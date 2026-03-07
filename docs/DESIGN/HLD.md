@@ -1,9 +1,9 @@
 # rathena-client — High-Level Design
 
-**Status**: Draft v9  
+**Status**: Draft v10  
 **Date**: 2026-03-06  
 **Author**: goKore project  
-**Supersedes**: HLD v8 (2026-03-06)
+**Supersedes**: HLD v9 (2026-03-06)
 
 ---
 
@@ -133,13 +133,13 @@ and calls `session.Encode(...)` to build outbound packets.
 goKore calls fsm.Connect(ctx)
   → FSM calls dialer(ctx, loginAddr) → net.Conn    [goKore-provided dialer]
   → FSM creates LoginSession, runs Feed loop internally
-  → recv 0x0AC4: extracts tokens, closes conn
+  → recv 0x0069: extracts tokens, closes conn
   → FSM calls dialer(ctx, charAddr) → net.Conn
   → FSM creates CharSession, sends 0x0065, runs Feed loop internally
   → recv 0x006B / 0x099D: builds char list
   → FSM calls OnCharList callback → goKore returns chosen slot (uint8)
   → FSM sends 0x0066, continues Feed loop
-  → recv 0x0071: extracts map addr, closes conn
+  → recv 0x0081 (PACKETVER < 20170315) / 0x0AC5 (≥ 20170315): extracts map addr, closes conn
   → FSM calls dialer(ctx, mapAddr) → net.Conn
   → FSM creates MapSession, sends 0x0436, runs Feed loop internally
   → recv 0x0073 / 0x0A18 / 0x02EB: sends 0x007D + 0x007E/0x0360, transitions to Ready
@@ -212,8 +212,13 @@ type Dialer func(ctx context.Context, addr string) (net.Conn, error)
 type ServerConfig struct {
     LoginAddr   string        // "host:port" of the rAthena login server
     Packetver   uint32        // YYYYMMDD; selects packet layouts and IDs
-    StepTimeout time.Duration // per-step deadline (default: 30s); Connect returns
-                               // ErrTimeout if a server accepts TCP but never responds
+    StepTimeout time.Duration // per-step deadline (default: 30s); enforced via
+                               // conn.SetDeadline(time.Now().Add(StepTimeout)) before
+                               // each blocking read inside Connect(). Returns ErrTimeout
+                               // if the server accepts TCP but never responds within the
+                               // deadline. The FSM calls SetDeadline before every read,
+                               // not once globally, so long-running authentication steps
+                               // each get a fresh deadline.
 }
 
 // Credentials holds the per-account authentication details.
@@ -266,6 +271,13 @@ func (f *ConnectionFSM) OnServerNotify(fn func(events.ServerNotify)) *Connection
 // left any live state (session object, partial credentials), Connect tears it
 // down before starting fresh. This means reconnection is simply calling Connect
 // again — there is no separate Reconnect method.
+//
+// Error handling: If Connect encounters a failure, it calls OnFailed(err) (if
+// registered) and then returns that same error. goKore should use ONE of these
+// — either the OnFailed callback or the return value — not both, to avoid
+// double-handling the same failure. The recommended pattern is to use OnFailed
+// for application-level error reporting and ignore the return value, or check
+// only the return value and not register OnFailed.
 func (f *ConnectionFSM) Connect(ctx context.Context) error
 ```
 
@@ -297,7 +309,10 @@ CharAuth     ── recv 0x006C/0x0081 ─────────────�
 SelectingChar ── recv other ──────────────────────────────── (stay)
     │  call OnCharList(chars) → get slot
     │  send 0x0066(slot)
-    │  recv 0x0071/0x0AC5 → extract mapAddr, close conn
+    │  recv 0x0081/0x0AC5 → extract mapAddr, close conn
+    │    (0x0081 = HC_NOTIFY_ZONESVR for PACKETVER < 20170315;
+    │     0x0AC5 = HC_NOTIFY_ZONESVR for PACKETVER >= 20170315.
+    │     NOTE: 0x0081 is also SC_NOTIFY_BAN — see §20 for disambiguation.)
     ▼
 DialingMap   ── dial error ──────────────────────────────────► Failed
     │  dialer(ctx, mapAddr) succeeds → send 0x0436
@@ -306,7 +321,9 @@ MapAuth      ── recv 0x0074/0x0081 ─────────────�
     │  recv 0x0283 ZC_AID → store account ID echo (stay)
     │  (note: 0x0283 is sent by rAthena inside clif_parse_WantToConnection,
     │   immediately on receiving 0x0436, before the char-server auth round-trip.
-    │   For PACKETVER < 20070521 a raw 4-byte AID is sent instead — no packet header.)
+    │   For PACKETVER < 20070521 a raw 4-byte AID is sent instead — no packet header.
+    │   This raw 4-byte form CANNOT be detected by standard framing (lengths[0x??] lookup)
+    │   because no packet ID precedes it. Pre-20070521 is OUT OF SCOPE for Phase 1.)
     │  recv 0x0073/0x0A18/0x02EB
     │    → send 0x007D (map loaded confirmation)
     │    → send 0x007E/0x0360 (tick sync; CZ_REQUEST_TIME)
@@ -329,7 +346,7 @@ Every step below happens with zero application involvement:
 | Recv `0x09A0` (PACKETVER ≥ 20130000) | Send `CH_CHARLIST_REQ` (0x09A1) × `p.total`; wait for `0x099D` pages |
 | Recv `0x099D` page(s) | Accumulate; when all pages received → call `OnCharList` |
 | After `OnCharList` returns slot | Send `0x0066` with chosen slot |
-| Recv `0x0071`/`0x0AC5` | Close char conn, dial map server, send `0x0436` |
+| Recv `0x0081` (PACKETVER < 20170315) or `0x0AC5` (≥ 20170315) | Close char conn, dial map server, send `0x0436`. Source: `common/packets.hpp:290–308` (HEADER_HC_NOTIFY_ZONESVR). NOTE: `0x0081` == SC_NOTIFY_BAN on same connection — FSM distinguishes by payload size: SC_NOTIFY_BAN is 4 bytes; HC_NOTIFY_ZONESVR is ≥ 28 bytes. |
 | Recv `0x0283` (PACKETVER ≥ 20070521) | Store account ID echo; stay in MapAuth |
 | Recv `0x0073`/`0x0A18`/`0x02EB` | Send `0x007D` (map loaded) + `0x007E`/`0x0360` (tick sync) → call `OnReady` |
 
@@ -481,16 +498,17 @@ lives in `pkg/fsm`. This is part of the library, not goKore.
 ```go
 // LoginSession
 func NewLoginSession(packetver uint32) *LoginSession
-func (s *LoginSession) Feed(data []byte)
-func (s *LoginSession) Encode(req send.LoginRequest) []byte
+func (s *LoginSession) Feed(data []byte) error
 func (s *LoginSession) OnLoginAccepted(fn func(events.LoginAccepted))
 func (s *LoginSession) OnLoginRefused(fn func(events.LoginRefused))
 // ... one On* method per login-server receive action
+// NOTE: Sessions do NOT expose an Encode(req) method — callers use generated encode
+// functions directly (e.g. encode.EncodeLogin(req, packetver) returns [N]byte).
+// This avoids a heap-allocating []byte wrapper on the encode path.
 
 // CharSession
 func NewCharSession(packetver uint32) *CharSession
-func (s *CharSession) Feed(data []byte)
-func (s *CharSession) Encode(req send.CharRequest) []byte
+func (s *CharSession) Feed(data []byte) error
 func (s *CharSession) OnCharListReceived(fn func(events.CharListReceived))
 func (s *CharSession) OnMapServerInfo(fn func(events.MapServerInfo))
 // ... one On* method per char-server receive action
@@ -503,8 +521,13 @@ func (s *MapSession) EnableObfuscation(key0, key1, key2 uint32)
 // The first encoded packet uses the one-step key ((k0*k1+k2)>>16)&0x7FFF.
 // Subsequent packets use the rolling LCG key initialized with the two-step formula.
 // S→C packets received via Feed() are never obfuscated.
-func (s *MapSession) Feed(data []byte)
-func (s *MapSession) Encode(req send.MapRequest) []byte
+func (s *MapSession) Feed(data []byte) error
+// Encode applies C→S packet ID obfuscation (if enabled) to the given fixed-size
+// byte slice and returns the obfuscated version. The caller builds the raw packet
+// using a generated encode function (e.g. encode.EncodeMove), then passes the
+// result to Encode to apply shuffling/obfuscation before writing to the socket.
+// Encode does NOT allocate — it operates on the caller-provided array in place.
+func (s *MapSession) Encode(pktID *uint16)
 func (s *MapSession) OnActorExists(fn func(events.ActorExists))
 func (s *MapSession) OnActorMoved(fn func(events.ActorMoved))
 func (s *MapSession) OnActorConnected(fn func(events.ActorConnected))
@@ -534,8 +557,9 @@ g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
     src/map/packets_struct.hpp
 ```
 
-Running this at each of the ~225 PACKETVER breakpoints in the file (214 in
-`packets_struct.hpp` plus 32 in `packets.hpp`, union = 225) and diffing
+Running this at each of the ~223 PACKETVER breakpoints in the file (212 in
+`packets_struct.hpp` plus 31 in `packets.hpp`, union = 223 — verified by counting
+unique dates after preprocessing) and diffing
 adjacent outputs yields a complete, lossless table of every struct layout change
 across all supported packetvers. This is mechanically correct — the compiler
 resolves every `#if PACKETVER >= X` exactly as rAthena does.
@@ -547,11 +571,17 @@ to a single `PACKETVER` date. The codegen runs three preprocessing passes per
 breakpoint (MAIN, RE, ZERO) and merges the results.
 
 `packets.hpp` (newer ZC_/CZ_ structs, ~279 additional structs) requires stub headers
-for `mysql.h` and `libconfig.h`. These stubs are ~50 lines and are maintained in
-`internal/codegen/stubs/`.
+for the `map.hpp → script.hpp → ryml_std.hpp` include chain. These stubs are maintained
+in `validation/stubs/packets_hpp_stub.h` and `internal/codegen/stubs/packets_hpp_stub.h`.
+**Note (M13 correction):** Prior HLD versions incorrectly stated that `mysql.h` and
+`libconfig.h` stubs were needed for `packets.hpp`. The actual dependency chain is
+`map.hpp → script.hpp → ryml_std.hpp` — there is no mysql or libconfig in this path.
 
-`common/packets.hpp` (login/char server structs, ~66 structs) requires the same
-stubs.
+`common/packets.hpp` (login/char server structs, ~131 structs when preprocessed at
+PACKETVER=20180307) requires stubs for `common/mmo.hpp`, `common/socket.hpp`,
+`common/showmsg.hpp`, and `common/utilities.hpp`. These are maintained in
+`validation/stubs/common_hpp_stub.h` and `internal/codegen/stubs/common_hpp_stub.h`.
+**Note:** `common/packets.hpp` does NOT need `mysql.h` or `libconfig.h` stubs.
 
 **What the preprocessor gives us**:
 - Exact field names, types, and order for every struct at every packetver
@@ -565,9 +595,15 @@ stubs.
 - Decode hints for packed binary fields (PosDir, MoveData — described in §7)
 - OpenKore compatibility names
 
-### Source 2: Semantic Manifest (`semantics.yaml`, ~500 lines)
+### Source 2: Semantic Manifest (`semantics/mappings.yaml`, 42,751 lines)
 
-A small YAML file that provides only what the preprocessor cannot:
+A YAML file that provides only what the preprocessor cannot. Despite its size
+(42,751 lines as of 2026-03-06), it is machine-readable and machine-writeable via
+the `gokore-semantics` MCP server. Do not edit directly; use MCP only.
+
+**Known quality issues**: As of 2026-03-06, running `semantics_validate_all_quality`
+returns 306 errors and 1000+ quality warnings. Treat the DB as a starting point —
+always cross-check against GCC preprocessor output before implementing.
 
 ```yaml
 # semantics.yaml — human-maintained semantic layer
@@ -614,6 +650,9 @@ codegen joins struct_db + action_db
 The codegen reads rAthena source from a local checkout. The path is a codegen
 argument. Generated files are committed to the repository (analogous to `.pb.go`
 files). Regeneration is triggered manually when rAthena is updated.
+
+The semantic manifest is at `semantics/mappings.yaml` (accessed via MCP only —
+see README-LLM.md §9 for the correct workflow).
 
 ---
 
@@ -735,8 +774,12 @@ func runMapLoop(
             dispatcher.Trigger(ctx, hook.EventDisconnected, err)
             return
         }
-        // Feed is synchronous; all callbacks fire and return before next Read
-        s.Feed(buf[:n])
+        // Feed is synchronous; all callbacks fire and return before next Read.
+        // Feed returns error on stream desync (unknown packet ID). Caller closes conn.
+        if err := s.Feed(buf[:n]); err != nil {
+            dispatcher.Trigger(ctx, hook.EventDisconnected, err)
+            return
+        }
     }
 }
 ```
@@ -744,8 +787,9 @@ func runMapLoop(
 ### Send pattern (steady-state)
 
 ```go
-// goKore encodes a request, writes raw bytes to its own socket.
-raw := mapSession.Encode(send.RequestMove{X: 150, Y: 200, Dir: 0})
+// goKore builds a raw packet using generated encode function, then obfuscates.
+raw := encode.EncodeMove(send.RequestMove{X: 150, Y: 200, Dir: 0}, mapSession.Packetver())
+mapSession.Encode(&raw[0])  // applies C→S packet ID obfuscation in place if enabled
 conn.Write(raw[:])
 ```
 
@@ -753,10 +797,11 @@ conn.Write(raw[:])
 
 ```go
 // goKore schedules keepalives on its own timer goroutine.
-// The library provides the Encode functions; goKore owns the schedule.
+// The library provides the encode functions; goKore owns the schedule.
 ticker := time.NewTicker(cfg.KeepaliveInterval)
 for range ticker.C {
-    raw := mapSession.Encode(send.MapKeepalive{})  // 0x007E or 0x0B1C
+    raw := encode.EncodeMapKeepalive(send.MapKeepalive{}, mapSession.Packetver())
+    mapSession.Encode(&raw[0])
     conn.Write(raw[:])
 }
 ```
@@ -791,10 +836,11 @@ Each session type maintains a `[65536]HandlerFunc` array indexed by packet ID.
 No map, no hash, no interface dispatch. Lookup is a single array dereference.
 
 **Acknowledged cost**: at 1000 MapSession instances, this is
-1000 × 65536 × 8 bytes = **500 MB** for handler arrays alone. This is accepted
-for a dedicated bot machine. If memory becomes a constraint, the lookup can be
-changed to a sorted slice + binary search (~6 MB total) without changing any
-public API.
+1000 × 65536 × 8 bytes = **500 MB** for handler arrays alone.
+The length tables add 1000 × 65536 × 2 bytes = **~128 MB**.
+Total acknowledged memory: **~628 MB** for a dedicated bot machine. If memory
+becomes a constraint, the lookup can be changed to a sorted slice + binary search
+(~6 MB total for lengths + handlers) without changing any public API.
 
 ### Packet framing: O(1) length lookup
 
@@ -921,17 +967,43 @@ func EncodeMove(req send.RequestMove, packetver uint32) [5]byte {
 }
 ```
 
-### `pkg/session`
+### Error types (`pkg/session/errors.go`)
 
-The PACKETVER-aware framing + dispatch engine.
+```go
+// ErrUnknownPacket is returned by Feed() when an unrecognized packet ID is
+// encountered. The stream is irrecoverably desynced; the caller must close the conn.
+type ErrUnknownPacket struct {
+    ID uint16
+}
+func (e ErrUnknownPacket) Error() string
+
+// ErrTimeout is returned by ConnectionFSM.Connect() when a server step exceeds
+// ServerConfig.StepTimeout. The underlying cause is a net.Error with Timeout()==true.
+type ErrTimeout struct {
+    Step string  // e.g. "login_auth", "char_auth", "map_auth"
+    Err  error   // the underlying net.Error
+}
+func (e ErrTimeout) Error() string
+func (e ErrTimeout) Unwrap() error
+
+// HandlerFunc is the type of a registered packet handler callback.
+// Called synchronously inside Feed() for each decoded frame.
+// data is the full frame bytes (including the 2-byte packet ID header).
+// packetver is the packetver the session was created with.
+type HandlerFunc func(data []byte, packetver uint32)
+```
+
+### `pkg/session` — sessionCore
 
 ```go
 // Internal structure shared by all three session types
 type sessionCore struct {
     packetver uint32
-    recvBuf   []byte            // reassembly buffer; grows to high-water mark once
+    buf       []byte            // full backing array; never re-sliced; owned by sessionCore
+    recvBuf   []byte            // active sub-slice of buf; advances forward as frames are consumed
     lengths   [65536]int16      // GENERATED: length table for this server type
     handlers  [65536]HandlerFunc
+    faulted   bool              // set true on ErrUnknownPacket; Feed() becomes a no-op
 }
 
 // MapSession also has send-side obfuscation state:
@@ -984,7 +1056,24 @@ else:
 `0x00000000` for `PACKETVER > 20180307`. When all keys are zero, the XOR is a no-op.
 The client should simply not call `EnableObfuscation` for modern servers.
 
-`Feed(data []byte)` algorithm:
+**`ObfuscationKeysFor` API** (GENERATED: `pkg/session/obfuscation_keys.go`):
+
+```go
+// GENERATED: pkg/session/obfuscation_keys.go
+// Source: src/map/clif_obfuscation.hpp (read with -DPACKET_OBFUSCATION defined).
+// Returns the three obfuscation keys for the given packetver.
+// Returns (0, 0, 0) for packetver > 20180307 (obfuscation disabled).
+// Returns (0, 0, 0) for any packetver not in the key table.
+// Callers should check: if k0|k1|k2 != 0 { session.EnableObfuscation(k0, k1, k2) }
+func ObfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32)
+```
+
+**Codegen requirement**: `clif_obfuscation.hpp` must be preprocessed with
+`-DPACKET_OBFUSCATION` defined or it produces zero output. This flag was absent from
+prior HLD GCC commands — a BLOCKER corrected here. See `validation/preprocess_check.sh`
+for the correct command.
+
+`Feed(data []byte) error` algorithm:
 
 ```
 1. Append data to recvBuf (no alloc if capacity sufficient)
@@ -995,7 +1084,10 @@ The client should simply not call `EnableObfuscation` for modern servers.
       if frameLen == -1: frameLen = leU16(recvBuf[2:4])  (variable-length)
       if frameLen == 0:
           // Unknown packet: the stream is now desynced; we cannot determine
-          // the frame length. Return an error. Caller closes the connection.
+          // the frame length. Set internal faulted flag; all future calls are
+          // no-ops. Return ErrUnknownPacket{ID: packetID}.
+          // Caller is responsible for closing the connection.
+          s.faulted = true
           return ErrUnknownPacket{ID: packetID}
    c. if len(recvBuf) < int(frameLen): break (incomplete frame)
    d. fn := handlers[packetID]
@@ -1005,9 +1097,11 @@ The client should simply not call `EnableObfuscation` for modern servers.
 3. If consumed > 0:
       // Copy unconsumed bytes to the front of the backing array and re-slice.
       // Without this, the backing array fills and append allocates a new one.
-      n := copy(recvBuf[:cap(recvBuf)], recvBuf)
-      recvBuf = recvBuf[:n]
-4. Return
+      // The full backing array is accessible via s.buf (the underlying array,
+      // never re-sliced). recvBuf is a sub-slice of s.buf.
+      n := copy(s.buf, recvBuf)
+      recvBuf = s.buf[:n]
+4. Return nil
 ```
 
 **recvBuf memory management note**: advancing `recvBuf = recvBuf[frameLen:]` only
@@ -1029,16 +1123,48 @@ internal/codegen/
         parser.go        parses flat preprocessed C into StructDB
         differ.go        diffs adjacent packetver outputs → VersionTable
     semantics/
-        loader.go        reads semantics.yaml
+        loader.go        reads semantics/mappings.yaml
     gen/
         decode.go        generates pkg/decode/*.go
         encode.go        generates pkg/encode/*.go
         events.go        generates pkg/events/*.go
         lengths.go       generates pkg/session/lengths_*.go (per server type)
+        shuffle.go       generates pkg/session/shuffle_map.go
+        obfuscation.go   generates pkg/session/obfuscation_keys.go
     stubs/
-        mysql_stub.h     stub for mysql.h (required by packets.hpp)
-        libconfig_stub.h stub for libconfig.h
+        packets_hpp_stub.h   stubs for packets.hpp → map.hpp → script.hpp → ryml chain
+        common_hpp_stub.h    stubs for common/packets.hpp → mmo.hpp etc.
 ```
+
+**`clif_shuffle.hpp` codegen** (`gen/shuffle.go`):
+
+`clif_shuffle.hpp` has 1 `#if PACKETVER ==` block and 152 `#elif PACKETVER ==` blocks
+(153 PACKETVER-exact sections — verified by `grep -c "^#elif"` = 152).
+Each section lists `parseable_packet(shuffled_id, ...)` entries. The codegen maps
+each `parseable_packet(shuffledID, len, handler, ...)` to the base C→S packet ID
+for that handler (the unshuffled ID defined in `clif_packetdb.hpp`).
+
+The generated output is `pkg/session/shuffle_map.go`:
+
+```go
+// GENERATED: pkg/session/shuffle_map.go
+// ShuffledCtoSID returns the shuffled C→S wire packet ID for a given base packet ID
+// at the given packetver. Returns baseID unchanged if no shuffle exists for this
+// packetver (i.e. packetver is not one of the 153 exact PACKETVER == values in
+// clif_shuffle.hpp).
+//
+// Source: src/map/clif_shuffle.hpp (153 exact PACKETVER sections).
+func ShuffledCtoSID(packetver uint32, baseID uint16) uint16
+```
+
+**`clif_packetdb.hpp` codegen** (`gen/lengths.go` + `gen/shuffle.go`):
+
+`clif_packetdb.hpp` defines base (unshuffled) C→S packet registrations:
+`parseable_packet(packetID, length, handler, ...)`. It provides the base packet ID
+→ handler name mapping needed to reverse-map shuffled IDs to base IDs. The codegen
+reads this file to build the base ID table, then cross-references `clif_shuffle.hpp`
+to produce the shuffle table. It also produces the C→S length table for sessions
+that need it.
 
 ---
 
@@ -1100,6 +1226,13 @@ maps to (from `packets_struct.hpp` `idle_unitType` enum):
 given server type and packetver. Each session populates its `lengths[65536]` array
 from this table at construction time.
 
+`LengthTableFor` is **not** a runtime function — it is a codegen artifact. The
+codegen produces `lengths_login.go`, `lengths_char.go`, and `lengths_map.go`, each
+containing a function `func populateLengths(pv uint32, t *[65536]int16)` that is
+called from `NewLoginSession`, `NewCharSession`, `NewMapSession` respectively. This
+function is an inline `switch pv { case ...: t[id] = len; ... }` with no allocations.
+The session constructor calls it once; the array is never modified after construction.
+
 **Same packet ID, different layout** (Pattern B): packet `0x0206`
 (`PACKET_ZC_FRIENDS_STATE`) has a 9-byte body pre-20180221 and a 33-byte body
 post-20180221. The decode function handles this with a single `if packetver >=
@@ -1123,14 +1256,16 @@ this library. All are documented in
 
 ---
 
-## 13. Phase 1 Implementation Scope
+## 13. Initial Implementation Scope (Phase 1 in README-LLM.md)
 
 The first working slice implements the full login → char → map connect flow plus
 core actor visibility — enough to authenticate against a rAthena server, receive
 the character list, enter the map, and see nearby actors.
 
-**Includes `pkg/fsm`**: Phase 1 ships `ConnectionFSM` so goKore can drive the
-entire login sequence with a single `Connect()` call.
+**Phase note**: README-LLM.md uses a different phase numbering (Phase 0 = validation
+infrastructure, Phase 1 = fix HLD, Phase 2 = packing, Phase 3 = codegen, etc.).
+This §13 describes the *packet scope* for Phase 3 (codegen) and Phase 4 (generated
+packages) + Phase 5 (session hand-written parts) in README terms.
 
 ### Packets handled by the FSM internally (transparent to goKore)
 
@@ -1142,10 +1277,10 @@ entire login sequence with a single `Connect()` call.
 | Send char connect | 0x0065 (raw) | C→S | Sent automatically on char server connect |
 | Recv char slot info | 0x082D | S→C | PACKETVER ≥ 20130000 only; auxiliary; stored |
 | Recv char list (initial) | 0x006B | S→C | Always sent. PACKETVER < 20130000: char list is complete here, no 0x09A0 follows. PACKETVER ≥ 20130000: partial — wait for 0x09A0 |
-| Recv charlist notify | 0x09A0 | S→C | PACKETVER ≥ 20130000 only; sends `CH_CHARLIST_REQ` (0x09A1) × `p.total` |
+| Recv charlist notify | 0x09A0 | S→C | PACKETVER ≥ 20130000 only; sends `CH_CHARLIST_REQ` (0x09A1) × `p.total`. NOTE: for PACKETVER_RE_NUM >= 20151001 AND < 20180103 the packet has an extra `uint32 slots` field (total 10 bytes instead of 6). Source: `common/packets.hpp:617–624`. The FSM reads `p.total` from offset 2; offset of `total` field is unchanged (always at byte 2). |
 | Recv char pages | 0x099D | S→C | PACKETVER ≥ 20130000; accumulate until all pages received; then call `OnCharList` |
 | Send char select | 0x0066 | C→S | Sent after `OnCharList` returns slot |
-| Recv map server info | 0x0071, 0x0AC5 | S→C | Map addr extracted, conn closed |
+| Recv map server info | 0x0081 (PACKETVER < 20170315), 0x0AC5 (≥ 20170315) | S→C | HC_NOTIFY_ZONESVR. Map addr extracted, conn closed. Source: `common/packets.hpp:290–308`. NOTE: 0x0081 is also SC_NOTIFY_BAN — FSM distinguishes by frame length (HC_NOTIFY_ZONESVR ≥ 28 bytes; SC_NOTIFY_BAN = 4 bytes). |
 | Send map connect | 0x0436 (raw) | C→S | Sent automatically on map server connect |
 | Recv ZC_AID | 0x0283 | S→C | PACKETVER ≥ 20070521; sent by rAthena in `clif_parse_WantToConnection` immediately on receiving 0x0436, before char-server auth round-trip; account ID echo; stored. PACKETVER < 20070521: raw 4-byte AID with no packet header — not relevant for Phase 1. |
 | Recv map enter | 0x0073, 0x0A18, 0x02EB | S→C | ZC_ACCEPT_ENTER variants by PACKETVER; triggers map-loaded sequence |
@@ -1168,7 +1303,7 @@ entire login sequence with a single `Connect()` call.
 | `map_keepalive` | scheduled by caller timer | C→S | `0x007E` or `0x0B1C` |
 
 Phase 2 adds the remaining ~400+ actions via full codegen from the preprocessor +
-semantics.yaml.
+`semantics/mappings.yaml`.
 
 ---
 
@@ -1177,8 +1312,8 @@ semantics.yaml.
 ```
 rathena-client/
     go.mod                              module github.com/lenaxia/ragnarok-go-client
-    go.sum
-    semantics.yaml                      human-maintained semantic layer (~500 lines)
+    semantics/
+        mappings.yaml                   human-maintained semantic layer (~42,751 lines; edit via MCP only)
 
     docs/
         DESIGN/
@@ -1238,19 +1373,21 @@ rathena-client/
         codegen/
             main.go                     entry point
             preprocess/
-                runner.go               runs GCC -E -P at each PACKETVER breakpoint
-                parser.go               parses preprocessed C into StructDB
-                differ.go               diffs adjacent outputs → VersionTable
+                 runner.go               runs GCC -E -P at each PACKETVER breakpoint
+                 parser.go               parses preprocessed C into StructDB
+                 differ.go               diffs adjacent outputs → VersionTable
             semantics/
-                loader.go               reads semantics.yaml
+                loader.go               reads semantics/mappings.yaml
             gen/
                 decode.go               generates pkg/decode/*.go
                 encode.go               generates pkg/encode/*.go
                 events.go               generates pkg/events/*.go
                 lengths.go              generates pkg/session/lengths_*.go
+                shuffle.go              generates pkg/session/shuffle_map.go
+                obfuscation.go          generates pkg/session/obfuscation_keys.go
             stubs/
-                mysql_stub.h            stub for mysql.h
-                libconfig_stub.h        stub for libconfig.h
+                packets_hpp_stub.h      stubs for map.hpp → script.hpp → ryml chain
+                common_hpp_stub.h       stubs for common/mmo.hpp etc.
 ```
 
 ---
@@ -1261,7 +1398,7 @@ rathena-client/
 |---|---|
 | GCC `-E -P` as struct source of truth | Eliminates manual transcription errors for field types/sizes. Compiler resolves all `#if PACKETVER` correctly. Validated at the compiler level. |
 | Runtime `packetver uint32` in each decode fn | Single binary supports all servers. No snapshot directories. Packetver switch cost is immeasurable (~1 integer comparison per packet). |
-| `semantics.yaml` for names only | Keeps human-maintained data minimal. Only semantic names, groupings, and decode hints — not the hundreds of type/size facts the compiler already knows. |
+| `semantics/mappings.yaml` for names only | Keeps human-maintained data minimal. Only semantic names, groupings, and decode hints — not the hundreds of type/size facts the compiler already knows. |
 | Zero runtime deps | Protocol library must be embeddable. No transitive dependency surprises. |
 | Separate Go module from goKore | Protocol correctness is independent of bot strategy. Other Go projects can import this library without importing goKore. |
 | No `context.Context` in library | Context is an application concern. Threading it through every decode call at 1000 bots × N packets/sec is pure overhead with no cancelable operations to offer. |
@@ -1283,9 +1420,9 @@ rathena-client/
 
 | Risk | Mitigation |
 |---|---|
-| `packets.hpp` requires stub headers (mysql, libconfig) | Stubs are ~50 lines. Maintained in `internal/codegen/stubs/`. Breakage is obvious — codegen fails loudly. |
+| `packets.hpp` requires stub headers (ryml, script) | Stubs are maintained in `validation/stubs/` and `internal/codegen/stubs/`. The actual dependency chain is `map.hpp → script.hpp → ryml_std.hpp` — NOT mysql/libconfig (common misconception). Breakage is obvious — codegen fails loudly. |
 | rAthena upstream changes break the preprocessor input | Codegen is re-run when rAthena is updated. The structs it produces are the ground truth — no human review needed for type changes. |
-| `semantics.yaml` field name mappings can be wrong | These are the same mappings that exist in goKore's `mappings.yaml` today, already partially validated. Errors surface as test failures in action integration tests. |
+| `semantics/mappings.yaml` field name mappings can be wrong | The DB contains 306 known validation errors as of 2026-03-06. Always cross-check against GCC preprocessor output before implementing. Errors surface as test failures in action integration tests. |
 | PACKETVER_RE / PACKETVER_ZERO variants | `config/packets.hpp` defines `PACKETVER_RE_NUM` when `PACKETVER_RE` is set. The codegen runs separate preprocessing passes for MAIN, RE, and ZERO variants and merges the results. |
 | 500 MB handler array cost at 1000 bots | Accepted for a dedicated bot machine. If memory becomes a constraint, the public API is unchanged — the internal lookup can be replaced with a sorted slice + binary search (~6 MB total) without any API break. |
 | `Feed()` not goroutine-safe | By design. goKore's architecture already guarantees one read goroutine per connection. Documenting this explicitly prevents misuse. |
@@ -1306,7 +1443,7 @@ rathena-client/
 | `AID` field absent pre-20131223 in actor structs | `packet_idle_unit`, `packet_spawn_unit`, `packet_unit_walking` have no `AID` field before PACKETVER 20131223. The canonical `ActorExists.ID` field must be set to 0 for those older packet versions. The codegen must handle this: pre-20131223 `ID` is sourced from `GID` (the only identifier in old packets), not from an absent `AID` field. |
 | `effectState` type changes | `packet_idle_unit` and `packet_spawn_unit`: `int16` pre-20080102, `int32` post. `packet_unit_walking`: `int16` for PACKETVER < 7 (pre-2006), `int32` otherwise. Both breakpoints must appear in the generated decode functions. |
 | `GID` → `CharID` naming is a misnomer for non-player entities | `GID` is `char_id` for PCs but a general unit GID for monsters/NPCs. The canonical name `CharID` is kept for OpenKore compatibility but the comment in `events.ActorExists` must note that it is 0 for monsters and NPCs. |
-| 225 PACKETVER breakpoints, plus PACKETVER_MAIN_NUM/RE_NUM/ZERO_NUM second dimension | The union of breakpoints in `packets_struct.hpp` (214) and `packets.hpp` (32) is 225 unique values. Additionally, some conditions use `PACKETVER_MAIN_NUM`, `PACKETVER_RE_NUM`, and `PACKETVER_ZERO_NUM` — three independent build-flavor axes that cannot be expressed as a single `PACKETVER` date. The codegen must handle these as separate preprocessing passes. |
+| 225 PACKETVER breakpoints, plus PACKETVER_MAIN_NUM/RE_NUM/ZERO_NUM second dimension | The union of breakpoints in `packets_struct.hpp` (212) and `packets.hpp` (31) is 223 unique values (corrected from earlier prose claiming 225). Additionally, some conditions use `PACKETVER_MAIN_NUM`, `PACKETVER_RE_NUM`, and `PACKETVER_ZERO_NUM` — three independent build-flavor axes that cannot be expressed as a single `PACKETVER` date. The codegen must handle these as separate preprocessing passes. |
 
 ---
 
@@ -1381,7 +1518,9 @@ type LoginAccepted struct {
     LoginID1    uint32   // primary session token — forwarded to char and map servers
     LoginID2    uint32   // secondary session token — forwarded to char server
     Sex         uint8    // 0=female, 1=male
-    Token       string   // WEB_AUTH_TOKEN (17 bytes, PACKETVER >= 20170315 only; "" otherwise)
+    Token       string   // WEB_AUTH_TOKEN (17 bytes, PACKETVER >= 20170315 only; "" otherwise).
+                         // WEB_AUTH_TOKEN_LENGTH = 16+1 = 17: 16 random bytes + 1 null terminator.
+                         // Source: common/mmo.hpp:120: #define WEB_AUTH_TOKEN_LENGTH 16+1
     CharServers []CharServerInfo
 }
 
@@ -1445,8 +1584,11 @@ type CharacterInfo struct {
     Class      uint16
     BaseLevel  uint16
     // ... full CHARACTER_INFO fields
-    HP, MaxHP  int64   // int32 for PACKETVER < 20170830, int64 after
-    SP, MaxSP  int64
+    BaseExp    int64   // int32 for PACKETVER < 20170830, int64 after
+    JobExp     int64   // int32 for PACKETVER < 20170830, int64 after
+    HP, MaxHP  int64   // int32 for PACKETVER_RE_NUM < 20211103 AND PACKETVER_MAIN_NUM < 20220330
+    SP, MaxSP  int64   // int16 for PACKETVER_RE_NUM < 20211103 AND PACKETVER_MAIN_NUM < 20220330
+                       // (pre-modern SP is int16, not int32 — source: common/packets.hpp:53–57)
 }
 ```
 
@@ -1470,7 +1612,11 @@ type MapServerInfo struct {
     MapName string  // 16 bytes (MAP_NAME_LENGTH_EXT), e.g. "prontera.gat"
     IP      uint32
     Port    uint16
-    Domain  string  // 128 bytes, PACKETVER >= 20170315 only; "" otherwise
+    Domain  string  // 128 bytes, PACKETVER >= 20170315 only; "" otherwise.
+                    // NOTE: current rAthena always sets domain to "" even for
+                    // PACKETVER >= 20170315 (source: char_clif.cpp:913:
+                    // safestrncpy(p.domain, "", sizeof(p.domain))).
+                    // Addr() falls back to IP when Domain is "".
 }
 
 // Addr returns a "host:port" string suitable for net.Dial.
@@ -1542,6 +1688,9 @@ fixed-size sub-structs. The element count is `(totalLength - headerSize) / eleme
 
 Examples:
 - `0x0069` / `0x0ac4` `AC_ACCEPT_LOGIN` → `PACKET_AC_ACCEPT_LOGIN_sub char_servers[]`
+  - PACKETVER < 20170315: sub-struct is 32 bytes (`uint32 ip` + `uint16 port` + `char name[20]` + `uint16 users` + `uint16 type` + `uint16 new_`). Source: `common/packets.hpp:200–207`.
+  - PACKETVER >= 20170315: sub-struct is 160 bytes (same fields + `uint8 unknown[128]`). Source: `common/packets.hpp:176–184`.
+  - Token field: `0x0AC4` variant (PACKETVER >= 20170315) includes `char token[WEB_AUTH_TOKEN_LENGTH]` (17 bytes) in the outer struct before `char_servers[]`. `0x0069` variant does not.
 - `0x006b` `HC_ACCEPT_ENTER` → `CHARACTER_INFO characters[]`
 - `0x099d` / `0x0b72` `HC_ACK_CHARINFO_PER_PAGE` → `CHARACTER_INFO characters[]`
 
@@ -1587,25 +1736,50 @@ Examples:
 ### Sub-struct element size and PACKETVER
 
 Some sub-structs are themselves version-conditional. For example, `CHARACTER_INFO`
-switches HP/SP/EXP from `int32` to `int64` at PACKETVER 20170830. The element size
-function `elementSize(packetver uint32) int` is generated alongside the decode loop.
+switches SP/MaxSP from `int16` to `int64` and HP/MaxHP from `int32` to `int64`
+at `PACKETVER_RE_NUM >= 20211103 || PACKETVER_MAIN_NUM >= 20220330`. The element
+size function is generated alongside the decode loop:
+
+```go
+// GENERATED: elementSize is a private function within each decode file.
+// Signature form: func characterInfoSize(packetver uint32) int
+func characterInfoSize(packetver uint32) int {
+    if isRE(packetver) && packetver >= 20211103 || isMain(packetver) && packetver >= 20220330 {
+        return /* sizeof CHARACTER_INFO with int64 hp/sp/maxhp/maxsp */ 156
+    }
+    return /* sizeof CHARACTER_INFO with int32/int16 fields */ 144
+}
+```
+
+The exact constant sizes are verified by running the GCC preprocessor and summing
+field sizes (use `validation/length_check.sh`).
 
 ### `CHARACTER_INFO` struct (key nested struct)
 
 `CHARACTER_INFO` is defined in `src/common/packets.hpp` lines 31–105. It is used in
 four char-server packets. Key version-conditional fields:
 
-| Field | Pre-20170830 type | Post-20170830 type |
-|-------|------------------|--------------------|
-| `hp`  | `int32`          | `int64`            |
-| `max_hp` | `int32`       | `int64`            |
-| `sp`  | `int32`          | `int64`            |
-| `max_sp` | `int32`       | `int64`            |
-| `base_exp` | `uint32`    | `uint64`           |
-| `job_exp`  | `uint32`    | `uint64`           |
+| Field | Condition | Type | Notes |
+|-------|-----------|------|-------|
+| `exp` | PACKETVER < 20170830 | `int32` | Source: `common/packets.hpp:33–37` |
+| `exp` | PACKETVER >= 20170830 | `int64` | |
+| `jobexp` | PACKETVER < 20170830 | `int32` | |
+| `jobexp` | PACKETVER >= 20170830 | `int64` | |
+| `hp` | PACKETVER_RE_NUM < 20211103 AND PACKETVER_MAIN_NUM < 20220330 | `int32` | Source: `common/packets.hpp:51–59` |
+| `hp` | PACKETVER_RE_NUM >= 20211103 OR PACKETVER_MAIN_NUM >= 20220330 | `int64` | |
+| `maxhp` | same condition as `hp` | `int32` / `int64` | |
+| `sp` | PACKETVER_RE_NUM < 20211103 AND PACKETVER_MAIN_NUM < 20220330 | **`int16`** (NOT `int32`) | |
+| `sp` | PACKETVER_RE_NUM >= 20211103 OR PACKETVER_MAIN_NUM >= 20220330 | `int64` | |
+| `maxsp` | same condition as `sp` | **`int16`** / `int64` | |
 
-The Go event struct uses `int64`/`uint64` for all of these; the decode function
-zero-extends or sign-extends when reading the `int32`/`uint32` variants.
+**Critical correction (M7):** The earlier HLD prose stated "int32 → int64 at PACKETVER 20170830"
+for HP/SP. This is WRONG:
+- `exp`/`jobexp` breakpoint is `PACKETVER >= 20170830` (a plain PACKETVER date).
+- `hp`/`maxhp` breakpoint is `PACKETVER_RE_NUM >= 20211103 || PACKETVER_MAIN_NUM >= 20220330` (RE/MAIN axes).
+- Pre-modern `sp`/`maxsp` are `int16` — not `int32` — a distinct bug.
+
+The Go event struct uses `int64` for all; decode functions sign-extend from the
+narrower types when reading older packets.
 
 ---
 
@@ -1619,7 +1793,7 @@ should reconnect.
 
 | Event | Packet ID | Key fields | Notes |
 |-------|-----------|-----------|-------|
-| `LoginRefused` | `0x006a` / `0x083e` (≥20120000) | `ErrorCode uint8`, `UnblockTime string` | See error code table below |
+| `LoginRefused` | `0x006a` (PACKETVER < 20120000) / `0x083e` (≥ 20120000) | `ErrorCode uint8` (< 20120000) or `ErrorCode uint32` (≥ 20120000), `UnblockTime string` | Source: `common/packets.hpp:224–238`. For PACKETVER >= 20120000, `error` field is `uint32` — the Go event uses `uint32`; pre-20120000 values are zero-extended. |
 | `ServerNotify` | `0x0081` | `Result uint8` | Generic disconnect (also used by char+map) |
 
 `LoginRefused.ErrorCode` values (validated from `loginclif.cpp:185–207`):
@@ -1661,6 +1835,16 @@ should reconnect.
 - 9 = Too many connections from this IP
 - 10 = Out of paid time
 - 15 = Disconnected by GM
+
+**Note on 0x0081 disambiguation on CharSession (M1):** `PACKET_SC_NOTIFY_BAN`
+(`SC_NOTIFY_BAN`, 4 bytes) and `PACKET_HC_NOTIFY_ZONESVR` (`HC_NOTIFY_ZONESVR`,
+≥ 28 bytes for PACKETVER < 20170315) both use packet ID `0x0081` (source:
+`common/packets.hpp:308,315`). The CharSession length table must register `0x0081`
+with length `-1` (variable), then the FSM distinguishes them by the length field
+(bytes 2:4 of the frame): SC_NOTIFY_BAN is always exactly 4 bytes (`int16 packetType`
++ `uint8 result` + padding? — actually SC_NOTIFY_BAN is 4 bytes total with just
+packetType+result); HC_NOTIFY_ZONESVR is 28 bytes (packetType+CID+mapname+ip+port).
+The FSM checks frame length to decide which event to fire.
 
 **Note:** `0x0081` `PACKET_SC_NOTIFY_BAN` is the same packet ID across login, char,
 and map servers. The `ServerNotify` event is defined once in `pkg/events` and
@@ -1716,10 +1900,10 @@ goroutine or a single writer goroutine per connection.)
 
 ---
 
-## 22. Field Name Reference for semantics.yaml
+## 22. Field Name Reference for `semantics/mappings.yaml`
 
 This section documents the exact rAthena struct field names for Phase 1 packets,
-validated against `packets_struct.hpp` and `packets.hpp`. The `semantics.yaml`
+validated against `packets_struct.hpp` and `packets.hpp`. The `semantics/mappings.yaml`
 author must use these exact names as `rathena_field` values.
 
 ### Actor visibility structs (`packet_idle_unit`, `packet_spawn_unit`, `packet_unit_walking`)

@@ -156,9 +156,13 @@ e.CharID = leU32(data, off) // rAthena: GID
 e.Speed = leU16(data, off)  // rAthena: speed
 ```
 
-### 7. HLD.md is the Design Authority (MANDATORY)
+### 7. HLD.md is the Design Authority — but the Semantic DB is the Packet Authority (MANDATORY)
 
-**`docs/DESIGN/HLD.md` is the authoritative design document for this library.**
+**`docs/DESIGN/HLD.md` is the authoritative design document for architecture and algorithms.**
+
+**`semantics/mappings.yaml` (accessed via MCP) is the authoritative source for packet field definitions.**
+
+The HLD is prose. Prose drifts. The semantic DB is machine-checkable. When they conflict, run the GCC preprocessor and check rAthena source — that is the ground truth. Update both the HLD and the DB to match.
 
 Before implementing any package, read the relevant HLD section:
 - §3 Architecture + data flows
@@ -171,6 +175,8 @@ Before implementing any package, read the relevant HLD section:
 - §14 Repository structure
 
 **If you need to deviate from the HLD, update the HLD FIRST, then implement.**
+
+**Every HLD claim about a packet ID, field type, or struct layout MUST cite a specific rAthena file:line.**
 
 ### 8. Type Safety — No `interface{}` or Reflection in the Hot Path (MANDATORY)
 
@@ -191,18 +197,35 @@ func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 
 Reflection was a bug surface and performance cost in goKore v1. Direct byte reads with offset arithmetic are both simpler and faster.
 
-### 9. Semantic DB via MCP Server Only (CRITICAL)
+### 9. Semantic DB via MCP Server Only — But Verify Before Trusting (CRITICAL)
 
-**ALWAYS use the `gokore-semantics` MCP server. NEVER edit `semantics/mappings.yaml` directly.**
+**ALWAYS use the `gokore-semantics` MCP server to READ and WRITE the semantic DB. NEVER edit `semantics/mappings.yaml` directly.**
 
-The MCP server provides validation, error checking, and maintains database consistency. The YAML file is the persistence layer — edit it only through the MCP server.
+**However: the DB contains known errors and must not be trusted without GCC verification.**
+
+As of 2026-03-06, the DB has 306 validation errors and 1000+ quality issues (run `semantics_validate` and `validate_all_quality` to see the current state). Common error classes:
+- Wrong struct names in action implementations
+- Invalid canonical param types (`*uint32`, `[4]byte`, etc.)
+- Missing fields and metadata
+
+**The correct workflow is:**
+1. Query DB via MCP (`semantics_get`, `semantics_list_fields`) — treat as a starting point
+2. Run GCC preprocessor to get ground truth
+3. Compare and fix DB via MCP if they differ
+4. Only then implement
 
 ```bash
-# CORRECT: Use the gokore-semantics MCP server tools
-# (semantics_add, semantics_update, semantics_add_field, etc.)
+# CORRECT: Use MCP to query, then verify with GCC
+# 1. semantics_get("0x09FF")  ← starting point, may have errors
+# 2. g++ -E -P ... packets_struct.hpp | grep -A 30 "struct packet_idle_unit " ← ground truth
+# 3. Fix DB via MCP if they differ
+# 4. Implement
 
 # WRONG: Direct file edit
 vim semantics/mappings.yaml  # NEVER DO THIS
+
+# WRONG: Trust the DB without GCC verification
+# (the DB has 306 known validation errors as of 2026-03-06)
 ```
 
 ### 10. Ask Before Deciding (MANDATORY)
@@ -219,9 +242,129 @@ When uncertain about:
 
 ### 11. No Comments in Code
 
-Code should be self-documenting. Exception: **package-level doc comments** (the `// Package foo ...` comment) are required on every package. Function signatures with non-obvious parameters may have a brief doc comment.
+Code should be self-documenting. Exception: **package-level doc comments** (the `// Package foo ...` comment) are required on every package. Function signatures with non-obvious parameters may have a brief doc comment. Field reads in decode functions **must** cite the rAthena field name as a comment (e.g., `// rAthena: AID`).
 
 Do NOT add inline comments like `// increment offset`, `// parse field`, etc. The code should read clearly without them.
+
+---
+
+## Defense-in-Depth: How We Prevent and Catch Errors
+
+The HLD audit identified 30 issues (10 blockers, 15 majors, 5 minors) in Draft v9 — most caused by prose describing data structures without machine verification. This section defines the process that prevents this class of error from reaching implementation.
+
+### The Core Problem
+
+The HLD is prose written by reasoning about rAthena. Reasoning produces plausible-sounding but unverified claims. An LLM writing code against unverified prose will produce plausible-sounding but incorrect code. Errors compound silently until runtime.
+
+**The solution is three layers of machine-checkable verification between rAthena source and Go code.**
+
+### Layer 1: GCC Preprocessor as Ground Truth
+
+Every struct field claim in the HLD or DB must be verifiable by running:
+
+```bash
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
+    -I ~/personal/rathena/src \
+    -I ~/personal/rathena/src/map \
+    -I ~/personal/rathena/src/common \
+    ~/personal/rathena/src/map/packets_struct.hpp 2>/dev/null | grep -A 20 "struct packet_idle_unit "
+```
+
+`packets_struct.hpp` preprocesses cleanly with no stubs needed. `packets.hpp` requires stubs (see `validation/stubs/`) because it includes `map.hpp` → `script.hpp` → `ryml_std.hpp`. `common/packets.hpp` also requires stubs for `common/mmo.hpp` etc.
+
+The `validation/` directory contains scripts to automate this:
+
+```
+validation/
+    preprocess_check.sh     run GCC -E on all three headers; output to validation/output/
+    length_check.sh         for Phase 1 packets: verify field sizes sum to expected total
+    db_validate.sh          run MCP validate_all_quality + validate_lengths
+    stubs/
+        packets_hpp_stub.h  stubs for map.hpp include chain (ryml, script, sql)
+        common_hpp_stub.h   stubs for common/mmo.hpp, socket.hpp, showmsg.hpp include chain
+```
+
+**Run these scripts before implementing any package. If a script fails, fix the DB and HLD first.**
+
+### Layer 2: Semantic DB as a Starting Point — Not a Source of Truth
+
+The DB (`semantics/mappings.yaml`, accessed via MCP only) has 446 packet mappings and 1995 field definitions. It is a useful starting point for understanding what packets exist and their approximate structure.
+
+**However, the DB is known to contain errors.** As of 2026-03-06, running `semantics_validate` produces 306 validation errors and `validate_all_quality` produces 1000+ quality issues. Examples of confirmed errors include:
+
+- Wrong struct names in semantic action implementations (e.g. `actor_action` using `PACKET_ZC_NOTIFY_ACT` for a packet that is actually `PACKET_ZC_NOTIFY_ACT_DAMAGE`)
+- Struct name mismatches between action implementations and packet definitions (e.g. `send_chat`, `reply_party_invite`, `market_purchase`)
+- Invalid canonical param types (e.g. `*uint32`, `[4]byte`, `[10]uint32` — pointer and array types that are not valid param types)
+- Missing fields, missing OpenKore names, missing semantic descriptions across hundreds of packets
+- Semantic actions referencing packet IDs that don't exist in the DB
+
+**The DB must be treated as unverified until validated against GCC preprocessor output.**
+
+The workflow for using the DB:
+
+1. Query the DB via MCP to get the starting-point field list
+2. Run the GCC preprocessor for the same packet
+3. Compare field names, types, and order between DB and preprocessor output
+4. Fix any discrepancies in the DB via MCP before writing any code
+5. Only after DB entry matches GCC output is it safe to implement
+
+**The DB is a cross-reference, not an oracle. GCC output is the oracle.**
+
+When a delegate agent is asked to implement a decode function, the prompt is:
+> "Query the DB for packet `0x09FF` using MCP `semantics_get` as a starting point. Then run the GCC preprocessor to verify. Fix the DB via MCP if they differ. Only then implement."
+
+### Layer 3: Tiered Tests that Catch What the DB Cannot
+
+**Tier A — Byte-level golden tests (no network):**
+Every decode function has a test that feeds known bytes and asserts specific field values. Golden bytes are synthesized directly from the rAthena struct definition by constructing the packet manually from the C field layout. These catch codegen bugs and DB errors simultaneously.
+
+**Tier B — Integration tests against real rAthena (Docker):**
+A full `FSM.Connect()` against a real rAthena server. This is the only way to verify packet IDs, obfuscation keys, framing, and the full auth sequence. rAthena Docker is at `127.0.0.1:6900` (see goKore README-LLM.md for credentials).
+
+**Tier C — Regression tests from captured traffic:**
+Real packet captures saved as binary fixtures in `testdata/captures/`. Replayed through `Feed()` and the callback sequence asserted. These are immune to golden tests written from the same wrong source as the code.
+
+### Pre-Implementation Gate (MANDATORY for every package)
+
+Before any delegate agent writes a single line of implementation code:
+
+1. **Run `validation/preprocess_check.sh`** for every packet the package touches. Paste the relevant struct output into the work log.
+
+2. **Query the DB** (`semantics_get`, `semantics_list_fields`) for every packet. Verify field names, types, and positions match the preprocessor output. If they differ, fix the DB via MCP.
+
+3. **Run `validation/db_validate.sh`** — all DB quality checks must pass.
+
+4. **Run `validation/length_check.sh`** for every fixed-length packet — field sizes must sum to the expected total.
+
+5. **Document the GCC command used** and its key output in the work log. Example:
+   ```
+   Verified: packet_idle_unit at PACKETVER=20180307
+   Command: g++ -E -P -DPACKETVER=20180307 ... packets_struct.hpp | grep -A 30 "struct packet_idle_unit {"
+   Result: objecttype(1) + AID(4) + GID(4) + speed(2) + ... + PosDir[3](3) = 175 bytes total
+   ```
+
+**No implementation proceeds without passing this gate.**
+
+### When the HLD, DB, and rAthena Source Conflict
+
+The hierarchy of authority is fixed:
+
+```
+rAthena source (GCC preprocessor output)  ← ALWAYS WINS
+        ↓
+semantics/mappings.yaml (via MCP)          ← fix to match GCC output
+        ↓
+docs/DESIGN/HLD.md                         ← fix to match GCC output
+        ↓
+Go implementation                          ← implement against corrected DB
+```
+
+When any conflict is found:
+1. Run the GCC preprocessor. That output is authoritative.
+2. Fix the DB entry via MCP to match.
+3. Fix the HLD claim to match, citing `rAthena src/file:line`.
+4. Document the correction in the work log.
+5. Then implement.
 
 ---
 
@@ -233,18 +376,27 @@ Do NOT add inline comments like `// increment offset`, `// parse field`, etc. Th
 rathena-client/
     semantics/
         mappings.yaml          human-maintained semantic layer (edit via MCP only)
+                               446 packet mappings, 1995 fields — already populated
+
+    validation/                pre-implementation verification scripts
+        preprocess_check.sh    run GCC -E on rAthena headers
+        length_check.sh        verify field sizes vs expected packet lengths
+        db_validate.sh         run MCP quality checks on semantic DB
+        stubs/
+            packets_hpp_stub.h   stubs for map.hpp → script.hpp → ryml chain
+            common_hpp_stub.h    stubs for common/mmo.hpp etc.
 
     pkg/
-        packing/               DONE — WBUFPOS/WBUFPOS2 bit-packing
-        fsm/                   BUILD THIS — ConnectionFSM login sequencer
-        events/                GENERATED — canonical S→C event structs
-        send/                  GENERATED — canonical C→S request structs
-        decode/                GENERATED — raw bytes → event structs
-        encode/                GENERATED — request structs → raw bytes
-        session/               HAND-WRITTEN + GENERATED — PACKETVER-aware tokenizer + dispatcher
+        packing/               IMPLEMENTED (no tests yet — packing_test.go needed)
+        fsm/                   NOT STARTED
+        events/                NOT STARTED — GENERATED from codegen
+        send/                  NOT STARTED — GENERATED from codegen
+        decode/                NOT STARTED — GENERATED from codegen
+        encode/                NOT STARTED — GENERATED from codegen
+        session/               NOT STARTED — HAND-WRITTEN + GENERATED lengths
 
     internal/
-        codegen/               BUILD THIS — code generator (reads rAthena + mappings.yaml)
+        codegen/               NOT STARTED — build this in Phase 1
 ```
 
 ### Data Flow Diagram
@@ -254,7 +406,7 @@ rathena-client/
 │                        rathena-client                            │
 │                                                                  │
 │  pkg/fsm/          ConnectionFSM — login + reconnect sequencer   │
-│  pkg/packing/      WBUFPOS / WBUFPOS2 encode+decode         DONE │
+│  pkg/packing/      WBUFPOS / WBUFPOS2 encode+decode    PARTIAL   │
 │  pkg/events/       Canonical event structs (S→C)    GENERATED    │
 │  pkg/send/         Canonical send request types (C→S) GENERATED  │
 │  pkg/decode/       Raw bytes → events               GENERATED    │
@@ -262,7 +414,7 @@ rathena-client/
 │  pkg/session/      PACKETVER-aware tokenizer + dispatcher        │
 │                    (LoginSession, CharSession, MapSession)        │
 │                                                                  │
-│  internal/codegen/ Code generator (reads rAthena + YAML)         │
+│  internal/codegen/ Code generator (reads rAthena + mappings.yaml)│
 └──────────────────────────────────────────────────────────────────┘
          ↑ imported by
 ┌──────────────────────────────────────────────────────────────────┐
@@ -284,10 +436,10 @@ goKore calls fsm.Connect(ctx)
   → FSM creates CharSession, sends 0x0065, feeds it
   → receives char list (0x006B / 0x099D), calls OnCharList callback
   → sends 0x0066 with chosen slot
-  → receives 0x0071 / 0x0AC5 with map addr, closes conn
+  → receives 0x0081 / 0x0AC5 with map addr, closes conn
   → FSM calls dialer(ctx, mapAddr) → net.Conn
   → FSM creates MapSession, sends 0x0436
-  → receives 0x0073/0x0A18/0x02EB, sends 0x007D + 0x007E/0x0360
+  → receives 0x0073/0x0A18/0x02EB, sends 0x007D + shuffled(0x007E/0x0360)
   → calls OnReady(mapSession, conn)   [goKore takes over the conn]
 ```
 
@@ -303,8 +455,9 @@ TCP bytes arrive on net.Conn  (goKore read loop)
   → Feed() returns to goKore read loop
 
 goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
-  → encode.EncodeMove(req, packetver)   [GENERATED, returns [5]byte]
-  → optionally XOR packet ID (C→S obfuscation, PACKETVER ≤ 20180307 only)
+  → encode.EncodeMove(req, packetver)   [GENERATED, returns [N]byte]
+  → look up shuffled C→S packet ID for this packetver
+  → optionally XOR packet ID (obfuscation, PACKETVER ≤ 20180307 only)
   → goKore calls conn.Write(bytes[:])  [goKore owns the socket]
 ```
 
@@ -312,47 +465,139 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 
 ## Implementation Phases
 
-### Phase 0 — Complete (pkg/packing)
+### Current State
 
-`pkg/packing/packing.go` is fully implemented:
-- `DecodePosDir(data []byte) (x, y uint16, dir uint8)` — 3-byte RBUFPOS
-- `EncodePosDir(x, y uint16, dir uint8) [3]byte`
-- `DecodeMoveData(data []byte) (fromX, fromY, toX, toY uint16, sx0, sy0 uint8)` — 6-byte RBUFPOS2
-- `EncodeMoveData(fromX, fromY, toX, toY uint16, sx0, sy0 uint8) [6]byte`
+| Package | Status | Notes |
+|---|---|---|
+| `pkg/packing` | Partial | packing.go written, no tests |
+| `internal/codegen` | Not started | Must be built before any generated packages |
+| `pkg/events` | Not started | Generated output |
+| `pkg/send` | Not started | Generated output |
+| `pkg/decode` | Not started | Generated output |
+| `pkg/encode` | Not started | Generated output |
+| `pkg/session` | Not started | Hand-written + generated lengths |
+| `pkg/fsm` | Not started | |
+| `validation/` | Not started | Must be built before fixing HLD |
 
-Still needed: `packing_test.go` (table-driven tests + fuzz tests).
+### Phase 0 — Validation Infrastructure (DO THIS FIRST)
 
-### Phase 1 — Build internal/codegen
-
-Build the code generator that reads rAthena C++ headers and `semantics/mappings.yaml` to produce Go source files. See "Code Generation Pipeline" section below.
+Before any implementation, build the verification scripts. These are the tools that prevent HLD drift from becoming code bugs.
 
 **Deliverables:**
-- `internal/codegen/preprocess/` — GCC runner + C parser + VersionTable differ
+- `validation/preprocess_check.sh` — runs GCC -E on all three headers at a given PACKETVER
+- `validation/length_check.sh` — verifies field sizes sum to expected lengths for Phase 1 packets
+- `validation/db_validate.sh` — runs MCP `validate_all_quality` and `validate_lengths`
+- `validation/stubs/packets_hpp_stub.h` — stubs for packets.hpp include chain
+- `validation/stubs/common_hpp_stub.h` — stubs for common/packets.hpp include chain
+
+**Acceptance criteria:**
+- `./validation/preprocess_check.sh 20180307` exits 0 and produces struct output for all three headers
+- `./validation/db_validate.sh` exits 0 (or produces a report with known issues listed)
+
+### Phase 1 — Fix HLD and DB (DO THIS SECOND)
+
+The HLD audit found 10 blockers, 15 majors, and 5 minors. Fix all of them before writing any implementation code.
+
+**For each fix:**
+1. Run `validation/preprocess_check.sh` to get ground truth
+2. Fix the DB entry via MCP if needed
+3. Fix the HLD text with explicit `rAthena src/file:line` citations
+4. Run `validation/db_validate.sh` to confirm DB is clean after the fix
+
+**Key blockers to fix (in order):**
+1. B6: `0x0071` → `0x0081`/`0x0AC5` for HC_NOTIFY_ZONESVR throughout the HLD
+2. B4+B10: Decide `Feed()` error strategy; fix both §5 and §9 pseudocode
+3. B5: Fix `recvBuf` copy-to-front algorithm (needs `buf []byte` field in sessionCore)
+4. B1: Specify codegen output for `clif_shuffle.hpp` + shuffle-ID lookup API
+5. B2+B3: Specify obfuscation codegen pass with `-DPACKET_OBFUSCATION`; add `ObfuscationKeysFor` API
+6. M7: Fix CHARACTER_INFO HP/SP breakpoints (PACKETVER_RE_NUM >= 20211103)
+7. M8: Fix LoginRefused.ErrorCode uint8 → uint32 for PACKETVER >= 20120000
+8. All remaining MAJORs and MINORs
+
+### Phase 2 — pkg/packing completion
+
+Complete the `packing_test.go` that was skipped. TDD: write tests first (they exist as stubs), make them pass.
+
+**Deliverables:**
+- `pkg/packing/packing_test.go` — table-driven, round-trip, fuzz, and benchmark tests
+- All tests pass: `go test -bench=. -benchmem ./pkg/packing/`
+
+### Phase 3 — internal/codegen
+
+Build the code generator. This is the most complex part of the project. It does not exist yet.
+
+**Inputs:**
+1. `~/personal/rathena/src/map/packets_struct.hpp` — map server packet structs (~212 PACKETVER breakpoints)
+2. `~/personal/rathena/src/map/packets.hpp` — newer ZC_/CZ_ structs (requires stub headers)
+3. `~/personal/rathena/src/common/packets.hpp` — login/char server structs (requires different stubs)
+4. `~/personal/rathena/src/map/clif_packetdb.hpp` — base C→S packet length table
+5. `~/personal/rathena/src/map/clif_shuffle.hpp` — per-PACKETVER C→S packet ID shuffle table (155 sections)
+6. `~/personal/rathena/src/map/clif_obfuscation.hpp` — obfuscation keys (requires `-DPACKET_OBFUSCATION`)
+7. `semantics/mappings.yaml` — semantic names and action groupings (via MCP)
+
+**Key codegen facts:**
+- `packets_struct.hpp` preprocesses cleanly with no stubs (verified)
+- `packets.hpp` requires stubs for `map.hpp → script.hpp → ryml_std.hpp` (verified: `ryml_std.hpp: No such file or directory`)
+- `common/packets.hpp` requires stubs for `common/mmo.hpp`, `common/socket.hpp`, `common/showmsg.hpp`, `common/utilities.hpp`
+- `clif_obfuscation.hpp` requires `-DPACKET_OBFUSCATION` define or produces zero output (verified)
+- `clif_shuffle.hpp` has 1 `#if` + 151 `#elif` PACKETVER-exact sections (not ranges — exact `==` matches)
+- PACKETVER breakpoints: 212 unique dates in packets_struct.hpp, 31 in packets.hpp; union = ~223
+
+**GCC command for packets_struct.hpp (works now, no stubs needed):**
+```bash
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
+    -I ~/personal/rathena/src \
+    -I ~/personal/rathena/src/map \
+    -I ~/personal/rathena/src/common \
+    ~/personal/rathena/src/map/packets_struct.hpp 2>/dev/null
+```
+
+**GCC command for clif_obfuscation.hpp:**
+```bash
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKET_OBFUSCATION \
+    -I ~/personal/rathena/src \
+    ~/personal/rathena/src/map/clif_obfuscation.hpp 2>/dev/null
+```
+
+**Deliverables:**
+- `internal/codegen/main.go` — entry point
+- `internal/codegen/preprocess/` — GCC runner, C parser, VersionTable differ
 - `internal/codegen/semantics/` — mappings.yaml loader
-- `internal/codegen/gen/` — Go source generators for decode, encode, events, session lengths
-- `internal/codegen/stubs/` — mysql_stub.h, libconfig_stub.h
+- `internal/codegen/gen/` — Go source generators for decode, encode, events, session lengths, shuffle table, obfuscation keys
+- `internal/codegen/stubs/packets_hpp_stub.h` — stubs for packets.hpp include chain
+- `internal/codegen/stubs/common_hpp_stub.h` — stubs for common/packets.hpp include chain
 
-### Phase 2 — Generated packages (pkg/events, pkg/send, pkg/decode, pkg/encode, pkg/session/lengths_*)
+**Running the codegen:**
+```bash
+go run ./internal/codegen/main.go \
+    --rathena ~/personal/rathena \
+    --semantics semantics/mappings.yaml \
+    --out .
+```
 
-Run the codegen against the rAthena source to produce:
+### Phase 4 — Generated packages (pkg/events, pkg/send, pkg/decode, pkg/encode, pkg/session/lengths_*)
+
+Run the codegen to produce:
 - `pkg/events/*.go` — one file per canonical receive action
 - `pkg/send/*.go` — one file per canonical send action
 - `pkg/decode/*.go` — one file per canonical action, with per-packetver byte-reading logic
 - `pkg/encode/*.go` — one file per send action, returns `[N]byte`
 - `pkg/session/lengths_login.go`, `lengths_char.go`, `lengths_map.go`
+- `pkg/session/shuffle_map.go` — GENERATED: `ShuffledCtoSID(packetver uint32, baseID uint16) uint16`
+- `pkg/session/obfuscation_keys.go` — GENERATED: `ObfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32)`
 
-Phase 1 (login → char → map connect + core actor visibility) targets these actions:
+Phase 1 scope (login → char → map connect + core actor visibility):
 - `actor_exists` (0x0078, 0x01D8, 0x09FF)
 - `actor_moved` (0x007B, 0x01DA, 0x022C, 0x09FD)
 - `actor_connected` (0x007C, 0x01D9, 0x09FE)
 - `actor_vanished` (0x0080)
 - `stat_update` (0x00B0, 0x00B1, 0x00BE)
-- `request_move` send (0x0085)
+- `request_move` send (0x0085 base ID, shuffled per PACKETVER)
 - All FSM packets (login/char/map auth sequence — see HLD §13)
 
 Phase 2 adds the remaining ~400+ actions.
 
-### Phase 3 — pkg/session (hand-written parts)
+### Phase 5 — pkg/session (hand-written parts)
 
 Implement the three session types:
 - `pkg/session/login.go` — `LoginSession`
@@ -363,66 +608,76 @@ Implement the three session types:
 The `Feed()` algorithm is specified in HLD §9. Key points:
 - O(1) length lookup via `[65536]int16` array (generated)
 - O(1) handler dispatch via `[65536]HandlerFunc` array
-- Zero allocs in steady state (copy-to-front on the recvBuf)
-- Not goroutine-safe by design (one goroutine per connection — caller's responsibility)
+- `sessionCore` must hold both `buf []byte` (full backing array) AND the active sub-slice to allow correct copy-to-front
+- Zero allocs in steady state
+- Not goroutine-safe by design
 
-### Phase 4 — pkg/fsm
+`Feed()` returns an error. When `lengths[packetID] == 0` (unknown packet), the stream is desynced and `Feed()` returns `ErrUnknownPacket`. The session sets an internal `faulted` flag so subsequent calls are no-ops. The caller must close the connection. See HLD §9 for the full algorithm.
+
+### Phase 6 — pkg/fsm
 
 Implement `ConnectionFSM`. Full state machine, public API, and automatic protocol steps are specified in HLD §4. Key constraints:
 - Zero goroutines inside the FSM
 - Receives a `Dialer func(ctx context.Context, addr string) (net.Conn, error)` — never calls `net.Dial` directly
+- Implements `StepTimeout` via `conn.SetDeadline(time.Now().Add(cfg.StepTimeout))` before each read
 - Blocks in the caller's goroutine until `OnReady` or `OnFailed` fires
 - After `OnReady` fires, releases all references to the `net.Conn`
+- Calls `session.EnableObfuscation(ObfuscationKeysFor(packetver))` when constructing MapSession (for PACKETVER ≤ 20180307)
+- Watches for `0x0081` (PACKETVER < 20170315) or `0x0AC5` (≥ 20170315) for HC_NOTIFY_ZONESVR
 
 Test with `net.Pipe` stubs — no real rAthena server needed for unit tests.
 
-### Phase 5 — Integration with goKore
+### Phase 7 — Integration with goKore
 
-Replace goKore's `internal/network/` layer:
-
-| Deleted from goKore | Replaced by |
-|---|---|
-| `internal/network/packets/generated/` (~4,634 files) | `pkg/decode/` + `pkg/events/` |
-| `internal/network/packetver/` (`PacketVersionRegistry`) | `pkg/session/` |
-| `internal/network/adapters/` (~500 files) | Deleted; not needed |
-| `internal/network/receive/Receiver` (2-goroutine) | goKore read loop calls `mapSession.Feed()` directly |
-| `internal/network/params/` | `pkg/events/` types |
-| `internal/network/connection/fsm.go` | `pkg/fsm/ConnectionFSM` |
-
-New goKore adapter: `internal/network/rathena/connector.go` (thin glue layer, see HLD §7).
+Replace goKore's `internal/network/` layer. See HLD §7.
 
 ---
 
 ## Code Generation Pipeline
 
-The code generator (`internal/codegen`) is the most complex part of this project. It is a `go run`-only tool — not importable as a library.
+The code generator (`internal/codegen`) **does not exist yet**. It must be built in Phase 3.
 
 ### Inputs
 
 1. **rAthena C++ headers** (from `RATHENA_ROOT`):
-   - `src/map/packets_struct.hpp` — map server packet structs (~214 PACKETVER breakpoints)
-   - `src/map/packets.hpp` — newer ZC_/CZ_ structs (~279 additional structs, requires stubs)
-   - `src/common/packets.hpp` — login/char server structs (~66 structs, requires stubs)
-   - `src/map/clif_packetdb.hpp` — base packet length/handler registration table
-   - `src/map/clif_shuffle.hpp` — per-PACKETVER packet ID shuffling table
-   - `src/map/clif_obfuscation.hpp` — PACKET_OBFUSCATION key table
+   - `src/map/packets_struct.hpp` — map server packet structs (no stubs needed — verified)
+   - `src/map/packets.hpp` — newer ZC_/CZ_ structs (needs stubs — ryml chain)
+   - `src/common/packets.hpp` — login/char server structs (needs stubs — mmo/socket chain)
+   - `src/map/clif_packetdb.hpp` — base C→S packet registration (lengths + handler names)
+   - `src/map/clif_shuffle.hpp` — per-PACKETVER C→S packet ID shuffle table
+   - `src/map/clif_obfuscation.hpp` — PACKET_OBFUSCATION key table (needs `-DPACKET_OBFUSCATION`)
 
-2. **`semantics/mappings.yaml`** — human-maintained, accessed via MCP server only. Provides what the preprocessor cannot: semantic field names, canonical action groupings, decode hints for packed binary fields.
+2. **`semantics/mappings.yaml`** — accessed via MCP server only. Provides semantic field names, canonical action groupings, decode hints for packed binary fields.
 
 ### Processing
 
 ```bash
-# The codegen runs GCC at each of ~225 PACKETVER breakpoints:
+# packets_struct.hpp — no stubs needed
 g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
     -I RATHENA_ROOT/src -I RATHENA_ROOT/src/map -I RATHENA_ROOT/src/common \
-    -include internal/codegen/stubs/mysql_stub.h \
-    -include internal/codegen/stubs/libconfig_stub.h \
     RATHENA_ROOT/src/map/packets_struct.hpp
+
+# packets.hpp — needs stubs for ryml/script/sql chain
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
+    -I RATHENA_ROOT/src -I RATHENA_ROOT/src/map -I RATHENA_ROOT/src/common \
+    -include internal/codegen/stubs/packets_hpp_stub.h \
+    RATHENA_ROOT/src/map/packets.hpp
+
+# common/packets.hpp — needs stubs for mmo/socket/showmsg/utilities chain
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
+    -I RATHENA_ROOT/src -I RATHENA_ROOT/src/common \
+    -include internal/codegen/stubs/common_hpp_stub.h \
+    RATHENA_ROOT/src/common/packets.hpp
+
+# clif_obfuscation.hpp — needs -DPACKET_OBFUSCATION
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKET_OBFUSCATION \
+    -I RATHENA_ROOT/src \
+    RATHENA_ROOT/src/map/clif_obfuscation.hpp
 ```
 
-Three passes per breakpoint (MAIN, RE, ZERO build flavors) to handle `PACKETVER_RE_NUM` and `PACKETVER_ZERO_NUM` variants.
+Three passes per struct breakpoint (MAIN, RE, ZERO build flavors) to handle `PACKETVER_RE_NUM` and `PACKETVER_ZERO_NUM` variants.
 
-**Diffing adjacent outputs** produces a `VersionTable`: a map of struct name → list of (packetver_range, StructLayout) entries. This is the authoritative source for all field names, types, sizes, and PACKETVER conditionals.
+**Diffing adjacent outputs** produces a `VersionTable`: a map of struct name → list of (packetver_range, StructLayout) entries.
 
 ### Combination
 
@@ -434,42 +689,36 @@ semantics/mappings.yaml  (via MCP server — DO NOT EDIT DIRECTLY)
     → ActionDB: map[action_name]ActionDef (canonical names, decode hints)
     ↓
 codegen joins StructDB + ActionDB
-    → pkg/decode/*.go      (one file per action, inline packetver switches)
-    → pkg/encode/*.go      (one file per send action)
-    → pkg/events/*.go      (one file per canonical event type)
+    → pkg/decode/*.go
+    → pkg/encode/*.go
+    → pkg/events/*.go
     → pkg/session/lengths_login.go
     → pkg/session/lengths_char.go
     → pkg/session/lengths_map.go
+    → pkg/session/shuffle_map.go        ShuffledCtoSID(packetver, baseID)
+    → pkg/session/obfuscation_keys.go   ObfuscationKeysFor(packetver) (k0,k1,k2)
 ```
 
 ### Running the codegen
 
 ```bash
 go run ./internal/codegen/main.go \
-    --rathena RATHENA_ROOT \
+    --rathena ~/personal/rathena \
     --semantics semantics/mappings.yaml \
     --out .
 ```
 
 Generated files are committed to the repository (analogous to `.pb.go` files). Regeneration is triggered manually when rAthena is updated or when `semantics/mappings.yaml` changes.
 
-### What semantics/mappings.yaml provides
-
-The mappings.yaml (edit via MCP server only) provides:
-- **Action groupings**: multiple packet IDs that all implement the same logical action (e.g., `actor_exists` covers 0x0078, 0x01D8, 0x09FF, and others)
-- **Canonical field names**: `AID` → `ID`, `GID` → `CharID`, `speed` → `Speed`
-- **Decode hints**: which fields use `DecodePosDir` (3-byte packed) vs `DecodeMoveData` (6-byte packed)
-- **OpenKore compatibility names** (for goKore's handler layer)
-
-It does NOT provide field types, sizes, or PACKETVER conditions — those come exclusively from the GCC preprocessor output.
-
 ---
 
 ## Non-Trivial Wire Formats
 
-These are the two packed binary formats used throughout the protocol. They are fully implemented in `pkg/packing`. All generated decode functions call `packing.DecodePosDir` and `packing.DecodeMoveData` — never reimplement this logic inline.
+These are the two packed binary formats used throughout the protocol. They are implemented in `pkg/packing`. All generated decode functions call `packing.DecodePosDir` and `packing.DecodeMoveData` — never reimplement this logic inline.
 
 ### 3-byte packed position (WBUFPOS / PosDir[3])
+
+Source: `clif.cpp:173–178` (encode), `clif.cpp:197–211` (decode).
 
 ```
 Byte 0: [x9 x8 x7 x6 x5 x4 x3 x2]
@@ -477,13 +726,14 @@ Byte 1: [x1 x0 y9 y8 y7 y6 y5 y4]
 Byte 2: [y3 y2 y1 y0 d3 d2 d1 d0]
 ```
 
-- x: 10-bit map coordinate (bits 23:14)
-- y: 10-bit map coordinate (bits 13:4)
-- dir: 4-bit direction (bits 3:0), 0=N/1=NW/2=W/3=SW/4=S/5=SE/6=E/7=NE
-
-Used in all `PosDir[3]` fields across all PACKETVER values.
+- x: 10-bit map coordinate
+- y: 10-bit map coordinate
+- dir: 4-bit direction. Values: 0=N, 1=NW, 2=W, 3=SW, 4=S, 5=SE, 6=E, 7=NE
+  (Source: `src/map/path.hpp`: `DIR_NORTH=0, DIR_NORTHWEST=1, DIR_WEST=2, ...`)
 
 ### 6-byte packed movement (WBUFPOS2 / MoveData[6])
+
+Source: `clif.cpp:182–190` (encode), `clif.cpp:214–240` (decode).
 
 ```
 Bytes 0-4: fromX(10b) fromY(10b) toX(10b) toY(10b)  [packed]
@@ -491,10 +741,6 @@ Byte 5:    [sx0_3 sx0_2 sx0_1 sx0_0 sy0_3 sy0_2 sy0_1 sy0_0]
 ```
 
 **CRITICAL**: Byte 5 is `sx0` (high nibble) and `sy0` (low nibble) — sub-cell interpolation offsets. It is **NOT a direction value**. There is no direction field in the 6-byte format.
-
-This was a confirmed bug in goKore v1 (`handlers/actors/handler.go:88`: `direction = (data[5] & 0xF0) >> 4`). This library fixes it: `events.ActorMoved` has no `Dir` field.
-
-`sx0`/`sy0` are cosmetic interpolation hints for the visual client. Bot code can ignore them.
 
 ---
 
@@ -526,13 +772,16 @@ go build -gcflags="-m" 2>&1 | grep "does not escape"
 
 ### Handler Lookup: O(1) Array Index
 
-Each session type uses a `[65536]HandlerFunc` array indexed by packet ID — no map, no hash. Single array dereference. Length table is a `[65536]int16` array — same O(1) lookup.
+Each session type uses a `[65536]HandlerFunc` array indexed by packet ID. Length table is a `[65536]int16` array. Both are per-session-instance. Memory at 1000 bots:
+- Handler arrays: 1000 × 65536 × 8 bytes = ~500 MB
+- Length arrays: 1000 × 65536 × 2 bytes = ~128 MB
+- Total: ~628 MB — accepted for a dedicated bot machine
 
-Memory cost: 1000 MapSession instances × 65536 entries × 8 bytes = ~500 MB for handler arrays. This is accepted for a dedicated bot machine. The public API is unchanged if this needs to be optimized later.
+`type HandlerFunc func(data []byte, packetver uint32)` (defined in `pkg/session`).
 
-### `Feed()` is Not Goroutine-Safe — By Design
+`Feed()` returns `error`. Signature: `func (s *MapSession) Feed(data []byte) error`.
 
-One session per goroutine. goKore's architecture already guarantees one read goroutine per TCP connection. Adding a mutex to `Feed()` would cost ~20 ns per call × all packets × 1000 bots for zero benefit.
+`Encode()` does NOT wrap the generated functions in a heap-allocating `[]byte` return. Callers call generated encode functions directly: `encode.EncodeMove(req, packetver)` returns `[5]byte`. Session types may expose typed helpers but must not add allocations.
 
 ---
 
@@ -554,17 +803,19 @@ One session per goroutine. goKore's architecture already guarantees one read gor
 - Test every state transition (see HLD §4 state machine)
 - Test PACKETVER-conditional paths (< 20130000 vs ≥ 20130000 char list flow)
 - Test `OnFailed` paths (login refused, dial error, timeout)
+- Integration test against real rAthena Docker (127.0.0.1:6900)
 
 ### pkg/session
 
 - Benchmark tests in `session_bench_test.go`
 - Feed a pre-captured packet stream; verify all callbacks fire in correct order
+- Verify `Feed()` returns `ErrUnknownPacket` on unknown packet ID
 - Verify 0 allocs/op after initial recvBuf warmup
 
 ### pkg/decode, pkg/encode (generated)
 
 - Generated tests verify byte-level correctness against known rAthena packet captures
-- Round-trip: `encode(decode(bytes)) ≈ bytes` (for fields that survive round-trip)
+- Golden bytes synthesized from rAthena struct definitions (not from intuition)
 
 ### Full Repository Validation (MANDATORY after every task)
 
@@ -574,6 +825,8 @@ go test ./...
 go test -race ./...
 go test -bench=. -benchmem ./pkg/...
 grep -r "^\s*go " pkg/   # must be empty
+./validation/preprocess_check.sh 20180307   # must exit 0
+./validation/db_validate.sh                 # must exit 0
 ```
 
 ---
@@ -584,61 +837,70 @@ grep -r "^\s*go " pkg/   # must be empty
 
 Use when coordinating multi-package implementations, phase-level work, or any task spanning multiple files.
 
-#### Orchestrator Workflow (11-Step Process)
+#### Orchestrator Workflow (12-Step Process)
 
 ```
 1. Context Setup
    → Delegate: "Read README-LLM.md, relevant HLD sections, existing code"
    → Define: Clear scope, ownership boundaries, expected deliverables
-   → Include: Design constraints, architectural invariants (zero goroutines, zero allocs)
+   → Include: Design constraints, architectural invariants
 
-2. Implementation Delegation
+2. Pre-Implementation Gate
+   → BEFORE delegating any implementation:
+   → Run ./validation/preprocess_check.sh for every packet the work touches
+   → Run ./validation/db_validate.sh — must pass
+   → Query MCP for every packet: semantics_get, semantics_list_fields
+   → Fix DB via MCP if any field is wrong
+   → Fix HLD if any claim is wrong (with rAthena file:line citations)
+   → Only proceed when DB and HLD are verified against GCC output
+
+3. Implementation Delegation
    → Delegate: Package implementation with TDD requirements
    → Prompt Detail Level: "Fresh college grad seeing codebase for first time"
-   → Include: Specific HLD section references, pattern examples, testing requirements
+   → Include: Specific HLD section references, DB packet IDs to query, testing requirements
 
-3. Code Review Delegation
+4. Code Review Delegation
    → Delegate: Skeptical reviewer to validate implementation
-   → Focus: Zero-goroutine invariant, zero-alloc requirement, correctness vs rAthena source
+   → Focus: Zero-goroutine invariant, zero-alloc requirement, correctness vs DB fields
    → Requirement: Only code + benchmarks count as proof (NOT status updates)
    → Output: Detailed gap report with code references and fix recommendations
 
-4. Gap Remediation
+5. Gap Remediation
    → Delegate: Fix ALL gaps identified in review (no matter how minor)
    → Validate: Each fix with targeted benchmarks or tests
 
-5. Iterative Validation
-   → Repeat Steps 2-4 until ZERO gaps remain
-   → No Compromises: All benchmarks meeting targets, all tests passing
+6. Iterative Validation
+   → Repeat Steps 3-5 until ZERO gaps remain
 
-6. End-to-End Validation
+7. End-to-End Validation
    → Test against a live rAthena server when implementing session/fsm packages
-   → Reference: rAthena Docker containers at 127.0.0.1:6900 (see goKore README-LLM.md for credentials)
-   → For codegen: verify generated structs match rAthena source field-for-field
+   → Reference: rAthena Docker containers at 127.0.0.1:6900
 
-7. Build and Test Validation
+8. Build and Test Validation
    → go build ./...       ALL packages must build
    → go test ./...        ALL tests must pass
    → go test -race ./...  No race conditions
    → grep -r "^\s*go " pkg/  Must be empty
    → go test -bench=. -benchmem ./pkg/...  Benchmarks must meet targets
+   → ./validation/preprocess_check.sh 20180307  Must exit 0
+   → ./validation/db_validate.sh  Must exit 0
 
-8. Commit and Push
+9. Commit and Push
    → git add .
    → git commit -m "Descriptive message referencing phase/package"
    → git push origin HEAD
 
-9. Work Log Creation
-   → Create work log in docs/WORKLOG/
-   → Format: NNNN_YYYY-MM-DD_description.md
-   → Content: What was implemented, test results, benchmark results, next steps
-   → Commit work log with code changes
+10. Work Log Creation
+    → Create work log in docs/WORKLOG/
+    → Format: NNNN_YYYY-MM-DD_description.md
+    → Content: GCC commands run, DB entries checked, test results, benchmark results
+    → Commit work log with code changes
 
-10. Move to Next Phase/Package
+11. Move to Next Phase/Package
     → Validate no integration gaps between previous and current work
     → Repeat workflow from Step 1
 
-11. Integration Gap Check
+12. Integration Gap Check
     → Ask: "Was previous package's code actually integrated/wired correctly?"
     → Check: Import paths, function signatures match HLD spec
     → Test: End-to-end flow through the new package
@@ -653,17 +915,25 @@ CONTEXT:
 - Design Invariants: Zero goroutines in pkg/, zero allocs in decode hot path,
                      no external deps, rAthena is source of truth
 
+PRE-IMPLEMENTATION GATE (do this before writing any code):
+- Run: ./validation/preprocess_check.sh YYYYMMDD
+- Query MCP: semantics_get for each packet ID you will implement
+- Verify: every field name/type/position in the DB matches the GCC output
+- Fix: DB via MCP if anything is wrong; document in work log
+
 SCOPE:
 - Objective: [Clear, specific goal]
 - Boundaries: [Which files/packages this delegation owns]
 - Integration Points: [How this connects to other packages]
+- Packet IDs to implement: [List DB packet IDs to query]
 
 REQUIREMENTS:
 - MUST read README-LLM.md
 - MUST read listed HLD sections
-- MUST follow TDD (tests first)
+- MUST run pre-implementation gate
+- MUST follow TDD (tests first, golden bytes from rAthena struct definitions)
 - MUST benchmark decode/encode functions (0 allocs/op target)
-- MUST create work log when done
+- MUST create work log when done (include GCC output evidence)
 
 DELIVERABLES:
 1. [Specific package or file with acceptance criteria]
@@ -675,12 +945,12 @@ SUCCESS CRITERIA:
 - go test ./... exits 0
 - go test -bench=. -benchmem shows 0 allocs/op on hot path
 - grep -r "^\s*go " pkg/ produces empty output
-- Work log created
+- ./validation/preprocess_check.sh exits 0
+- ./validation/db_validate.sh exits 0
+- Work log created with GCC evidence
 ```
 
 ### Agent Role 2: Delegation Agent
-
-Use when implementing a specific package, running codegen, or fixing a specific bug.
 
 #### Delegation Agent Workflow
 
@@ -690,51 +960,51 @@ Use when implementing a specific package, running codegen, or fixing a specific 
    - All listed HLD sections
    - Existing code in the package being extended
 
-2. Understand Constraints
+2. Run Pre-Implementation Gate (MANDATORY — do before writing a single line)
+   - ./validation/preprocess_check.sh YYYYMMDD for all relevant packets
+   - semantics_get / semantics_list_fields for all packet IDs in scope
+   - Verify DB fields match GCC output; fix via MCP if they differ
+
+3. Understand Constraints
    - Zero goroutines in pkg/ — hard invariant
    - Zero allocs in decode hot path — verified by benchmarks
    - rAthena source is the only packet structure authority
    - No external deps
 
-3. Plan Implementation
+4. Plan Implementation
    - Break down into sub-tasks
-   - Identify test scenarios (happy + edge cases + error paths)
+   - Identify test scenarios (golden bytes from rAthena struct definitions)
    - Identify which rAthena source files to reference
 
-4. Write Tests FIRST (TDD)
+5. Write Tests FIRST (TDD)
    - Tests MUST fail initially
+   - Golden bytes synthesized from rAthena C struct layout — not from intuition
    - Include benchmark tests for all decode/encode functions
 
-5. Implement
+6. Implement
    - Follow package descriptions in HLD §9
    - Direct byte reads (no reflection, no interface{})
    - Value types, no pointers in event structs
-   - [N]byte returns from encode functions where possible
+   - Field reads must cite rAthena field name: `// rAthena: AID`
 
-6. Validate
+7. Validate
    - go build ./...
    - go test ./...
    - go test -bench=. -benchmem ./pkg/...  (0 allocs/op)
    - grep -r "^\s*go " pkg/  (must be empty)
+   - ./validation/preprocess_check.sh exits 0
+   - ./validation/db_validate.sh exits 0
 
-7. Create Work Log
-   - MANDATORY — task is not done without it
+8. Create Work Log (MANDATORY — task is not done without it)
+   - Include GCC command and key output
+   - Include DB packet IDs queried
+   - Include benchmark results
 
-8. Report Back
+9. Report Back
    - Clear completion status
    - Benchmark results
    - Any gaps or questions
 ```
-
-#### Critical Principles
-
-**READ FIRST, ASK LATER**: Read README-LLM.md and all HLD sections before any work.
-
-**VERIFY AGAINST RATHENA SOURCE**: Before declaring a field correctly decoded, cross-reference with `RATHENA_ROOT/src/map/packets_struct.hpp` or `clif.cpp`.
-
-**BENCHMARK EVERYTHING**: Every decode function needs a benchmark. 0 allocs/op is not optional.
-
-**NO GOROUTINES IN PKG/**: Before writing `go`, stop and ask if it belongs in the caller instead.
 
 ---
 
@@ -753,7 +1023,7 @@ go test -race ./...
 # Benchmarks with memory stats
 go test -bench=. -benchmem ./pkg/...
 
-# Fuzz tests (run for extended periods to find edge cases)
+# Fuzz tests
 go test -fuzz=FuzzDecodePosDir -fuzztime=60s ./pkg/packing/
 go test -fuzz=FuzzDecodeMoveData -fuzztime=60s ./pkg/packing/
 
@@ -763,7 +1033,12 @@ grep -r "^\s*go " pkg/
 # CI: escape analysis — event structs must not heap-escape
 go build -gcflags="-m" 2>&1 | grep "does not escape"
 
-# Run codegen (Phase 1+)
+# Pre-implementation validation gate
+./validation/preprocess_check.sh 20180307    # test at a known PACKETVER
+./validation/length_check.sh                 # verify Phase 1 packet field sums
+./validation/db_validate.sh                  # MCP quality checks
+
+# Run codegen (Phase 3+)
 go run ./internal/codegen/main.go \
     --rathena ~/personal/rathena \
     --semantics semantics/mappings.yaml \
@@ -779,34 +1054,26 @@ go run ./internal/codegen/main.go \
 ```go
 // FORBIDDEN anywhere in pkg/
 go someFunc()
-
-// Why: The library contract is zero goroutines.
-// If you need concurrency, put it in the caller (goKore).
 ```
 
 ### 2. Extracting direction from MoveData byte 5
 
 ```go
-// WRONG — this is a confirmed bug from goKore v1
+// WRONG — confirmed bug from goKore v1
 direction := (data[5] & 0xF0) >> 4
 
 // CORRECT — byte 5 is sx0/sy0, NOT direction
 fromX, fromY, toX, toY, sx0, sy0 := packing.DecodeMoveData(data)
-// events.ActorMoved has no Dir field — the 6-byte format has no direction
 ```
 
 ### 3. Using a Go `string` for binary fields
 
 ```go
-// WRONG — causes UTF-8 corruption for bytes > 0x7F (goKore v1 bug)
-type Foo struct {
-    PosDir string  // NEVER
-}
+// WRONG — causes UTF-8 corruption for bytes > 0x7F
+type Foo struct { PosDir string }
 
 // CORRECT
-type Foo struct {
-    PosDir [3]byte  // or decoded inline by the decode function
-}
+type Foo struct { PosDir [3]byte }
 ```
 
 ### 4. Editing semantics/mappings.yaml directly
@@ -816,7 +1083,6 @@ type Foo struct {
 vim semantics/mappings.yaml
 
 # CORRECT — use the gokore-semantics MCP server tools
-# (semantics_add, semantics_add_field, semantics_update, etc.)
 ```
 
 ### 5. Adding external dependencies
@@ -824,9 +1090,6 @@ vim semantics/mappings.yaml
 ```go
 // WRONG — adding a require entry to go.mod
 require github.com/some/library v1.0.0
-
-// This library must have zero external runtime dependencies.
-// Use only the Go standard library.
 ```
 
 ### 6. Using reflection or interface{} in decode/encode
@@ -834,36 +1097,20 @@ require github.com/some/library v1.0.0
 ```go
 // WRONG
 func decode(pkt interface{}) interface{} { reflect.ValueOf(pkt)... }
-
-// CORRECT — direct byte reads, typed returns
-func ActorExists_0x09FF(data []byte, pv uint32) events.ActorExists {
-    var e events.ActorExists
-    e.ID = leU32(data, 4)
-    ...
-    return e
-}
 ```
 
-### 7. Deviating from HLD without updating it
+### 7. Deviating from HLD without updating it AND citing rAthena source
 
-If you discover the HLD is wrong or incomplete, update `docs/DESIGN/HLD.md` to reflect the correct design BEFORE implementing. The HLD is the design authority.
+Every HLD correction must include `rAthena src/file:line` as the authority. No HLD claim is valid without a citation.
 
-### 8. Using OpenKore field names in Go code
+### 8. Skipping the pre-implementation gate
 
-```go
-// WRONG — OpenKore names
-e.ObjectID = ...   // OpenKore calls it objectID
-e.x = ...          // OpenKore calls it x
-
-// CORRECT — use rAthena names as comments, semantic names in Go
-e.ID = leU32(data, off)   // rAthena: AID
-e.X = ...                  // decoded from PosDir, rAthena: xPos
-```
+Every packet implementation must be preceded by a GCC preprocess run. No exceptions. Document the output in the work log.
 
 ### 9. Calling `net.Dial` from inside `pkg/fsm`
 
 ```go
-// WRONG — the library never dials
+// WRONG
 conn, err := net.Dial("tcp", addr)
 
 // CORRECT — call the provided Dialer
@@ -873,12 +1120,20 @@ conn, err := dialer(ctx, addr)
 ### 10. Using `context.Context` in decode or encode functions
 
 ```go
-// WRONG — context is an application concern
+// WRONG
 func ActorExists_0x09FF(ctx context.Context, data []byte, pv uint32) events.ActorExists
 
-// CORRECT — no context in library internals
+// CORRECT
 func ActorExists_0x09FF(data []byte, pv uint32) events.ActorExists
 ```
+
+### 11. Trusting the DB without GCC verification
+
+The DB is a useful starting point, not a trusted oracle. It has 306 known validation errors. Always verify DB fields against GCC preprocessor output before implementing. The DB is edited via MCP to match GCC output — not the other way around.
+
+### 12. Writing golden test bytes from intuition
+
+Golden bytes must be constructed by manually laying out the C struct field-by-field. Open `packets_struct.hpp`, find the struct, write the bytes according to the field types in order. Cross-check with the GCC preprocessor output.
 
 ---
 
@@ -886,14 +1141,12 @@ func ActorExists_0x09FF(data []byte, pv uint32) events.ActorExists
 
 **Format**: `docs/WORKLOG/NNNN_YYYY-MM-DD_description.md`
 
-- `NNNN` — 4-digit sequence number, sequential, zero-padded
-- `YYYY-MM-DD` — ISO date when work was performed
-- `description` — brief snake_case description
-
-**Current logs:**
-```bash
-ls docs/WORKLOG/
-```
+**Content requirements:**
+- GCC commands run and key output (struct names, field types verified)
+- DB packet IDs queried and whether they matched GCC output
+- Test results (pass/fail counts)
+- Benchmark results (ns/op, allocs/op)
+- Any discrepancies found and how they were resolved
 
 **Get next sequence number:**
 ```bash
@@ -914,10 +1167,13 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 | `docs/DESIGN/HLD.md` §6 | Codegen pipeline spec | Before implementing internal/codegen |
 | `docs/DESIGN/HLD.md` §8 | Performance contract + benchmark targets | Before writing any decode/encode |
 | `docs/DESIGN/HLD.md` §13 | Phase 1 scope — which packets first | When choosing what to implement next |
-| `RATHENA_ROOT/src/map/packets_struct.hpp` | Packet struct definitions | When implementing any decode function |
+| `RATHENA_ROOT/src/map/packets_struct.hpp` | Packet struct definitions | Preprocess and diff before every decode fn |
 | `RATHENA_ROOT/src/map/clif.cpp:173–249` | WBUFPOS/WBUFPOS2 C source | When implementing packing tests |
-| `semantics/mappings.yaml` (via MCP) | Semantic name mappings | When codegen needs field name info |
+| `RATHENA_ROOT/src/map/clif_shuffle.hpp` | C→S packet ID shuffle table | Before implementing any C→S encode fn |
+| `RATHENA_ROOT/src/map/clif_obfuscation.hpp` | Obfuscation keys | Before implementing obfuscation |
+| `semantics/mappings.yaml` (via MCP) | Starting-point packet field definitions — **verify against GCC before trusting** (306 known errors) | Before every implementation — as a cross-reference only |
 | `pkg/packing/packing.go` | Bit-packing reference implementation | When writing decode functions |
+| `validation/preprocess_check.sh` | GCC verification gate | Before every implementation |
 
 ### Key Design Decisions Summary
 
@@ -932,8 +1188,13 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 | Callbacks not channels | Channel adds goroutine + allocation per event; inline callbacks cost nothing |
 | No `context.Context` in library | Context is application-layer; threading through 1000-bot decode calls is pure overhead |
 | FSM takes Dialer not net.Conn | goKore owns all sockets; FSM needs to dial three separate servers sequentially |
+| `Feed()` returns error | Stream desync on unknown packet is unrecoverable; caller must close connection |
+| Semantic DB is a cross-reference, not an oracle | DB has 306 known validation errors as of 2026-03-06. GCC preprocessor output is the only trustworthy source. DB is a starting point — verify against GCC before implementing |
+| Pre-implementation gate is mandatory | Prevents HLD drift from becoming code bugs; catches errors before compilation |
 
 ---
 
 **Last Updated**: 2026-03-06
-**Design Authority**: `docs/DESIGN/HLD.md` (Draft v9)
+**Design Authority**: `docs/DESIGN/HLD.md` (Draft v9 — pending fixes from 2026-03-06 audit)
+**Ground Truth**: GCC preprocessor output against `~/personal/rathena/src/`
+**Packet Cross-Reference**: `semantics/mappings.yaml` via `gokore-semantics` MCP (306 known errors — verify against GCC before trusting)

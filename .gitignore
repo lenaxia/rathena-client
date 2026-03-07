@@ -30,3 +30,9 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Vim swap files
+*.swp
+
+# Validation output
+validation/output/
