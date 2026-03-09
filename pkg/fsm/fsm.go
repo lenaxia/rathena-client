@@ -13,6 +13,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"time"
 
@@ -107,6 +108,10 @@ func (f *ConnectionFSM) OnCharServerList(fn func([]CharServerInfo) int) *Connect
 // assembled. Receives raw CHARACTER_INFO bytes (variable struct size per
 // PACKETVER); returns the slot number to select. If not registered:
 // Credentials.CharSlot is used.
+//
+// Note: HLD §4 originally specified func([]events.CharacterInfo) uint8 but
+// the CHARACTER_INFO decoder is a generated SKIP stub in Phase 1. The current
+// []byte signature is a documented Phase 1 deviation; see HLD §4.
 func (f *ConnectionFSM) OnCharList(fn func([]byte) uint8) *ConnectionFSM {
 	f.onCharList = fn
 	return f
@@ -319,6 +324,18 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		return "", fmt.Errorf("fsm: send char enter: %w", err)
 	}
 
+	// The char server immediately echoes back the account ID as a raw 4-byte uint32
+	// (not a packet with a type header) before sending any framed packets.
+	// Source: char_clif.cpp:851-853 — WFIFOL(fd,0) = account_id; WFIFOSET(fd,4)
+	// Consume and discard these 4 bytes so the CharSession framer sees clean data.
+	if err := conn.SetDeadline(time.Now().Add(f.stepTimeout())); err != nil {
+		return "", fmt.Errorf("fsm: set char echo deadline: %w", err)
+	}
+	var echoAID [4]byte
+	if _, err := io.ReadFull(conn, echoAID[:]); err != nil {
+		return "", fmt.Errorf("fsm: read char account echo: %w", err)
+	}
+
 	charSess := session.NewCharSession(f.server.Packetver)
 
 	// For PACKETVER < 20170315, 0x0081 is used as HC_NOTIFY_ZONESVR (28 bytes fixed)
@@ -512,34 +529,6 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	}
 
 	mapSess := session.NewMapSession(f.server.Packetver)
-
-	// Register auth-phase packet lengths that may be absent from the generated
-	// lengths_map.go (lengths_map.go is still partially populated — US-02).
-	// These are the only packets the FSM receives before handing off to goKore.
-	//
-	// ZC_AID (0x0283): int16 + uint32 = 6 bytes; always present (pv >= 20070521)
-	// Source: clif.cpp WFIFOW(fd,0)=0x283; clif_packetdb.hpp: packet(0x0283,6)
-	mapSess.SetLength(0x0283, 6)
-
-	// ZC_REFUSE_ENTER (0x0074): int16 + uint8 = 3 bytes
-	// Source: packets.hpp DEFINE_PACKET_HEADER(ZC_REFUSE_ENTER, 0x74)
-	mapSess.SetLength(0x0074, 3)
-
-	// ZC_ACCEPT_ENTER variants — exactly one is used depending on packetver:
-	// 0x0073 (< 20080102): int16+uint32+[3]uint8+uint8+uint8 = 11 bytes
-	// 0x02EB (>= 20080102, not 20141022..20160329): +uint16 font = 13 bytes
-	// 0x0A18 (20141022..20160329): +uint16+uint8 sex = 14 bytes
-	// Source: packets.hpp PACKET_ZC_ACCEPT_ENTER / DEFINE_PACKET_HEADER(ZC_ACCEPT_ENTER,...)
-	mapSess.SetLength(0x0073, 11)
-	mapSess.SetLength(0x02EB, 13)
-	mapSess.SetLength(0x0A18, 14)
-
-	// ZC_INVENTORY_EXPANSION_INFO (0x0B18): int16 + uint16 size = 4 bytes.
-	// Sent between ZC_AID and ZC_ACCEPT_ENTER in the map-entry burst.
-	// NOT in lengths_map.go (US-02 incomplete); must be registered here so
-	// feedUntil() can frame it before ZC_ACCEPT_ENTER arrives.
-	// Source: DUMP1 line ~156; DUMP8_movement line ~156; packet is always 4 bytes.
-	mapSess.SetLength(0x0B18, 4)
 
 	// Enable C→S obfuscation if keys exist for this packetver.
 	k0, k1, k2 := session.ObfuscationKeysFor(f.server.Packetver)

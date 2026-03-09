@@ -431,3 +431,99 @@ func parseIntInto(s string, dst *int) {
 	}
 	*dst = n
 }
+
+// PacketMapping holds the packet-level metadata from the mappings: section.
+// Only the fields needed for length generation are populated.
+type PacketMapping struct {
+	PacketID      string // e.g. "0x00B0" (normalised uppercase hex)
+	Direction     string // "send" or "receive"
+	RathenaStruct string // e.g. "PACKET_ZC_PAR_CHANGE"
+}
+
+// LoadMappings parses only the mappings: section of mappings.yaml and returns
+// a slice of PacketMapping for all entries that have a non-empty rathena_struct.
+// It uses a simple line-by-line scanner and only extracts the three fields needed
+// for the S→C length join pass.
+func LoadMappings(path string) ([]PacketMapping, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("open %s: %w", path, err)
+	}
+	defer f.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(f)
+	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("scan %s: %w", path, err)
+	}
+	return parseMappings(lines), nil
+}
+
+// parseMappings scans lines for the mappings: block and extracts packet_id,
+// direction, and rathena_struct for each list entry.
+func parseMappings(lines []string) []PacketMapping {
+	inMappings := false
+	var results []PacketMapping
+	var cur PacketMapping
+
+	flush := func() {
+		if cur.PacketID != "" && cur.RathenaStruct != "" {
+			results = append(results, cur)
+		}
+		cur = PacketMapping{}
+	}
+
+	for _, raw := range lines {
+		if !inMappings {
+			if strings.TrimSpace(raw) == "mappings:" {
+				inMappings = true
+			}
+			continue
+		}
+		// Stop at the next top-level key (no leading space).
+		if len(raw) > 0 && raw[0] != ' ' && raw[0] != '\t' {
+			break
+		}
+
+		trimmed := strings.TrimSpace(raw)
+		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
+			continue
+		}
+
+		// A "- packet_id:" line starts a new mapping entry.
+		if strings.HasPrefix(trimmed, "- ") {
+			flush()
+			rest := strings.TrimPrefix(trimmed, "- ")
+			k, v := splitKV(rest)
+			if k == "packet_id" {
+				cur.PacketID = normPacketID(unquote(v))
+			}
+			continue
+		}
+
+		k, v := splitKV(trimmed)
+		switch k {
+		case "packet_id":
+			cur.PacketID = normPacketID(unquote(v))
+		case "direction":
+			cur.Direction = unquote(v)
+		case "rathena_struct":
+			cur.RathenaStruct = unquote(v)
+		}
+	}
+	flush()
+	return results
+}
+
+// normPacketID normalises a packet ID to "0xABCD" form (uppercase hex digits).
+func normPacketID(s string) string {
+	lower := strings.ToLower(s)
+	if strings.HasPrefix(lower, "0x") {
+		return "0x" + strings.ToUpper(lower[2:])
+	}
+	return "0x" + strings.ToUpper(lower)
+}

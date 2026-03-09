@@ -15,6 +15,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/lenaxia/ragnarok-go-client/internal/codegen/gen"
@@ -66,14 +67,7 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Println("  → pkg/session/obfuscation_keys.go")
 
-	// Step 3: Generate length tables (session/lengths_*.go)
-	log.Println("Generating length tables...")
-	if err := genLengths(cfg, outDir); err != nil {
-		return fmt.Errorf("lengths: %w", err)
-	}
-	log.Println("  → pkg/session/lengths_login.go, lengths_char.go, lengths_map.go")
-
-	// Step 4: Load semantic DB.
+	// Step 3: Load semantic DB.
 	log.Printf("Loading semantic DB from %s...", semanticsPath)
 	db, err := semantics.LoadFile(semanticsPath)
 	if err != nil {
@@ -81,7 +75,7 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  Loaded %d semantic actions", len(db.Actions))
 
-	// Step 5: Build VersionTable from packets_struct.hpp.
+	// Step 4: Build VersionTable from packets_struct.hpp.
 	log.Println("Building VersionTable from packets_struct.hpp...")
 	vt, err := buildVersionTable(cfg)
 	if err != nil {
@@ -89,20 +83,28 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  VersionTable has %d structs", len(vt))
 
-	// Step 5b: Inject synthetic structs (SYNTH_*) for structless packets.
+	// Step 4b: Inject synthetic structs (SYNTH_*) for structless packets.
 	log.Println("Injecting synthetic struct layouts...")
 	if err := injectSynthetic(cfg, vt); err != nil {
 		return fmt.Errorf("inject synthetic structs: %w", err)
 	}
 	log.Printf("  VersionTable now has %d structs (after synthetic injection)", len(vt))
 
-	// Step 5c: Inject structs from common/packets.hpp (login/char server packets).
+	// Step 4c: Inject structs from common/packets.hpp (login/char server packets).
 	// These are not in packets_struct.hpp so buildVersionTable never sees them.
 	log.Println("Injecting common/packets.hpp struct layouts...")
 	if err := injectCommonPacketStructs(cfg, vt); err != nil {
 		return fmt.Errorf("inject common packet structs: %w", err)
 	}
 	log.Printf("  VersionTable now has %d structs (after common injection)", len(vt))
+
+	// Step 5: Generate length tables (session/lengths_*.go).
+	// Must run after VersionTable is built so S→C lengths can be joined from struct sizes.
+	log.Println("Generating length tables...")
+	if err := genLengths(cfg, outDir, semanticsPath, vt, db); err != nil {
+		return fmt.Errorf("lengths: %w", err)
+	}
+	log.Println("  → pkg/session/lengths_login.go, lengths_char.go, lengths_map.go")
 
 	// Step 6: Generate event structs (pkg/events/*.go)
 	log.Println("Generating event structs...")
@@ -346,12 +348,33 @@ func genObfuscation(cfg preprocess.Config, outDir string) error {
 	return writeFile(filepath.Join(outDir, "pkg", "session", "obfuscation_keys.go"), src)
 }
 
-func genLengths(cfg preprocess.Config, outDir string) error {
-	// --- Map server lengths (from clif_packetdb.hpp) ---
+func genLengths(cfg preprocess.Config, outDir, semanticsPath string, vt preprocess.VersionTable, db *semantics.DB) error {
+	// --- Map server lengths ---
+	// Part 1: C→S lengths from clif_packetdb.hpp (existing).
 	mapBreakpoints, err := buildMapLengthBreakpoints(cfg)
 	if err != nil {
 		return fmt.Errorf("build map length breakpoints: %w", err)
 	}
+
+	// Part 2: S→C lengths from packets.hpp HEADER_* constants (Gap B).
+	stocPacketsHPP, err := buildMapStocLengthBreakpoints(cfg)
+	if err != nil {
+		return fmt.Errorf("build map s→c packets.hpp breakpoints: %w", err)
+	}
+	mapBreakpoints = mergeBreakpoints(mapBreakpoints, stocPacketsHPP)
+
+	// Part 3: S→C lengths joined from VersionTable + SemanticDB mappings: section (Gap A + Gap C).
+	packetMappings, err := semantics.LoadMappings(semanticsPath)
+	if err != nil {
+		return fmt.Errorf("load packet mappings for join pass: %w", err)
+	}
+	log.Printf("  Loaded %d packet mappings for S→C join pass", len(packetMappings))
+	stocJoin, err := buildMapStocJoinPass(vt, packetMappings)
+	if err != nil {
+		return fmt.Errorf("build map s→c join pass: %w", err)
+	}
+	mapBreakpoints = mergeBreakpoints(mapBreakpoints, stocJoin)
+	_ = db
 
 	mapSrc, err := gen.GenerateLengthsFile(gen.ServerMap, mapBreakpoints)
 	if err != nil {
@@ -543,6 +566,186 @@ func diffLenTable(prev, cur map[uint16]int16) []gen.LengthEntry {
 		}
 	}
 	return changed
+}
+
+// buildMapStocLengthBreakpoints processes src/map/packets.hpp at each PACKETVER
+// breakpoint and extracts S→C packet lengths via ParseCommonPacketHeaders.
+// This covers Gap B: packets that have HEADER_* constants and struct definitions
+// in packets.hpp but are not registered in clif_packetdb.hpp (or are S→C only).
+func buildMapStocLengthBreakpoints(cfg preprocess.Config) ([]gen.LengthBreakpoint, error) {
+	packetsFile := filepath.Join(cfg.RathenaRoot, "src", "map", "packets.hpp")
+	allDates, err := preprocess.ExtractBreakpointsFromFile(packetsFile)
+	if err != nil {
+		return nil, fmt.Errorf("extract packets.hpp breakpoints: %w", err)
+	}
+	allDates = preprocess.SortBreakpoints(append([]uint32{20030000}, allDates...))
+	log.Printf("  %d packets.hpp breakpoints to process", len(allDates))
+
+	type lenTable map[uint16]int16
+	var prev lenTable
+	var bps []gen.LengthBreakpoint
+
+	for _, pv := range allDates {
+		preprocessed, err := preprocess.Preprocess(cfg, preprocess.SourcePackets, pv)
+		if err != nil {
+			log.Printf("  WARNING: preprocess packets.hpp at %d failed: %v", pv, err)
+			continue
+		}
+		structDB, err := preprocess.ExtractStructs(preprocessed, pv)
+		if err != nil {
+			log.Printf("  WARNING: ExtractStructs packets.hpp at %d failed: %v", pv, err)
+			continue
+		}
+		packets := preprocess.ParseCommonPacketHeaders(preprocessed, structDB)
+
+		cur := make(lenTable)
+		for _, p := range packets {
+			cur[p.ID] = p.Length
+		}
+
+		ver := pv
+		if pv == 20030000 {
+			ver = 0
+		}
+
+		changed := diffLenTable(prev, cur)
+		if len(changed) > 0 {
+			bps = append(bps, gen.LengthBreakpoint{Ver: ver, Entries: changed})
+		}
+		prev = cur
+	}
+	return bps, nil
+}
+
+// buildMapStocJoinPass walks SemanticDB receive-direction entries and for each
+// one looks up the rathena_struct in the VersionTable. It emits LengthBreakpoints
+// for each PACKETVER range where the struct has a known TotalSize. This covers
+// Gap A (packets_struct.hpp structs) and Gap C (SYNTH_* synthetic structs).
+func buildMapStocJoinPass(vt preprocess.VersionTable, mappings []semantics.PacketMapping) ([]gen.LengthBreakpoint, error) {
+	// Collect breakpoints as a map[packetver]map[packetID]length to dedup.
+	type lenTable map[uint16]int16
+	bpMap := make(map[uint32]lenTable)
+
+	for _, mapping := range mappings {
+		if mapping.Direction != "receive" {
+			continue
+		}
+		structName := mapping.RathenaStruct
+		if structName == "" {
+			continue
+		}
+		ranges, ok := vt[structName]
+		if !ok {
+			continue
+		}
+		id64, err := parseHexID(mapping.PacketID)
+		if err != nil {
+			log.Printf("  WARNING: join pass: cannot parse packet ID %q: %v", mapping.PacketID, err)
+			continue
+		}
+		id := uint16(id64)
+
+		for _, vr := range ranges {
+			if vr.Layout == nil {
+				continue
+			}
+			size := vr.Layout.TotalSize
+			var length int16
+			if vr.Layout.Fields != nil {
+				for _, f := range vr.Layout.Fields {
+					if f.IsFlexArray {
+						length = -1
+						break
+					}
+				}
+			}
+			if length == 0 {
+				if size <= 0 {
+					continue
+				}
+				length = int16(size)
+			}
+
+			ver := vr.MinVer
+			if ver == 20030000 {
+				ver = 0
+			}
+			if bpMap[ver] == nil {
+				bpMap[ver] = make(lenTable)
+			}
+			// Non-zero length always wins over a reset placeholder (0).
+			if cur, exists := bpMap[ver][id]; !exists || (cur == 0 && length != 0) {
+				bpMap[ver][id] = length
+			}
+
+			// If MaxVer is set, emit a "reset to 0" at that boundary so the
+			// generated code stops applying this length from that version on —
+			// but only if a non-zero length is not already set at that boundary
+			// (i.e. a newer range for the same packet already claims that version).
+			if vr.MaxVer != 0 {
+				if bpMap[vr.MaxVer] == nil {
+					bpMap[vr.MaxVer] = make(lenTable)
+				}
+				if existing, exists := bpMap[vr.MaxVer][id]; !exists || existing == 0 {
+					// Only write reset if nothing better is registered yet.
+					// The newer range will overwrite this 0 if it runs after us.
+					bpMap[vr.MaxVer][id] = 0
+				}
+			}
+		}
+	}
+
+	var bps []gen.LengthBreakpoint
+	for ver, tbl := range bpMap {
+		var entries []gen.LengthEntry
+		for id, length := range tbl {
+			entries = append(entries, gen.LengthEntry{ID: id, Length: length})
+		}
+		bps = append(bps, gen.LengthBreakpoint{Ver: ver, Entries: entries})
+	}
+	return bps, nil
+}
+
+// mergeBreakpoints merges two sorted breakpoint slices into one. Entries from
+// both are combined; when two entries have the same (ver, id), the one from
+// extra wins (it has higher specificity — struct-derived over clif_packetdb).
+func mergeBreakpoints(base, extra []gen.LengthBreakpoint) []gen.LengthBreakpoint {
+	// Build a map[ver]map[id]length from base.
+	type lenTable map[uint16]int16
+	bpMap := make(map[uint32]lenTable)
+	for _, bp := range base {
+		if bpMap[bp.Ver] == nil {
+			bpMap[bp.Ver] = make(lenTable)
+		}
+		for _, e := range bp.Entries {
+			bpMap[bp.Ver][e.ID] = e.Length
+		}
+	}
+	// Overlay extra — extra wins on conflict.
+	for _, bp := range extra {
+		if bpMap[bp.Ver] == nil {
+			bpMap[bp.Ver] = make(lenTable)
+		}
+		for _, e := range bp.Entries {
+			bpMap[bp.Ver][e.ID] = e.Length
+		}
+	}
+	// Flatten back to a slice.
+	var result []gen.LengthBreakpoint
+	for ver, tbl := range bpMap {
+		var entries []gen.LengthEntry
+		for id, length := range tbl {
+			entries = append(entries, gen.LengthEntry{ID: id, Length: length})
+		}
+		result = append(result, gen.LengthBreakpoint{Ver: ver, Entries: entries})
+	}
+	return result
+}
+
+// parseHexID parses a packet ID string like "0x00B0" or "0xB0" into uint64.
+func parseHexID(s string) (uint64, error) {
+	s = strings.TrimPrefix(strings.ToLower(s), "0x")
+	return strconv.ParseUint(s, 16, 16)
 }
 
 func genEvents(db *semantics.DB, outDir string) error {

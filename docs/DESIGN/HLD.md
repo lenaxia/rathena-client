@@ -248,9 +248,17 @@ func New(server ServerConfig, creds Credentials, dialer Dialer) *ConnectionFSM
 func (f *ConnectionFSM) OnCharServerList(fn func([]events.CharServerInfo) int) *ConnectionFSM
 
 // OnCharList is called once the char list is received. The callback receives
-// the full list and returns the slot number to select. If not registered, the
-// slot from Credentials.CharSlot is used.
-func (f *ConnectionFSM) OnCharList(fn func([]events.CharacterInfo) uint8) *ConnectionFSM
+// raw CHARACTER_INFO bytes and returns the slot number to select. If not
+// registered, the slot from Credentials.CharSlot is used.
+//
+// Phase 1 implementation: raw []byte because the CHARACTER_INFO decoder
+// (struct varies per PACKETVER) is a generated SKIP stub not yet available.
+// goKore receives the raw bytes and may parse them with its own codec.
+//
+// Planned Phase 2 upgrade: func([]events.CharacterInfo) uint8 once the
+// CHARACTER_INFO decoder is generated. The current signature is a known
+// deviation from the long-term design (HLD §4 originally specified CharacterInfo).
+func (f *ConnectionFSM) OnCharList(fn func([]byte) uint8) *ConnectionFSM
 
 // OnReady is called when the map server accepts entry (0x0073/0x0A18/0x02EB) and the
 // map-loaded sequence has been sent. The FSM passes the ready MapSession and the
@@ -816,8 +824,10 @@ rate. These constraints are verified by benchmarks in CI.
 
 ### Zero goroutines
 
-The library contains no `go` statement in any `pkg/` file. This is enforced by a
-CI lint check (`grep -r "^\s*go " pkg/`). Goroutines are the caller's concern.
+The library contains no `go` statement in any non-test `pkg/` file. This is enforced by a
+CI lint check (`grep -r --include='*.go' --exclude='*_test.go' "^\s*go " pkg/`).
+Goroutines are the caller's concern. Test files (`_test.go`) are excluded because
+test helpers legitimately use goroutines to simulate concurrent callers.
 
 ### Zero heap allocations in the decode hot path
 
@@ -1434,7 +1444,7 @@ rathena-client/
 | `CHARACTER_INFO` HP/SP/EXP type changes | `int32` → `int64` at PACKETVER breakpoints. Handled by packetver branching in the generated decode fn, same as any other versioned field. |
 | `0x0b1d` map-server ping requires immediate reply | If goKore fails to register `OnPingLive` or fails to send the reply within the server timeout, the connection is dropped. This is documented in §16; it is a goKore responsibility, not a library bug. |
 | `login_id2` not in `0x0436` | The client sends only `login_id1` in the map-connect packet. `login_id2` reaches the map server via the char server's internal auth channel (`0x2afd`). The map server then validates `login_id1` from the client against what the char server provided. No action required from the library — this is transparent. |
-| Events with `[]T` fields allocate | `make([]T, n)` inside decode functions for variable-count arrays. The zero-alloc benchmark target applies only to fixed-size events; slice-bearing events are benchmarked separately with explicit alloc counts documented. |
+| Events with `[]T` fields allocate | `make([]T, n)` inside decode functions for variable-count arrays. The zero-alloc benchmark target applies only to fixed-size events; slice-bearing events are benchmarked separately with explicit alloc counts documented. Known instances: `PetEggList_0x01A6` (`InventoryIndices []int16`) and `ZcSkillSelectRequest_0x0442` (`SkillIds []int16`) each produce one heap allocation per call — confirmed by `go build -gcflags="-m=2"`. These are accepted as the packet type inherently carries a variable-length list. |
 | FSM `Connect` is synchronous and blocking | goKore must call it in a goroutine (`go fsm.Connect(ctx)`). If called on the main goroutine it will block until `OnReady` or `OnFailed`. This is documented and verified by the integration test, which always calls it in a goroutine. |
 | FSM does not auto-reconnect | By design. goKore calls `Connect` again when it decides reconnection is appropriate (respecting rate limits, max-attempts config, etc.). The FSM has no opinion on retry policy. |
 | Charlist pagination depends on PACKETVER | `PACKETVER >= 20130000`: server sends `0x082D`, then `0x006B`, then `0x09A0` (with `p.total >= 1`; never 0 in rAthena). FSM sends `0x09A1` × `p.total`, waits for all `0x099D` pages. `PACKETVER < 20130000`: server sends only `0x006B` — no `0x09A0`, no `0x099D`. FSM proceeds immediately on `0x006B`. The test suite covers both paths. |

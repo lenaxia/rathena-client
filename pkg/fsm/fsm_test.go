@@ -65,6 +65,16 @@ func mustDrain(t *testing.T, conn net.Conn, n int) {
 	}
 }
 
+// writeAccountIDEcho writes the 4-byte raw account ID that the real rAthena char
+// server sends immediately after receiving 0x0065 CH_ENTER, before any framed
+// packets. Source: char_clif.cpp:851-853 WFIFOL(fd,0) = account_id; WFIFOSET(fd,4)
+func writeAccountIDEcho(t *testing.T, conn net.Conn, aid uint32) {
+	t.Helper()
+	var b [4]byte
+	binary.LittleEndian.PutUint32(b[:], aid)
+	mustWrite(t, conn, b[:])
+}
+
 // ── Wire-format builders (server side) ───────────────────────────────────────
 
 // buildLoginAcceptPre builds a 0x0069 AC_ACCEPT_LOGIN packet for PACKETVER < 20170315.
@@ -308,6 +318,7 @@ func TestConnect_FullFlow_Pre20170315(t *testing.T) {
 		if binary.LittleEndian.Uint32(pkt[10:14]) != sid2 {
 			t.Errorf("CH_ENTER: sessionID2=%#x, want %#x", binary.LittleEndian.Uint32(pkt[10:14]), sid2)
 		}
+		writeAccountIDEcho(t, conn, aid)
 		mustWrite(t, conn, buildCharEnterAccept(nil))
 		// Verify CH_SELECT_CHAR: type=0x0066, slot=0
 		pkt = mustRead(t, conn, 3)
@@ -383,6 +394,7 @@ func TestConnect_FullFlow_Post20170315(t *testing.T) {
 	}
 	charScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 17) // CH_ENTER
+		writeAccountIDEcho(t, conn, aid)
 		// pv >= 20130000 paged flow
 		mustWrite(t, conn, buildHC082D())
 		mustWrite(t, conn, buildCharEnterAccept(nil))
@@ -471,6 +483,7 @@ func TestConnect_CharServerRefused(t *testing.T) {
 	}
 	charScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
 		mustWrite(t, conn, buildCharRefuse(0))
 	}
 
@@ -582,6 +595,7 @@ func TestConnect_OnCharServerList(t *testing.T) {
 	}
 	charScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 17) // CH_ENTER
+		writeAccountIDEcho(t, conn, aid)
 		// pv >= 20130000 paged flow
 		mustWrite(t, conn, buildHC082D())
 		mustWrite(t, conn, buildCharEnterAccept(nil))
@@ -657,6 +671,7 @@ func TestConnect_OnCharList(t *testing.T) {
 	}
 	charScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
 		mustWrite(t, conn, buildCharEnterAccept(rawChars))
 		mustDrain(t, conn, 3)
 		mustWrite(t, conn, buildHCNotifyZonesvrPre(charID, mapIP, mapPort))
@@ -723,6 +738,7 @@ func TestConnect_Reconnect(t *testing.T) {
 	mkChar := func() serverScript {
 		return func(t *testing.T, conn net.Conn) {
 			mustDrain(t, conn, 17) // CH_ENTER
+			writeAccountIDEcho(t, conn, aid)
 			// pv >= 20130000 paged flow
 			mustWrite(t, conn, buildHC082D())
 			mustWrite(t, conn, buildCharEnterAccept(nil))
@@ -791,6 +807,7 @@ func TestConnect_MapRefused(t *testing.T) {
 	}
 	charScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 17) // CH_ENTER
+		writeAccountIDEcho(t, conn, aid)
 		// pv >= 20130000 paged flow
 		mustWrite(t, conn, buildHC082D())
 		mustWrite(t, conn, buildCharEnterAccept(nil))
@@ -829,6 +846,59 @@ func TestConnect_MapRefused(t *testing.T) {
 	}
 	if !failedCalled {
 		t.Fatal("OnFailed was not called")
+	}
+}
+
+// TestConnect_ContextCancellation tests that Connect returns promptly when the
+// context is cancelled before dialing completes.
+//
+// The dialer blocks on a channel until either the context is cancelled or the
+// test unblocks it. Cancelling the context must cause the dialer to return
+// ctx.Err() and Connect must propagate that error back to the caller.
+func TestConnect_ContextCancellation(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// dialBarrier is closed by the dialer once it detects ctx cancellation.
+	dialBarrier := make(chan struct{})
+
+	blockingDialer := func(ctx context.Context, addr string) (net.Conn, error) {
+		select {
+		case <-ctx.Done():
+			close(dialBarrier)
+			return nil, ctx.Err()
+		case <-time.After(10 * time.Second):
+			// Safety valve: should never hit in tests.
+			return nil, fmt.Errorf("dialer timeout")
+		}
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   20180307,
+		StepTimeout: 5 * time.Second,
+	}
+	creds := Credentials{}
+
+	loginFSM := New(server, creds, blockingDialer)
+
+	// Cancel the context immediately — Connect must return promptly.
+	cancel()
+
+	err := loginFSM.Connect(ctx)
+
+	// Wait for the dialer goroutine (if any) to finish.
+	select {
+	case <-dialBarrier:
+		// dialer ran and unblocked correctly.
+	case <-time.After(2 * time.Second):
+		t.Fatal("dialer did not unblock within 2s after context cancellation")
+	}
+
+	if err == nil {
+		t.Fatal("expected error from Connect when context is cancelled, got nil")
+	}
+	if !strings.Contains(err.Error(), "cancel") && !strings.Contains(err.Error(), "context") {
+		t.Errorf("expected context cancellation error, got: %v", err)
 	}
 }
 
@@ -1057,5 +1127,139 @@ func TestCStr(t *testing.T) {
 		if got != tc.want {
 			t.Errorf("cStr(%v) = %q, want %q", tc.input, got, tc.want)
 		}
+	}
+}
+
+// TestCharPhase_EchoFix_Regression proves that runCharPhase() fails when the
+// char server does NOT send the 4-byte account ID echo before framed packets.
+// Without the io.ReadFull in runCharPhase() the first 2 bytes of the account ID
+// are interpreted as a packet ID by the CharSession framer, producing
+// ErrUnknownPacket. This test is a load-bearing regression guard: if the
+// io.ReadFull call is removed, this test must fail.
+func TestCharPhase_EchoFix_Regression(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+	const charID = uint32(100001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+	}
+	// charScriptNoEcho deliberately omits writeAccountIDEcho — simulating a server
+	// that does NOT send the echo. The FSM's io.ReadFull will consume the first
+	// 4 bytes of the framed HC_ACCEPT_ENTER2 packet (0x2D08 1D00) as the echo,
+	// leaving a mangled stream. The CharSession framer then hits an unknown packet
+	// ID and runCharPhase returns an error.
+	// Write errors after the FSM disconnects are expected and ignored.
+	charScriptNoEcho := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17) // CH_ENTER
+		// NO writeAccountIDEcho — jump straight to framed packets.
+		_ = conn.SetDeadline(time.Now().Add(2 * time.Second))
+		_, _ = conn.Write(buildHC082D()) // FSM reads first 4 bytes as echo
+		_, _ = conn.Write(buildCharEnterAccept(nil))
+		_, _ = conn.Write(buildHCCharlistNotify(1))
+		// FSM will have errored; remaining writes may fail — that is expected.
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   pv,
+		StepTimeout: 2 * time.Second,
+	}
+	creds := Credentials{}
+
+	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScriptNoEcho))
+
+	err := loginFSM.Connect(context.Background())
+	if err == nil {
+		t.Fatal("expected error when char server omits 4-byte account ID echo, got nil — echo fix may have been removed")
+	}
+	// The error must come from the char phase, not the login phase.
+	if !strings.Contains(err.Error(), "char") {
+		t.Errorf("error should mention char phase: %v", err)
+	}
+}
+
+// TestMapPhase_UnknownPacketBeforeReady_Regression proves that if the map
+// server sends a packet with an unregistered length before ZC_ACCEPT_ENTER,
+// runMapPhase() returns an ErrUnknownPacket error and OnReady is never called.
+// This validates that the SetLength calls in runMapPhase() are load-bearing:
+// any packet arriving in the map burst that is missing from the SetLength block
+// will permanently fault the session and block OnReady.
+func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+	const charID = uint32(100001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+	}
+	charScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
+		mustWrite(t, conn, buildHC082D())
+		mustWrite(t, conn, buildCharEnterAccept(nil))
+		mustWrite(t, conn, buildHCCharlistNotify(1))
+		mustDrain(t, conn, 2) // 0x09A1
+		mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+		mustDrain(t, conn, 3) // 0x0066
+		mustWrite(t, conn, buildHCNotifyZonesvrPost(charID, mapIP, mapPort))
+	}
+	// mapScript sends ZC_AID (registered), then a packet with ID 0xDEAD which is
+	// deliberately not registered in runMapPhase's SetLength block, then
+	// ZC_ACCEPT_ENTER. The unregistered 0xDEAD must cause Connect() to return
+	// ErrUnknownPacket before OnReady fires.
+	// After the FSM disconnects, writes may fail — those errors are expected and ignored.
+	mapScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 19) // CZ_ENTER
+		_ = conn.SetDeadline(time.Now().Add(2 * time.Second))
+		// ZC_AID (0x0283) — registered in runMapPhase
+		_, _ = conn.Write(buildZCAID(aid))
+		// Inject a fixed-length packet with ID 0xDEAD (definitely not registered).
+		// 6-byte packet: 2-byte ID + 4 bytes payload.
+		unknown := make([]byte, 6)
+		unknown[0] = 0xAD
+		unknown[1] = 0xDE // 0xDEAD in little-endian
+		_, _ = conn.Write(unknown)
+		// ZC_ACCEPT_ENTER arrives after — but session is already faulted.
+		_, _ = conn.Write(buildZCAcceptEnter(pv))
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   pv,
+		StepTimeout: 2 * time.Second,
+	}
+	creds := Credentials{}
+
+	readyCalled := false
+	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+		OnReady(func(_ *session.MapSession, c net.Conn) {
+			readyCalled = true
+			c.Close()
+		})
+
+	err := loginFSM.Connect(context.Background())
+	if err == nil {
+		t.Fatal("expected error when map server sends unregistered packet ID before ZC_ACCEPT_ENTER, got nil")
+	}
+	if readyCalled {
+		t.Fatal("OnReady must not fire when session faults before ZC_ACCEPT_ENTER")
+	}
+	if !strings.Contains(err.Error(), "unknown packet") {
+		t.Errorf("expected 'unknown packet' in error, got: %v", err)
 	}
 }

@@ -35,13 +35,22 @@ These provide ground-truth byte sequences for offline replay.
 ## Story Map
 
 ```
-US-08  Live server test (Tier 1)  ──► runs against 127.0.0.1:6900
-                                       requires Docker container up
-US-09  Mock server replay (Tier 2) ──► offline, deterministic, no Docker needed
-                                        derived from DUMP1 + DUMP8_movement
+US-10  Fix S→C lengths pipeline   ──► eliminates all 34 SetLength calls from fsm.go
+  │                                     (EPIC-00 story, prerequisite for US-09)
+  │
+  ├──► US-08  Live server test (Tier 1)  ──► runs against 127.0.0.1:6900
+  │                                           requires Docker container up
+  │                                           (already passes; US-10 makes it cleaner)
+  │
+  └──► US-09  Mock server replay (Tier 2) ──► offline, deterministic, no Docker needed
+                                               derived from DUMP1 + DUMP8_movement
+                                               requires US-10: replay test must not
+                                               reproduce SetLength workarounds
 ```
 
-US-08 and US-09 are independent and can be implemented in parallel.
+**US-10 must complete before US-09.**  
+US-08 is already implemented and passing; US-10 improves it by removing the 34
+`SetLength` calls that the live test currently relies on via `fsm.go`.
 
 ---
 

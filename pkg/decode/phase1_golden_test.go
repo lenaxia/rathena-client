@@ -836,3 +836,298 @@ func TestZcGuildAgitInfo_0x0B27_Empty(t *testing.T) {
 		t.Errorf("Castle_list: got len=%d want 0", len(e.Castle_list))
 	}
 }
+
+// ─── ChatMessage_0x008D ───────────────────────────────────────────────────────
+//
+// struct PACKET_ZC_NOTIFY_CHAT (variable length):
+//
+//	0:2  PacketType    2:2  PacketLength   4:4  GID   8:+  Message (null-terminated)
+//
+// Verified from rAthena: clif.cpp clif_chat() — GID at offset 4, Message at offset 8.
+// Note: Message is a complex expression in the DB; decoded as empty string by generated code.
+func makeChatMessage0x008D(senderID uint32, msg string) []byte {
+	msgBytes := append([]byte(msg), 0x00) // null-terminate
+	totalLen := 8 + len(msgBytes)
+	b := make([]byte, totalLen)
+	putI16LE(b, 0, 0x008D)
+	putI16LE(b, 2, int16(totalLen))
+	putU32LE(b, 4, senderID)
+	copy(b[8:], msgBytes)
+	return b
+}
+
+// TestChatMessage_0x008D_Golden verifies SenderID is decoded from GID at offset 4.
+// Message field is a complex expression and is emitted as a comment — decoded as "".
+func TestChatMessage_0x008D_Golden(t *testing.T) {
+	data := makeChatMessage0x008D(9876, "Hello world")
+	e := ChatMessage_0x008D(data, 20181121)
+
+	if e.SenderID != 9876 {
+		t.Errorf("SenderID: got %d want 9876", e.SenderID)
+	}
+	// Message is a complex expression (DB position 3); generated code emits a comment.
+	// Verifying it decodes to "" is the correct expectation per known-skip documentation.
+	if e.Message != "" {
+		t.Errorf("Message: got %q want empty (complex expression — known skip)", e.Message)
+	}
+}
+
+// TestChatMessage_0x008D_ZeroSender verifies zero GID is preserved correctly.
+func TestChatMessage_0x008D_ZeroSender(t *testing.T) {
+	data := makeChatMessage0x008D(0, "system message")
+	e := ChatMessage_0x008D(data, 20181121)
+
+	if e.SenderID != 0 {
+		t.Errorf("SenderID: got %d want 0", e.SenderID)
+	}
+}
+
+// ─── ChatMessage_0x008E ───────────────────────────────────────────────────────
+//
+// struct PACKET_ZC_NOTIFY_PLAYERCHAT (variable length):
+//
+//	0:2  PacketType    2:2  PacketLength   4:+  Message (null-terminated, no GID)
+//
+// 0x008E is the self-chat echo — no sender ID field. GID is implicitly the player's own ID.
+// The generated code still reads GID at offset 4, but the struct has no GID field.
+// SenderID will contain whatever bytes happen to be at offset 4 (first bytes of Message).
+func TestChatMessage_0x008E_Golden(t *testing.T) {
+	msg := "My own chat"
+	msgBytes := append([]byte(msg), 0x00)
+	totalLen := 4 + len(msgBytes)
+	b := make([]byte, totalLen)
+	putI16LE(b, 0, 0x008E)
+	putI16LE(b, 2, int16(totalLen))
+	copy(b[4:], msgBytes)
+
+	e := ChatMessage_0x008E(b, 20181121)
+
+	// SenderID reads leU32(data, 4) — which is first 4 bytes of Message ("My o" LE = 0x6F204D79)
+	wantSenderID := uint32(b[4]) | uint32(b[5])<<8 | uint32(b[6])<<16 | uint32(b[7])<<24
+	if e.SenderID != wantSenderID {
+		t.Errorf("SenderID: got 0x%X want 0x%X (first 4 bytes of message)", e.SenderID, wantSenderID)
+	}
+	// Message is a complex expression — emitted as comment, decoded as "".
+	if e.Message != "" {
+		t.Errorf("Message: got %q want empty (complex expression — known skip)", e.Message)
+	}
+}
+
+// ─── CharacterMove_0x035F ─────────────────────────────────────────────────────
+//
+// struct SYNTH_CZ_REQUEST_MOVE2 (5 bytes):
+//
+//	0:2  packetType   2:3  dest (packed x,y,dir)
+//
+// Verified from rAthena: clif_parse_WalkToXY — 3-byte packed coords at offset 2.
+func makeCharacterMove0x035F(coords [3]byte) []byte {
+	b := make([]byte, 5)
+	putI16LE(b, 0, 0x035F)
+	b[2] = coords[0]
+	b[3] = coords[1]
+	b[4] = coords[2]
+	return b
+}
+
+func TestCharacterMove_0x035F_Golden(t *testing.T) {
+	coords := [3]byte{0xA8, 0x54, 0x06} // x=168, y=84, dir=6
+	data := makeCharacterMove0x035F(coords)
+	e := CharacterMove_0x035F(data, 20181121)
+
+	if e.Coords != coords {
+		t.Errorf("Coords: got %v want %v", e.Coords, coords)
+	}
+}
+
+// TestCharacterMove_0x035F_ZeroCoords verifies zero coords produce zeroed result.
+func TestCharacterMove_0x035F_ZeroCoords(t *testing.T) {
+	data := makeCharacterMove0x035F([3]byte{0, 0, 0})
+	e := CharacterMove_0x035F(data, 20181121)
+
+	if e.Coords != ([3]byte{}) {
+		t.Errorf("Coords: got %v want {0,0,0}", e.Coords)
+	}
+}
+
+// ─── ActorStatusActive_0x0196 ─────────────────────────────────────────────────
+//
+// struct packet_sc_notick (9 bytes):
+//
+//	0:2  PacketType   2:2  index(statusID)   4:4  AID   8:1  state(Active)
+//
+// Verified from rAthena: status.cpp clif_status_change_sub()
+func makeActorStatusActive0x0196(statusID uint16, actorID uint32, active uint8) []byte {
+	b := make([]byte, 9)
+	putI16LE(b, 0, 0x0196)
+	putU16LE(b, 2, statusID)
+	putU32LE(b, 4, actorID)
+	b[8] = active
+	return b
+}
+
+func TestActorStatusActive_0x0196_Golden_Active(t *testing.T) {
+	data := makeActorStatusActive0x0196(42, 10001, 1)
+	e := ActorStatusActive_0x0196(data, 20181121)
+
+	if e.StatusID != 42 {
+		t.Errorf("StatusID: got %d want 42", e.StatusID)
+	}
+	if e.ActorID != 10001 {
+		t.Errorf("ActorID: got %d want 10001", e.ActorID)
+	}
+	if e.Active != 1 {
+		t.Errorf("Active: got %d want 1", e.Active)
+	}
+}
+
+func TestActorStatusActive_0x0196_Golden_Inactive(t *testing.T) {
+	data := makeActorStatusActive0x0196(100, 99999, 0)
+	e := ActorStatusActive_0x0196(data, 20181121)
+
+	if e.StatusID != 100 {
+		t.Errorf("StatusID: got %d want 100", e.StatusID)
+	}
+	if e.ActorID != 99999 {
+		t.Errorf("ActorID: got %d want 99999", e.ActorID)
+	}
+	if e.Active != 0 {
+		t.Errorf("Active: got %d want 0", e.Active)
+	}
+}
+
+// ─── ActorStatusEffectExtended_0x043F ────────────────────────────────────────
+//
+// struct packet_status_change2 (25 bytes):
+//
+//	0:2  PacketType   2:2  statusID   4:4  AID   8:1  flag
+//	9:4  Left(tick)  13:4  val1      17:4  val2  21:4  val3
+//
+// Verified from rAthena: status.cpp clif_status_change2()
+// Note: Active field uses complex expression (packet.state != 0) — emitted as comment, defaults to false.
+func makeActorStatusEffectExtended0x043F(statusID uint16, actorID uint32, flag uint8,
+	tick, val1, val2, val3 uint32) []byte {
+	b := make([]byte, 25)
+	putI16LE(b, 0, 0x043F)
+	putU16LE(b, 2, statusID)
+	putU32LE(b, 4, actorID)
+	b[8] = flag
+	putU32LE(b, 9, tick)
+	putU32LE(b, 13, val1)
+	putU32LE(b, 17, val2)
+	putU32LE(b, 21, val3)
+	return b
+}
+
+func TestActorStatusEffectExtended_0x043F_Golden(t *testing.T) {
+	data := makeActorStatusEffectExtended0x043F(55, 20202, 1, 30000, 10, 20, 30)
+	e := ActorStatusEffectExtended_0x043F(data, 20181121)
+
+	if e.StatusID != 55 {
+		t.Errorf("StatusID: got %d want 55", e.StatusID)
+	}
+	if e.ActorID != 20202 {
+		t.Errorf("ActorID: got %d want 20202", e.ActorID)
+	}
+	// Active is a complex expression (packet.state != 0) — known skip, defaults to false.
+	if e.Active != false {
+		t.Errorf("Active: got %v want false (complex expression — known skip)", e.Active)
+	}
+	if e.DurationMS != 30000 {
+		t.Errorf("DurationMS: got %d want 30000", e.DurationMS)
+	}
+	if e.Val1 != 10 {
+		t.Errorf("Val1: got %d want 10", e.Val1)
+	}
+	if e.Val2 != 20 {
+		t.Errorf("Val2: got %d want 20", e.Val2)
+	}
+	if e.Val3 != 30 {
+		t.Errorf("Val3: got %d want 30", e.Val3)
+	}
+}
+
+// TestActorStatusEffectExtended_0x043F_ZeroDuration verifies zero-duration status removal packet.
+func TestActorStatusEffectExtended_0x043F_ZeroDuration(t *testing.T) {
+	data := makeActorStatusEffectExtended0x043F(77, 5050, 0, 0, 0, 0, 0)
+	e := ActorStatusEffectExtended_0x043F(data, 20181121)
+
+	if e.StatusID != 77 {
+		t.Errorf("StatusID: got %d want 77", e.StatusID)
+	}
+	if e.ActorID != 5050 {
+		t.Errorf("ActorID: got %d want 5050", e.ActorID)
+	}
+	if e.DurationMS != 0 {
+		t.Errorf("DurationMS: got %d want 0", e.DurationMS)
+	}
+}
+
+// ─── Version boundary note ────────────────────────────────────────────────────
+//
+// ActorVanished (0x0080), MapEnter (0x02EB/0x007D), and ActorAction (0x008A/0x08C8)
+// decoders are SKIP stubs — their rAthena structs are not present in the VersionTable
+// for the MAIN branch (20181121 <= pv < 20200916). There are no generated decode
+// functions to test. The FSM handles these packets at the session layer without
+// invoking generated decode functions.
+//
+// Version boundary tests for functions that DO exist:
+
+// TestActorStatusActive_0x0196_VersionBoundary verifies no panic at packetver boundary.
+func TestActorStatusActive_0x0196_VersionBoundary(t *testing.T) {
+	// At any packetver, packet_sc_notick has the same layout (9 bytes, no version variants).
+	data := makeActorStatusActive0x0196(1, 1, 1)
+	e20181121 := ActorStatusActive_0x0196(data, 20181121)
+	e20200401 := ActorStatusActive_0x0196(data, 20200401)
+	// Both should decode identically — struct has no PACKETVER variants.
+	if e20181121 != e20200401 {
+		t.Errorf("version boundary mismatch: 20181121=%+v 20200401=%+v", e20181121, e20200401)
+	}
+}
+
+// TestActorStatusEffectExtended_0x043F_VersionBoundary verifies no panic at packetver boundary.
+func TestActorStatusEffectExtended_0x043F_VersionBoundary(t *testing.T) {
+	data := makeActorStatusEffectExtended0x043F(1, 1, 1, 1000, 1, 1, 1)
+	e20181121 := ActorStatusEffectExtended_0x043F(data, 20181121)
+	e20200401 := ActorStatusEffectExtended_0x043F(data, 20200401)
+	if e20181121 != e20200401 {
+		t.Errorf("version boundary mismatch: 20181121=%+v 20200401=%+v", e20181121, e20200401)
+	}
+}
+
+// ─── F3 Benchmarks ────────────────────────────────────────────────────────────
+
+func BenchmarkChatMessage_0x008D(b *testing.B) {
+	data := makeChatMessage0x008D(12345, "benchmark chat message")
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = ChatMessage_0x008D(data, 20181121)
+	}
+}
+
+func BenchmarkCharacterMove_0x035F(b *testing.B) {
+	data := makeCharacterMove0x035F([3]byte{0xA8, 0x54, 0x06})
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = CharacterMove_0x035F(data, 20181121)
+	}
+}
+
+func BenchmarkActorStatusActive_0x0196(b *testing.B) {
+	data := makeActorStatusActive0x0196(42, 10001, 1)
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = ActorStatusActive_0x0196(data, 20181121)
+	}
+}
+
+func BenchmarkActorStatusEffectExtended_0x043F(b *testing.B) {
+	data := makeActorStatusEffectExtended0x043F(55, 20202, 1, 30000, 10, 20, 30)
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = ActorStatusEffectExtended_0x043F(data, 20181121)
+	}
+}

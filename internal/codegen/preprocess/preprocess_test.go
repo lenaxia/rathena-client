@@ -576,3 +576,193 @@ func TestVersionTable_LayoutAt(t *testing.T) {
 		}
 	}
 }
+
+// ── Synthetic struct injection tests (US-10 Gap C) ────────────────────────────
+// Each test verifies that the SYNTH_ZC_* struct body from synthetic_structs.hpp
+// is parsed correctly by ParseStructBody with the expected layout.
+// Struct bodies below are the preprocessed representations (g++ -E -P output).
+
+// TestParseStructBody_SYNTH_ZC_NOTIFY_PLAYERCHAT verifies 0x008E layout.
+// clif_packetdb.hpp packet(0x008e,-1) — variable length.
+// Layout: int16 PacketType + uint16 PacketLength + char message[] = 4 bytes fixed + flex.
+func TestParseStructBody_SYNTH_ZC_NOTIFY_PLAYERCHAT(t *testing.T) {
+	body := `
+int16 PacketType;
+uint16 PacketLength;
+char message[];
+`
+	layout, err := preprocess.ParseStructBody(body, "SYNTH_ZC_NOTIFY_PLAYERCHAT", 20200401)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	// TotalSize must not include the flex array.
+	if layout.TotalSize != 4 { // int16(2) + uint16(2)
+		t.Errorf("TotalSize = %d, want 4", layout.TotalSize)
+	}
+	if len(layout.Fields) != 3 {
+		t.Fatalf("field count = %d, want 3", len(layout.Fields))
+	}
+	if !layout.Fields[2].IsFlexArray {
+		t.Error("message field should be IsFlexArray")
+	}
+}
+
+// TestParseStructBody_SYNTH_ZC_CONFIG verifies 0x02D9 layout.
+// clif_packetdb.hpp packet(0x02d9,10) — fixed 10 bytes.
+// Layout: int16 PacketType + uint32 type + uint32 value = 2+4+4 = 10 bytes.
+func TestParseStructBody_SYNTH_ZC_CONFIG(t *testing.T) {
+	body := `
+int16 PacketType;
+uint32 type;
+uint32 value;
+`
+	layout, err := preprocess.ParseStructBody(body, "SYNTH_ZC_CONFIG", 20200401)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	if layout.TotalSize != 10 { // 2+4+4
+		t.Errorf("TotalSize = %d, want 10", layout.TotalSize)
+	}
+	if len(layout.Fields) != 3 {
+		t.Fatalf("field count = %d, want 3", len(layout.Fields))
+	}
+	// Verify field sizes.
+	if layout.Fields[0].Size != 2 {
+		t.Errorf("PacketType size = %d, want 2", layout.Fields[0].Size)
+	}
+	if layout.Fields[1].Size != 4 {
+		t.Errorf("type size = %d, want 4", layout.Fields[1].Size)
+	}
+	if layout.Fields[2].Size != 4 {
+		t.Errorf("value size = %d, want 4", layout.Fields[2].Size)
+	}
+}
+
+// TestParseStructBody_SYNTH_ZC_ACH_UPDATE verifies 0x0A24 layout.
+// clif_packetdb.hpp packet(0x0A24,66) — fixed 66 bytes.
+// Layout: int16(2)+uint32(4)+uint16(2)+uint32(4)+uint32(4)+uint32(4)+
+//
+//	uint8(1)+uint32[10](40)+uint32(4)+uint8(1) = 66 bytes.
+func TestParseStructBody_SYNTH_ZC_ACH_UPDATE(t *testing.T) {
+	body := `
+int16 PacketType;
+uint32 total_score;
+uint16 level;
+uint32 achievement_exp;
+uint32 achievement_exp_tnl;
+uint32 achievement_id;
+uint8 is_complete;
+uint32 count[10];
+uint32 completed_epoch;
+uint8 rewarded;
+`
+	layout, err := preprocess.ParseStructBody(body, "SYNTH_ZC_ACH_UPDATE", 20200401)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	if layout.TotalSize != 66 { // 2+4+2+4+4+4+1+40+4+1
+		t.Errorf("TotalSize = %d, want 66", layout.TotalSize)
+	}
+	// count[10] is one array field of total size 40.
+	var countField *preprocess.Field
+	for i := range layout.Fields {
+		if layout.Fields[i].Name == "count" {
+			countField = &layout.Fields[i]
+		}
+	}
+	if countField == nil {
+		t.Fatal("count field not found")
+	}
+	if !countField.IsArray {
+		t.Error("count field should be IsArray")
+	}
+	if countField.Size != 40 {
+		t.Errorf("count field Size = %d, want 40", countField.Size)
+	}
+}
+
+// TestParseStructBody_SYNTH_ZC_OVERWEIGHT_PERCENT verifies 0x0ADE layout.
+// clif_packetdb.hpp packet(0x0ADE,6) — fixed 6 bytes.
+// Layout: int16 PacketType + uint32 percent = 2+4 = 6 bytes.
+func TestParseStructBody_SYNTH_ZC_OVERWEIGHT_PERCENT(t *testing.T) {
+	body := `
+int16 PacketType;
+uint32 percent;
+`
+	layout, err := preprocess.ParseStructBody(body, "SYNTH_ZC_OVERWEIGHT_PERCENT", 20200401)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	if layout.TotalSize != 6 { // 2+4
+		t.Errorf("TotalSize = %d, want 6", layout.TotalSize)
+	}
+	if len(layout.Fields) != 2 {
+		t.Fatalf("field count = %d, want 2", len(layout.Fields))
+	}
+}
+
+// TestParseStructBody_SYNTH_ZC_EQUIPSWITCH_LIST verifies 0x0A9B layout.
+// clif_packetdb.hpp packet(0x0A9B,-1) — variable length.
+// Layout: int16 PacketType + uint16 PacketLength + uint8 items[] = 4 bytes fixed + flex.
+func TestParseStructBody_SYNTH_ZC_EQUIPSWITCH_LIST(t *testing.T) {
+	body := `
+int16 PacketType;
+uint16 PacketLength;
+uint8 items[];
+`
+	layout, err := preprocess.ParseStructBody(body, "SYNTH_ZC_EQUIPSWITCH_LIST", 20200401)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	if layout.TotalSize != 4 { // int16(2) + uint16(2); flex array excluded
+		t.Errorf("TotalSize = %d, want 4", layout.TotalSize)
+	}
+	if len(layout.Fields) != 3 {
+		t.Fatalf("field count = %d, want 3", len(layout.Fields))
+	}
+	if !layout.Fields[2].IsFlexArray {
+		t.Error("items field should be IsFlexArray")
+	}
+}
+
+// TestParseStructBody_SYNTH_ZC_ALL_ACH_LIST verifies 0x0A23 layout.
+// clif_packetdb.hpp packet(0x0A23,-1) — variable length.
+// Layout: int16 PacketType + uint16 PacketLength + uint8 data[] = 4 bytes fixed + flex.
+func TestParseStructBody_SYNTH_ZC_ALL_ACH_LIST(t *testing.T) {
+	body := `
+int16 PacketType;
+uint16 PacketLength;
+uint8 data[];
+`
+	layout, err := preprocess.ParseStructBody(body, "SYNTH_ZC_ALL_ACH_LIST", 20200401)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	if layout.TotalSize != 4 { // int16(2) + uint16(2); flex array excluded
+		t.Errorf("TotalSize = %d, want 4", layout.TotalSize)
+	}
+	if len(layout.Fields) != 3 {
+		t.Fatalf("field count = %d, want 3", len(layout.Fields))
+	}
+	if !layout.Fields[2].IsFlexArray {
+		t.Error("data field should be IsFlexArray")
+	}
+}

@@ -256,3 +256,89 @@ struct SYNTH_ZC_PETEGG_LIST {
     uint16 PacketLength; // Total packet length
     uint16 eggs[];       // Variable-length array of inventory indices (flexible array)
 } __attribute__((packed));
+
+// ============================================================================
+// ZC Packets (Server → Client) — structless (raw WFIFOW only), Gap C
+// Each layout is derived from:
+//   1. clif_packetdb.hpp packet(id, length) registration
+//   2. clif.cpp WFIFOW/WFIFOL call sites for the relevant function
+// ============================================================================
+
+// 0x008E ZC_NOTIFY_PLAYERCHAT — Server echoes player chat back to client
+// clif_packetdb.hpp:42  packet(0x008e,-1)
+// clif.cpp:6663  clif_displaymessage — layout: 008e <packetLen>.W <message>.?B
+// Length: variable; PacketLength at bytes [2:4] gives total frame size.
+struct SYNTH_ZC_NOTIFY_PLAYERCHAT {
+    int16  PacketType;
+    uint16 PacketLength; // Total packet length including header
+    char   message[];    // Null-terminated message string (flexible array)
+} __attribute__((packed));
+
+// 0x02D9 ZC_CONFIG — Server sends config type + enabled flag
+// clif_packetdb.hpp:920  packet(0x02d9,10)
+// clif.cpp:10284  clif_configuration — layout: 02d9 <type>.L <value>.L
+// Length: 2 + 4 + 4 = 10 bytes
+struct SYNTH_ZC_CONFIG {
+    int16  PacketType;
+    uint32 type;    // enum e_config_type
+    uint32 value;   // 0=disabled, 1=enabled
+} __attribute__((packed));
+
+// 0x0A24 ZC_ACH_UPDATE — Single achievement update
+// clif_packetdb.hpp:1767  packet(0x0A24,66)  [inside #if PACKETVER >= 20150513]
+// clif.cpp:21864  WFIFOW(fd,0)=0xa24; layout from WFIFOL/WFIFOW calls:
+//   +2  uint32 total_score
+//   +6  uint16 level
+//   +8  uint32 achievement_exp
+//   +12 uint32 achievement_exp_tnl
+//   +16 uint32 achievement_id
+//   +20 uint8  is_complete
+//   +21 uint32 count[10]  (MAX_ACHIEVEMENT_OBJECTIVES=10, each 4 bytes = 40 bytes)
+//   +61 uint32 completed_epoch
+//   +65 uint8  rewarded
+// Total: 2+4+2+4+4+4+1+40+4+1 = 66 bytes
+struct SYNTH_ZC_ACH_UPDATE {
+    int16  PacketType;
+    uint32 total_score;
+    uint16 level;
+    uint32 achievement_exp;
+    uint32 achievement_exp_tnl;
+    uint32 achievement_id;
+    uint8  is_complete;
+    uint32 count[10];
+    uint32 completed_epoch;
+    uint8  rewarded;
+} __attribute__((packed));
+
+// 0x0ADE ZC_OVERWEIGHT_PERCENT — Weight limit threshold percentage
+// clif_packetdb.hpp:1891  packet(0x0ADE,6)  [inside #if PACKETVER >= 20171025]
+// clif.cpp:22036  WFIFOW(fd,0)=0xADE; WFIFOL(fd,2)=battle_config.natural_heal_weight_rate
+// Layout: 0ADE <percentage>.L
+// Length: 2 + 4 = 6 bytes
+struct SYNTH_ZC_OVERWEIGHT_PERCENT {
+    int16  PacketType;
+    uint32 percent; // Natural heal weight rate percentage
+} __attribute__((packed));
+
+// 0x0A9B ZC_EQUIPSWITCH_LIST — Full list of equip-switch window items
+// clif_packetdb.hpp:1860  packet(0x0A9B,-1)  [inside #if PACKETVER >= 20170208]
+// clif.cpp:22231  WFIFOW(fd,0)=0xa9b; WFIFOW(fd,2)=offset (total length)
+// Layout: 0a9b <length>.W { <index>.W <position>.L }*
+// Length: variable; PacketLength at bytes [2:4] gives total frame size.
+struct SYNTH_ZC_EQUIPSWITCH_LIST {
+    int16  PacketType;
+    uint16 PacketLength; // Total packet length including header
+    uint8  items[];      // Variable-length array of {uint16 index; uint32 position} records
+} __attribute__((packed));
+
+// 0x0A23 ZC_ALL_ACH_LIST — Full achievement list sent on login
+// clif_packetdb.hpp:1766  packet(0x0A23,-1)  [inside #if PACKETVER >= 20150513]
+// clif.cpp:21829  WFIFOW(fd,0)=0xa23; WFIFOW(fd,2)=len
+// Layout: 0a23 <length>.W <count>.L <total_score>.L <level>.W
+//         <ach_exp>.L <ach_exp_tnl>.L { achievement_record }*count
+// Length: variable; PacketLength at bytes [2:4] gives total frame size.
+struct SYNTH_ZC_ALL_ACH_LIST {
+    int16  PacketType;
+    uint16 PacketLength; // Total packet length including header
+    uint8  data[];       // Variable-length payload (flexible array)
+} __attribute__((packed));
