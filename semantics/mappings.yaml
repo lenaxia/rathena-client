@@ -326,7 +326,7 @@ mappings:
         - OpenKore tracks dmgTo and dmgFrom counters
     - packet_id: "0x02E1"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_ACT2
+      rathena_struct: packet_damage
       openkore_name: actor_action
       semantic_category: combat
       description: Notifies client of attack/damage action with 32-bit damage values
@@ -774,7 +774,7 @@ mappings:
         - See 0x029A, 0x02D4, 0x0990, 0x0A37 for evolutionary variants
     - packet_id: "0x08C8"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_ACT_DAMAGE
+      rathena_struct: packet_damage
       openkore_name: actor_action
       semantic_category: combat
       description: Notifies client of attack/damage action with damage numbers (includes SP damage flag)
@@ -1165,7 +1165,7 @@ mappings:
         - time=0 means no cooldown
     - packet_id: "0x043F"
       direction: receive
-      rathena_struct: PACKET_ZC_STATUS_CHANGE2
+      rathena_struct: packet_status_change2
       openkore_name: actor_status_active
       semantic_category: status_update
       description: Extended status effect notification with timing and additional values
@@ -1775,7 +1775,7 @@ mappings:
         - Modern version of 0x0073 with font field
     - packet_id: "0x09FD"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_MOVEENTRY
+      rathena_struct: packet_unit_walking
       openkore_name: actor_moved
       semantic_category: entity_spawn
       description: Moving actor spawn packet (monsters/players walking). Uses packet_unit_walking with moveStartTime + MoveData[6]. HP values of -1 (0xFFFFFFFF) indicate HP not visible.
@@ -2165,7 +2165,7 @@ mappings:
         - Server responds with skill_use notification if successful
     - packet_id: "0x0116"
       direction: send
-      rathena_struct: PACKET_CZ_USE_SKILL_TOGROUND
+      rathena_struct: SYNTH_CZ_USE_SKILL_TOGROUND
       openkore_name: skill_use_location
       semantic_category: combat
       description: Use skill on ground location (area skills)
@@ -2692,7 +2692,7 @@ mappings:
             WAIT_FOR_SAKRAY_ACTIVE: 15
     - packet_id: "0x09FE"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_NEWENTRY11
+      rathena_struct: packet_spawn_unit
       openkore_name: actor_connected
       semantic_category: actor
       description: Actor appeared/connected (entering viewport, spawning). Uses packet_spawn_unit with NO moveStartTime + PosDir[3] for position.
@@ -2901,7 +2901,7 @@ mappings:
         - HP/MaxHP at byte offset 72/76 (vs 79/83 in 0x09FD)
     - packet_id: "0x09FF"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_STANDENTRY11
+      rathena_struct: packet_idle_unit
       openkore_name: actor_exists
       semantic_category: actor
       description: Actor already exists (stationary entity visible in viewport). Uses packet_idle_unit with NO moveStartTime + PosDir[3] + state field. UNIQUE VARIANT with different field layout than 0x0078.
@@ -7215,7 +7215,7 @@ mappings:
           nested_struct_def: PACKET_ZC_ACK_GUILDSTORAGE_LOG_sub
     - packet_id: "0x09DB"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_MOVEENTRY10
+      rathena_struct: packet_unit_walking
       openkore_name: actor_moved
       semantic_category: movement
       description: Actor spawns while moving (full entity appearance and movement data)
@@ -15972,7 +15972,7 @@ mappings:
             WIZARD: 9
     - packet_id: "0x0078"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_STANDENTRY
+      rathena_struct: packet_idle_unit
       openkore_name: actor_exists
       semantic_category: movement
       description: Actor standing (visible on screen)
@@ -16169,7 +16169,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x0079"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_NEWENTRY
+      rathena_struct: packet_spawn_unit
       openkore_name: actor_connected
       semantic_category: movement
       description: Actor spawning (just appeared)
@@ -16361,7 +16361,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x007B"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_MOVEENTRY
+      rathena_struct: packet_unit_walking
       openkore_name: actor_moved
       semantic_category: movement
       description: Actor walking (moving on screen)
@@ -16558,7 +16558,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x0085"
       direction: send
-      rathena_struct: PACKET_CZ_REQUEST_MOVE
+      rathena_struct: SYNTH_CZ_REQUEST_MOVE
       openkore_name: move_to
       semantic_category: movement
       description: Request to move to coordinates
@@ -16627,7 +16627,7 @@ mappings:
         - Server validates and responds with 0x0087 if accepted
     - packet_id: "0x01D8"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_STANDENTRY2
+      rathena_struct: packet_idle_unit
       openkore_name: actor_exists
       semantic_category: movement
       description: Actor standing (extended format)
@@ -16824,7 +16824,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x01D9"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_NEWENTRY2
+      rathena_struct: packet_spawn_unit
       openkore_name: actor_connected
       semantic_category: movement
       description: Actor spawning (extended format)
@@ -17016,7 +17016,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x01DA"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_MOVEENTRY2
+      rathena_struct: packet_unit_walking
       openkore_name: actor_moved
       semantic_category: movement
       description: Actor walking (extended format)
@@ -17213,7 +17213,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x022C"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_MOVEENTRY3
+      rathena_struct: packet_unit_walking
       openkore_name: actor_moved
       semantic_category: movement
       description: Actor walking (extended format v3)
@@ -17410,8 +17410,8 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x02EC"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_MOVEENTRY4
-      openkore_name: actor_exists
+      rathena_struct: packet_unit_walking
+      openkore_name: actor_moved
       semantic_category: movement
       description: Actor standing (extended format v4)
       confidence: 100
@@ -17607,7 +17607,7 @@ mappings:
         - Contains equipment, status effects, and appearance
     - packet_id: "0x02ED"
       direction: receive
-      rathena_struct: PACKET_ZC_NOTIFY_NEWENTRY3
+      rathena_struct: packet_spawn_unit
       openkore_name: actor_connected
       semantic_category: movement
       description: Actor spawning (extended format v3)
@@ -18181,7 +18181,7 @@ mappings:
             TRADE_STATE_REQUESTING: 1
     - packet_id: "0x00EB"
       direction: send
-      rathena_struct: PACKET_CZ_CONCLUDE_EXCHANGE_ITEM
+      rathena_struct: SYNTH_CZ_CONCLUDE_EXCHANGE_ITEM
       openkore_name: deal_finalize
       semantic_category: trading
       description: Client confirms trade (OK button pressed)
@@ -18436,7 +18436,7 @@ mappings:
             WHISPER_SUCCESS: 0
     - packet_id: "0x01A6"
       direction: receive
-      rathena_struct: PACKET_ZC_PETEGG_LIST
+      rathena_struct: SYNTH_ZC_PETEGG_LIST
       openkore_name: pet_egg_list
       semantic_category: pets
       description: List of pet eggs in inventory for hatching
@@ -18509,7 +18509,7 @@ mappings:
             QUEST_STATE_INACTIVE: 0
     - packet_id: "0x011F"
       direction: receive
-      rathena_struct: PACKET_ZC_SKILL_ENTRY
+      rathena_struct: packet_skill_entry
       openkore_name: area_spell
       semantic_category: skills
       description: Ground skill placed on map (area effect spell entry)
@@ -18555,7 +18555,7 @@ mappings:
           semantic: Visibility flag (1=visible, 0=hidden)
     - packet_id: "0x0436"
       direction: send
-      rathena_struct: PACKET_CZ_ENTER
+      rathena_struct: SYNTH_CZ_ENTER
       openkore_name: map_login
       semantic_category: map_server
       description: Map server login request (client → map server)
@@ -18595,7 +18595,7 @@ mappings:
           semantic: Character gender (0=female, 1=male)
     - packet_id: "0x0065"
       direction: send
-      rathena_struct: PACKET_CH_ENTER_0x0065
+      rathena_struct: SYNTH_CH_ENTER_0x0065
       openkore_name: game_login
       semantic_category: character_server
       description: Character server authentication (client → char server) - full auth data
@@ -18640,7 +18640,7 @@ mappings:
           semantic: Character sex (0=female, 1=male, 99=account sex)
     - packet_id: "0x0275"
       direction: send
-      rathena_struct: PACKET_CH_ENTER
+      rathena_struct: SYNTH_CH_ENTER
       openkore_name: game_login
       semantic_category: character_server
       description: Character server authentication (no rAthena struct found, 37 bytes length)
@@ -18715,7 +18715,7 @@ mappings:
           semantic: Index of selected map from 0x0840 list
     - packet_id: "0x0437"
       direction: send
-      rathena_struct: PACKET_CZ_REQUEST_MOVE2
+      rathena_struct: SYNTH_CZ_REQUEST_MOVE2
       openkore_name: move_to
       semantic_category: movement
       description: Request to move to coordinates (PACKETVER >= 20120307)
@@ -18739,7 +18739,7 @@ mappings:
           array_element_type: uint8
     - packet_id: "0x0283"
       direction: receive
-      rathena_struct: PACKET_ZC_AID
+      rathena_struct: SYNTH_ZC_AID
       openkore_name: account_id
       semantic_category: map_server
       description: Account ID confirmation from map server
@@ -18906,7 +18906,7 @@ mappings:
           semantic: Item grade level
     - packet_id: "0x007D"
       direction: send
-      rathena_struct: PACKET_CZ_NOTIFY_ACTORINIT
+      rathena_struct: SYNTH_CZ_NOTIFY_ACTORINIT
       openkore_name: map_loaded
       semantic_category: map
       description: Notify server that map is loaded and ready for spawn (CZ_NOTIFY_ACTORINIT)
@@ -18947,7 +18947,7 @@ mappings:
           semantic: Character creation error code
     - packet_id: "0x035F"
       direction: send
-      rathena_struct: PACKET_CZ_REQUEST_MOVE2
+      rathena_struct: SYNTH_CZ_REQUEST_MOVE2
       openkore_name: character_move
       semantic_category: movement
       description: Request player movement to destination (modern variant, PACKETVER >= 20180000)
@@ -19110,7 +19110,7 @@ mappings:
           array_element_type: char
     - packet_id: "0x007E"
       direction: send
-      rathena_struct: PACKET_CZ_REQUEST_TIME
+      rathena_struct: SYNTH_CZ_REQUEST_TIME
       openkore_name: request_time
       semantic_category: synchronization
       description: Request server time synchronization
@@ -19135,7 +19135,7 @@ mappings:
           semantic: Client timestamp for time synchronization
     - packet_id: "0x008C"
       direction: send
-      rathena_struct: PACKET_CZ_REQUEST_CHAT
+      rathena_struct: SYNTH_CZ_REQUEST_CHAT
       openkore_name: public_chat
       semantic_category: chat
       description: Send public chat message
@@ -19160,7 +19160,7 @@ mappings:
           semantic: Chat message text (variable length, null-terminated)
     - packet_id: "0x009F"
       direction: send
-      rathena_struct: PACKET_CZ_ITEM_PICKUP
+      rathena_struct: SYNTH_CZ_ITEM_PICKUP
       openkore_name: item_take
       semantic_category: items
       description: Request to pick up item from ground
@@ -19185,7 +19185,7 @@ mappings:
           semantic: Ground item entity ID to pick up
     - packet_id: "0x00A7"
       direction: send
-      rathena_struct: PACKET_CZ_USE_ITEM
+      rathena_struct: SYNTH_CZ_USE_ITEM
       openkore_name: item_use
       semantic_category: items
       description: Use item from inventory
@@ -19270,7 +19270,7 @@ mappings:
           semantic: Inventory index of item to unequip
     - packet_id: "0x00F3"
       direction: send
-      rathena_struct: PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
+      rathena_struct: SYNTH_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
       openkore_name: storage_item_add
       semantic_category: items
       description: Move item from inventory to storage
@@ -19300,7 +19300,7 @@ mappings:
           semantic: Amount of item to move to storage
     - packet_id: "0x00F5"
       direction: send
-      rathena_struct: PACKET_CZ_MOVE_ITEM_FROM_STORE_TO_BODY
+      rathena_struct: SYNTH_CZ_MOVE_ITEM_FROM_STORE_TO_BODY
       openkore_name: storage_item_remove
       semantic_category: items
       description: Move item from storage to inventory
@@ -19326,7 +19326,7 @@ mappings:
           semantic: Amount of item to move to inventory
     - packet_id: "0x00F7"
       direction: send
-      rathena_struct: PACKET_CZ_CLOSE_STORE
+      rathena_struct: SYNTH_CZ_CLOSE_STORE
       openkore_name: close_storage
       semantic_category: items
       description: Close storage window
@@ -19346,7 +19346,7 @@ mappings:
           omit_from_openkore: true
     - packet_id: "0x0360"
       direction: send
-      rathena_struct: PACKET_CZ_REQUEST_TIME2
+      rathena_struct: SYNTH_CZ_REQUEST_TIME2
       openkore_name: sync_request_time
       semantic_category: synchronization
       description: Client time synchronization response
@@ -19354,6 +19354,12 @@ mappings:
       validated_by: EPIC11-STORY8-TIME_SYNC
       validated_date: "2026-01-16"
       fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: (implicit)
+          semantic: Packet ID
+          omit_from_openkore: true
         - position: 1
           rathena_name: ClientTime
           rathena_type: uint32
@@ -19361,7 +19367,7 @@ mappings:
           semantic: Client timestamp for synchronization
     - packet_id: "0x0363"
       direction: send
-      rathena_struct: PACKET_CZ_ITEM_THROW2
+      rathena_struct: SYNTH_CZ_ITEM_THROW2
       openkore_name: item_drop
       semantic_category: items
       description: Request to drop item from inventory (modern variant)
@@ -19387,7 +19393,7 @@ mappings:
           semantic: Quantity of items to drop
     - packet_id: "0x0362"
       direction: send
-      rathena_struct: PACKET_CZ_ITEM_PICKUP2
+      rathena_struct: SYNTH_CZ_ITEM_PICKUP2
       openkore_name: item_take
       semantic_category: items
       description: Request to pick up item from ground (modern variant)
@@ -19408,7 +19414,7 @@ mappings:
           semantic: Ground item object ID to pick up
     - packet_id: "0x0ADD"
       direction: receive
-      rathena_struct: PACKET_ZC_ITEM_FALL_ENTRY3
+      rathena_struct: packet_dropflooritem
       openkore_name: item_exists
       semantic_category: items
       description: Item appeared on ground (modern variant, after drop)
@@ -19469,7 +19475,7 @@ mappings:
           semantic: Quantity of items in stack
     - packet_id: "0x00A3"
       direction: receive
-      rathena_struct: PACKET_ZC_NORMAL_ITEMLIST
+      rathena_struct: packet_itemlist_normal
       openkore_name: inventory_items_stackable
       semantic_category: inventory
       description: Legacy stackable inventory items list (potions, arrows, etc.) - replaced by 0x0B09 in newer versions
@@ -19489,7 +19495,7 @@ mappings:
           semantic: item_list_array
     - packet_id: "0x0B09"
       direction: receive
-      rathena_struct: PACKET_ZC_INVENTORY_ITEMLIST_NORMAL
+      rathena_struct: packet_itemlist_normal
       openkore_name: item_list_stackable
       semantic_category: inventory_sync
       description: Modern format for stackable inventory items (PACKETVER >= 20120925). Functionally identical to 0x00A3, uses same item structure.
@@ -19509,7 +19515,7 @@ mappings:
           semantic: item_list_array
     - packet_id: "0x00A4"
       direction: receive
-      rathena_struct: PACKET_ZC_EQUIPMENT_ITEMLIST
+      rathena_struct: packet_itemlist_equip
       openkore_name: inventory_items_nonstackable
       semantic_category: Inventory
       description: Receives non-stackable inventory items (equipment, weapons, armor) during sync
@@ -19539,7 +19545,7 @@ mappings:
           nested_struct_def: EQUIPITEM_INFO_TYPE1
     - packet_id: "0x0B0A"
       direction: receive
-      rathena_struct: PACKET_ZC_INVENTORY_ITEMLIST_EQUIP
+      rathena_struct: packet_itemlist_equip
       openkore_name: item_list_nonstackable
       semantic_category: Inventory
       description: Modern version of 0x00A4 - receives non-stackable inventory items during sync
@@ -19679,7 +19685,7 @@ mappings:
           semantic: menu_selection
     - packet_id: "0x00B9"
       direction: send
-      rathena_struct: PACKET_CZ_REQ_NEXT_SCRIPT
+      rathena_struct: SYNTH_CZ_REQ_NEXT_SCRIPT
       openkore_name: npc_talk_continue
       semantic_category: npc_dialog
       description: Send continue/next to NPC dialog
@@ -19704,7 +19710,7 @@ mappings:
           semantic: npc_id
     - packet_id: "0x009E"
       direction: receive
-      rathena_struct: PACKET_DROPFLOORITEM
+      rathena_struct: packet_dropflooritem
       openkore_name: item_appeared
       semantic_category: items
       description: Item appeared on ground (new drop) - updated to match rAthena field names
@@ -19891,7 +19897,7 @@ mappings:
           semantic: Skill ID to delete from skill list
     - packet_id: "0x0196"
       direction: receive
-      rathena_struct: PACKET_ZC_MSG_STATE_CHANGE
+      rathena_struct: packet_sc_notick
       openkore_name: actor_status_active
       semantic_category: status_update
       description: 'Actor status effect added/removed notification (ZC_MSG_STATE_CHANGE). Format: statusID(uint16) + actorID(uint32) + flag(uint8). Used for ending status changes and starting them on non-PC units. Legacy packet without timing info.'
@@ -19921,8 +19927,8 @@ mappings:
           openkore_name: flag
           semantic: Status flag (1=active, 0=inactive)
     - packet_id: "0x0977"
-      direction: send
-      rathena_struct: PACKET_ZC_HP_INFO
+      direction: receive
+      rathena_struct: packet_monster_hp
       openkore_name: monster_hp_info
       semantic_category: ACTOR_STATUS
       description: Monster HP information update
@@ -19992,7 +19998,7 @@ mappings:
           semantic: PK mode
     - packet_id: "0x01C8"
       direction: receive
-      rathena_struct: PACKET_ZC_USE_ITEM_ACK2
+      rathena_struct: PACKET_ZC_USE_ITEM_ACK
       openkore_name: item_used
       semantic_category: UNCATEGORIZED
       description: Acknowledgement of item usage - confirms whether item use succeeded or failed, updates remaining count
@@ -20035,7 +20041,7 @@ mappings:
           semantic: Success flag (1=success, 0=failure)
     - packet_id: "0x00CB"
       direction: receive
-      rathena_struct: PACKET_ZC_PC_SELL_RESULT
+      rathena_struct: SYNTH_ZC_PC_SELL_RESULT
       openkore_name: sell_result
       semantic_category: UNCATEGORIZED
       description: 'ZC_PC_SELL_RESULT: result of selling items to an NPC shop'
@@ -20054,7 +20060,7 @@ mappings:
           semantic: 'Sell result: 0=success, 1=failed'
 metadata:
     total_packets: 446
-    last_updated: "2026-03-05"
+    last_updated: "2026-03-08"
     maintainer: goKore Team
     source_references:
         rathena_version: ""
@@ -31187,12 +31193,12 @@ semantic_actions:
               struct_name: PACKET_AC_ACCEPT_LOGIN
               field_mapping:
                 AccountID: packet.AID
-                AccountSex: packet.Sex
-                LastLoginIP: packet.Last_ip
-                LastLoginTime: packet.Last_login
-                ServerInfo: packet.Char_servers
-                SessionID: packet.Login_id1
-                SessionID2: packet.Login_id2
+                AccountSex: packet.sex
+                LastLoginIP: packet.last_ip
+                LastLoginTime: packet.last_login
+                ServerInfo: packet.char_servers
+                SessionID: packet.login_id1
+                SessionID2: packet.login_id2
     ac_ack_hash:
         name: ac_ack_hash
         description: AC_ACK_HASH packet (PACKET_AC_ACK_HASH)
@@ -31270,7 +31276,7 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_AID
+              struct_name: SYNTH_ZC_AID
               field_mapping:
                 AccountID: packet.AID
     account_server_info:
@@ -31310,12 +31316,12 @@ semantic_actions:
               struct_name: PACKET_AC_ACCEPT_LOGIN
               field_mapping:
                 AccountID: packet.AID
-                AccountSex: packet.Sex
-                LastLoginIP: packet.Last_ip
-                LastLoginTime: packet.Last_login
-                ServerInfo: packet.Char_servers
-                SessionID: packet.Login_id1
-                SessionID2: packet.Login_id2
+                AccountSex: packet.sex
+                LastLoginIP: packet.last_ip
+                LastLoginTime: nullTermString(packet.last_login[:])
+                ServerInfo: packet.char_servers
+                SessionID: packet.login_id1
+                SessionID2: packet.login_id2
                 WebAuthToken: '""'
     actor_action:
         name: actor_action
@@ -31410,7 +31416,7 @@ semantic_actions:
               type: uint32
               semantic: Guild ID
             - name: PosDir
-              type: '[]byte'
+              type: '[3]byte'
               semantic: 'Packed position and direction (3 bytes: x, y, direction)'
             - name: Opt1
               type: int16
@@ -31507,165 +31513,165 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_NEWENTRY
+              struct_name: packet_spawn_unit
               field_mapping:
                 CharID: uint32(0)
-                Clothes_color: packet.ClothesColor
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
                 Costume: int16(0)
                 EmblemID: packet.GEmblemVer
                 Font: int16(0)
                 GuildID: packet.GUID
                 HP: int32(0)
-                Hair_color: packet.HairColor
-                Hair_style: packet.HairStyle
-                Head_dir: packet.HeadDir
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: packet.headDir
                 ID: packet.GID
                 IsBoss: uint8(0)
-                Lowhead: packet.HeadBottom
-                Lv: packet.Clevel
-                Manner: packet.Manner
+                Lowhead: packet.accessory
+                Lv: packet.clevel
+                Manner: packet.honor
                 MaxHP: int32(0)
-                Midhead: packet.HeadMid
+                Midhead: packet.accessory3
                 Name: string("")
                 Object_type: uint8(0)
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Opt3: uint8(packet.Virtue)
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Opt3: uint8(packet.virtue)
                 Opt4: int16(0)
-                Option: int32(packet.EffectState)
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tophead: packet.HeadTop
-                Type: packet.Job
-                Walk_speed: packet.Speed
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: int32(packet.effectState)
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(0)
+                Stance: packet.isPKModeON
+                Tophead: packet.accessory2
+                Type: packet.job
+                Walk_speed: packet.speed
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x01D9"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_NEWENTRY2
+              struct_name: packet_spawn_unit
               field_mapping:
                 CharID: uint32(0)
-                Clothes_color: packet.ClothesColor
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
                 Costume: int16(0)
                 EmblemID: packet.GEmblemVer
                 Font: int16(0)
                 GuildID: packet.GUID
                 HP: int32(0)
-                Hair_color: packet.HairColor
-                Hair_style: packet.HairStyle
-                Head_dir: packet.HeadDir
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: packet.headDir
                 ID: packet.GID
                 IsBoss: uint8(0)
-                Lowhead: packet.HeadBottom
-                Lv: packet.Clevel
-                Manner: packet.Manner
+                Lowhead: packet.accessory
+                Lv: packet.clevel
+                Manner: packet.honor
                 MaxHP: int32(0)
-                Midhead: packet.HeadMid
+                Midhead: packet.accessory3
                 Name: string("")
                 Object_type: uint8(0)
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Opt3: uint8(packet.Virtue)
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Opt3: uint8(packet.virtue)
                 Opt4: int16(0)
-                Option: int32(packet.EffectState)
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tophead: packet.HeadTop
-                Type: packet.Job
-                Walk_speed: packet.Speed
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: int32(packet.effectState)
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(0)
+                Stance: packet.isPKModeON
+                Tophead: packet.accessory2
+                Type: packet.job
+                Walk_speed: packet.speed
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x02ED"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_NEWENTRY3
+              struct_name: packet_spawn_unit
               field_mapping:
                 CharID: uint32(0)
-                Clothes_color: packet.ClothesColor
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
                 Costume: int16(0)
                 EmblemID: packet.GEmblemVer
                 Font: int16(0)
                 GuildID: packet.GUID
                 HP: int32(0)
-                Hair_color: packet.HairColor
-                Hair_style: packet.HairStyle
-                Head_dir: packet.HeadDir
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: packet.headDir
                 ID: packet.GID
                 IsBoss: uint8(0)
-                Lowhead: packet.HeadBottom
-                Lv: packet.Clevel
-                Manner: packet.Manner
+                Lowhead: packet.accessory
+                Lv: packet.clevel
+                Manner: packet.honor
                 MaxHP: int32(0)
-                Midhead: packet.HeadMid
+                Midhead: packet.accessory3
                 Name: string("")
                 Object_type: uint8(0)
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Opt3: uint8(packet.Virtue)
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Opt3: uint8(packet.virtue)
                 Opt4: int16(0)
-                Option: int32(packet.EffectState)
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tophead: packet.HeadTop
-                Type: packet.Job
-                Walk_speed: packet.Speed
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: int32(packet.effectState)
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(0)
+                Stance: packet.isPKModeON
+                Tophead: packet.accessory2
+                Type: packet.job
+                Walk_speed: packet.speed
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x09FE"
               packetver_range:
                 - 20181002
                 - null
-              struct_name: PACKET_ZC_NOTIFY_NEWENTRY11
+              struct_name: packet_spawn_unit
               field_mapping:
                 CharID: packet.GID
                 Clothes_color: int16(packet.bodypalette)
-                Costume: int16(packet.Robe)
+                Costume: int16(packet.robe)
                 EmblemID: int16(packet.GEmblemVer)
-                Font: int16(packet.Font)
+                Font: int16(packet.font)
                 GuildID: packet.GUID
                 HP: int32(packet.HP)
                 Hair_color: int16(packet.headpalette)
-                Hair_style: int16(packet.Head)
-                Head_dir: int16(packet.HeadDir)
+                Hair_style: int16(packet.head)
+                Head_dir: int16(packet.headDir)
                 ID: packet.AID
-                IsBoss: packet.IsBoss
-                Lowhead: int16(packet.Accessory)
+                IsBoss: packet.isBoss
+                Lowhead: int16(packet.accessory)
                 Lv: int16(packet.clevel)
-                Manner: int16(packet.Honor)
-                MaxHP: int32(packet.MaxHP)
-                Midhead: int16(packet.Accessory3)
-                Name: strings.TrimRight(string(packet.Name[:]), "\x00")
+                Manner: int16(packet.honor)
+                MaxHP: int32(packet.maxHP)
+                Midhead: int16(packet.accessory3)
+                Name: strings.TrimRight(string(packet.name[:]), "\x00")
                 Object_type: packet.objecttype
-                Opt1: int16(packet.BodyState)
-                Opt2: int16(packet.HealthState)
-                Opt3: uint8(packet.Virtue)
-                Opt4: int16(packet.Body)
-                Option: int32(packet.EffectState)
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: int16(packet.Shield)
-                Stance: packet.IsPKModeON
-                Tophead: int16(packet.Accessory2)
-                Type: int16(packet.Job)
-                Walk_speed: int16(packet.Speed)
-                Weapon: int16(packet.Weapon)
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Opt1: int16(packet.bodyState)
+                Opt2: int16(packet.healthState)
+                Opt3: uint8(packet.virtue)
+                Opt4: int16(packet.body)
+                Option: int32(packet.effectState)
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(packet.shield)
+                Stance: packet.isPKModeON
+                Tophead: int16(packet.accessory2)
+                Type: int16(packet.job)
+                Walk_speed: int16(packet.speed)
+                Weapon: int16(packet.weapon)
+                XSize: packet.xSize
+                YSize: packet.ySize
     actor_died_or_disappeared:
         name: actor_died_or_disappeared
         description: Actor vanished (died or left screen)
@@ -31701,7 +31707,7 @@ semantic_actions:
               type: uint32
               semantic: Guild ID
             - name: PosDir
-              type: '[]byte'
+              type: '[3]byte'
               semantic: 'Packed position and direction (3 bytes: x, y, direction)'
             - name: Opt1
               type: int16
@@ -31801,169 +31807,169 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_STANDENTRY
+              struct_name: packet_idle_unit
               field_mapping:
-                Act: packet.State
+                Act: packet.state
                 CharID: uint32(0)
-                Clothes_color: packet.ClothesColor
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
                 Costume: int16(0)
                 EmblemID: packet.GEmblemVer
                 Font: int16(0)
                 GuildID: packet.GUID
                 HP: int32(0)
-                Hair_color: packet.HairColor
-                Hair_style: packet.HairStyle
-                Head_dir: packet.HeadDir
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: packet.headDir
                 ID: packet.GID
                 IsBoss: uint8(0)
-                Lowhead: packet.HeadBottom
-                Lv: packet.Clevel
-                Manner: packet.Manner
+                Lowhead: packet.accessory
+                Lv: packet.clevel
+                Manner: packet.honor
                 MaxHP: int32(0)
-                Midhead: packet.HeadMid
+                Midhead: packet.accessory3
                 Name: string("")
                 Object_type: uint8(0)
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Opt3: packet.Virtue
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Opt3: packet.virtue
                 Opt4: int16(0)
-                Option: packet.EffectState
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tophead: packet.HeadTop
-                Type: packet.Job
-                Walk_speed: packet.Speed
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: packet.effectState
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(0)
+                Stance: packet.isPKModeON
+                Tophead: packet.accessory2
+                Type: packet.job
+                Walk_speed: packet.speed
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x01D8"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_STANDENTRY2
+              struct_name: packet_idle_unit
               field_mapping:
-                Act: packet.State
+                Act: packet.state
                 CharID: uint32(0)
-                Clothes_color: packet.ClothesColor
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
                 Costume: int16(0)
                 EmblemID: packet.GEmblemVer
                 Font: int16(0)
                 GuildID: packet.GUID
                 HP: int32(0)
-                Hair_color: packet.HairColor
-                Hair_style: packet.HairStyle
-                Head_dir: packet.HeadDir
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: packet.headDir
                 ID: packet.GID
                 IsBoss: uint8(0)
-                Lowhead: packet.HeadBottom
-                Lv: packet.Clevel
-                Manner: packet.Manner
+                Lowhead: packet.accessory
+                Lv: packet.clevel
+                Manner: packet.honor
                 MaxHP: int32(0)
-                Midhead: packet.HeadMid
+                Midhead: packet.accessory3
                 Name: string("")
                 Object_type: uint8(0)
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Opt3: packet.Virtue
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Opt3: packet.virtue
                 Opt4: int16(0)
-                Option: packet.EffectState
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tophead: packet.HeadTop
-                Type: packet.Job
-                Walk_speed: packet.Speed
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: packet.effectState
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(0)
+                Stance: packet.isPKModeON
+                Tophead: packet.accessory2
+                Type: packet.job
+                Walk_speed: packet.speed
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x02EC"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_MOVEENTRY4
+              struct_name: packet_unit_walking
               field_mapping:
-                Act: packet.State
+                Act: uint8(0)
                 CharID: uint32(0)
-                Clothes_color: packet.ClothesColor
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
                 Costume: int16(0)
                 EmblemID: packet.GEmblemVer
                 Font: int16(0)
                 GuildID: packet.GUID
                 HP: int32(0)
-                Hair_color: packet.HairColor
-                Hair_style: packet.HairStyle
-                Head_dir: packet.HeadDir
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: packet.headDir
                 ID: packet.GID
                 IsBoss: uint8(0)
-                Lowhead: packet.HeadBottom
-                Lv: packet.Clevel
-                Manner: packet.Manner
+                Lowhead: packet.accessory
+                Lv: packet.clevel
+                Manner: packet.honor
                 MaxHP: int32(0)
-                Midhead: packet.HeadMid
+                Midhead: packet.accessory3
                 Name: string("")
                 Object_type: uint8(0)
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Opt3: packet.Virtue
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Opt3: packet.virtue
                 Opt4: int16(0)
-                Option: packet.EffectState
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tophead: packet.HeadTop
-                Type: packet.Job
-                Walk_speed: packet.Speed
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: packet.effectState
+                PosDir: '[3]byte{}'
+                Sex: packet.sex
+                Shield: int16(0)
+                Stance: packet.isPKModeON
+                Tophead: packet.accessory2
+                Type: packet.job
+                Walk_speed: packet.speed
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x09FF"
               packetver_range:
                 - 20181002
                 - null
-              struct_name: PACKET_ZC_NOTIFY_STANDENTRY11
+              struct_name: packet_idle_unit
               field_mapping:
-                Act: packet.State
+                Act: packet.state
                 CharID: packet.GID
                 Clothes_color: int16(packet.bodypalette)
-                Costume: int16(packet.Robe)
+                Costume: int16(packet.robe)
                 EmblemID: int16(packet.GEmblemVer)
-                Font: int16(packet.Font)
+                Font: int16(packet.font)
                 GuildID: packet.GUID
                 HP: packet.HP
                 Hair_color: int16(packet.headpalette)
-                Hair_style: int16(packet.Head)
-                Head_dir: int16(packet.HeadDir)
+                Hair_style: int16(packet.head)
+                Head_dir: int16(packet.headDir)
                 ID: packet.AID
-                IsBoss: packet.IsBoss
-                Lowhead: int16(packet.Accessory)
+                IsBoss: packet.isBoss
+                Lowhead: int16(packet.accessory)
                 Lv: int16(packet.clevel)
-                Manner: int16(packet.Honor)
-                MaxHP: packet.MaxHP
-                Midhead: int16(packet.Accessory3)
-                Name: string(packet.Name)
-                Object_type: packet.ObjectType
-                Opt1: int16(packet.BodyState)
-                Opt2: int16(packet.HealthState)
-                Opt3: uint8(packet.Virtue)
-                Opt4: int16(packet.Body)
-                Option: int32(packet.EffectState)
-                PosDir: '[]byte(packet.PosDir)'
-                Sex: packet.Sex
-                Shield: int16(packet.Shield)
-                Stance: packet.IsPKModeON
-                Tophead: int16(packet.Accessory2)
-                Type: int16(packet.Job)
-                Walk_speed: int16(packet.Speed)
-                Weapon: int16(packet.Weapon)
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Manner: int16(packet.honor)
+                MaxHP: packet.maxHP
+                Midhead: int16(packet.accessory3)
+                Name: string(packet.name)
+                Object_type: packet.objecttype
+                Opt1: int16(packet.bodyState)
+                Opt2: int16(packet.healthState)
+                Opt3: uint8(packet.virtue)
+                Opt4: int16(packet.body)
+                Option: int32(packet.effectState)
+                PosDir: '[3]byte(packet.PosDir[:])'
+                Sex: packet.sex
+                Shield: int16(packet.shield)
+                Stance: packet.isPKModeON
+                Tophead: int16(packet.accessory2)
+                Type: int16(packet.job)
+                Walk_speed: int16(packet.speed)
+                Weapon: int16(packet.weapon)
+                XSize: packet.xSize
+                YSize: packet.ySize
     actor_moved:
         name: actor_moved
         description: Full entity spawn packet for moving actors (modern PACKETVER >= 20181002)
@@ -32039,7 +32045,7 @@ semantic_actions:
               type: '*uint32'
               semantic: Maximum HP
             - name: MoveData
-              type: '[]byte'
+              type: '[6]byte'
               semantic: 'Packed movement coordinates (6 bytes: from_x, from_y, to_x, to_y, direction)'
             - name: Tick
               type: '*uint32'
@@ -32082,82 +32088,82 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_MOVEENTRY
+              struct_name: packet_unit_walking
               field_mapping:
                 CharID: packet.GID
-                Clothes_color: uint16(packet.ClothesColor)
+                Clothes_color: packet.bodypalette
                 Coords: uint32(packet.MoveData)
                 Costume: "0"
                 EmblemID: uint16(packet.GEmblemVer)
                 Font: "0"
                 GuildID: packet.GUID
                 HP: "0"
-                Hair_color: uint16(packet.HairColor)
-                Hair_style: uint16(packet.HairStyle)
-                Head_dir: uint16(packet.HeadDir)
+                Hair_color: packet.headpalette
+                Hair_style: packet.head
+                Head_dir: uint16(packet.headDir)
                 ID: packet.GID
                 IsBoss: "0"
                 Len: "0"
-                Lowhead: uint16(packet.HeadBottom)
-                Lv: uint16(packet.Clevel)
-                Manner: uint16(packet.Manner)
+                Lowhead: packet.accessory
+                Lv: uint16(packet.clevel)
+                Manner: uint16(packet.honor)
                 MaxHP: "0"
-                Midhead: uint16(packet.HeadMid)
-                MoveData: '[]byte(packet.MoveData)'
+                Midhead: packet.accessory3
+                MoveData: '[6]byte(packet.MoveData[:])'
                 Name: '""'
                 Object_type: "0"
-                Opt1: uint16(packet.BodyState)
-                Opt2: uint16(packet.HealthState)
-                Opt3: uint32(packet.Virtue)
+                Opt1: uint16(packet.bodyState)
+                Opt2: uint16(packet.healthState)
+                Opt3: uint32(packet.virtue)
                 Opt4: "0"
-                Option: uint32(packet.EffectState)
-                Sex: packet.Sex
-                Shield: uint32(packet.Shield)
-                Stance: packet.IsPKModeON
-                Tick: packet.Tick
-                Tophead: uint16(packet.HeadTop)
-                Type: uint16(packet.Job)
-                Walk_speed: uint16(packet.Speed)
-                Weapon: uint32(packet.Weapon)
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: uint32(packet.effectState)
+                Sex: packet.sex
+                Shield: uint32(0)
+                Stance: packet.isPKModeON
+                Tick: packet.moveStartTime
+                Tophead: packet.accessory2
+                Type: uint16(packet.job)
+                Walk_speed: uint16(packet.speed)
+                Weapon: uint32(packet.weapon)
+                XSize: packet.xSize
+                YSize: packet.ySize
             - packet_id: "0x01DA"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_MOVEENTRY2
+              struct_name: packet_unit_walking
               field_mapping:
                 CharID: "0"
-                Clothes_color: uint16(packet.ClothesColor)
+                Clothes_color: uint16(packet.bodypalette)
                 Coords: uint32(packet.MoveData)
                 Costume: "0"
                 EmblemID: "0"
                 Font: "0"
                 GuildID: packet.GUID
                 HP: "0"
-                Hair_color: uint16(packet.HairColor)
+                Hair_color: uint16(packet.headpalette)
                 Hair_style: "0"
                 Head_dir: "0"
                 ID: packet.GID
                 IsBoss: "0"
                 Len: "0"
-                Lowhead: uint16(packet.HeadBottom)
-                Lv: uint16(packet.Clevel)
+                Lowhead: uint16(packet.accessory)
+                Lv: uint16(packet.clevel)
                 Manner: "0"
                 MaxHP: "0"
                 Midhead: "0"
-                MoveData: '[]byte(packet.MoveData)'
+                MoveData: '[6]byte(packet.MoveData[:])'
                 Name: '""'
                 Object_type: "0"
                 Opt1: "0"
-                Opt2: uint16(packet.HealthState)
+                Opt2: uint16(packet.healthState)
                 Opt3: "0"
                 Opt4: "0"
-                Option: uint32(packet.EffectState)
-                Sex: packet.Sex
+                Option: uint32(packet.effectState)
+                Sex: packet.sex
                 Shield: "0"
-                Stance: packet.IsPKModeON
-                Tick: packet.Tick
+                Stance: packet.isPKModeON
+                Tick: packet.moveStartTime
                 Tophead: "0"
                 Type: "0"
                 Walk_speed: "0"
@@ -32168,17 +32174,17 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_NOTIFY_MOVEENTRY3
+              struct_name: packet_unit_walking
               field_mapping:
                 CharID: "0"
-                Clothes_color: uint16(packet.ClothesColor)
+                Clothes_color: uint16(packet.bodypalette)
                 Coords: uint32(packet.MoveData)
                 Costume: "0"
                 EmblemID: "0"
                 Font: "0"
                 GuildID: packet.GUID
                 HP: "0"
-                Hair_color: uint16(packet.HairColor)
+                Hair_color: uint16(packet.headpalette)
                 Hair_style: "0"
                 Head_dir: "0"
                 ID: packet.GID
@@ -32186,69 +32192,69 @@ semantic_actions:
                 Len: "0"
                 Lowhead: "0"
                 Lv: "0"
-                Manner: uint16(packet.Manner)
+                Manner: uint16(packet.honor)
                 MaxHP: "0"
-                Midhead: uint16(packet.HeadMid)
-                MoveData: '[]byte(packet.MoveData)'
+                Midhead: uint16(packet.accessory3)
+                MoveData: '[6]byte(packet.MoveData[:])'
                 Name: '""'
                 Object_type: "0"
-                Opt1: uint16(packet.BodyState)
-                Opt2: uint16(packet.HealthState)
-                Opt3: uint32(packet.Virtue)
+                Opt1: uint16(packet.bodyState)
+                Opt2: uint16(packet.healthState)
+                Opt3: uint32(packet.virtue)
                 Opt4: "0"
                 Option: "0"
-                Sex: packet.Sex
+                Sex: packet.sex
                 Shield: "0"
-                Stance: packet.IsPKModeON
-                Tick: packet.Tick
-                Tophead: uint16(packet.HeadTop)
+                Stance: packet.isPKModeON
+                Tick: packet.moveStartTime
+                Tophead: packet.accessory2
                 Type: "0"
-                Walk_speed: uint16(packet.Speed)
+                Walk_speed: uint16(packet.speed)
                 Weapon: "0"
                 XSize: "0"
-                YSize: packet.YSize
+                YSize: packet.ySize
             - packet_id: "0x09DB"
               packetver_range:
                 - 20141001
                 - null
-              struct_name: PACKET_ZC_NOTIFY_MOVEENTRY10
+              struct_name: packet_unit_walking
               field_mapping:
                 CharID: packet.AID
-                Clothes_color: uint16(packet.Bodypalette)
-                Costume: packet.Robe
+                Clothes_color: uint16(packet.bodypalette)
+                Costume: packet.robe
                 EmblemID: uint16(packet.GEmblemVer)
-                Font: uint16(packet.Font)
+                Font: uint16(packet.font)
                 GuildID: packet.GUID
                 HP: uint32(packet.HP)
-                Hair_color: uint16(packet.Headpalette)
-                Hair_style: packet.Head
-                Head_dir: uint16(packet.HeadDir)
+                Hair_color: uint16(packet.headpalette)
+                Hair_style: packet.head
+                Head_dir: uint16(packet.headDir)
                 ID: packet.GID
-                IsBoss: packet.IsBoss
+                IsBoss: packet.isBoss
                 Len: uint16(packet.PacketLength)
-                Lowhead: packet.Accessory
-                Lv: uint16(packet.Clevel)
-                Manner: uint16(packet.Honor)
-                MaxHP: uint32(packet.MaxHP)
-                Midhead: packet.Accessory3
-                MoveData: '[]byte(packet.MoveData)'
-                Name: strings.TrimRight(string(packet.Name), "\x00")
-                Object_type: packet.ObjectType
-                Opt1: uint16(packet.BodyState)
-                Opt2: uint16(packet.HealthState)
-                Opt3: uint32(packet.Virtue)
+                Lowhead: packet.accessory
+                Lv: uint16(packet.clevel)
+                Manner: uint16(packet.honor)
+                MaxHP: uint32(packet.maxHP)
+                Midhead: packet.accessory3
+                MoveData: '[6]byte(packet.MoveData[:])'
+                Name: strings.TrimRight(string(packet.name), "\x00")
+                Object_type: packet.objecttype
+                Opt1: uint16(packet.bodyState)
+                Opt2: uint16(packet.healthState)
+                Opt3: uint32(packet.virtue)
                 Opt4: "0"
-                Option: uint32(packet.EffectState)
-                Sex: packet.Sex
-                Shield: packet.Shield
-                Stance: packet.IsPKModeON
-                Tick: packet.MoveStartTime
-                Tophead: packet.Accessory2
-                Type: uint16(packet.Job)
-                Walk_speed: uint16(packet.Speed)
-                Weapon: packet.Weapon
-                XSize: packet.XSize
-                YSize: packet.YSize
+                Option: uint32(packet.effectState)
+                Sex: packet.sex
+                Shield: packet.shield
+                Stance: packet.isPKModeON
+                Tick: packet.moveStartTime
+                Tophead: packet.accessory2
+                Type: uint16(packet.job)
+                Walk_speed: uint16(packet.speed)
+                Weapon: packet.weapon
+                XSize: packet.xSize
+                YSize: packet.ySize
     actor_status_active:
         name: actor_status_active
         description: Actor status effect active/inactive notification
@@ -32268,11 +32274,11 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_ZC_MSG_STATE_CHANGE
+              struct_name: packet_sc_notick
               field_mapping:
-                Active: packet.Flag
+                Active: packet.state
                 ActorID: packet.AID
-                StatusID: packet.StatusID
+                StatusID: packet.index
     actor_status_effect_extended:
         name: actor_status_effect_extended
         description: Extended status effect notification with actor ID, timing, and effect parameters
@@ -32304,15 +32310,15 @@ semantic_actions:
               packetver_range:
                 - 20090121
                 - null
-              struct_name: PACKET_ZC_STATUS_CHANGE2
+              struct_name: packet_status_change2
               field_mapping:
-                Active: packet.Flag != 0
+                Active: packet.state != 0
                 ActorID: packet.AID
-                DurationMS: packet.Tick
-                StatusID: packet.StatusID
-                Val1: packet.Val1
-                Val2: packet.Val2
-                Val3: packet.Val3
+                DurationMS: packet.Left
+                StatusID: uint16(packet.index)
+                Val1: packet.val1
+                Val2: packet.val2
+                Val3: packet.val3
     add_exchange_item:
         name: add_exchange_item
         description: Item added to trade window
@@ -32355,15 +32361,15 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
               field_mapping:
-                Amount: packet.Amount
-                Damaged: packet.Damaged
-                Grade: packet.Grade
-                ID: packet.ItemId
-                Identified: packet.Identified
-                ItemType: packet.ItemType
-                Location: packet.Location
-                Look: packet.Look
-                Refine: packet.Refine
+                Amount: packet.amount
+                Damaged: packet.damaged
+                Grade: packet.grade
+                ID: packet.itemId
+                Identified: packet.identified
+                ItemType: packet.itemType
+                Location: packet.location
+                Look: packet.look
+                Refine: packet.refine
                 Slot: '[]byte{}'
     area_spell:
         name: area_spell
@@ -32393,14 +32399,14 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_SKILL_ENTRY
+              struct_name: packet_skill_entry
               field_mapping:
                 ID: packet.AID
-                IsVisible: packet.IsVisible
-                SourceID: packet.CreatorAID
-                Type: packet.Job
-                X: packet.XPos
-                "Y": packet.YPos
+                IsVisible: packet.isVisible
+                SourceID: packet.creatorAID
+                Type: packet.job
+                X: packet.xPos
+                "Y": packet.yPos
     attack_range:
         name: attack_range
         description: Notifies client of current attack range
@@ -32416,7 +32422,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ATTACK_RANGE
               field_mapping:
-                Type: packet.CurrentAttRange
+                Type: packet.currentAttRange
     banking_check:
         name: banking_check
         description: Banking system availability check
@@ -32907,23 +32913,23 @@ semantic_actions:
         openkore_name: character_move
         canonical_params:
             - name: Coords
-              type: string
+              type: '[3]byte'
               semantic: Destination coordinates (packed x, y, dir)
         implementations:
             - packet_id: "0x035F"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_CZ_REQUEST_MOVE2
+              struct_name: SYNTH_CZ_REQUEST_MOVE2
               field_mapping:
-                Coords: string(packet.Dest[:])
+                Coords: '[3]byte(packet.dest[:])'
     character_moves:
         name: character_moves
         description: Player character is moving
         openkore_name: character_moves
         canonical_params:
             - name: MoveData
-              type: '[]byte'
+              type: '[6]byte'
               semantic: 'Packed coordinates: from_x, from_y, to_x, to_y (6 bytes)'
             - name: Time
               type: uint32
@@ -32935,8 +32941,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_PLAYERMOVE
               field_mapping:
-                MoveData: packet.MoveData[:]
-                Time: packet.MoveStartTime
+                MoveData: '[6]byte(packet.moveData[:])'
+                Time: packet.moveStartTime
     character_pages_notify:
         name: character_pages_notify
         description: Character list page count notification
@@ -33051,7 +33057,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_ACK_ANSWER_MACRO_DETECTOR
               field_mapping:
-                Answer: func() [16]byte { var arr [16]byte; copy(arr[:], []byte(packet.Answer)); return arr }()
+                Answer: func() [16]byte { var arr [16]byte; copy(arr[:], []byte(packet.answer)); return arr }()
                 PacketType: packet.PacketType
     cz_advanced_status_change:
         name: cz_advanced_status_change
@@ -33088,7 +33094,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_ADVENTURER_AGENCY_JOIN_REQ
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_adventurer_agency_join_result:
         name: cz_adventurer_agency_join_result
         description: CZ_ADVENTURER_AGENCY_JOIN_RESULT packet (PACKET_CZ_ADVENTURER_AGENCY_JOIN_RESULT)
@@ -33107,8 +33113,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_ADVENTURER_AGENCY_JOIN_RESULT
               field_mapping:
-                PacketType: packet.PacketType
-                Result: packet.Result
+                PacketType: packet.packetType
+                Result: packet.result
     cz_approximate_actor:
         name: cz_approximate_actor
         description: CZ_APPROXIMATE_ACTOR packet (PACKET_CZ_APPROXIMATE_ACTOR)
@@ -33133,10 +33139,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_APPROXIMATE_ACTOR
               field_mapping:
-                MasterGID: packet.MasterGID
+                MasterGID: packet.masterGID
                 PacketType: packet.PacketType
-                Unused1: packet.Unused1
-                Unused2: packet.Unused2
+                Unused1: packet.unused1
+                Unused2: packet.unused2
     cz_checkname1:
         name: cz_checkname1
         description: CZ_CHECKNAME1 packet (PACKET_CZ_CHECKNAME1)
@@ -33179,7 +33185,7 @@ semantic_actions:
               struct_name: PACKET_CZ_CHECKNAME2
               field_mapping:
                 Name: packet.Name
-                Own_char: packet.Own_char
+                Own_char: packet.own_char
                 PacketType: packet.PacketType
     cz_choose_menu_zero:
         name: cz_choose_menu_zero
@@ -33202,7 +33208,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CHOOSE_MENU_ZERO
               field_mapping:
-                MenuIndex: packet.MenuIndex
+                MenuIndex: packet.menuIndex
                 NpcID: packet.NpcID
                 PacketType: packet.PacketType
     cz_client_version:
@@ -33223,8 +33229,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CLIENT_VERSION
               field_mapping:
-                ClientVersion: packet.ClientVersion
-                PacketType: packet.PacketType
+                ClientVersion: packet.clientVersion
+                PacketType: packet.packetType
     cz_close_msgbox_extend_bodyitem_size:
         name: cz_close_msgbox_extend_bodyitem_size
         description: CZ_CLOSE_MSGBOX_EXTEND_BODYITEM_SIZE packet (PACKET_CZ_CLOSE_MSGBOX_EXTEND_BODYITEM_SIZE)
@@ -33240,7 +33246,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CLOSE_MSGBOX_EXTEND_BODYITEM_SIZE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_close_refining_ui:
         name: cz_close_refining_ui
         description: CZ_CLOSE_REFINING_UI packet (PACKET_CZ_CLOSE_REFINING_UI)
@@ -33256,7 +33262,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CLOSE_REFINING_UI
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_close_reform_ui:
         name: cz_close_reform_ui
         description: CZ_CLOSE_REFORM_UI packet (PACKET_CZ_CLOSE_REFORM_UI)
@@ -33304,7 +33310,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CLOSE_UI_STYLINGSHOP
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_cmd_resetcooltime:
         name: cz_cmd_resetcooltime
         description: CZ_CMD_RESETCOOLTIME packet (PACKET_CZ_CMD_RESETCOOLTIME)
@@ -33320,7 +33326,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CMD_RESETCOOLTIME
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_complete_apply_macro_detector_captcha:
         name: cz_complete_apply_macro_detector_captcha
         description: CZ_COMPLETE_APPLY_MACRO_DETECTOR_CAPTCHA packet (PACKET_CZ_COMPLETE_APPLY_MACRO_DETECTOR_CAPTCHA)
@@ -33360,7 +33366,7 @@ semantic_actions:
               field_mapping:
                 AID: packet.AID
                 PacketType: packet.PacketType
-                Type: packet.Type
+                Type: packet.type
     cz_dynamicnpc_create_request:
         name: cz_dynamicnpc_create_request
         description: CZ_DYNAMICNPC_CREATE_REQUEST packet (PACKET_CZ_DYNAMICNPC_CREATE_REQUEST)
@@ -33392,7 +33398,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_GET_ACCOUNT_LIMTIED_SALE_LIST
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_grade_enchant_close_ui:
         name: cz_grade_enchant_close_ui
         description: CZ_GRADE_ENCHANT_CLOSE_UI packet (PACKET_CZ_GRADE_ENCHANT_CLOSE_UI)
@@ -33439,12 +33445,12 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_GRADE_ENCHANT_REQUEST
               field_mapping:
-                Blessing_amount: packet.Blessing_amount
-                Blessing_flag: packet.Blessing_flag
-                Index: packet.Index
-                Material_index: packet.Material_index
+                Blessing_amount: packet.blessing_amount
+                Blessing_flag: packet.blessing_flag
+                Index: packet.index
+                Material_index: packet.material_index
                 PacketType: packet.PacketType
-                Protect_flag: packet.Protect_flag
+                Protect_flag: packet.protect_flag
     cz_grade_enchant_select_equipment:
         name: cz_grade_enchant_select_equipment
         description: CZ_GRADE_ENCHANT_SELECT_EQUIPMENT packet (PACKET_CZ_GRADE_ENCHANT_SELECT_EQUIPMENT)
@@ -33463,7 +33469,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_GRADE_ENCHANT_SELECT_EQUIPMENT
               field_mapping:
-                Index: packet.Index
+                Index: packet.index
                 PacketType: packet.PacketType
     cz_inventory_tab:
         name: cz_inventory_tab
@@ -33507,7 +33513,7 @@ semantic_actions:
               struct_name: PACKET_CZ_ITEM_REFORM
               field_mapping:
                 ITID: packet.ITID
-                Index: packet.Index
+                Index: packet.index
                 PacketType: packet.PacketType
     cz_join_group:
         name: cz_join_group
@@ -33571,7 +33577,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_CART
               field_mapping:
-                Index: packet.Index
+                Index: packet.index
                 PacketType: packet.PacketType
     cz_npc_barter_market_close:
         name: cz_npc_barter_market_close
@@ -33588,7 +33594,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_NPC_BARTER_MARKET_CLOSE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_npc_barter_market_purchase:
         name: cz_npc_barter_market_purchase
         description: CZ_NPC_BARTER_MARKET_PURCHASE packet (PACKET_CZ_NPC_BARTER_MARKET_PURCHASE)
@@ -33610,9 +33616,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_NPC_BARTER_MARKET_PURCHASE
               field_mapping:
-                List: packet.List[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                List: packet.list
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     cz_npc_expanded_barter_market_close:
         name: cz_npc_expanded_barter_market_close
         description: CZ_NPC_EXPANDED_BARTER_MARKET_CLOSE packet (PACKET_CZ_NPC_EXPANDED_BARTER_MARKET_CLOSE)
@@ -33628,7 +33634,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_NPC_EXPANDED_BARTER_MARKET_CLOSE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_npc_expanded_barter_market_purchase:
         name: cz_npc_expanded_barter_market_purchase
         description: CZ_NPC_EXPANDED_BARTER_MARKET_PURCHASE packet (PACKET_CZ_NPC_EXPANDED_BARTER_MARKET_PURCHASE)
@@ -33650,9 +33656,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_NPC_EXPANDED_BARTER_MARKET_PURCHASE
               field_mapping:
-                List: packet.List[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                List: packet.list
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     cz_npc_market_purchase:
         name: cz_npc_market_purchase
         description: CZ_NPC_MARKET_PURCHASE packet (PACKET_CZ_NPC_MARKET_PURCHASE)
@@ -33674,7 +33680,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_NPC_MARKET_PURCHASE
               field_mapping:
-                List: packet.List[:]
+                List: packet.list[:]
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
     cz_party_config:
@@ -33695,8 +33701,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_PARTY_CONFIG
               field_mapping:
-                PacketType: packet.PacketType
-                RefuseInvite: packet.RefuseInvite
+                PacketType: packet.packetType
+                RefuseInvite: packet.refuseInvite
     cz_party_join_req:
         name: cz_party_join_req
         description: CZ_PARTY_JOIN_REQ packet (PACKET_CZ_PARTY_JOIN_REQ)
@@ -33758,9 +33764,9 @@ semantic_actions:
               struct_name: PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC
               field_mapping:
                 AID: packet.AID
-                List: packet.List[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                List: packet.list[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     cz_pc_purchase_itemlist_frommc2:
         name: cz_pc_purchase_itemlist_frommc2
         description: CZ_PC_PURCHASE_ITEMLIST_FROMMC2 packet (PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC2)
@@ -33789,9 +33795,9 @@ semantic_actions:
               struct_name: PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC2
               field_mapping:
                 AID: packet.AID
-                List: packet.List[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                List: packet.list[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
                 UniqueID: packet.UniqueID
     cz_pc_sell_itemlist:
         name: cz_pc_sell_itemlist
@@ -33828,7 +33834,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_PING_LIVE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_random_combine_item_ui_close:
         name: cz_random_combine_item_ui_close
         description: CZ_RANDOM_COMBINE_ITEM_UI_CLOSE packet (PACKET_CZ_RANDOM_COMBINE_ITEM_UI_CLOSE)
@@ -33844,7 +33850,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_RANDOM_COMBINE_ITEM_UI_CLOSE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_random_upgrade_item_ui_close:
         name: cz_random_upgrade_item_ui_close
         description: CZ_RANDOM_UPGRADE_ITEM_UI_CLOSE packet (PACKET_CZ_RANDOM_UPGRADE_ITEM_UI_CLOSE)
@@ -33860,7 +33866,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_RANDOM_UPGRADE_ITEM_UI_CLOSE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_refining_select_item:
         name: cz_refining_select_item
         description: CZ_REFINING_SELECT_ITEM packet (PACKET_CZ_REFINING_SELECT_ITEM)
@@ -33879,8 +33885,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REFINING_SELECT_ITEM
               field_mapping:
-                Index: packet.Index
-                PacketType: packet.PacketType
+                Index: packet.index
+                PacketType: packet.packetType
     cz_req_agit_investment:
         name: cz_req_agit_investment
         description: CZ_REQ_AGIT_INVESTMENT packet (PACKET_CZ_REQ_AGIT_INVESTMENT)
@@ -34080,7 +34086,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_EXTEND_BODYITEM_SIZE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_req_guild_emblem_img1:
         name: cz_req_guild_emblem_img1
         description: CZ_REQ_GUILD_EMBLEM_IMG1 packet (PACKET_CZ_REQ_GUILD_EMBLEM_IMG1)
@@ -34099,8 +34105,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_GUILD_EMBLEM_IMG1
               field_mapping:
-                Guild_id: packet.Guild_id
-                PacketType: packet.PacketType
+                Guild_id: packet.guild_id
+                PacketType: packet.packetType
     cz_req_guild_emblem_img2:
         name: cz_req_guild_emblem_img2
         description: CZ_REQ_GUILD_EMBLEM_IMG2 packet (PACKET_CZ_REQ_GUILD_EMBLEM_IMG2)
@@ -34122,9 +34128,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_GUILD_EMBLEM_IMG2
               field_mapping:
-                Emblem_id: packet.Emblem_id
-                Guild_id: packet.Guild_id
-                PacketType: packet.PacketType
+                Emblem_id: packet.emblem_id
+                Guild_id: packet.guild_id
+                PacketType: packet.packetType
     cz_req_guild_emblem_img3:
         name: cz_req_guild_emblem_img3
         description: CZ_REQ_GUILD_EMBLEM_IMG3 packet (PACKET_CZ_REQ_GUILD_EMBLEM_IMG3)
@@ -34146,9 +34152,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_GUILD_EMBLEM_IMG3
               field_mapping:
-                Emblem_id: packet.Emblem_id
-                Guild_id: packet.Guild_id
-                PacketType: packet.PacketType
+                Emblem_id: packet.emblem_id
+                Guild_id: packet.guild_id
+                PacketType: packet.packetType
     cz_req_itemrepair1:
         name: cz_req_itemrepair1
         description: CZ_REQ_ITEMREPAIR1 packet (PACKET_CZ_REQ_ITEMREPAIR1)
@@ -34168,7 +34174,7 @@ semantic_actions:
               struct_name: PACKET_CZ_REQ_ITEMREPAIR1
               field_mapping:
                 Item: '[]byte{}'
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_req_itemrepair2:
         name: cz_req_itemrepair2
         description: CZ_REQ_ITEMREPAIR2 packet (PACKET_CZ_REQ_ITEMREPAIR2)
@@ -34188,7 +34194,7 @@ semantic_actions:
               struct_name: PACKET_CZ_REQ_ITEMREPAIR2
               field_mapping:
                 Item: '[]byte{}'
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_req_join_group:
         name: cz_req_join_group
         description: CZ_REQ_JOIN_GROUP packet (PACKET_CZ_REQ_JOIN_GROUP)
@@ -34335,8 +34341,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_MOVE_GUILD_AGIT
               field_mapping:
-                Castle_id: packet.Castle_id
-                PacketType: packet.PacketType
+                Castle_id: packet.castle_id
+                PacketType: packet.packetType
     cz_req_open_msgbox_extend_bodyitem_size:
         name: cz_req_open_msgbox_extend_bodyitem_size
         description: CZ_REQ_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE packet (PACKET_CZ_REQ_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE)
@@ -34352,7 +34358,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_req_player_aid_in_range:
         name: cz_req_player_aid_in_range
         description: CZ_REQ_PLAYER_AID_IN_RANGE packet (PACKET_CZ_REQ_PLAYER_AID_IN_RANGE)
@@ -34379,8 +34385,8 @@ semantic_actions:
               field_mapping:
                 PacketType: packet.PacketType
                 RadiusRange: packet.RadiusRange
-                XPos: packet.XPos
-                YPos: packet.YPos
+                XPos: packet.xPos
+                YPos: packet.yPos
     cz_req_preview_macro_detector:
         name: cz_req_preview_macro_detector
         description: CZ_REQ_PREVIEW_MACRO_DETECTOR packet (PACKET_CZ_REQ_PREVIEW_MACRO_DETECTOR)
@@ -34421,10 +34427,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_RANDOM_COMBINE_ITEM
               field_mapping:
-                ItemId: packet.ItemId
-                Items: packet.Items[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                ItemId: packet.itemId
+                Items: packet.items[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     cz_req_random_upgrade_item:
         name: cz_req_random_upgrade_item
         description: CZ_REQ_RANDOM_UPGRADE_ITEM packet (PACKET_CZ_REQ_RANDOM_UPGRADE_ITEM)
@@ -34446,9 +34452,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_RANDOM_UPGRADE_ITEM
               field_mapping:
-                Index: packet.Index
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
+                Index: packet.index
+                ItemId: packet.itemId
+                PacketType: packet.packetType
     cz_req_refining:
         name: cz_req_refining
         description: CZ_REQ_REFINING packet (PACKET_CZ_REQ_REFINING)
@@ -34473,10 +34479,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_REFINING
               field_mapping:
-                BlacksmithBlessing: packet.BlacksmithBlessing
-                Index: packet.Index
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
+                BlacksmithBlessing: packet.blacksmithBlessing
+                Index: packet.index
+                ItemId: packet.itemId
+                PacketType: packet.packetType
     cz_req_remaintime:
         name: cz_req_remaintime
         description: CZ_REQ_REMAINTIME packet (PACKET_CZ_REQ_REMAINTIME)
@@ -34492,7 +34498,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_REMAINTIME
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_req_remove_bargain_sale_item:
         name: cz_req_remove_bargain_sale_item
         description: CZ_REQ_REMOVE_BARGAIN_SALE_ITEM packet (PACKET_CZ_REQ_REMOVE_BARGAIN_SALE_ITEM)
@@ -34716,7 +34722,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_SE_CASHSHOP_OPEN1
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     cz_se_cashshop_open2:
         name: cz_se_cashshop_open2
         description: CZ_SE_CASHSHOP_OPEN2 packet (PACKET_CZ_SE_CASHSHOP_OPEN2)
@@ -34735,8 +34741,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_SE_CASHSHOP_OPEN2
               field_mapping:
-                PacketType: packet.PacketType
-                Tab: packet.Tab
+                PacketType: packet.packetType
+                Tab: packet.tab
     cz_se_pc_buy_cashitem_list:
         name: cz_se_pc_buy_cashitem_list
         description: CZ_SE_PC_BUY_CASHITEM_LIST packet (PACKET_CZ_SE_PC_BUY_CASHITEM_LIST)
@@ -34782,9 +34788,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_SHORTCUT_KEY_CHANGE1
               field_mapping:
-                Hotkey: func() []byte { bytes, _ := packet.Hotkey.ToPacket(0); if len(bytes) > 2 { return bytes[2:] }; return []byte{} }()
-                Index: packet.Index
-                PacketType: packet.PacketType
+                Hotkey: func() []byte { bytes, _ := packet.hotkey.ToPacket(0); if len(bytes) > 2 { return bytes[2:] }; return []byte{} }()
+                Index: packet.index
+                PacketType: packet.packetType
     cz_shortcut_key_change2:
         name: cz_shortcut_key_change2
         description: CZ_SHORTCUT_KEY_CHANGE2 packet (PACKET_CZ_SHORTCUT_KEY_CHANGE2)
@@ -34810,9 +34816,9 @@ semantic_actions:
               struct_name: PACKET_CZ_SHORTCUT_KEY_CHANGE2
               field_mapping:
                 Hotkey: func() []byte { bytes, _ := packet.Hotkey.ToPacket(0); if len(bytes) > 2 { return bytes[2:] }; return []byte{} }()
-                Index: packet.Index
-                PacketType: packet.PacketType
-                Tab: packet.Tab
+                Index: packet.index
+                PacketType: packet.packetType
+                Tab: packet.tab
     cz_shortcutkeybar_rotate1:
         name: cz_shortcutkeybar_rotate1
         description: CZ_SHORTCUTKEYBAR_ROTATE1 packet - Client request to rotate hotkey shortcut bar rows
@@ -34831,8 +34837,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_SHORTCUTKEYBAR_ROTATE1
               field_mapping:
-                PacketType: packet.PacketType
-                Rowshift: packet.Rowshift
+                PacketType: packet.packetType
+                Rowshift: packet.rowshift
     cz_shortcutkeybar_rotate2:
         name: cz_shortcutkeybar_rotate2
         description: CZ_SHORTCUTKEYBAR_ROTATE2 packet (PACKET_CZ_SHORTCUTKEYBAR_ROTATE2)
@@ -34854,9 +34860,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_SHORTCUTKEYBAR_ROTATE2
               field_mapping:
-                PacketType: packet.PacketType
-                Rowshift: packet.Rowshift
-                Tab: packet.Tab
+                PacketType: packet.packetType
+                Rowshift: packet.rowshift
+                Tab: packet.tab
     cz_uninstallation:
         name: cz_uninstallation
         description: CZ_UNINSTALLATION packet (PACKET_CZ_UNINSTALLATION)
@@ -34934,8 +34940,8 @@ semantic_actions:
               field_mapping:
                 AID: packet.AID
                 BoxIndex: packet.BoxIndex
-                Index: packet.Index
-                ItemID: packet.ItemID
+                Index: packet.index
+                ItemID: packet.itemID
                 PacketType: packet.PacketType
     cz_use_skill_end:
         name: cz_use_skill_end
@@ -34981,10 +34987,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_USE_SKILL_START
               field_mapping:
-                PacketType: packet.PacketType
-                SkillId: packet.SkillId
-                SkillLv: packet.SkillLv
-                TargetId: packet.TargetId
+                PacketType: packet.packetType
+                SkillId: packet.skillId
+                SkillLv: packet.skillLv
+                TargetId: packet.targetId
     cz_view_camerainfo:
         name: cz_view_camerainfo
         description: CZ_VIEW_CAMERAINFO packet (PACKET_CZ_VIEW_CAMERAINFO)
@@ -35003,8 +35009,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_VIEW_CAMERAINFO
               field_mapping:
-                Action: packet.Action
-                PacketType: packet.PacketType
+                Action: packet.action
+                PacketType: packet.packetType
     deal_add_other:
         name: deal_add_other
         description: Client adds item to trade window
@@ -35197,7 +35203,7 @@ semantic_actions:
               type: uint32
               semantic: Actor unique identifier
             - name: Coords
-              type: '[]byte'
+              type: '[6]byte'
               semantic: 'Packed movement data: 6 bytes with from(x,y) + to(x,y) + sub-coords (OpenKore: makeCoordsFromTo unpacks this)'
             - name: Tick
               type: uint32
@@ -35209,7 +35215,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_MOVE
               field_mapping:
-                Coords: '[]byte(packet.PosDir)'
+                Coords: '[6]byte(packet.PosDir[:])'
                 ID: packet.GID
                 Tick: packet.Tick
     entity_spawn:
@@ -35224,18 +35230,18 @@ semantic_actions:
               type: uint16
               semantic: Entity type/class
             - name: PosDir
-              type: '[]byte'
+              type: '[3]byte'
               semantic: 'Packed position and direction (3 bytes: x[10bit] + y[10bit] + dir[4bit]). Handler must unpack using makeCoordsDir pattern from OpenKore.'
         implementations:
             - packet_id: "0x007C"
               packetver_range:
                 - 20030000
                 - 20080102
-              struct_name: PACKET_ZC_NOTIFY_STANDENTRY
+              struct_name: packet_spawn_unit2
               field_mapping:
                 EntityID: packet.GID
-                EntityType: uint16(packet.Job)
-                PosDir: '[]byte(packet.PosDir)'
+                EntityType: uint16(packet.job)
+                PosDir: '[3]byte(packet.PosDir[:])'
     equip_item:
         name: equip_item
         description: Equip an item from inventory
@@ -35431,16 +35437,16 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_DROPFLOORITEM
+              struct_name: packet_dropflooritem
               field_mapping:
-                Amount: uint16(packet.Count)
+                Amount: uint16(packet.count)
                 ID: packet.ITAID
                 Identified: packet.IsIdentified
                 ItemID: packet.ITID
                 Subx: packet.subX
                 Suby: packet.subY
-                X: uint16(packet.XPos)
-                "Y": uint16(packet.YPos)
+                X: uint16(packet.xPos)
+                "Y": uint16(packet.yPos)
     item_disappeared:
         name: item_disappeared
         description: Item disappeared from ground
@@ -35509,14 +35515,14 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ITEM_ENTRY
               field_mapping:
-                Amount: packet.Amount
-                ID: packet.ITID
-                Identified: packet.IsIdentified
-                NameID: packet.ITID2
-                Subx: packet.SubX
-                Suby: packet.SubY
-                X: packet.XPos
-                "Y": packet.YPos
+                Amount: packet.amount
+                ID: uint32(packet.itemId)
+                Identified: packet.identify
+                NameID: uint16(0)
+                Subx: packet.subX
+                Suby: packet.subY
+                X: packet.x
+                "Y": packet.y
     item_pickup:
         name: item_pickup
         description: Item added to inventory
@@ -35544,11 +35550,11 @@ semantic_actions:
                 - 20181120
               struct_name: PACKET_ZC_ITEM_PICKUP_ACK
               field_mapping:
-                Amount: packet.Count
+                Amount: packet.count
                 Index: packet.Index
                 IsIdentified: packet.IsIdentified != 0
-                ItemID: uint32(packet.Nameid)
-                Result: packet.Result
+                ItemID: uint32(packet.nameid)
+                Result: packet.result
             - packet_id: "0x0A37"
               packetver_range:
                 - 20150226
@@ -35730,7 +35736,7 @@ semantic_actions:
               type: '*uint16'
               semantic: Font setting (PACKETVER >= 20080102)
             - name: Coords
-              type: '[]byte'
+              type: '[3]byte'
               semantic: 3-byte packed position and direction
             - name: SyncMapSync
               type: '*uint32'
@@ -35748,7 +35754,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACCEPT_ENTER
               field_mapping:
-                Coords: packet.PosDir[:]
+                Coords: '[3]byte(packet.PosDir[:])'
                 Font: '&packet.Font'
                 SyncMapSync: '&packet.StartTime'
                 XSize: '&packet.XSize'
@@ -35815,7 +35821,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_NPC_MARKET_PURCHASE
               field_mapping:
-                ItemList: packet.List
+                ItemList: packet.list
     master_login:
         name: master_login
         description: Login authentication packet (client → auth server)
@@ -35863,7 +35869,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_ZC_HP_INFO
+              struct_name: packet_monster_hp
               field_mapping:
                 actorID: packet.GID
                 currentHP: packet.HP
@@ -35898,12 +35904,12 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ATTACK_FAILURE_FOR_DISTANCE
               field_mapping:
-                ID: packet.TargetAID
-                Range: packet.CurrentAttRange
-                SourceX: packet.TargetXPos
-                SourceY: packet.TargetYPos
-                TargetX: packet.XPos
-                TargetY: packet.YPos
+                ID: packet.targetAID
+                Range: packet.currentAttRange
+                SourceX: packet.targetXPos
+                SourceY: packet.targetYPos
+                TargetX: packet.xPos
+                TargetY: packet.yPos
     move_from_storage:
         name: move_from_storage
         description: Move item from storage to inventory
@@ -35930,23 +35936,23 @@ semantic_actions:
         openkore_name: move_to
         canonical_params:
             - name: Coords
-              type: '[]byte'
+              type: '[3]byte'
               semantic: 'Packed destination coordinates (3 bytes: x, y, direction)'
         implementations:
             - packet_id: "0x0085"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_CZ_REQUEST_MOVE
+              struct_name: SYNTH_CZ_REQUEST_MOVE
               field_mapping:
-                Coords: '[]byte(packet.Dest)'
+                Coords: '[3]byte(packet.PosDir[:])'
             - packet_id: "0x0437"
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_CZ_REQUEST_MOVE2
+              struct_name: SYNTH_CZ_REQUEST_MOVE2
               field_mapping:
-                Coords: packet.Dest[:]
+                Coords: '[3]byte(packet.dest[:])'
     move_to_storage:
         name: move_to_storage
         description: Move item from inventory to storage
@@ -35965,8 +35971,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
               field_mapping:
-                Amount: packet.Amount
-                Index: packet.Index
+                Amount: packet.amount
+                Index: packet.index
     notify_actor_init:
         name: notify_actor_init
         description: Notify server that client actor is initialized and ready
@@ -35998,7 +36004,7 @@ semantic_actions:
               struct_name: PACKET_CZ_CONTACTNPC
               field_mapping:
                 NPCID: packet.AID
-                Type: packet.Type
+                Type: packet.type
     npc_menu_response:
         name: npc_menu_response
         description: Respond to NPC menu selection
@@ -36040,9 +36046,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PC_PURCHASE_ITEMLIST
               field_mapping:
-                ItemList: func() []byte { var buf []byte; for _, item := range packet.Items { if itemBytes, err := item.ToPacket(0); err == nil { buf = append(buf, itemBytes[2:]...) }; }; return buf }()
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                ItemList: func() []byte { var buf []byte; for _, item := range packet.items { if itemBytes, err := item.ToPacket(0); err == nil { buf = append(buf, itemBytes[2:]...) }; }; return buf }()
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     npc_talk_close:
         name: npc_talk_close
         description: Close NPC dialog
@@ -36194,10 +36200,10 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - null
-              struct_name: PACKET_ZC_PETEGG_LIST
+              struct_name: SYNTH_ZC_PETEGG_LIST
               field_mapping:
                 Eggs: func() []byte { var result []byte; for _, egg := range packet.Eggs { result = append(result, egg...) }; return result }()
-                InventoryIndices: packet.Eggs
+                InventoryIndices: packet.eggs
     pet_info:
         name: pet_info
         description: Pet status information (hunger, intimacy, level)
@@ -36229,11 +36235,11 @@ semantic_actions:
               struct_name: PACKET_ZC_PROPERTY_PET
               field_mapping:
                 Accessory: packet.ITID
-                Friendly: packet.NRelationship
-                Hungry: packet.NFullness
-                Level: packet.NLevel
+                Friendly: packet.nRelationship
+                Hungry: packet.nFullness
+                Level: packet.nLevel
                 PacketType: packet.PacketType
-                Type: packet.BModified
+                Type: packet.bModified
     pickup_item:
         name: pickup_item
         description: Pick up an item from the ground
@@ -36417,15 +36423,7 @@ semantic_actions:
             - name: QuestID
               type: uint32
               semantic: Quest ID
-        implementations:
-            - packet_id: "0x02B3"
-              packetver_range:
-                - 20030000
-                - null
-              struct_name: PACKET_ZC_QUEST_NOTIFY_EFFECT
-              field_mapping:
-                Active: packet.Active
-                QuestID: packet.QuestID
+        implementations: []
     received_character_ID_and_Map:
         name: received_character_ID_and_Map
         description: Map server connection info after character selection
@@ -36819,7 +36817,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_PC_PURCHASE_ITEMLIST
               field_mapping:
-                ItemList: packet.ItemList
+                ItemList: packet.items
     shop_sell:
         name: shop_sell
         description: Sell items to NPC shop
@@ -36851,7 +36849,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ADD_SKILL
               field_mapping:
-                Skill: serialization.SerializeSKILLDATA(packet.Skill)
+                Skill: serialization.SerializeSKILLDATA(packet.skill)
     skill_cast:
         name: skill_cast
         description: Skill cast bar display - notifies skill casting has begun
@@ -36888,14 +36886,14 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping:
-                SkillID: packet.SkillID
-                SourceID: packet.SourceID
-                TargetID: packet.TargetID
-                Type: packet.DelayTime
-                Unknown: packet.Element
+                SkillID: packet.skillId
+                SourceID: packet.srcId
+                TargetID: packet.dstId
+                Type: packet.delayTime
+                Unknown: packet.element
                 Wait: "0"
-                X: packet.X
-                "Y": packet.Y
+                X: packet.x
+                "Y": packet.y
     skill_delete:
         name: skill_delete
         description: Remove skill from skill list
@@ -37093,11 +37091,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_TOUSESKILL
               field_mapping:
-                Btype: packet.Btype
-                Cause: packet.Cause
-                Flag: packet.Flag
-                ItemId: packet.ItemId
-                SkillID: packet.SkillId
+                Btype: packet.btype
+                Cause: packet.cause
+                Flag: packet.flag
+                ItemId: packet.itemId
+                SkillID: packet.skillId
     skill_use_location:
         name: skill_use_location
         description: Use skill on ground location (area skills)
@@ -37153,11 +37151,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_USE_SKILL
               field_mapping:
-                Amount: packet.Level
+                Amount: packet.level
                 SkillID: packet.SKID
-                SourceID: packet.SourceID
-                Success: packet.Result
-                TargetID: packet.TargetID
+                SourceID: packet.srcAID
+                Success: packet.result
+                TargetID: packet.targetAID
     skills_list:
         name: skills_list
         description: Complete list of character skills
@@ -37173,7 +37171,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SKILLINFO_LIST
               field_mapping:
-                Skills: packet.Skills[:]
+                Skills: packet.skills[:]
     stat_update:
         name: stat_update
         description: Character stat value updated
@@ -37192,32 +37190,32 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PAR_CHANGE
               field_mapping:
-                StatType: packet.VarID
-                Value: uint32(packet.Count)
+                StatType: packet.varID
+                Value: uint32(packet.count)
             - packet_id: "0x00B1"
               packetver_range:
                 - 20030000
                 - null
               struct_name: PACKET_ZC_LONGPAR_CHANGE
               field_mapping:
-                StatType: packet.VarID
-                Value: uint32(packet.Amount)
+                StatType: packet.varID
+                Value: uint32(packet.amount)
             - packet_id: "0x00BE"
               packetver_range:
                 - 20030000
                 - null
               struct_name: PACKET_ZC_STATUS_CHANGE
               field_mapping:
-                StatType: packet.StatusID
-                Value: uint32(packet.Value)
+                StatType: packet.statusID
+                Value: uint32(packet.value)
             - packet_id: "0x0B25"
               packetver_range:
                 - 20030000
                 - null
               struct_name: PACKET_ZC_LONGLONGPAR_CHANGE
               field_mapping:
-                StatType: packet.VarID
-                Value: uint32(packet.Amount)
+                StatType: packet.varID
+                Value: uint32(packet.amount)
     storage_item_add:
         name: storage_item_add
         description: Move item from inventory to storage
@@ -37430,9 +37428,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_STORE_ENTRY
               field_mapping:
-                ID: packet.MakerAID
-                PacketType: packet.PacketType
-                Title: strings.TrimRight(packet.StoreName, "\x00")
+                ID: packet.makerAID
+                PacketType: packet.packetType
+                Title: strings.TrimRight(packet.storeName, "\x00")
     whisper_sent:
         name: whisper_sent
         description: Whisper send acknowledgment
@@ -37572,19 +37570,19 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_ADD_ITEM_RODEX
               field_mapping:
-                Count: packet.Count
-                Favorite: packet.Favorite
-                Index: packet.Index
+                Count: packet.count
+                Favorite: packet.favorite
+                Index: packet.index
                 IsDamaged: packet.IsDamaged
                 IsIdentified: packet.IsIdentified
-                ItemId: packet.ItemId
-                Location: packet.Location
+                ItemId: packet.itemId
+                Location: packet.location
                 PacketType: packet.PacketType
-                RefiningLevel: packet.RefiningLevel
-                Result: packet.Result
-                Slot: serialization.SerializeEQUIPSLOTINFO(packet.Slot)
-                Type: packet.Type
-                Weight: packet.Weight
+                RefiningLevel: packet.refiningLevel
+                Result: packet.result
+                Slot: serialization.SerializeEQUIPSLOTINFO(packet.slot)
+                Type: packet.type
+                Weight: packet.weight
     zc_ack_additem_to_cart:
         name: zc_ack_additem_to_cart
         description: ZC_ACK_ADDITEM_TO_CART packet (PACKET_ZC_ACK_ADDITEM_TO_CART)
@@ -37671,8 +37669,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_CLOSE_ROULETTE
               field_mapping:
-                PacketType: packet.PacketType
-                Result: packet.Result
+                PacketType: packet.packetType
+                Result: packet.result
     zc_ack_count_bargain_sale_item:
         name: zc_ack_count_bargain_sale_item
         description: ZC_ACK_COUNT_BARGAIN_SALE_ITEM packet (PACKET_ZC_ACK_COUNT_BARGAIN_SALE_ITEM)
@@ -37743,8 +37741,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_EXTEND_BODYITEM_SIZE
               field_mapping:
-                PacketType: packet.PacketType
-                Result: packet.Result
+                PacketType: packet.packetType
+                Result: packet.result
     zc_ack_guildstorage_log:
         name: zc_ack_guildstorage_log
         description: ZC_ACK_GUILDSTORAGE_LOG packet (PACKET_ZC_ACK_GUILDSTORAGE_LOG)
@@ -37876,7 +37874,7 @@ semantic_actions:
               struct_name: PACKET_ZC_ACK_MAKE_GROUP
               field_mapping:
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
     zc_ack_merge_item:
         name: zc_ack_merge_item
         description: ZC_ACK_MERGE_ITEM packet (PACKET_ZC_ACK_MERGE_ITEM)
@@ -37901,10 +37899,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_MERGE_ITEM
               field_mapping:
-                Amount: packet.Amount
-                Index: packet.Index
-                PacketType: packet.PacketType
-                Reason: packet.Reason
+                Amount: packet.amount
+                Index: packet.index
+                PacketType: packet.packetType
+                Reason: packet.reason
     zc_ack_open_msgbox_extend_bodyitem_size:
         name: zc_ack_open_msgbox_extend_bodyitem_size
         description: ZC_ACK_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE packet (PACKET_ZC_ACK_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE)
@@ -37926,9 +37924,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE
               field_mapping:
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
-                Result: packet.Result
+                ItemId: packet.itemId
+                PacketType: packet.packetType
+                Result: packet.result
     zc_ack_openstore2:
         name: zc_ack_openstore2
         description: ZC_ACK_OPENSTORE2 packet (PACKET_ZC_ACK_OPENSTORE2)
@@ -37990,7 +37988,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_PREVIEW_MACRO_DETECTOR
               field_mapping:
-                CaptchaKey: '[]byte{packet.CaptchaKey}'
+                CaptchaKey: '[]byte{packet.captchaKey}'
                 ImageSize: packet.imageSize
                 PacketType: packet.PacketType
     zc_ack_random_combine_item:
@@ -38011,8 +38009,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_RANDOM_COMBINE_ITEM
               field_mapping:
-                PacketType: packet.PacketType
-                Result: packet.Result
+                PacketType: packet.packetType
+                Result: packet.result
     zc_ack_random_upgrade_item:
         name: zc_ack_random_upgrade_item
         description: ZC_ACK_RANDOM_UPGRADE_ITEM packet (PACKET_ZC_ACK_RANDOM_UPGRADE_ITEM)
@@ -38031,8 +38029,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_RANDOM_UPGRADE_ITEM
               field_mapping:
-                PacketType: packet.PacketType
-                Result: packet.Result
+                PacketType: packet.packetType
+                Result: packet.result
     zc_ack_ranking:
         name: zc_ack_ranking
         description: ZC_ACK_RANKING packet (PACKET_ZC_ACK_RANKING)
@@ -38155,8 +38153,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_REQNAMEALL
               field_mapping:
-                Gid: packet.Gid
-                Packet_id: packet.Packet_id
+                Gid: packet.gid
+                Packet_id: packet.packet_id
     zc_ack_reqnameall_npc:
         name: zc_ack_reqnameall_npc
         description: ZC_ACK_REQNAMEALL_NPC packet (PACKET_ZC_ACK_REQNAMEALL_NPC)
@@ -38175,8 +38173,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_REQNAMEALL_NPC
               field_mapping:
-                ID: uint32(packet.Gid)
-                Name: strings.TrimRight(string(packet.Name[:]), "\x00")
+                ID: uint32(packet.gid)
+                Name: strings.TrimRight(string(packet.name[:]), "\x00")
     zc_ack_se_cash_item_list2:
         name: zc_ack_se_cash_item_list2
         description: ZC_ACK_SE_CASH_ITEM_LIST2 packet (PACKET_ZC_ACK_SE_CASH_ITEM_LIST2)
@@ -38233,7 +38231,7 @@ semantic_actions:
               struct_name: PACKET_ZC_ACK_TAKEOFF_EQUIP_ALL
               field_mapping:
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
     zc_ack_upload_macro_detector:
         name: zc_ack_upload_macro_detector
         description: ZC_ACK_UPLOAD_MACRO_DETECTOR packet (PACKET_ZC_ACK_UPLOAD_MACRO_DETECTOR)
@@ -38252,7 +38250,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_UPLOAD_MACRO_DETECTOR
               field_mapping:
-                CaptchaKey: '[]byte{packet.CaptchaKey}'
+                CaptchaKey: '[]byte{packet.captchaKey}'
                 PacketType: packet.PacketType
     zc_action_failure:
         name: zc_action_failure
@@ -38312,14 +38310,14 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ADD_ITEM_TO_CART
               field_mapping:
-                Amount: packet.Amount
-                Damaged: packet.Damaged
-                Identified: packet.Identified
-                Index: packet.Index
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
-                Refine: packet.Refine
-                Slot: serialization.SerializeEQUIPSLOTINFO(packet.Slot)
+                Amount: packet.amount
+                Damaged: packet.damaged
+                Identified: packet.identified
+                Index: packet.index
+                ItemId: packet.itemId
+                PacketType: packet.packetType
+                Refine: packet.refine
+                Slot: serialization.SerializeEQUIPSLOTINFO(packet.slot)
     zc_add_item_to_store:
         name: zc_add_item_to_store
         description: ZC_ADD_ITEM_TO_STORE packet (PACKET_ZC_ADD_ITEM_TO_STORE)
@@ -38356,14 +38354,14 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ADD_ITEM_TO_STORE
               field_mapping:
-                Amount: packet.Amount
-                Damaged: packet.Damaged
-                Identified: packet.Identified
-                Index: packet.Index
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
-                Refine: packet.Refine
-                Slot: serialization.SerializeEQUIPSLOTINFO(packet.Slot)
+                Amount: packet.amount
+                Damaged: packet.damaged
+                Identified: packet.identified
+                Index: packet.index
+                ItemId: packet.itemId
+                PacketType: packet.packetType
+                Refine: packet.refine
+                Slot: serialization.SerializeEQUIPSLOTINFO(packet.slot)
     zc_adventurer_agency_join_req:
         name: zc_adventurer_agency_join_req
         description: ZC_ADVENTURER_AGENCY_JOIN_REQ packet (PACKET_ZC_ADVENTURER_AGENCY_JOIN_REQ)
@@ -38385,9 +38383,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ADVENTURER_AGENCY_JOIN_REQ
               field_mapping:
-                Job: packet.Job
-                Level: packet.Level
-                PacketType: packet.PacketType
+                Job: packet.job
+                Level: packet.level
+                PacketType: packet.packetType
     zc_adventurer_agency_join_result:
         name: zc_adventurer_agency_join_result
         description: ZC_ADVENTURER_AGENCY_JOIN_RESULT packet (PACKET_ZC_ADVENTURER_AGENCY_JOIN_RESULT)
@@ -38403,7 +38401,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ADVENTURER_AGENCY_JOIN_RESULT
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     zc_apply_macro_detector:
         name: zc_apply_macro_detector
         description: ZC_APPLY_MACRO_DETECTOR packet (PACKET_ZC_APPLY_MACRO_DETECTOR)
@@ -38425,7 +38423,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_APPLY_MACRO_DETECTOR
               field_mapping:
-                CaptchaKey: '[]byte{packet.CaptchaKey}'
+                CaptchaKey: '[]byte{packet.captchaKey}'
                 ImageSize: packet.imageSize
                 PacketType: packet.PacketType
     zc_apply_macro_detector_captcha:
@@ -38541,8 +38539,8 @@ semantic_actions:
               struct_name: PACKET_ZC_BATTLEFIELD_NOTIFY_HP
               field_mapping:
                 AID: packet.AID
-                Hp: packet.Hp
-                Maxhp: packet.Maxhp
+                Hp: packet.hp
+                Maxhp: packet.maxhp
                 PacketType: packet.PacketType
     zc_boss_info:
         name: zc_boss_info
@@ -38628,10 +38626,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_BROADCAST_ITEMREFINING_RESULT
               field_mapping:
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
-                Refine_level: packet.Refine_level
-                Status: packet.Status
+                ItemId: packet.itemId
+                PacketType: packet.packetType
+                Refine_level: packet.refine_level
+                Status: packet.status
     zc_broadcast2:
         name: zc_broadcast2
         description: ZC_BROADCAST2 packet (PACKET_ZC_BROADCAST2)
@@ -38718,12 +38716,12 @@ semantic_actions:
               struct_name: PACKET_ZC_BROADCASTING_SPECIAL_ITEM_OBTAIN_item
               field_mapping:
                 BoxItemID: packet.BoxItemID
-                BoxItemID_len: packet.BoxItemID_len
+                BoxItemID_len: packet.boxItemID_len
                 ItemID: packet.ItemID
-                Len: packet.Len
+                Len: packet.len
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
-                Type: packet.Type
+                Type: packet.type
     zc_buying_store_entry:
         name: zc_buying_store_entry
         description: ZC_BUYING_STORE_ENTRY packet (PACKET_ZC_BUYING_STORE_ENTRY)
@@ -38742,8 +38740,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_BUYING_STORE_ENTRY
               field_mapping:
-                MakerAID: packet.MakerAID
-                PacketType: packet.PacketType
+                MakerAID: packet.makerAID
+                PacketType: packet.packetType
     zc_c_markerinfo:
         name: zc_c_markerinfo
         description: ZC_C_MARKERINFO packet (PACKET_ZC_C_MARKERINFO)
@@ -38770,8 +38768,8 @@ semantic_actions:
               field_mapping:
                 AID: packet.AID
                 PacketType: packet.PacketType
-                XPos: packet.XPos
-                YPos: packet.YPos
+                XPos: packet.xPos
+                YPos: packet.yPos
     zc_cancel_exchange_item:
         name: zc_cancel_exchange_item
         description: ZC_CANCEL_EXCHANGE_ITEM packet (PACKET_ZC_CANCEL_EXCHANGE_ITEM)
@@ -38831,9 +38829,9 @@ semantic_actions:
               struct_name: PACKET_ZC_CHANGE_GUILD
               field_mapping:
                 AID: packet.AID
-                Emblem_id: packet.Emblem_id
-                Guild_id: packet.Guild_id
-                PacketType: packet.PacketType
+                Emblem_id: packet.emblem_id
+                Guild_id: packet.guild_id
+                PacketType: packet.packetType
     zc_change_item_option:
         name: zc_change_item_option
         description: ZC_CHANGE_ITEM_OPTION packet (PACKET_ZC_CHANGE_ITEM_OPTION)
@@ -38858,10 +38856,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_CHANGE_ITEM_OPTION
               field_mapping:
-                Index: packet.Index
-                PacketType: packet.PacketType
-                RefiningLevel: packet.RefiningLevel
-                Slot: serialization.SerializeEQUIPSLOTINFO(packet.Slot)
+                Index: packet.index
+                PacketType: packet.packetType
+                RefiningLevel: packet.refiningLevel
+                Slot: serialization.SerializeEQUIPSLOTINFO(packet.slot)
     zc_changestate_pet:
         name: zc_changestate_pet
         description: ZC_CHANGESTATE_PET packet (PACKET_ZC_CHANGESTATE_PET)
@@ -39135,9 +39133,9 @@ semantic_actions:
               struct_name: PACKET_ZC_COUPLESTATUS
               field_mapping:
                 PacketType: packet.PacketType
-                Type: packet.StatusType
-                Val: packet.DefaultStatus
-                Val2: packet.PlusStatus
+                Type: packet.statusType
+                Val: packet.defaultStatus
+                Val2: packet.plusStatus
     zc_debugmsg:
         name: zc_debugmsg
         description: ZC_DEBUGMSG packet (PACKET_ZC_DEBUGMSG)
@@ -39267,7 +39265,7 @@ semantic_actions:
               struct_name: PACKET_ZC_DELETE_MEMBER_FROM_GROUP
               field_mapping:
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
                 accountID: packet.AID
                 characterName: string(packet.name[:])
                 result: packet.result
@@ -39316,7 +39314,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_DIALOG_TEXT_ALIGN
               field_mapping:
-                Align: packet.Align
+                Align: packet.align
                 PacketType: packet.PacketType
     zc_dialog_window_pos:
         name: zc_dialog_window_pos
@@ -39384,8 +39382,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_DISAPPEAR_BUYING_STORE_ENTRY
               field_mapping:
-                MakerAID: packet.MakerAID
-                PacketType: packet.PacketType
+                MakerAID: packet.makerAID
+                PacketType: packet.packetType
     zc_dynamicnpc_create_result:
         name: zc_dynamicnpc_create_result
         description: ZC_DYNAMICNPC_CREATE_RESULT packet (PACKET_ZC_DYNAMICNPC_CREATE_RESULT)
@@ -39405,7 +39403,7 @@ semantic_actions:
               struct_name: PACKET_ZC_DYNAMICNPC_CREATE_RESULT
               field_mapping:
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
     zc_entry_queue_init:
         name: zc_entry_queue_init
         description: ZC_ENTRY_QUEUE_INIT packet (PACKET_ZC_ENTRY_QUEUE_INIT)
@@ -39486,11 +39484,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_EQUIPMENT_EFFECT
               field_mapping:
-                Aid: packet.Aid
-                Effects: packet.Effects[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
-                Status: packet.Status
+                Aid: packet.aid
+                Effects: packet.effects[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
+                Status: packet.status
     zc_equipwin_microscope:
         name: zc_equipwin_microscope
         description: ZC_EQUIPWIN_MICROSCOPE packet (PACKET_ZC_EQUIPWIN_MICROSCOPE)
@@ -39536,17 +39534,17 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
               field_mapping:
-                Accessory: packet.Accessory
-                Accessory2: packet.Accessory2
-                Accessory3: packet.Accessory3
-                Bodypalette: packet.Bodypalette
-                Head: packet.Head
-                Headpalette: packet.Headpalette
-                Job: packet.Job
-                List: packet.List[:]
+                Accessory: packet.accessory
+                Accessory2: packet.accessory2
+                Accessory3: packet.accessory3
+                Bodypalette: packet.bodypalette
+                Head: packet.head
+                Headpalette: packet.headpalette
+                Job: packet.job
+                List: packet.list[:]
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
-                Sex: packet.Sex
+                Sex: packet.sex
     zc_exchangeitem_undo:
         name: zc_exchangeitem_undo
         description: ZC_EXCHANGEITEM_UNDO packet (PACKET_ZC_EXCHANGEITEM_UNDO)
@@ -39598,8 +39596,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_EXTEND_BODYITEM_SIZE
               field_mapping:
-                ExpansionSize: packet.ExpansionSize
-                PacketType: packet.PacketType
+                ExpansionSize: packet.expansionSize
+                PacketType: packet.packetType
     zc_friends_list:
         name: zc_friends_list
         description: ZC_FRIENDS_LIST packet (PACKET_ZC_FRIENDS_LIST)
@@ -39654,11 +39652,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GOLDPCCAFE_POINT
               field_mapping:
-                IsActive: packet.IsActive
-                Mode: packet.Mode
+                IsActive: packet.isActive
+                Mode: packet.mode
                 PacketType: packet.PacketType
-                PlayedTime: packet.PlayedTime
-                Point: packet.Point
+                PlayedTime: packet.playedTime
+                Point: packet.point
     zc_grade_enchant_ack:
         name: zc_grade_enchant_ack
         description: ZC_GRADE_ENCHANT_ACK packet (PACKET_ZC_GRADE_ENCHANT_ACK)
@@ -39680,8 +39678,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GRADE_ENCHANT_ACK
               field_mapping:
-                Grade: packet.Grade
-                Index: packet.Index
+                Grade: packet.grade
+                Index: packet.index
                 PacketType: packet.PacketType
     zc_grade_enchant_broadcast_result:
         name: zc_grade_enchant_broadcast_result
@@ -39707,10 +39705,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GRADE_ENCHANT_BROADCAST_RESULT
               field_mapping:
-                Grade: packet.Grade
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
-                Status: packet.Status
+                Grade: packet.grade
+                ItemId: packet.itemId
+                PacketType: packet.packetType
+                Status: packet.status
     zc_grade_enchant_material_list:
         name: zc_grade_enchant_material_list
         description: ZC_GRADE_ENCHANT_MATERIAL_LIST packet (PACKET_ZC_GRADE_ENCHANT_MATERIAL_LIST)
@@ -39776,9 +39774,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GUILD_AGIT_INFO
               field_mapping:
-                Castle_list: packet.Castle_list[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                Castle_list: packet.castle_list[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_guild_emblem_img:
         name: zc_guild_emblem_img
         description: ZC_GUILD_EMBLEM_IMG packet (PACKET_ZC_GUILD_EMBLEM_IMG)
@@ -39806,11 +39804,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GUILD_EMBLEM_IMG
               field_mapping:
-                Emblem_data: packet.Emblem_data
-                Emblem_id: packet.Emblem_id
-                Guild_id: packet.Guild_id
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                Emblem_data: packet.emblem_data
+                Emblem_id: packet.emblem_id
+                Guild_id: packet.guild_id
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_guild_info:
         name: zc_guild_info
         description: ZC_GUILD_INFO packet (PACKET_ZC_GUILD_INFO)
@@ -39868,21 +39866,21 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GUILD_INFO
               field_mapping:
-                Average: packet.UserAverageLevel
-                Castle: strings.TrimRight(packet.ManageLand, "\x00")
-                ConMember: packet.UserNum
-                Emblem: packet.EmblemVersion
-                Exp: packet.Exp
+                Average: packet.userAverageLevel
+                Castle: strings.TrimRight(packet.manageLand, "\x00")
+                ConMember: packet.userNum
+                Emblem: packet.emblemVersion
+                Exp: packet.exp
                 GuildID: packet.GDID
-                Honor: packet.Honor
-                Level: packet.Level
-                Master: packet.MasterGID
-                MaxMember: packet.MaxUserNum
-                Name: strings.TrimRight(packet.Guildname, "\x00")
-                Next_exp: packet.MaxExp
-                Points: packet.Point
-                Virtue: packet.Virtue
-                Zeny: packet.Zeny
+                Honor: packet.honor
+                Level: packet.level
+                Master: packet.masterGID
+                MaxMember: packet.maxUserNum
+                Name: strings.TrimRight(packet.guildname, "\x00")
+                Next_exp: packet.maxExp
+                Points: packet.point
+                Virtue: packet.virtue
+                Zeny: packet.zeny
     zc_guild_notice:
         name: zc_guild_notice
         description: ZC_GUILD_NOTICE packet (PACKET_ZC_GUILD_NOTICE)
@@ -39929,8 +39927,8 @@ semantic_actions:
               field_mapping:
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
-                SkillInfo: packet.SkillInfo[:]
-                SkillPoint: packet.SkillPoint
+                SkillInfo: packet.skillInfo[:]
+                SkillPoint: packet.skillPoint
     zc_hoskillinfo_list:
         name: zc_hoskillinfo_list
         description: ZC_HOSKILLINFO_LIST packet (PACKET_ZC_HOSKILLINFO_LIST)
@@ -40021,9 +40019,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_INVENTORY_END
               field_mapping:
-                Flag: packet.Flag
-                InvType: packet.InvType
-                PacketType: packet.PacketType
+                Flag: packet.flag
+                InvType: packet.invType
+                PacketType: packet.packetType
     zc_inventory_start:
         name: zc_inventory_start
         description: ZC_INVENTORY_START packet (PACKET_ZC_INVENTORY_START)
@@ -40048,10 +40046,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_INVENTORY_START
               field_mapping:
-                InvType: packet.InvType
-                Name: packet.Name
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                InvType: packet.invType
+                Name: packet.name
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_inventory_tab:
         name: zc_inventory_tab
         description: ZC_INVENTORY_TAB packet (PACKET_ZC_INVENTORY_TAB)
@@ -40135,14 +40133,14 @@ semantic_actions:
               struct_name: PACKET_ZC_ITEM_PICKUP_PARTY
               field_mapping:
                 AID: packet.AID
-                Damaged: packet.Damaged
-                Identified: packet.Identified
-                ItemId: packet.ItemId
-                ItemType: packet.ItemType
-                Location: packet.Location
-                PacketType: packet.PacketType
-                Refine: packet.Refine
-                Slot: serialization.SerializeEQUIPSLOTINFO(packet.Slot)
+                Damaged: packet.damaged
+                Identified: packet.identified
+                ItemId: packet.itemId
+                ItemType: packet.itemType
+                Location: packet.location
+                PacketType: packet.packetType
+                Refine: packet.refine
+                Slot: serialization.SerializeEQUIPSLOTINFO(packet.slot)
     zc_item_reform_ack:
         name: zc_item_reform_ack
         description: ZC_ITEM_REFORM_ACK packet (PACKET_ZC_ITEM_REFORM_ACK)
@@ -40164,9 +40162,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ITEM_REFORM_ACK
               field_mapping:
-                Index: packet.Index
+                Index: packet.index
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
     zc_item_throw_ack:
         name: zc_item_throw_ack
         description: ZC_ITEM_THROW_ACK packet (PACKET_ZC_ITEM_THROW_ACK)
@@ -40209,8 +40207,8 @@ semantic_actions:
               struct_name: PACKET_ZC_LONGLONGPAR_CHANGE
               field_mapping:
                 PacketType: packet.PacketType
-                Type: packet.VarID
-                Val: packet.Amount
+                Type: packet.varID
+                Val: packet.amount
     zc_makingarrow_list:
         name: zc_makingarrow_list
         description: ZC_MAKINGARROW_LIST packet (PACKET_ZC_MAKINGARROW_LIST)
@@ -40259,10 +40257,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_MAKINGITEM_LIST
               field_mapping:
-                Items: packet.Items[:]
-                MakeItem: packet.MakeItem
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                Items: packet.items[:]
+                MakeItem: packet.makeItem
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_membermgr_info:
         name: zc_membermgr_info
         description: ZC_MEMBERMGR_INFO packet (PACKET_ZC_MEMBERMGR_INFO)
@@ -40328,9 +40326,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_MERGE_ITEM_OPEN
               field_mapping:
-                Items: packet.Items[:]
-                PacketLen: packet.PacketLen
-                PacketType: packet.PacketType
+                Items: packet.items[:]
+                PacketLen: packet.packetLen
+                PacketType: packet.packetType
     zc_millenniumshield:
         name: zc_millenniumshield
         description: ZC_MILLENNIUMSHIELD packet (PACKET_ZC_MILLENNIUMSHIELD)
@@ -40412,9 +40410,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_MOVE_ITEM_FAILED
               field_mapping:
-                ItemCount: packet.ItemCount
-                ItemIndex: packet.ItemIndex
-                PacketType: packet.PacketType
+                ItemCount: packet.itemCount
+                ItemIndex: packet.itemIndex
+                PacketType: packet.packetType
     zc_myguild_basic_info:
         name: zc_myguild_basic_info
         description: ZC_MYGUILD_BASIC_INFO packet (PACKET_ZC_MYGUILD_BASIC_INFO)
@@ -40438,7 +40436,7 @@ semantic_actions:
               field_mapping:
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
-                RgInfo: packet.RgInfo[:]
+                RgInfo: packet.rgInfo[:]
     zc_notify_actorinit:
         name: zc_notify_actorinit
         description: ZC_NOTIFY_ACTORINIT packet (PACKET_ZC_NOTIFY_ACTORINIT)
@@ -40454,7 +40452,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_ACTORINIT
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     zc_notify_bargain_sale_close:
         name: zc_notify_bargain_sale_close
         description: ZC_NOTIFY_BARGAIN_SALE_CLOSE packet (PACKET_ZC_NOTIFY_BARGAIN_SALE_CLOSE)
@@ -40522,10 +40520,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_CARTITEM_COUNTINFO
               field_mapping:
-                CurCount: packet.CurCount
-                CurWeight: packet.CurWeight
-                MaxCount: packet.MaxCount
-                MaxWeight: packet.MaxWeight
+                CurCount: packet.curCount
+                CurWeight: packet.curWeight
+                MaxCount: packet.maxCount
+                MaxWeight: packet.maxWeight
                 PacketType: packet.PacketType
     zc_notify_chat_party:
         name: zc_notify_chat_party
@@ -40599,10 +40597,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_EFFECT3
               field_mapping:
-                Aid: packet.Aid
-                EffectId: packet.EffectId
-                Num: packet.Num
-                PacketType: packet.PacketType
+                Aid: packet.aid
+                EffectId: packet.effectId
+                Num: packet.num
+                PacketType: packet.packetType
     zc_notify_groundskill:
         name: zc_notify_groundskill
         description: ZC_NOTIFY_GROUNDSKILL packet (PACKET_ZC_NOTIFY_GROUNDSKILL)
@@ -40637,12 +40635,12 @@ semantic_actions:
               struct_name: PACKET_ZC_NOTIFY_GROUNDSKILL
               field_mapping:
                 AID: packet.AID
-                Level: packet.Level
+                Level: packet.level
                 PacketType: packet.PacketType
                 SKID: packet.SKID
-                StartTime: packet.StartTime
-                XPos: packet.XPos
-                YPos: packet.YPos
+                StartTime: packet.startTime
+                XPos: packet.xPos
+                YPos: packet.yPos
     zc_notify_hp_to_groupm:
         name: zc_notify_hp_to_groupm
         description: Notify party member HP information
@@ -40665,8 +40663,8 @@ semantic_actions:
               struct_name: PACKET_ZC_NOTIFY_HP_TO_GROUPM
               field_mapping:
                 AID: packet.AID
-                Hp: packet.Hp
-                Maxhp: packet.Maxhp
+                Hp: packet.hp
+                Maxhp: packet.maxhp
                 PacketType: packet.PacketType
                 accountID: packet.AID
                 hp: packet.hp
@@ -40718,8 +40716,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_MEMBERINFO_TO_GROUPM
               field_mapping:
-                Job: packet.Job
-                Level: packet.Level
+                Job: packet.job
+                Level: packet.level
                 PacketType: packet.PacketType
     zc_notify_position_to_groupm:
         name: zc_notify_position_to_groupm
@@ -40744,8 +40742,8 @@ semantic_actions:
               field_mapping:
                 AID: packet.AID
                 PacketType: packet.PacketType
-                XPos: packet.XPos
-                YPos: packet.YPos
+                XPos: packet.xPos
+                YPos: packet.yPos
                 accountID: packet.AID
                 x: packet.xPos
                 "y": packet.yPos
@@ -40814,9 +40812,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NPC_BARTER_MARKET_ITEMINFO
               field_mapping:
-                List: packet.List[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                List: packet.list[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_npc_market_open:
         name: zc_npc_market_open
         description: ZC_NPC_MARKET_OPEN packet (PACKET_ZC_NPC_MARKET_OPEN)
@@ -40865,10 +40863,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NPC_MARKET_PURCHASE_RESULT
               field_mapping:
-                List: packet.List[:]
+                List: packet.list[:]
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
     zc_npc_showefst_update:
         name: zc_npc_showefst_update
         description: ZC_NPC_SHOWEFST_UPDATE packet (PACKET_ZC_NPC_SHOWEFST_UPDATE)
@@ -40961,7 +40959,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_OPEN_REFINING_UI
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     zc_open_reform_ui:
         name: zc_open_reform_ui
         description: ZC_OPEN_REFORM_UI packet (PACKET_ZC_OPEN_REFORM_UI)
@@ -41003,9 +41001,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_OPEN_SEARCH_STORE_INFO
               field_mapping:
-                Effect: packet.Effect
-                PacketType: packet.PacketType
-                RemainingUses: packet.RemainingUses
+                Effect: packet.effect
+                PacketType: packet.packetType
+                RemainingUses: packet.remainingUses
     zc_openstore:
         name: zc_openstore
         description: ZC_OPENSTORE packet (PACKET_ZC_OPENSTORE)
@@ -41064,8 +41062,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PARTY_CONFIG
               field_mapping:
-                DenyPartyInvites: packet.DenyPartyInvites
-                PacketType: packet.PacketType
+                DenyPartyInvites: packet.denyPartyInvites
+                PacketType: packet.packetType
     zc_pc_purchase_itemlist_frommc:
         name: zc_pc_purchase_itemlist_frommc
         description: ZC_PC_PURCHASE_ITEMLIST_FROMMC packet (PACKET_ZC_PC_PURCHASE_ITEMLIST_FROMMC)
@@ -41091,9 +41089,9 @@ semantic_actions:
               struct_name: PACKET_ZC_PC_PURCHASE_ITEMLIST_FROMMC
               field_mapping:
                 AID: packet.AID
-                Items: packet.Items[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                Items: packet.items[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_pc_purchase_myitemlist:
         name: zc_pc_purchase_myitemlist
         description: ZC_PC_PURCHASE_MYITEMLIST packet (PACKET_ZC_PC_PURCHASE_MYITEMLIST)
@@ -41119,9 +41117,9 @@ semantic_actions:
               struct_name: PACKET_ZC_PC_PURCHASE_MYITEMLIST
               field_mapping:
                 AID: packet.AID
-                Items: packet.Items[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                Items: packet.items[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_pc_purchase_result:
         name: zc_pc_purchase_result
         description: ZC_PC_PURCHASE_RESULT packet (PACKET_ZC_PC_PURCHASE_RESULT)
@@ -41225,7 +41223,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PING_LIVE
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     zc_play_npc_bgm:
         name: zc_play_npc_bgm
         description: ZC_PLAY_NPC_BGM packet (PACKET_ZC_PLAY_NPC_BGM)
@@ -41396,28 +41394,28 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PROPERTY_HOMUN
               field_mapping:
-                Amotion: packet.Amotion
-                Atk2: packet.Atk2
-                Crit: packet.Crit
-                Def: packet.Def
-                Exp: packet.Exp
-                ExpNext: packet.ExpNext
-                Flags: packet.Flags
-                Flee: packet.Flee
-                Hit: packet.Hit
-                Hp: packet.Hp
-                Hunger: packet.Hunger
-                Intimacy: packet.Intimacy
-                ItemId: packet.ItemId
-                Level: packet.Level
-                Matk: packet.Matk
-                MaxHp: packet.MaxHp
-                MaxSp: packet.MaxSp
-                Mdef: packet.Mdef
-                PacketType: packet.PacketType
-                Range: packet.Range
-                SkillPoints: packet.SkillPoints
-                Sp: packet.Sp
+                Amotion: packet.amotion
+                Atk2: packet.atk2
+                Crit: packet.crit
+                Def: packet.def
+                Exp: packet.exp
+                ExpNext: packet.expNext
+                Flags: packet.flags
+                Flee: packet.flee
+                Hit: packet.hit
+                Hp: packet.hp
+                Hunger: packet.hunger
+                Intimacy: packet.intimacy
+                ItemId: packet.itemId
+                Level: packet.level
+                Matk: packet.matk
+                MaxHp: packet.maxHp
+                MaxSp: packet.maxSp
+                Mdef: packet.mdef
+                PacketType: packet.packetType
+                Range: packet.range
+                SkillPoints: packet.skillPoints
+                Sp: packet.sp
     zc_random_combine_item_ui_open:
         name: zc_random_combine_item_ui_open
         description: ZC_RANDOM_COMBINE_ITEM_UI_OPEN packet (PACKET_ZC_RANDOM_COMBINE_ITEM_UI_OPEN)
@@ -41436,8 +41434,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_RANDOM_COMBINE_ITEM_UI_OPEN
               field_mapping:
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
+                ItemId: packet.itemId
+                PacketType: packet.packetType
     zc_random_upgrade_item_ui_open:
         name: zc_random_upgrade_item_ui_open
         description: ZC_RANDOM_UPGRADE_ITEM_UI_OPEN packet (PACKET_ZC_RANDOM_UPGRADE_ITEM_UI_OPEN)
@@ -41456,8 +41454,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_RANDOM_UPGRADE_ITEM_UI_OPEN
               field_mapping:
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
+                ItemId: packet.itemId
+                PacketType: packet.packetType
     zc_recovery:
         name: zc_recovery
         description: ZC_RECOVERY packet (PACKET_ZC_RECOVERY)
@@ -41544,9 +41542,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_REPAIRITEMLIST
               field_mapping:
-                Items: packet.Items[:]
-                PacketLength: packet.PacketLength
-                PacketType: packet.PacketType
+                Items: packet.items[:]
+                PacketLength: packet.packetLength
+                PacketType: packet.packetType
     zc_repute_info:
         name: zc_repute_info
         description: ZC_REPUTE_INFO packet (PACKET_ZC_REPUTE_INFO)
@@ -41607,8 +41605,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_REQ_ACK_MOVE_GUILD_AGIT
               field_mapping:
-                PacketType: packet.PacketType
-                Result: packet.Result
+                PacketType: packet.packetType
+                Result: packet.result
     zc_req_answer_macro_detector:
         name: zc_req_answer_macro_detector
         description: ZC_REQ_ANSWER_MACRO_DETECTOR packet (PACKET_ZC_REQ_ANSWER_MACRO_DETECTOR)
@@ -41628,7 +41626,7 @@ semantic_actions:
               struct_name: PACKET_ZC_REQ_ANSWER_MACRO_DETECTOR
               field_mapping:
                 PacketType: packet.PacketType
-                RetryCount: packet.RetryCount
+                RetryCount: packet.retryCount
     zc_req_join_guild:
         name: zc_req_join_guild
         description: ZC_REQ_JOIN_GUILD packet (PACKET_ZC_REQ_JOIN_GUILD)
@@ -41673,10 +41671,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_REQ_WEAR_EQUIP_ACK
               field_mapping:
-                Index: packet.Index
+                Index: packet.index
                 PacketType: packet.PacketType
-                Result: packet.Result
-                WearLocation: packet.WearLocation
+                Result: packet.result
+                WearLocation: packet.wearLocation
     zc_response_enchant:
         name: zc_response_enchant
         description: ZC_RESPONSE_ENCHANT packet (PACKET_ZC_RESPONSE_ENCHANT)
@@ -41699,7 +41697,7 @@ semantic_actions:
               struct_name: PACKET_ZC_RESPONSE_ENCHANT
               field_mapping:
                 ITID: packet.ITID
-                MsgId: packet.MsgId
+                MsgId: packet.msgId
                 PacketType: packet.PacketType
     zc_restart_ack:
         name: zc_restart_ack
@@ -41762,8 +41760,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ROLE_CHANGE
               field_mapping:
-                Flag: packet.Flag
-                PacketType: packet.PacketType
+                Flag: packet.flag
+                PacketType: packet.packetType
     zc_say_dialog:
         name: zc_say_dialog
         description: ZC_SAY_DIALOG packet (PACKET_ZC_SAY_DIALOG)
@@ -41788,7 +41786,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SAY_DIALOG
               field_mapping:
-                Message: packet.Message
+                Message: packet.message
                 NpcID: packet.NpcID
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
@@ -41813,9 +41811,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SE_CASHSHOP_OPEN
               field_mapping:
-                CashPoints: packet.CashPoints
-                KafraPoints: packet.KafraPoints
-                PacketType: packet.PacketType
+                CashPoints: packet.cashPoints
+                KafraPoints: packet.kafraPoints
+                PacketType: packet.packetType
     zc_se_pc_buy_cashitem_result:
         name: zc_se_pc_buy_cashitem_result
         description: ZC_SE_PC_BUY_CASHITEM_RESULT packet (PACKET_ZC_SE_PC_BUY_CASHITEM_RESULT)
@@ -41843,11 +41841,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SE_PC_BUY_CASHITEM_RESULT
               field_mapping:
-                CashPoints: packet.CashPoints
-                ItemId: packet.ItemId
-                KafraPoints: packet.KafraPoints
-                PacketType: packet.PacketType
-                Result: packet.Result
+                CashPoints: packet.cashPoints
+                ItemId: packet.itemId
+                KafraPoints: packet.kafraPoints
+                PacketType: packet.packetType
+                Result: packet.result
     zc_search_store_info_ack:
         name: zc_search_store_info_ack
         description: ZC_SEARCH_STORE_INFO_ACK packet (PACKET_ZC_SEARCH_STORE_INFO_ACK)
@@ -41902,8 +41900,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SEARCH_STORE_INFO_FAILED
               field_mapping:
-                PacketType: packet.PacketType
-                Reason: packet.Reason
+                PacketType: packet.packetType
+                Reason: packet.reason
     zc_select_dealtype:
         name: zc_select_dealtype
         description: ZC_SELECT_DEALTYPE packet (PACKET_ZC_SELECT_DEALTYPE)
@@ -41932,7 +41930,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SHORTCUT_KEY_LIST
               field_mapping:
-                PacketType: packet.PacketType
+                PacketType: packet.packetType
     zc_show_image:
         name: zc_show_image
         description: ZC_SHOW_IMAGE packet (PACKET_ZC_SHOW_IMAGE)
@@ -41954,7 +41952,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SHOW_IMAGE
               field_mapping:
-                Image: string(packet.Image)
+                Image: string(packet.image)
                 PacketType: packet.packetType
                 Type: packet.type
     zc_skill_disappear:
@@ -42047,13 +42045,13 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SKILLINFO_UPDATE2
               field_mapping:
-                Id: packet.Id
-                Inf: packet.Inf
-                Level: packet.Level
-                PacketType: packet.PacketType
-                Range2: packet.Range2
-                Sp: packet.Sp
-                UpFlag: packet.UpFlag
+                Id: packet.id
+                Inf: packet.inf
+                Level: packet.level
+                PacketType: packet.packetType
+                Range2: packet.range2
+                Sp: packet.sp
+                UpFlag: packet.upFlag
     zc_soulenergy:
         name: zc_soulenergy
         description: ZC_SOULENERGY packet (PACKET_ZC_SOULENERGY)
@@ -42076,7 +42074,7 @@ semantic_actions:
               struct_name: PACKET_ZC_SOULENERGY
               field_mapping:
                 AID: packet.AID
-                Num: packet.Num
+                Num: packet.num
                 PacketType: packet.PacketType
     zc_sound:
         name: zc_sound
@@ -42103,9 +42101,9 @@ semantic_actions:
               struct_name: PACKET_ZC_SOUND
               field_mapping:
                 AID: packet.AID
-                Act: packet.Act
+                Act: packet.act
                 PacketType: packet.PacketType
-                Term: packet.Term
+                Term: packet.term
     zc_specialpopup:
         name: zc_specialpopup
         description: ZC_SPECIALPOPUP packet (PACKET_ZC_SPECIALPOPUP)
@@ -42125,7 +42123,7 @@ semantic_actions:
               struct_name: PACKET_ZC_SPECIALPOPUP
               field_mapping:
                 PacketType: packet.PacketType
-                PpId: packet.PpId
+                PpId: packet.ppId
     zc_spirits:
         name: zc_spirits
         description: ZC_SPIRITS packet (PACKET_ZC_SPIRITS)
@@ -42148,7 +42146,7 @@ semantic_actions:
               struct_name: PACKET_ZC_SPIRITS
               field_mapping:
                 AID: packet.AID
-                Num: packet.Num
+                Num: packet.num
                 PacketType: packet.PacketType
     zc_spirits_attribute:
         name: zc_spirits_attribute
@@ -42196,7 +42194,7 @@ semantic_actions:
               struct_name: PACKET_ZC_SPIRITS2
               field_mapping:
                 AID: packet.AID
-                Num: packet.Num
+                Num: packet.num
                 PacketType: packet.PacketType
     zc_ssilist_item_click_ack:
         name: zc_ssilist_item_click_ack
@@ -42219,9 +42217,9 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_SSILIST_ITEM_CLICK_ACK
               field_mapping:
-                PacketType: packet.PacketType
-                X: packet.X
-                "Y": packet.Y
+                PacketType: packet.packetType
+                X: packet.x
+                "Y": packet.y
     zc_start_capture:
         name: zc_start_capture
         description: ZC_START_CAPTURE packet (PACKET_ZC_START_CAPTURE)
@@ -42269,11 +42267,11 @@ semantic_actions:
               struct_name: PACKET_ZC_STATE_CHANGE
               field_mapping:
                 ID: packet.AID
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Option: int32(packet.EffectState)
-                PacketType: packet.PacketType
-                Stance: packet.IsPKModeON
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Option: int32(packet.effectState)
+                PacketType: packet.packetType
+                Stance: packet.isPKModeON
             - packet_id: "0x0229"
               packetver_range:
                 - 20070000
@@ -42281,11 +42279,11 @@ semantic_actions:
               struct_name: PACKET_ZC_STATE_CHANGE
               field_mapping:
                 ID: packet.AID
-                Opt1: packet.BodyState
-                Opt2: packet.HealthState
-                Option: packet.EffectState
-                PacketType: packet.PacketType
-                Stance: packet.IsPKModeON
+                Opt1: packet.bodyState
+                Opt2: packet.healthState
+                Option: packet.effectState
+                PacketType: packet.packetType
+                Stance: packet.isPKModeON
     zc_status:
         name: zc_status
         description: ZC_STATUS packet (PACKET_ZC_STATUS)
@@ -42430,10 +42428,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_STATUS_CHANGE_ACK
               field_mapping:
-                Ok: packet.Ok
-                PacketType: packet.PacketType
-                Sp: packet.Sp
-                Value: packet.Value
+                Ok: packet.ok
+                PacketType: packet.packetType
+                Sp: packet.sp
+                Value: packet.value
     zc_stopmove:
         name: zc_stopmove
         description: Actor stopped moving
@@ -42509,8 +42507,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_TALKBOX_CHATCONTENTS
               field_mapping:
-                Aid: packet.Aid
-                Message: packet.Message
+                Aid: packet.aid
+                Message: packet.message
                 PacketType: packet.PacketType
     zc_target_spirits:
         name: zc_target_spirits
@@ -42555,7 +42553,7 @@ semantic_actions:
               struct_name: PACKET_ZC_TRYCAPTURE_MONSTER
               field_mapping:
                 PacketType: packet.PacketType
-                Result: packet.Result
+                Result: packet.result
     zc_ui_open:
         name: zc_ui_open
         description: ZC_UI_OPEN packet (PACKET_ZC_UI_OPEN)
@@ -42597,7 +42595,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_UI_OPEN2
               field_mapping:
-                Data: packet.Data
+                Data: packet.data
                 PacketType: packet.PacketType
                 UIType: packet.UIType
     zc_update_cardslot:
@@ -42627,11 +42625,11 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_UPDATE_CARDSLOT
               field_mapping:
-                CardSlot: packet.CardSlot
-                EquipFlag: packet.EquipFlag
-                ItemId: packet.ItemId
-                PacketType: packet.PacketType
-                WearState: packet.WearState
+                CardSlot: packet.cardSlot
+                EquipFlag: packet.equipFlag
+                ItemId: packet.itemId
+                PacketType: packet.packetType
+                WearState: packet.wearState
     zc_update_gdid:
         name: zc_update_gdid
         description: ZC_UPDATE_GDID packet (PACKET_ZC_UPDATE_GDID)
@@ -42659,10 +42657,10 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_UPDATE_GDID
               field_mapping:
-                GuildId: packet.GuildId
-                InterSid: packet.InterSid
-                IsMaster: packet.IsMaster
-                Mode: packet.Mode
+                GuildId: packet.guildId
+                InterSid: packet.interSid
+                IsMaster: packet.isMaster
+                Mode: packet.mode
                 PacketType: packet.PacketType
     zc_useskill_ack:
         name: zc_useskill_ack
@@ -42700,14 +42698,14 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping:
-                DelayTime: packet.DelayTime
-                DstId: packet.DstId
-                Element: packet.Element
-                PacketType: packet.PacketType
-                SkillId: packet.SkillId
-                SrcId: packet.SrcId
-                X: packet.X
-                "Y": packet.Y
+                DelayTime: packet.delayTime
+                DstId: packet.dstId
+                Element: packet.element
+                PacketType: packet.packetType
+                SkillId: packet.skillId
+                SrcId: packet.srcId
+                X: packet.x
+                "Y": packet.y
     zc_view_camerainfo:
         name: zc_view_camerainfo
         description: ZC_VIEW_CAMERAINFO packet (PACKET_ZC_VIEW_CAMERAINFO)
@@ -42726,8 +42724,8 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_VIEW_CAMERAINFO
               field_mapping:
-                Action: packet.Action
-                PacketType: packet.PacketType
+                Action: packet.action
+                PacketType: packet.packetType
     zc_wait_dialog:
         name: zc_wait_dialog
         description: ZC_WAIT_DIALOG packet (PACKET_ZC_WAIT_DIALOG)
