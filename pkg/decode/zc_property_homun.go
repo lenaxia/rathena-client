@@ -20,7 +20,7 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.Hp = leU16(data, 49)  // rAthena: hp (offset 49, size 4)
 		e.Hunger = leU16(data, 29)  // rAthena: hunger (offset 29, size 2)
 		e.Intimacy = leU16(data, 31)  // rAthena: intimacy (offset 31, size 2)
-		// e.ItemId: field itemId not found in layout
+		// e.ItemId = zero (field itemId absent in this struct version)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
 		e.Matk = leU16(data, 35)  // rAthena: matk (offset 35, size 2)
 		e.MaxHp = leU16(data, 53)  // rAthena: maxHp (offset 53, size 4)
@@ -43,7 +43,7 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.Hp = leU16(data, 49)  // rAthena: hp (offset 49, size 4)
 		e.Hunger = leU16(data, 29)  // rAthena: hunger (offset 29, size 2)
 		e.Intimacy = leU16(data, 31)  // rAthena: intimacy (offset 31, size 2)
-		// e.ItemId: field itemId not found in layout
+		// e.ItemId = zero (field itemId absent in this struct version)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
 		e.Matk = leU16(data, 35)  // rAthena: matk (offset 35, size 2)
 		e.MaxHp = leU16(data, 53)  // rAthena: maxHp (offset 53, size 4)
@@ -66,7 +66,7 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.Hp = leU16(data, 49)  // rAthena: hp (offset 49, size 4)
 		e.Hunger = leU16(data, 29)  // rAthena: hunger (offset 29, size 2)
 		e.Intimacy = leU16(data, 31)  // rAthena: intimacy (offset 31, size 2)
-		// e.ItemId: field itemId not found in layout
+		// e.ItemId = zero (field itemId absent in this struct version)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
 		e.Matk = leU16(data, 35)  // rAthena: matk (offset 35, size 2)
 		e.MaxHp = leU16(data, 53)  // rAthena: maxHp (offset 53, size 4)

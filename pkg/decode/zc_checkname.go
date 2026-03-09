@@ -35,7 +35,7 @@ func ZcCheckname_0x0A51(data []byte, packetver uint32) events.ZcCheckname {
 		e.CharId = leI32(data, 2)  // rAthena: CharId (offset 2, size 4)
 		e.Class = leI16(data, 6)  // rAthena: Class (offset 6, size 2)
 		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		// e.Name: field Name not found in layout
+		// e.Name = zero (field Name absent in this struct version)
 	}
 	return e
 }

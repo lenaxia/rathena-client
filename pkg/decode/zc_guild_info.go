@@ -47,7 +47,7 @@ func ZcGuildInfo_0x0A84(data []byte, packetver uint32) events.ZcGuildInfo {
 		e.Honor = leI32(data, 34)  // rAthena: honor (offset 34, size 4)
 		e.Level = leI32(data, 6)  // rAthena: level (offset 6, size 4)
 		// e.Castle = strings.TrimRight(packet.manageLand, "\x00")  (complex expression — implement manually)
-		// e.Master: field masterGID not found in layout
+		// e.Master = zero (field masterGID absent in this struct version)
 		e.Next_exp = leI32(data, 26)  // rAthena: maxExp (offset 26, size 4)
 		e.MaxMember = leI32(data, 14)  // rAthena: maxUserNum (offset 14, size 4)
 		e.Points = leI32(data, 30)  // rAthena: point (offset 30, size 4)

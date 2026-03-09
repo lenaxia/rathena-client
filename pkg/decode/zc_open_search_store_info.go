@@ -14,7 +14,7 @@ func ZcOpenSearchStoreInfo_0x083A(data []byte, packetver uint32) events.ZcOpenSe
 	} else {
 		e.Effect = leU16(data, 2)  // rAthena: effect (offset 2, size 2)
 		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
-		// e.RemainingUses: field remainingUses not found in layout
+		// e.RemainingUses = zero (field remainingUses absent in this struct version)
 	}
 	return e
 }

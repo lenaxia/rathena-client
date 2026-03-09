@@ -60,11 +60,11 @@ func TestLoaderDeepValidation(t *testing.T) {
 		}
 	}
 
-	// actor_exists 4th impl (0x09FF)
+	// actor_exists 4th impl (0x09FF) — pvMin bumped to 20181121 when shield field was added
 	ae := db.Actions["actor_exists"]
 	if ae != nil && len(ae.Implementations) >= 4 {
 		impl3 := ae.Implementations[3]
-		if impl3.PacketID != "0x09FF" || impl3.StructName != "packet_idle_unit" || impl3.PacketverMin != 20181002 {
+		if impl3.PacketID != "0x09FF" || impl3.StructName != "packet_idle_unit" || impl3.PacketverMin != 20181121 {
 			t.Errorf("actor_exists[3]: pkt=%s struct=%s pvMin=%d", impl3.PacketID, impl3.StructName, impl3.PacketverMin)
 		}
 	}

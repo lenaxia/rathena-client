@@ -10,7 +10,7 @@ func ZcPositionIdNameInfo_0x0166(data []byte, packetver uint32) events.ZcPositio
 	_ = packetver
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	// e.PosInfo: field posInfo not found in layout
+	// e.PosInfo = data[4:]  (complex expression — implement manually)
 	return e
 }
 

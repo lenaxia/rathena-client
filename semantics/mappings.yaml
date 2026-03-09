@@ -2979,10 +2979,10 @@ mappings:
           openkore_name: weapon
           semantic: Weapon sprite ID
         - position: 12
-          rathena_name: Shield
+          rathena_name: shield
           rathena_type: uint32
           openkore_name: shield
-          semantic: Shield sprite ID
+          semantic: Shield sprite ID — added to packet_idle_unit at PACKETVER 20181121; absent (zero) in pre-20181121 branches
         - position: 13
           rathena_name: Accessory
           rathena_type: uint16
@@ -20060,7 +20060,7 @@ mappings:
           semantic: 'Sell result: 0=success, 1=failed'
 metadata:
     total_packets: 446
-    last_updated: "2026-03-08"
+    last_updated: "2026-03-09"
     maintainer: goKore Team
     source_references:
         rathena_version: ""
@@ -31634,7 +31634,7 @@ semantic_actions:
                 YSize: packet.ySize
             - packet_id: "0x09FE"
               packetver_range:
-                - 20181002
+                - 20181121
                 - null
               struct_name: packet_spawn_unit
               field_mapping:
@@ -31931,7 +31931,7 @@ semantic_actions:
                 YSize: packet.ySize
             - packet_id: "0x09FF"
               packetver_range:
-                - 20181002
+                - 20181121
                 - null
               struct_name: packet_idle_unit
               field_mapping:
@@ -32215,7 +32215,7 @@ semantic_actions:
                 YSize: packet.ySize
             - packet_id: "0x09DB"
               packetver_range:
-                - 20141001
+                - 20181121
                 - null
               struct_name: packet_unit_walking
               field_mapping:
@@ -41263,7 +41263,7 @@ semantic_actions:
               field_mapping:
                 PacketLength: packet.PacketLength
                 PacketType: packet.PacketType
-                PosInfo: packet.posInfo[:]
+                PosInfo: data[4:]
     zc_position_info:
         name: zc_position_info
         description: ZC_POSITION_INFO packet (PACKET_ZC_POSITION_INFO)

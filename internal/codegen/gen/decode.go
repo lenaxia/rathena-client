@@ -155,10 +155,23 @@ func generateDecodeFunc(
 	sb.WriteString(fmt.Sprintf("func %s(data []byte, packetver uint32) events.%s {\n", fnName, structName))
 	sb.WriteString(fmt.Sprintf("\tvar e events.%s\n", structName))
 
+	// Build the union of all field names present across any applicable layout.
+	// This lets generateFieldReads distinguish "field absent in this version but
+	// known in other versions" (emit zero comment) from "field name not found
+	// in any version" (emit diagnostic comment).
+	allFieldNames := make(map[string]bool)
+	for _, r := range applicable {
+		if r.Layout != nil {
+			for _, f := range r.Layout.Fields {
+				allFieldNames[f.Name] = true
+			}
+		}
+	}
+
 	if len(applicable) == 1 {
 		// Single layout — no packetver branches needed.
 		sb.WriteString("\t_ = packetver\n")
-		body, usesPack := generateFieldReads("\t", applicable[0].Layout, impl, params)
+		body, usesPack := generateFieldReads("\t", applicable[0].Layout, impl, params, allFieldNames)
 		sb.WriteString(body)
 		if usesPack {
 			usesPacking = true
@@ -178,7 +191,7 @@ func generateDecodeFunc(
 			} else {
 				sb.WriteString(fmt.Sprintf("\t} else if packetver >= %d {\n", r.MinVer))
 			}
-			body, usesPack := generateFieldReads("\t\t", r.Layout, impl, params)
+			body, usesPack := generateFieldReads("\t\t", r.Layout, impl, params, allFieldNames)
 			sb.WriteString(body)
 			if usesPack {
 				usesPacking = true
@@ -192,11 +205,15 @@ func generateDecodeFunc(
 }
 
 // generateFieldReads emits field-read statements for each canonical param.
+// allFieldNames is the union of field names across all applicable layout versions;
+// if a field is absent from THIS layout but present in another, it is emitted as
+// an explicit zero comment rather than a "not found" diagnostic.
 func generateFieldReads(
 	indent string,
 	layout *preprocess.StructLayout,
 	impl *semantics.Implementation,
 	params []semantics.CanonicalParam,
+	allFieldNames map[string]bool,
 ) (src string, usesPacking bool) {
 	if layout == nil {
 		return fmt.Sprintf("%s// layout unavailable\n", indent), false
@@ -250,8 +267,15 @@ func generateFieldReads(
 
 		f, ok := fieldByName[rathenaField]
 		if !ok {
-			sb.WriteString(fmt.Sprintf("%s// e.%s: field %s not found in layout\n",
-				indent, goFieldName, rathenaField))
+			if allFieldNames[rathenaField] {
+				// Field exists in other struct versions but not this one — emit intentional zero.
+				sb.WriteString(fmt.Sprintf("%s// e.%s = zero (field %s absent in this struct version)\n",
+					indent, goFieldName, rathenaField))
+			} else {
+				// Field not found in any version — likely a mapping error.
+				sb.WriteString(fmt.Sprintf("%s// e.%s: field %s not found in layout\n",
+					indent, goFieldName, rathenaField))
+			}
 			continue
 		}
 

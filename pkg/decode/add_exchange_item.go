@@ -21,7 +21,7 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 	} else if packetver >= 20181121 {
 		e.Amount = leI32(data, 7)  // rAthena: amount (offset 7, size 4)
 		e.Damaged = data[12]  // rAthena: damaged (offset 12, size 1)
-		// e.Grade: field grade not found in layout
+		// e.Grade = zero (field grade absent in this struct version)
 		e.Identified = data[11]  // rAthena: identified (offset 11, size 1)
 		e.ID = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
 		e.ItemType = data[6]  // rAthena: itemType (offset 6, size 1)
@@ -32,7 +32,7 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 	} else if packetver >= 20161102 {
 		e.Amount = leI32(data, 5)  // rAthena: amount (offset 5, size 4)
 		e.Damaged = data[10]  // rAthena: damaged (offset 10, size 1)
-		// e.Grade: field grade not found in layout
+		// e.Grade = zero (field grade absent in this struct version)
 		e.Identified = data[9]  // rAthena: identified (offset 9, size 1)
 		e.ID = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]  // rAthena: itemType (offset 4, size 1)
@@ -43,34 +43,34 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 	} else if packetver >= 20150226 {
 		e.Amount = leI32(data, 5)  // rAthena: amount (offset 5, size 4)
 		e.Damaged = data[10]  // rAthena: damaged (offset 10, size 1)
-		// e.Grade: field grade not found in layout
+		// e.Grade = zero (field grade absent in this struct version)
 		e.Identified = data[9]  // rAthena: identified (offset 9, size 1)
 		e.ID = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]  // rAthena: itemType (offset 4, size 1)
-		// e.Location: field location not found in layout
-		// e.Look: field look not found in layout
+		// e.Location = zero (field location absent in this struct version)
+		// e.Look = zero (field look absent in this struct version)
 		e.Refine = data[11]  // rAthena: refine (offset 11, size 1)
 		// e.Slot = []byte{}  (complex expression — implement manually)
 	} else if packetver >= 20100223 {
 		e.Amount = leI32(data, 5)  // rAthena: amount (offset 5, size 4)
 		e.Damaged = data[10]  // rAthena: damaged (offset 10, size 1)
-		// e.Grade: field grade not found in layout
+		// e.Grade = zero (field grade absent in this struct version)
 		e.Identified = data[9]  // rAthena: identified (offset 9, size 1)
 		e.ID = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]  // rAthena: itemType (offset 4, size 1)
-		// e.Location: field location not found in layout
-		// e.Look: field look not found in layout
+		// e.Location = zero (field location absent in this struct version)
+		// e.Look = zero (field look absent in this struct version)
 		e.Refine = data[11]  // rAthena: refine (offset 11, size 1)
 		// e.Slot = []byte{}  (complex expression — implement manually)
 	} else {
 		e.Amount = leI32(data, 2)  // rAthena: amount (offset 2, size 4)
 		e.Damaged = data[9]  // rAthena: damaged (offset 9, size 1)
-		// e.Grade: field grade not found in layout
+		// e.Grade = zero (field grade absent in this struct version)
 		e.Identified = data[8]  // rAthena: identified (offset 8, size 1)
 		e.ID = uint32(leU16(data, 6))  // rAthena: itemId (offset 6, size 2)
-		// e.ItemType: field itemType not found in layout
-		// e.Location: field location not found in layout
-		// e.Look: field look not found in layout
+		// e.ItemType = zero (field itemType absent in this struct version)
+		// e.Location = zero (field location absent in this struct version)
+		// e.Look = zero (field look absent in this struct version)
 		e.Refine = data[10]  // rAthena: refine (offset 10, size 1)
 		// e.Slot = []byte{}  (complex expression — implement manually)
 	}
