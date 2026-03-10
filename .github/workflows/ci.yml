@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test -count=1 ./...
+
+      - name: Race detector
+        run: go test -race -count=1 ./...
+
+      - name: Zero goroutines in pkg/
+        run: |
+          result=$(grep -r "^\s*go " pkg/ --include="*.go" | grep -v "_test.go" || true)
+          if [ -n "$result" ]; then
+            echo "FAIL: goroutines found in pkg/:"
+            echo "$result"
+            exit 1
+          fi
+
+      - name: Benchmarks (0 allocs/op)
+        run: |
+          go test -bench=. -benchmem ./pkg/... | tee bench.txt
+          if grep -P "\s[1-9]\d* allocs/op" bench.txt; then
+            echo "FAIL: non-zero allocs found in benchmarks"
+            exit 1
+          fi
