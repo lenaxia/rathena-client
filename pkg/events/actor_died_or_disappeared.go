@@ -3,4 +3,7 @@
 package events
 
 // ActorDiedOrDisappeared is the event emitted for the actor_died_or_disappeared action.
-type ActorDiedOrDisappeared struct{}
+type ActorDiedOrDisappeared struct {
+	Gid uint32
+	Type uint8
+}

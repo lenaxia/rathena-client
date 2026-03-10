@@ -15,6 +15,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -197,6 +198,9 @@ var commonStructsToInject = []string{
 var mapStructsToInject = []string{
 	"PACKET_ZC_NOTIFY_PLAYERMOVE",
 	"PACKET_ZC_NOTIFY_TIME",
+	"PACKET_ZC_NOTIFY_VANISH", // 0x0080 ActorDiedOrDisappeared
+	"PACKET_ZC_NOTIFY_ACT",    // 0x008A / 0x02E1 / 0x08C8 ActorAction (3-way PACKETVER ladder)
+	"PACKET_ZC_STATUS",        // 0x00BD ZcStatus (full stats dump)
 }
 
 // injectCommonPacketStructs processes common/packets.hpp at all its PACKETVER
@@ -480,6 +484,16 @@ func genLengths(cfg preprocess.Config, outDir, semanticsPath string, vt preproce
 		return fmt.Errorf("build map s→c join pass: %w", err)
 	}
 	mapBreakpoints = mergeBreakpoints(mapBreakpoints, stocJoin)
+
+	// Part 4: enum-assigned packet IDs from packets_struct.hpp (Gap D).
+	// Some packet IDs are assigned via C++ enum values (e.g. inventorylistnormalType,
+	// sendLookType) rather than DEFINE_PACKET_HEADER constants. These are invisible to
+	// Parts 1–3. We parse packets_struct.hpp explicitly to extract them.
+	enumBPs, err := buildMapEnumPacketBreakpoints(cfg)
+	if err != nil {
+		return fmt.Errorf("build map enum packet breakpoints: %w", err)
+	}
+	mapBreakpoints = mergeBreakpoints(mapBreakpoints, enumBPs)
 	_ = db
 
 	mapSrc, err := gen.GenerateLengthsFile(gen.ServerMap, mapBreakpoints)
@@ -707,6 +721,119 @@ func buildMapStocLengthBreakpoints(cfg preprocess.Config) ([]gen.LengthBreakpoin
 		cur := make(lenTable)
 		for _, p := range packets {
 			cur[p.ID] = p.Length
+		}
+
+		ver := pv
+		if pv == 20030000 {
+			ver = 0
+		}
+
+		changed := diffLenTable(prev, cur)
+		if len(changed) > 0 {
+			bps = append(bps, gen.LengthBreakpoint{Ver: ver, Entries: changed})
+		}
+		prev = cur
+	}
+	return bps, nil
+}
+
+// reEnumAssign matches a single-line enum value assignment in preprocessed C++:
+//
+//	inventorylistnormalType = 0xb09,
+//	sendLookType = 0x1d7,
+var reEnumAssign = regexp.MustCompile(`^\s*(\w+)\s*=\s*(0x[0-9A-Fa-f]+)\s*,`)
+
+// enumPacketEntry describes a known enum-assigned packet ID in packets_struct.hpp
+// and the struct whose sizeof() gives the wire length (empty structName = variable-length).
+type enumPacketEntry struct {
+	enumName   string // C++ enum value name, e.g. "inventorylistnormalType"
+	structName string // PACKET_* struct name for size, "" = variable-length
+	varLen     bool   // if true, packet is variable-length (length field in bytes [2:4])
+}
+
+// knownEnumPackets is the table of enum-assigned packet IDs that the HEADER_*
+// parser in ParseCommonPacketHeaders cannot see. Each entry maps an enum name
+// to its struct (for fixed-size) or marks it as variable-length.
+//
+// Verified against packets_struct.hpp:
+//   - inventorylistnormalType / inventorylistequipType: packet_itemlist_normal/equip,
+//     which carry a packetLength field → variable-length.
+//   - sendLookType: PACKET_ZC_SPRITE_CHANGE, fixed size but changes at PACKETVER >= 20181121
+//     (uint32 val/val2 replaces uint16). clif_packetdb.hpp is not updated so stays 11;
+//     structDB gives the correct size.
+var knownEnumPackets = []enumPacketEntry{
+	{enumName: "inventorylistnormalType", varLen: true},
+	{enumName: "inventorylistequipType", varLen: true},
+	{enumName: "sendLookType", structName: "PACKET_ZC_SPRITE_CHANGE"},
+}
+
+// buildMapEnumPacketBreakpoints processes packets_struct.hpp at each of its
+// PACKETVER breakpoints and emits LengthBreakpoints for enum-assigned packet IDs
+// that are invisible to ParseCommonPacketHeaders (Gap D).
+func buildMapEnumPacketBreakpoints(cfg preprocess.Config) ([]gen.LengthBreakpoint, error) {
+	structFile := filepath.Join(cfg.RathenaRoot, "src", "map", "packets_struct.hpp")
+	allDates, err := preprocess.ExtractBreakpointsFromFile(structFile)
+	if err != nil {
+		return nil, fmt.Errorf("extract packets_struct.hpp breakpoints: %w", err)
+	}
+	allDates = preprocess.SortBreakpoints(append([]uint32{20030000}, allDates...))
+	log.Printf("  %d packets_struct.hpp breakpoints to process for enum packets", len(allDates))
+
+	type lenTable map[uint16]int16
+	var prev lenTable
+	var bps []gen.LengthBreakpoint
+
+	for _, pv := range allDates {
+		preprocessed, err := preprocess.Preprocess(cfg, preprocess.SourcePacketsStruct, pv)
+		if err != nil {
+			log.Printf("  WARNING: preprocess packets_struct.hpp at %d failed: %v", pv, err)
+			continue
+		}
+		structDB, err := preprocess.ExtractStructs(preprocessed, pv)
+		if err != nil {
+			log.Printf("  WARNING: ExtractStructs packets_struct.hpp at %d failed: %v", pv, err)
+			continue
+		}
+
+		// Extract enum assignments for the known enum names.
+		enumVals := make(map[string]uint16)
+		for _, line := range strings.Split(preprocessed, "\n") {
+			m := reEnumAssign.FindStringSubmatch(line)
+			if m == nil {
+				continue
+			}
+			name := m[1]
+			for _, e := range knownEnumPackets {
+				if e.enumName == name {
+					id64, err := strconv.ParseUint(strings.TrimPrefix(strings.ToLower(m[2]), "0x"), 16, 16)
+					if err == nil {
+						enumVals[name] = uint16(id64)
+					}
+					break
+				}
+			}
+		}
+
+		// Build the current length table from enum assignments.
+		cur := make(lenTable)
+		for _, e := range knownEnumPackets {
+			id, ok := enumVals[e.enumName]
+			if !ok {
+				continue
+			}
+			var length int16
+			if e.varLen {
+				length = -1
+			} else if e.structName != "" {
+				if layout, ok2 := structDB[e.structName]; ok2 && layout != nil && layout.Available {
+					length = int16(layout.TotalSize)
+				} else {
+					continue // unknown size — skip
+				}
+			} else {
+				continue
+			}
+			cur[id] = length
 		}
 
 		ver := pv

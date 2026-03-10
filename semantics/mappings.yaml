@@ -90,6 +90,9 @@ semantic_actions:
             - packet_id: "0x09DB"
               struct_name: packet_unit_walking
               packetver_min: 20181121
+            - packet_id: "0x09FD"
+              struct_name: packet_unit_walking
+              packetver_min: 20141022
     actor_status_active:
         implementations:
             - packet_id: "0x0196"

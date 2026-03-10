@@ -209,6 +209,7 @@ func TestReplay_Movement_20200401(t *testing.T) {
 				if n > 0 {
 					if ferr := sess.Feed(buf[:n]); ferr != nil {
 						feedErrors++
+						t.Logf("Feed error (movement): %v", ferr)
 					}
 				}
 				if err != nil {

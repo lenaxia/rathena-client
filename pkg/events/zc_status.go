@@ -3,4 +3,32 @@
 package events
 
 // ZcStatus is the event emitted for the zc_status action.
-type ZcStatus struct{}
+type ZcStatus struct {
+	Point uint16
+	Str uint8
+	StandardStr uint8
+	Agi uint8
+	StandardAgi uint8
+	Vit uint8
+	StandardVit uint8
+	Int_ uint8
+	StandardInt uint8
+	Dex uint8
+	StandardDex uint8
+	Luk uint8
+	StandardLuk uint8
+	AttPower int16
+	RefiningPower int16
+	Max_mattPower int16
+	Min_mattPower int16
+	ItemdefPower int16
+	PlusdefPower int16
+	MdefPower int16
+	PlusmdefPower int16
+	HitSuccessValue int16
+	AvoidSuccessValue int16
+	PlusAvoidSuccessValue int16
+	CriticalSuccessValue int16
+	ASPD int16
+	PlusASPD int16
+}

@@ -2,7 +2,81 @@
 
 package decode
 
-// SKIP ActorAction_0x008A: struct PACKET_ZC_NOTIFY_ACT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
 
-// SKIP ActorAction_0x08C8: struct PACKET_ZC_NOTIFY_ACT not found in VersionTable
+// ActorAction_0x008A decodes a 0x008A packet (struct PACKET_ZC_NOTIFY_ACT).
+func ActorAction_0x008A(data []byte, packetver uint32) events.ActorAction {
+	var e events.ActorAction
+	if packetver >= 20131223 {
+		e.SrcID = leI32(data, 2)  // rAthena: srcID (offset 2, size 4)
+		e.TargetID = leI32(data, 6)  // rAthena: targetID (offset 6, size 4)
+		e.ServerTick = leI32(data, 10)  // rAthena: serverTick (offset 10, size 4)
+		e.SrcSpeed = leI32(data, 14)  // rAthena: srcSpeed (offset 14, size 4)
+		e.DmgSpeed = leI32(data, 18)  // rAthena: dmgSpeed (offset 18, size 4)
+		e.Damage = leI32(data, 22)  // rAthena: damage (offset 22, size 4)
+		e.IsSPDamage = int8(data[26])  // rAthena: isSPDamage (offset 26, size 1)
+		e.Div = leU16(data, 27)  // rAthena: div (offset 27, size 2)
+		e.Type = data[29]  // rAthena: type (offset 29, size 1)
+		e.Damage2 = leI32(data, 30)  // rAthena: damage2 (offset 30, size 4)
+	} else if packetver >= 20071113 {
+		e.SrcID = leI32(data, 2)  // rAthena: srcID (offset 2, size 4)
+		e.TargetID = leI32(data, 6)  // rAthena: targetID (offset 6, size 4)
+		e.ServerTick = leI32(data, 10)  // rAthena: serverTick (offset 10, size 4)
+		e.SrcSpeed = leI32(data, 14)  // rAthena: srcSpeed (offset 14, size 4)
+		e.DmgSpeed = leI32(data, 18)  // rAthena: dmgSpeed (offset 18, size 4)
+		e.Damage = leI32(data, 22)  // rAthena: damage (offset 22, size 4)
+		e.Div = leU16(data, 26)  // rAthena: div (offset 26, size 2)
+		e.Type = data[28]  // rAthena: type (offset 28, size 1)
+		e.Damage2 = leI32(data, 29)  // rAthena: damage2 (offset 29, size 4)
+	} else {
+		e.SrcID = leI32(data, 2)  // rAthena: srcID (offset 2, size 4)
+		e.TargetID = leI32(data, 6)  // rAthena: targetID (offset 6, size 4)
+		e.ServerTick = leI32(data, 10)  // rAthena: serverTick (offset 10, size 4)
+		e.SrcSpeed = leI32(data, 14)  // rAthena: srcSpeed (offset 14, size 4)
+		e.DmgSpeed = leI32(data, 18)  // rAthena: dmgSpeed (offset 18, size 4)
+		e.Damage = int32(leI16(data, 22))  // rAthena: damage (offset 22, size 2)
+		e.Div = leU16(data, 24)  // rAthena: div (offset 24, size 2)
+		e.Type = data[26]  // rAthena: type (offset 26, size 1)
+		e.Damage2 = int32(leI16(data, 27))  // rAthena: damage2 (offset 27, size 2)
+	}
+	return e
+}
+
+// ActorAction_0x08C8 decodes a 0x08C8 packet (struct PACKET_ZC_NOTIFY_ACT).
+func ActorAction_0x08C8(data []byte, packetver uint32) events.ActorAction {
+	var e events.ActorAction
+	if packetver >= 20131223 {
+		e.SrcID = leI32(data, 2)  // rAthena: srcID (offset 2, size 4)
+		e.TargetID = leI32(data, 6)  // rAthena: targetID (offset 6, size 4)
+		e.ServerTick = leI32(data, 10)  // rAthena: serverTick (offset 10, size 4)
+		e.SrcSpeed = leI32(data, 14)  // rAthena: srcSpeed (offset 14, size 4)
+		e.DmgSpeed = leI32(data, 18)  // rAthena: dmgSpeed (offset 18, size 4)
+		e.Damage = leI32(data, 22)  // rAthena: damage (offset 22, size 4)
+		e.IsSPDamage = int8(data[26])  // rAthena: isSPDamage (offset 26, size 1)
+		e.Div = leU16(data, 27)  // rAthena: div (offset 27, size 2)
+		e.Type = data[29]  // rAthena: type (offset 29, size 1)
+		e.Damage2 = leI32(data, 30)  // rAthena: damage2 (offset 30, size 4)
+	} else if packetver >= 20071113 {
+		e.SrcID = leI32(data, 2)  // rAthena: srcID (offset 2, size 4)
+		e.TargetID = leI32(data, 6)  // rAthena: targetID (offset 6, size 4)
+		e.ServerTick = leI32(data, 10)  // rAthena: serverTick (offset 10, size 4)
+		e.SrcSpeed = leI32(data, 14)  // rAthena: srcSpeed (offset 14, size 4)
+		e.DmgSpeed = leI32(data, 18)  // rAthena: dmgSpeed (offset 18, size 4)
+		e.Damage = leI32(data, 22)  // rAthena: damage (offset 22, size 4)
+		e.Div = leU16(data, 26)  // rAthena: div (offset 26, size 2)
+		e.Type = data[28]  // rAthena: type (offset 28, size 1)
+		e.Damage2 = leI32(data, 29)  // rAthena: damage2 (offset 29, size 4)
+	} else {
+		e.SrcID = leI32(data, 2)  // rAthena: srcID (offset 2, size 4)
+		e.TargetID = leI32(data, 6)  // rAthena: targetID (offset 6, size 4)
+		e.ServerTick = leI32(data, 10)  // rAthena: serverTick (offset 10, size 4)
+		e.SrcSpeed = leI32(data, 14)  // rAthena: srcSpeed (offset 14, size 4)
+		e.DmgSpeed = leI32(data, 18)  // rAthena: dmgSpeed (offset 18, size 4)
+		e.Damage = int32(leI16(data, 22))  // rAthena: damage (offset 22, size 2)
+		e.Div = leU16(data, 24)  // rAthena: div (offset 24, size 2)
+		e.Type = data[26]  // rAthena: type (offset 26, size 1)
+		e.Damage2 = int32(leI16(data, 27))  // rAthena: damage2 (offset 27, size 2)
+	}
+	return e
+}
 
