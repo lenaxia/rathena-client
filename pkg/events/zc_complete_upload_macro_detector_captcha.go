@@ -2,8 +2,5 @@
 
 package events
 
-// ZcCompleteUploadMacroDetectorCaptcha is the event emitted when a zc_complete_upload_macro_detector_captcha packet is received.
-// ZC_COMPLETE_UPLOAD_MACRO_DETECTOR_CAPTCHA packet (PACKET_ZC_COMPLETE_UPLOAD_MACRO_DETECTOR_CAPTCHA)
-type ZcCompleteUploadMacroDetectorCaptcha struct {
-	PacketType int16 // PacketType field
-}
+// ZcCompleteUploadMacroDetectorCaptcha is the event emitted for the zc_complete_upload_macro_detector_captcha action.
+type ZcCompleteUploadMacroDetectorCaptcha struct{}

@@ -2,20 +2,20 @@
 
 package events
 
-// ZcAckAddItemRodex is the event emitted when a zc_ack_add_item_rodex packet is received.
-// ZC_ACK_ADD_ITEM_RODEX packet (PACKET_ZC_ACK_ADD_ITEM_RODEX)
+// ZcAckAddItemRodex is the event emitted for the zc_ack_add_item_rodex action.
 type ZcAckAddItemRodex struct {
-	IsDamaged int8 // IsDamaged field
-	IsIdentified int8 // IsIdentified field
-	PacketType int16 // PacketType field
-	Count int16 // count field
-	Favorite uint8 // favorite field
-	Index int16 // index field
-	ItemId uint32 // itemId field
-	Location uint32 // location field
-	RefiningLevel int8 // refiningLevel field
-	Result int8 // result field
-	Slot []byte // slot field
-	Type int8 // type field
-	Weight int16 // weight field
+	Result int8
+	Index int16
+	Count int16
+	ItemId uint32
+	Type int8
+	IsIdentified int8
+	IsDamaged int8
+	RefiningLevel int8
+	Slot []byte
+	OptionData []byte
+	Weight int16
+	Favorite uint8
+	Location uint32
+	Grade int8
 }

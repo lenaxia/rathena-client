@@ -2,10 +2,8 @@
 
 package events
 
-// ZcMyguildBasicInfo is the event emitted when a zc_myguild_basic_info packet is received.
-// ZC_MYGUILD_BASIC_INFO packet (PACKET_ZC_MYGUILD_BASIC_INFO)
+// ZcMyguildBasicInfo is the event emitted for the zc_myguild_basic_info action.
 type ZcMyguildBasicInfo struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	RgInfo []byte // rgInfo field
+	PacketLength int16
+	RgInfo []byte
 }

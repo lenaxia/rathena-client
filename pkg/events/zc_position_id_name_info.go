@@ -2,10 +2,9 @@
 
 package events
 
-// ZcPositionIdNameInfo is the event emitted when a zc_position_id_name_info packet is received.
-// ZC_POSITION_ID_NAME_INFO packet (PACKET_ZC_POSITION_ID_NAME_INFO)
+// ZcPositionIdNameInfo is the event emitted for the zc_position_id_name_info action.
 type ZcPositionIdNameInfo struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	PosInfo []byte // Guild position names (inline struct: positionID + posName[24])
+	PacketLength int16
+	PositionID []byte
+	PosName string
 }

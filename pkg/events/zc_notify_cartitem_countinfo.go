@@ -2,12 +2,10 @@
 
 package events
 
-// ZcNotifyCartitemCountinfo is the event emitted when a zc_notify_cartitem_countinfo packet is received.
-// ZC_NOTIFY_CARTITEM_COUNTINFO packet (PACKET_ZC_NOTIFY_CARTITEM_COUNTINFO)
+// ZcNotifyCartitemCountinfo is the event emitted for the zc_notify_cartitem_countinfo action.
 type ZcNotifyCartitemCountinfo struct {
-	PacketType int16 // PacketType field
-	CurCount int16 // curCount field
-	CurWeight int32 // curWeight field
-	MaxCount int16 // maxCount field
-	MaxWeight int32 // maxWeight field
+	CurCount int16
+	MaxCount int16
+	CurWeight int32
+	MaxWeight int32
 }

@@ -3,8 +3,5 @@
 package send
 
 // StorageItemRemove is the request struct for the storage_item_remove action.
-// Move item from storage to inventory
 type StorageItemRemove struct {
-	Amount uint32 // Amount of item to move to inventory
-	Index uint16 // Storage index of item to move to inventory
 }

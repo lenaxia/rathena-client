@@ -12,7 +12,7 @@ func EncodeCzReqPreviewMacroDetector(req send.CzReqPreviewMacroDetector, packetv
 	// Packet ID: 0x0A69 (little-endian)
 	p[0] = 0x69
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
+	copy(p[2:], req.CaptchaID)  // rAthena: captchaID
 	_ = packetver
 	return p
 }

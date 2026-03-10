@@ -2,10 +2,8 @@
 
 package events
 
-// ZcTalkboxChatcontents is the event emitted when a zc_talkbox_chatcontents packet is received.
-// ZC_TALKBOX_CHATCONTENTS packet (PACKET_ZC_TALKBOX_CHATCONTENTS)
+// ZcTalkboxChatcontents is the event emitted for the zc_talkbox_chatcontents action.
 type ZcTalkboxChatcontents struct {
-	PacketType int16 // PacketType field
-	Aid uint32 // aid field
-	Message string // Talkie box message text (80 bytes, null-terminated)
+	Aid uint32
+	Message string
 }

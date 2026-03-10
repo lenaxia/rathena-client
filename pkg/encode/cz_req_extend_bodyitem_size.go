@@ -12,7 +12,6 @@ func EncodeCzReqExtendBodyitemSize(req send.CzReqExtendBodyitemSize, packetver u
 	// Packet ID: 0x0B16 (little-endian)
 	p[0] = 0x16
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

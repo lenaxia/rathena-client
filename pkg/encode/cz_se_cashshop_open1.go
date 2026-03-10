@@ -12,7 +12,6 @@ func EncodeCzSeCashshopOpen1(req send.CzSeCashshopOpen1, packetver uint32) [2]by
 	// Packet ID: 0x0844 (little-endian)
 	p[0] = 0x44
 	p[1] = 0x08
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

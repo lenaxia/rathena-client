@@ -3,7 +3,5 @@
 package send
 
 // ItemEquip is the request struct for the item_equip action.
-// Equip item from inventory
 type ItemEquip struct {
-	Index uint16 // Inventory index of item to equip
 }

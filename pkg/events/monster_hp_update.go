@@ -2,10 +2,9 @@
 
 package events
 
-// MonsterHpUpdate is the event emitted when a monster_hp_update packet is received.
-// Monster HP information update
+// MonsterHpUpdate is the event emitted for the monster_hp_update action.
 type MonsterHpUpdate struct {
-	ActorID uint32 // Monster actor GID
-	CurrentHP uint32 // Current hit points
-	MaxHP uint32 // Maximum hit points
+	GID uint32
+	HP int32
+	MaxHP int32
 }

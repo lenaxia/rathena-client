@@ -2,8 +2,5 @@
 
 package events
 
-// ZcAckReqJoinGuild is the event emitted when a zc_ack_req_join_guild packet is received.
-// ZC_ACK_REQ_JOIN_GUILD packet (PACKET_ZC_ACK_REQ_JOIN_GUILD)
-type ZcAckReqJoinGuild struct {
-	Type uint8 // Invitation result (0=already in guild, 1=rejected, 2=accepted, 3=not enough capacity)
-}
+// ZcAckReqJoinGuild is the event emitted for the zc_ack_req_join_guild action.
+type ZcAckReqJoinGuild struct{}

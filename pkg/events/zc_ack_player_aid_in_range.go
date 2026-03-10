@@ -2,10 +2,8 @@
 
 package events
 
-// ZcAckPlayerAidInRange is the event emitted when a zc_ack_player_aid_in_range packet is received.
-// ZC_ACK_PLAYER_AID_IN_RANGE packet (PACKET_ZC_ACK_PLAYER_AID_IN_RANGE)
+// ZcAckPlayerAidInRange is the event emitted for the zc_ack_player_aid_in_range action.
 type ZcAckPlayerAidInRange struct {
-	AID []byte // AID field
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
+	PacketLength int16
+	AID []byte
 }

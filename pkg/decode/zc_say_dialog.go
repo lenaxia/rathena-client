@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSayDialog_0x00B4(data []byte, packetver uint32) events.ZcSayDialog {
 	var e events.ZcSayDialog
 	_ = packetver
-	e.NpcID = leU32(data, 4)  // rAthena: NpcID (offset 4, size 4)
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
+	e.NpcID = leU32(data, 4)  // rAthena: NpcID (offset 4, size 4)
 	e.Message = nullTermString(data[8:])  // rAthena: message (offset 8, size 0)
 	return e
 }

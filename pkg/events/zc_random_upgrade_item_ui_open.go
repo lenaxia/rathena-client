@@ -2,9 +2,7 @@
 
 package events
 
-// ZcRandomUpgradeItemUiOpen is the event emitted when a zc_random_upgrade_item_ui_open packet is received.
-// ZC_RANDOM_UPGRADE_ITEM_UI_OPEN packet (PACKET_ZC_RANDOM_UPGRADE_ITEM_UI_OPEN)
+// ZcRandomUpgradeItemUiOpen is the event emitted for the zc_random_upgrade_item_ui_open action.
 type ZcRandomUpgradeItemUiOpen struct {
-	ItemId uint32 // itemId field
-	PacketType int16 // packetType field
+	ItemId uint32
 }

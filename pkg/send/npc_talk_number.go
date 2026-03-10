@@ -3,8 +3,5 @@
 package send
 
 // NpcTalkNumber is the request struct for the npc_talk_number action.
-// Send number input to NPC dialog
 type NpcTalkNumber struct {
-	NPCID uint32 // NPC actor ID
-	Number int32 // Number value input
 }

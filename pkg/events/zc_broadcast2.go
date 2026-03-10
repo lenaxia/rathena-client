@@ -2,15 +2,5 @@
 
 package events
 
-// ZcBroadcast2 is the event emitted when a zc_broadcast2 packet is received.
-// ZC_BROADCAST2 packet (PACKET_ZC_BROADCAST2)
-type ZcBroadcast2 struct {
-	PacketID uint16 // Packet identifier
-	PacketLength int16 // Total packet length
-	FontColor uint32 // Broadcast message font color
-	FontType int16 // Broadcast message font type
-	FontSize int16 // Broadcast message font size
-	FontAlign int16 // Broadcast message font alignment
-	FontY int16 // Broadcast message Y position
-	Message string // Broadcast message text
-}
+// ZcBroadcast2 is the event emitted for the zc_broadcast2 action.
+type ZcBroadcast2 struct{}

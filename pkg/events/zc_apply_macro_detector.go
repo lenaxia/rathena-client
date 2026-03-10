@@ -2,10 +2,8 @@
 
 package events
 
-// ZcApplyMacroDetector is the event emitted when a zc_apply_macro_detector packet is received.
-// ZC_APPLY_MACRO_DETECTOR packet (PACKET_ZC_APPLY_MACRO_DETECTOR)
+// ZcApplyMacroDetector is the event emitted for the zc_apply_macro_detector action.
 type ZcApplyMacroDetector struct {
-	PacketType int16 // PacketType field
-	CaptchaKey []byte // Captcha key identifier (4-byte fixed array)
-	ImageSize uint16 // imageSize field
+	ImageSize uint16
+	CaptchaKey string
 }

@@ -3,7 +3,5 @@
 package send
 
 // NpcTalkContinue is the request struct for the npc_talk_continue action.
-// Continue NPC dialog (next button)
 type NpcTalkContinue struct {
-	NPCID uint32 // NPC actor ID
 }

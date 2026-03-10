@@ -2,9 +2,7 @@
 
 package events
 
-// ZcDynamicnpcCreateResult is the event emitted when a zc_dynamicnpc_create_result packet is received.
-// ZC_DYNAMICNPC_CREATE_RESULT packet (PACKET_ZC_DYNAMICNPC_CREATE_RESULT)
+// ZcDynamicnpcCreateResult is the event emitted for the zc_dynamicnpc_create_result action.
 type ZcDynamicnpcCreateResult struct {
-	PacketType uint16 // PacketType field
-	Result uint32 // result field
+	Result uint32
 }

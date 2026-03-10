@@ -3,9 +3,7 @@
 package send
 
 // CzContactnpc is the request struct for the cz_contactnpc action.
-// CZ_CONTACTNPC packet (PACKET_CZ_CONTACTNPC)
 type CzContactnpc struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	Type uint8 // type field
+	AID uint32
+	Type uint8
 }

@@ -3,8 +3,5 @@
 package send
 
 // CzReqExpelGroupMember is the request struct for the cz_req_expel_group_member action.
-// CZ_REQ_EXPEL_GROUP_MEMBER packet (PACKET_CZ_REQ_EXPEL_GROUP_MEMBER)
 type CzReqExpelGroupMember struct {
-	AccountID uint32 // Account ID of party member to expel
-	CharacterName string // Character name to expel from party
 }

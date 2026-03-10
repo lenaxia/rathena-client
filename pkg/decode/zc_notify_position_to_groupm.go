@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyPositionToGroupm_0x0107(data []byte, packetver uint32) events.ZcNotifyPositionToGroupm {
 	var e events.ZcNotifyPositionToGroupm
 	_ = packetver
-	e.X = leU16(data, 6)  // rAthena: xPos (offset 6, size 2)
-	e.Y = leU16(data, 8)  // rAthena: yPos (offset 8, size 2)
-	e.AccountID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
+	e.AID = data[2:]  // rAthena: AID (offset 2, size 4)
+	e.XPos = leI16(data, 6)  // rAthena: xPos (offset 6, size 2)
+	e.YPos = leI16(data, 8)  // rAthena: yPos (offset 8, size 2)
 	return e
 }
 

@@ -2,9 +2,7 @@
 
 package events
 
-// ZcAckTakeoffEquipAll is the event emitted when a zc_ack_takeoff_equip_all packet is received.
-// ZC_ACK_TAKEOFF_EQUIP_ALL packet (PACKET_ZC_ACK_TAKEOFF_EQUIP_ALL)
+// ZcAckTakeoffEquipAll is the event emitted for the zc_ack_takeoff_equip_all action.
 type ZcAckTakeoffEquipAll struct {
-	PacketType int16 // PacketType field
-	Result uint8 // result field
+	Result uint8
 }

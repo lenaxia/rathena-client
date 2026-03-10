@@ -13,7 +13,6 @@ func EncodeCzReqApplyMacroDetector(req send.CzReqApplyMacroDetector, packetver u
 	p[0] = 0x56
 	p[1] = 0x0a
 	leU32Put(p[2:], req.AID)  // rAthena: AID
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	_ = packetver
 	return p
 }

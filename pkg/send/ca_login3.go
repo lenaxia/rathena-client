@@ -3,12 +3,5 @@
 package send
 
 // CaLogin3 is the request struct for the ca_login3 action.
-// Login with MD5 hashed password and client info (CA_LOGIN3)
 type CaLogin3 struct {
-	ClientInfo uint8 // Additional client information byte
-	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
-	PacketType int16 // packetType field
-	PasswordSaltedMd5 string // MD5 hashed password (16 bytes)
-	Username string // Account username (24 bytes, null-terminated)
-	Version uint32 // Client version number
 }

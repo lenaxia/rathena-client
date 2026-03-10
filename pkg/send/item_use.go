@@ -3,8 +3,5 @@
 package send
 
 // ItemUse is the request struct for the item_use action.
-// Use item from inventory
 type ItemUse struct {
-	ID uint32 // Actor ID to use item on (self or target)
-	Index uint16 // Inventory index of item to use
 }

@@ -3,11 +3,5 @@
 package send
 
 // CzReqApplyBargainSaleItem is the request struct for the cz_req_apply_bargain_sale_item action.
-// CZ_REQ_APPLY_BARGAIN_SALE_ITEM packet (PACKET_CZ_REQ_APPLY_BARGAIN_SALE_ITEM)
 type CzReqApplyBargainSaleItem struct {
-	AccountID uint32 // Account ID
-	ItemID uint16 // Item ID to apply bargain sale to
-	Amount uint32 // Sale price amount
-	StartTime uint32 // Sale start time (unix timestamp)
-	Hours uint8 // Duration of sale in hours
 }

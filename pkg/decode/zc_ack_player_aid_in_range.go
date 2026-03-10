@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckPlayerAidInRange_0x0A6D(data []byte, packetver uint32) events.ZcAckPlayerAidInRange {
 	var e events.ZcAckPlayerAidInRange
 	_ = packetver
-	e.AID = data[4:]  // rAthena: AID (offset 4, size 0)
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
+	e.AID = data[4:]  // rAthena: AID (offset 4, size 0)
 	return e
 }
 

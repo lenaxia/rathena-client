@@ -2,10 +2,5 @@
 
 package events
 
-// AcRefuseLogin is the event emitted when a ac_refuse_login packet is received.
-// Login refused - legacy version with 8-bit error code
-type AcRefuseLogin struct {
-	Type uint8 // Login error code (see LOGIN_ERROR_CODES)
-	PacketType int16 // packetType field
-	Date string // Ban expiration date string (20 bytes, null-terminated)
-}
+// AcRefuseLogin is the event emitted for the ac_refuse_login action.
+type AcRefuseLogin struct{}

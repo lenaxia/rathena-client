@@ -2,9 +2,5 @@
 
 package events
 
-// ZcAckItemidentify is the event emitted when a zc_ack_itemidentify packet is received.
-// ZC_ACK_ITEMIDENTIFY packet (PACKET_ZC_ACK_ITEMIDENTIFY)
-type ZcAckItemidentify struct {
-	ItemIndex uint16 // Item inventory index
-	Result uint8 // Identification result (0=success, 1=fail)
-}
+// ZcAckItemidentify is the event emitted for the zc_ack_itemidentify action.
+type ZcAckItemidentify struct{}

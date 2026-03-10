@@ -8,6 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SelfChat_0x008E(data []byte, packetver uint32) events.SelfChat {
 	var e events.SelfChat
 	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 	e.Message = nullTermString(data[4:])  // rAthena: Message (offset 4, size 0)
 	return e
 }

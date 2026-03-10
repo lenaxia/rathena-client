@@ -2,8 +2,7 @@
 
 package events
 
-// AccountId is the event emitted when a account_id packet is received.
-// Account ID confirmation from map server
+// AccountId is the event emitted for the account_id action.
 type AccountId struct {
-	AccountID uint32 // Account ID
+	AID uint32
 }

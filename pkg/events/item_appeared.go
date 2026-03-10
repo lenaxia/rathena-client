@@ -2,15 +2,17 @@
 
 package events
 
-// ItemAppeared is the event emitted when a item_appeared packet is received.
-// Item appeared on ground (new drop)
+// ItemAppeared is the event emitted for the item_appeared action.
 type ItemAppeared struct {
-	ID uint32 // Item actor ID (ground item object ID)
-	ItemID uint16 // Item type/name ID
-	Identified uint8 // Item identified flag
-	X uint16 // Map X coordinate
-	Y uint16 // Map Y coordinate
-	Subx uint8 // Sub-tile X position
-	Suby uint8 // Sub-tile Y position
-	Amount uint16 // Item stack amount
+	ITAID uint32
+	ITID uint32
+	IsIdentified uint8
+	XPos int16
+	YPos int16
+	SubX uint8
+	SubY uint8
+	Count int16
+	Type uint16
+	Showdropeffect int8
+	Dropeffectmode int16
 }

@@ -12,8 +12,7 @@ func EncodeCzReqItemrepair1(req send.CzReqItemrepair1, packetver uint32) [15]byt
 	// Packet ID: 0x01FD (little-endian)
 	p[0] = 0xfd
 	p[1] = 0x01
-	// Item: complex mapping "[]byte{}" — implement manually
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
+	copy(p[2:], req.Item)  // rAthena: item
 	_ = packetver
 	return p
 }

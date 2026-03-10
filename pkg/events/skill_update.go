@@ -2,12 +2,5 @@
 
 package events
 
-// SkillUpdate is the event emitted when a skill_update packet is received.
-// Single skill information update (legacy version, use 0x07E1 for newer clients)
-type SkillUpdate struct {
-	SkillID uint16 // Skill ID
-	Lv uint16 // Skill level (1-10)
-	Range uint16 // Skill range in cells
-	Sp uint16 // SP cost to use skill
-	Up uint8 // Can skill be leveled up (1=yes, 0=no)
-}
+// SkillUpdate is the event emitted for the skill_update action.
+type SkillUpdate struct{}

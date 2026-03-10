@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGradeEnchantBroadcastResult_0x0B5E(data []byte, packetver uint32) events.ZcGradeEnchantBroadcastResult {
 	var e events.ZcGradeEnchantBroadcastResult
 	_ = packetver
-	e.Grade = leI16(data, 30)  // rAthena: grade (offset 30, size 2)
+	e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 	e.ItemId = leU32(data, 26)  // rAthena: itemId (offset 26, size 4)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.Grade = leI16(data, 30)  // rAthena: grade (offset 30, size 2)
 	e.Status = int8(data[32])  // rAthena: status (offset 32, size 1)
 	return e
 }

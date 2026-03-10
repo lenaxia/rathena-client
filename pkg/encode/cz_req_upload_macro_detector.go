@@ -12,7 +12,6 @@ func EncodeCzReqUploadMacroDetector(req send.CzReqUploadMacroDetector, packetver
 	// Packet ID: 0x0A52 (little-endian)
 	p[0] = 0x52
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	copy(p[2:18], req.Answer)  // rAthena: answer
 	leU16Put(p[18:], req.ImageSize)  // rAthena: imageSize
 	_ = packetver

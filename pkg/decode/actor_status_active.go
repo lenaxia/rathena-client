@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorStatusActive_0x0196(data []byte, packetver uint32) events.ActorStatusActive {
 	var e events.ActorStatusActive
 	_ = packetver
-	e.ActorID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
-	e.StatusID = leU16(data, 2)  // rAthena: index (offset 2, size 2)
-	e.Active = data[8]  // rAthena: state (offset 8, size 1)
+	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
+	e.State = data[8]  // rAthena: state (offset 8, size 1)
 	return e
 }
 

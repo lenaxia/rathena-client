@@ -3,7 +3,5 @@
 package send
 
 // PartyInvite is the request struct for the party_invite action.
-// Invite a player to party
 type PartyInvite struct {
-	TargetAID uint32 // Target player account ID
 }

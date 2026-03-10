@@ -3,9 +3,7 @@
 package send
 
 // CzChooseMenuZero is the request struct for the cz_choose_menu_zero action.
-// CZ_CHOOSE_MENU_ZERO packet (PACKET_CZ_CHOOSE_MENU_ZERO)
 type CzChooseMenuZero struct {
-	NpcID uint32 // NpcID field
-	PacketType int16 // PacketType field
-	MenuIndex uint8 // menuIndex field
+	NpcID uint32
+	MenuIndex uint8
 }

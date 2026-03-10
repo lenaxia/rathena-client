@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PublicChat_0x008D(data []byte, packetver uint32) events.PublicChat {
 	var e events.PublicChat
 	_ = packetver
-	// e.ID = &packet.GID  (complex expression — implement manually)
-	// e.Message = &packet.Message  (complex expression — implement manually)
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.GID = leU32(data, 4)  // rAthena: GID (offset 4, size 4)
+	e.Message = nullTermString(data[8:])  // rAthena: Message (offset 8, size 0)
 	return e
 }
-
-// SKIP PublicChat_0x008C: struct PACKET_CZ_REQUEST_CHAT not found in VersionTable
 

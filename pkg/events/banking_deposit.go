@@ -2,11 +2,5 @@
 
 package events
 
-// BankingDeposit is the event emitted when a banking_deposit packet is received.
-// Banking deposit acknowledgment
-type BankingDeposit struct {
-	Balance int64 // New bank balance after deposit
-	Result uint8 // Deposit result (0=failed, 1=success)
-	Amount int64 // Amount deposited
-	Zeny int32 // Remaining zeny after deposit
-}
+// BankingDeposit is the event emitted for the banking_deposit action.
+type BankingDeposit struct{}

@@ -2,13 +2,11 @@
 
 package events
 
-// ZcPersonalInfomation is the event emitted when a zc_personal_infomation packet is received.
-// ZC_PERSONAL_INFOMATION packet (PACKET_ZC_PERSONAL_INFOMATION)
+// ZcPersonalInfomation is the event emitted for the zc_personal_infomation action.
 type ZcPersonalInfomation struct {
-	Details []byte // details field
-	Length int16 // length field
-	PacketType int16 // packetType field
-	TotalDeath int16 // total_death field
-	TotalDrop int16 // total_drop field
-	TotalExp int16 // total_exp field
+	Length int16
+	Total_exp int32
+	Total_death int32
+	Total_drop int32
+	Details []byte
 }

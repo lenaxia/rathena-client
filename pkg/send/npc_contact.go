@@ -3,8 +3,7 @@
 package send
 
 // NpcContact is the request struct for the npc_contact action.
-// Initiate contact/talk with an NPC
 type NpcContact struct {
-	NPCID uint32 // NPC actor ID
-	Type uint8 // Contact type (1=talk)
+	AID uint32
+	Type uint8
 }

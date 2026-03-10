@@ -3,7 +3,7 @@
 package send
 
 // CzAdventurerAgencyJoinReq is the request struct for the cz_adventurer_agency_join_req action.
-// CZ_ADVENTURER_AGENCY_JOIN_REQ packet (PACKET_CZ_ADVENTURER_AGENCY_JOIN_REQ)
 type CzAdventurerAgencyJoinReq struct {
-	PacketType int16 // packetType field
+	GID []byte
+	AID []byte
 }

@@ -2,8 +2,10 @@
 
 package events
 
-// ZcAdventurerAgencyJoinResult is the event emitted when a zc_adventurer_agency_join_result packet is received.
-// ZC_ADVENTURER_AGENCY_JOIN_RESULT packet (PACKET_ZC_ADVENTURER_AGENCY_JOIN_RESULT)
+// ZcAdventurerAgencyJoinResult is the event emitted for the zc_adventurer_agency_join_result action.
 type ZcAdventurerAgencyJoinResult struct {
-	PacketType int16 // packetType field
+	Player_name string
+	Party_name string
+	AID []byte
+	Result []byte
 }

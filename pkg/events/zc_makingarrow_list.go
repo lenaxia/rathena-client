@@ -2,10 +2,8 @@
 
 package events
 
-// ZcMakingarrowList is the event emitted when a zc_makingarrow_list packet is received.
-// ZC_MAKINGARROW_LIST packet (PACKET_ZC_MAKINGARROW_LIST)
+// ZcMakingarrowList is the event emitted for the zc_makingarrow_list action.
 type ZcMakingarrowList struct {
-	Items []byte // items field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	Items []byte
 }

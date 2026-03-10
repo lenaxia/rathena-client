@@ -3,7 +3,5 @@
 package send
 
 // CzCompleteApplyMacroDetectorCaptcha is the request struct for the cz_complete_apply_macro_detector_captcha action.
-// CZ_COMPLETE_APPLY_MACRO_DETECTOR_CAPTCHA packet (PACKET_CZ_COMPLETE_APPLY_MACRO_DETECTOR_CAPTCHA)
 type CzCompleteApplyMacroDetectorCaptcha struct {
-	PacketType int16 // PacketType field
 }

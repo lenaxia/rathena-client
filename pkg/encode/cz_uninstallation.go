@@ -13,7 +13,6 @@ func EncodeCzUninstallation(req send.CzUninstallation, packetver uint32) [3]byte
 	p[0] = 0x35
 	p[1] = 0x0b
 	p[2] = req.InstallationKind  // rAthena: InstallationKind
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	_ = packetver
 	return p
 }

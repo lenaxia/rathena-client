@@ -3,7 +3,6 @@
 package send
 
 // CzReqPreviewMacroDetector is the request struct for the cz_req_preview_macro_detector action.
-// CZ_REQ_PREVIEW_MACRO_DETECTOR packet (PACKET_CZ_REQ_PREVIEW_MACRO_DETECTOR)
 type CzReqPreviewMacroDetector struct {
-	PacketType int16 // PacketType field
+	CaptchaID []byte
 }

@@ -2,9 +2,8 @@
 
 package events
 
-// SkillPostDelay is the event emitted when a skill_post_delay packet is received.
-// Skill cooldown notification
+// SkillPostDelay is the event emitted for the skill_post_delay action.
 type SkillPostDelay struct {
-	Time uint32 // Cooldown duration in milliseconds
-	ID uint16 // Skill ID entering cooldown
+	SKID uint16
+	DelayTM uint32
 }

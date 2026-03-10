@@ -3,7 +3,5 @@
 package send
 
 // CzSeCashshopOpen1 is the request struct for the cz_se_cashshop_open1 action.
-// CZ_SE_CASHSHOP_OPEN1 packet (PACKET_CZ_SE_CASHSHOP_OPEN1)
 type CzSeCashshopOpen1 struct {
-	PacketType int16 // packetType field
 }

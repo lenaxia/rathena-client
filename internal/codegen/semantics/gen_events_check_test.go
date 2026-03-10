@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/lenaxia/rathena-client/internal/codegen/gen"
+	"github.com/lenaxia/rathena-client/internal/codegen/preprocess"
 	"github.com/lenaxia/rathena-client/internal/codegen/semantics"
 )
 
@@ -16,7 +17,9 @@ func TestGeneratedEventsValidGo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadFile: %v", err)
 	}
-	files, err := gen.GenerateEventsDirFiles(db)
+	// Use an empty VersionTable — event files are still generated (empty structs).
+	vt := make(preprocess.VersionTable)
+	files, err := gen.GenerateEventsDirFiles(db, vt)
 	if err != nil {
 		t.Fatalf("GenerateEventsDirFiles: %v", err)
 	}

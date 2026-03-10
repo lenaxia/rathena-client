@@ -2,11 +2,9 @@
 
 package events
 
-// ZcAckMergeItem is the event emitted when a zc_ack_merge_item packet is received.
-// ZC_ACK_MERGE_ITEM packet (PACKET_ZC_ACK_MERGE_ITEM)
+// ZcAckMergeItem is the event emitted for the zc_ack_merge_item action.
 type ZcAckMergeItem struct {
-	Amount int16 // amount field
-	Index int16 // index field
-	PacketType int16 // packetType field
-	Reason uint8 // reason field
+	Index int16
+	Amount int16
+	Reason uint8
 }

@@ -2,9 +2,5 @@
 
 package events
 
-// ZcAckItemrepair is the event emitted when a zc_ack_itemrepair packet is received.
-// ZC_ACK_ITEMREPAIR packet (PACKET_ZC_ACK_ITEMREPAIR)
-type ZcAckItemrepair struct {
-	ItemIndex uint16 // Item inventory index
-	Result uint8 // Repair result (0=success, 1=failure)
-}
+// ZcAckItemrepair is the event emitted for the zc_ack_itemrepair action.
+type ZcAckItemrepair struct{}

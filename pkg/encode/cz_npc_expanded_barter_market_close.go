@@ -12,7 +12,6 @@ func EncodeCzNpcExpandedBarterMarketClose(req send.CzNpcExpandedBarterMarketClos
 	// Packet ID: 0x0B58 (little-endian)
 	p[0] = 0x58
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

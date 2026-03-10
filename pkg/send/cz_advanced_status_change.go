@@ -3,8 +3,5 @@
 package send
 
 // CzAdvancedStatusChange is the request struct for the cz_advanced_status_change action.
-// CZ_ADVANCED_STATUS_CHANGE packet (PACKET_CZ_ADVANCED_STATUS_CHANGE)
 type CzAdvancedStatusChange struct {
-	StatusType int16 // Type of status to change (STR, AGI, VIT, INT, DEX, LUK)
-	Amount int16 // Amount to increase status by
 }

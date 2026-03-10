@@ -2,11 +2,5 @@
 
 package events
 
-// ZcMonologDialog is the event emitted when a zc_monolog_dialog packet is received.
-// ZC_MONOLOG_DIALOG packet (PACKET_ZC_MONOLOG_DIALOG)
-type ZcMonologDialog struct {
-	NpcID uint32 // NpcID field
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Message string // message field
-}
+// ZcMonologDialog is the event emitted for the zc_monolog_dialog action.
+type ZcMonologDialog struct{}

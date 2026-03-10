@@ -2,9 +2,5 @@
 
 package events
 
-// ZcAckCountBargainSaleItem is the event emitted when a zc_ack_count_bargain_sale_item packet is received.
-// ZC_ACK_COUNT_BARGAIN_SALE_ITEM packet (PACKET_ZC_ACK_COUNT_BARGAIN_SALE_ITEM)
-type ZcAckCountBargainSaleItem struct {
-	ItemID uint32 // Item ID
-	Amount uint32 // Item amount/count
-}
+// ZcAckCountBargainSaleItem is the event emitted for the zc_ack_count_bargain_sale_item action.
+type ZcAckCountBargainSaleItem struct{}

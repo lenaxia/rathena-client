@@ -2,10 +2,8 @@
 
 package events
 
-// ZcMoveItemFailed is the event emitted when a zc_move_item_failed packet is received.
-// ZC_MOVE_ITEM_FAILED packet (PACKET_ZC_MOVE_ITEM_FAILED)
+// ZcMoveItemFailed is the event emitted for the zc_move_item_failed action.
 type ZcMoveItemFailed struct {
-	ItemCount int16 // itemCount field
-	ItemIndex int16 // itemIndex field
-	PacketType int16 // packetType field
+	ItemIndex int16
+	ItemCount int16
 }

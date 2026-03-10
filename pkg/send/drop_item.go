@@ -3,8 +3,5 @@
 package send
 
 // DropItem is the request struct for the drop_item action.
-// Drop an item from inventory onto the ground
 type DropItem struct {
-	Index uint16 // Inventory slot index
-	Amount uint16 // Quantity to drop
 }

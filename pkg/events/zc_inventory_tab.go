@@ -2,10 +2,5 @@
 
 package events
 
-// ZcInventoryTab is the event emitted when a zc_inventory_tab packet is received.
-// ZC_INVENTORY_TAB packet (PACKET_ZC_INVENTORY_TAB)
-type ZcInventoryTab struct {
-	PacketID int16 // Packet identifier
-	InventoryIndex int16 // Inventory index of the item
-	IsFavorite bool // Whether item is marked as favorite
-}
+// ZcInventoryTab is the event emitted for the zc_inventory_tab action.
+type ZcInventoryTab struct{}

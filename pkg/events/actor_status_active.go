@@ -2,10 +2,9 @@
 
 package events
 
-// ActorStatusActive is the event emitted when a actor_status_active packet is received.
-// Actor status effect active/inactive notification
+// ActorStatusActive is the event emitted for the actor_status_active action.
 type ActorStatusActive struct {
-	ActorID uint32 // Actor ID affected by status
-	StatusID uint16 // Status effect ID
-	Active uint8 // Whether status is active (1) or inactive (0)
+	Index int16
+	AID uint32
+	State uint8
 }

@@ -3,11 +3,5 @@
 package send
 
 // GameLogin is the request struct for the game_login action.
-// Character server authentication (client → char server)
 type GameLogin struct {
-	AccountID uint32 // Account ID from login server (zero if absent for certain packet variants)
-	SessionID uint32 // Session ID 1 (login_id1 from 0x0AC4, zero if absent)
-	Clienttype uint16 // Client type or user level (zero if absent, often unused/0)
-	SessionID2 uint32 // Session ID 2 (login_id2 from login server, zero if absent)
-	Sex uint8 // Character sex (0=female, 1=male, 99=account sex, zero if absent)
 }

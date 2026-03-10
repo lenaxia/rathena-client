@@ -2,14 +2,13 @@
 
 package events
 
-// ActorStatusEffectExtended is the event emitted when a actor_status_effect_extended packet is received.
-// Extended status effect notification with actor ID, timing, and effect parameters
+// ActorStatusEffectExtended is the event emitted for the actor_status_effect_extended action.
 type ActorStatusEffectExtended struct {
-	ActorID uint32 // Actor ID affected by status effect
-	StatusID uint16 // Status effect type ID
-	Active bool // Status is active (true) or removed (false)
-	DurationMS uint32 // Duration in milliseconds
-	Val1 uint32 // Status effect parameter 1 - meaning varies by StatusID
-	Val2 uint32 // Status effect parameter 2 - meaning varies by StatusID
-	Val3 uint32 // Status effect parameter 3 - meaning varies by StatusID
+	Index int16
+	AID uint32
+	State uint8
+	Left uint32
+	Val1 int32
+	Val2 int32
+	Val3 int32
 }

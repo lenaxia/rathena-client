@@ -2,12 +2,22 @@
 
 package events
 
-// ItemPickup is the event emitted when a item_pickup packet is received.
-// Item added to inventory
+// ItemPickup is the event emitted for the item_pickup action.
 type ItemPickup struct {
-	ItemID uint32 // Item type ID from database
-	Index uint16 // Inventory slot index
-	Amount uint16 // Item quantity
-	IsIdentified bool // Whether item is identified
-	Result uint8 // Pickup result: 0=success, 1=inventory full, 2=too heavy, etc.
+	Index uint16
+	Count uint16
+	Nameid uint32
+	IsIdentified uint8
+	IsDamaged uint8
+	RefiningLevel uint8
+	Slot []byte
+	Location uint32
+	Type uint8
+	Result uint8
+	HireExpireDate int32
+	BindOnEquipType uint16
+	Option_data []byte
+	Favorite uint8
+	Look uint16
+	Grade uint8
 }

@@ -3,8 +3,5 @@
 package send
 
 // NpcMenuResponse is the request struct for the npc_menu_response action.
-// Respond to NPC menu selection
 type NpcMenuResponse struct {
-	NPCID uint32 // NPC actor ID
-	MenuOption uint8 // Selected menu option (1-based index, 255=cancel)
 }

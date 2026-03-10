@@ -12,8 +12,7 @@ func EncodeCzAckAnswerMacroDetector(req send.CzAckAnswerMacroDetector, packetver
 	// Packet ID: 0x0A5C (little-endian)
 	p[0] = 0x5c
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
-	// Answer: complex mapping "func() [16]byte { var arr [16]byte; copy(arr[:], []byte(packet.answer)); return arr }()" — implement manually
+	copy(p[2:18], req.Answer)  // rAthena: answer
 	_ = packetver
 	return p
 }

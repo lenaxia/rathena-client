@@ -2,10 +2,8 @@
 
 package events
 
-// ZcInventoryEnd is the event emitted when a zc_inventory_end packet is received.
-// ZC_INVENTORY_END packet (PACKET_ZC_INVENTORY_END)
+// ZcInventoryEnd is the event emitted for the zc_inventory_end action.
 type ZcInventoryEnd struct {
-	Flag uint8 // Inventory flag/type
-	InvType uint8 // invType field
-	PacketType int16 // packetType field
+	InvType uint8
+	Flag uint8
 }

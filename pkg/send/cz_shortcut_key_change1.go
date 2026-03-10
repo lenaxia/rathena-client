@@ -3,9 +3,7 @@
 package send
 
 // CzShortcutKeyChange1 is the request struct for the cz_shortcut_key_change1 action.
-// CZ_SHORTCUT_KEY_CHANGE1 packet (PACKET_CZ_SHORTCUT_KEY_CHANGE1)
 type CzShortcutKeyChange1 struct {
-	Hotkey []byte // hotkey field (hotkey_data struct - 7 bytes: uint8 isSkill, uint32 id, uint16 count)
-	Index uint16 // index field
-	PacketType int16 // packetType field
+	Index uint16
+	Hotkey []byte
 }

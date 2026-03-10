@@ -2,11 +2,9 @@
 
 package events
 
-// ZcPreviewMacroDetectorCaptcha is the event emitted when a zc_preview_macro_detector_captcha packet is received.
-// ZC_PREVIEW_MACRO_DETECTOR_CAPTCHA packet (PACKET_ZC_PREVIEW_MACRO_DETECTOR_CAPTCHA)
+// ZcPreviewMacroDetectorCaptcha is the event emitted for the zc_preview_macro_detector_captcha action.
 type ZcPreviewMacroDetectorCaptcha struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	CaptchaKey string // captchaKey field
-	ImageData string // imageData field
+	PacketLength int16
+	CaptchaKey string
+	ImageData string
 }

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcCartoff is the event emitted when a zc_cartoff packet is received.
-// ZC_CARTOFF packet (PACKET_ZC_CARTOFF)
-type ZcCartoff struct {
-	PacketID uint16 // Packet identifier
-}
+// ZcCartoff is the event emitted for the zc_cartoff action.
+type ZcCartoff struct{}

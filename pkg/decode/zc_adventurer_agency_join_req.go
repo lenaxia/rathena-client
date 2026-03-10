@@ -8,9 +8,11 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAdventurerAgencyJoinReq_0x0AE7(data []byte, packetver uint32) events.ZcAdventurerAgencyJoinReq {
 	var e events.ZcAdventurerAgencyJoinReq
 	_ = packetver
-	e.Job = leI16(data, 36)  // rAthena: job (offset 36, size 2)
+	e.GRID = data[2:]  // rAthena: GRID (offset 2, size 4)
+	e.AID = data[6:]  // rAthena: AID (offset 6, size 4)
+	e.GroupName = nullTermString(data[10:34])  // rAthena: groupName (offset 10, size 24)
 	e.Level = leI16(data, 34)  // rAthena: level (offset 34, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.Job = leI16(data, 36)  // rAthena: job (offset 36, size 2)
 	return e
 }
 

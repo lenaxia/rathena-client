@@ -21,12 +21,8 @@ type DecodeInput struct {
 // action's implementations. Each function reads raw bytes from the wire and
 // populates an events.<ActionName> struct.
 //
-// The generated package is "decode". Functions are pure — no side effects, no
-// global state. All byte reads use little-endian order (Ragnarok Online protocol).
-//
-// Helper functions (leU16, leU32, leI16, leI32) are emitted into a shared
-// decode/helpers.go file (not generated here — they are hand-written in the
-// pkg/decode package). This generator assumes their existence.
+// Field names and Go types are derived directly from the rAthena struct layout —
+// no canonical_params or field_mapping expressions are used.
 func GenerateDecodeFile(input DecodeInput) (filename string, src string, err error) {
 	a := input.Action
 	if a == nil {
@@ -53,17 +49,25 @@ func GenerateDecodeFile(input DecodeInput) (filename string, src string, err err
 	// Track whether packing/events are actually used.
 	importsUsed := map[string]bool{"events": false, "packing": false}
 
-	// Generate one function per implementation.
+	// Compute action-scoped event field types: union of all fields across
+	// all receive-direction structs and all their layout versions. This ensures
+	// correct casts when different structs in the same action use different sizes.
+	eventFieldTypes := buildActionEventFieldTypes(a, input.VersionTable)
+
 	for _, impl := range a.Implementations {
 		if impl.PacketID == "" || impl.StructName == "" {
+			continue
+		}
+		// Skip send-direction structs — they belong to the encode package.
+		if !isReceiveStruct(impl.StructName) {
 			continue
 		}
 
 		fnName := fmt.Sprintf("%s_%s", structName, packetIDtoFuncSuffix(impl.PacketID))
 
-		funcSrc, usesPacking, err := generateDecodeFunc(fnName, structName, &impl, a.CanonicalParams, input.VersionTable)
+		funcSrc, usesPacking, err := generateDecodeFunc(fnName, structName, &impl, input.VersionTable, eventFieldTypes)
 		if err != nil {
-			// Log and skip rather than failing — DB has known errors.
+			// Log and skip rather than failing — DB may have known gaps.
 			sb.WriteString(fmt.Sprintf("// SKIP %s: %v\n\n", fnName, err))
 			continue
 		}
@@ -98,8 +102,8 @@ func GenerateDecodeFile(input DecodeInput) (filename string, src string, err err
 func generateDecodeFunc(
 	fnName, structName string,
 	impl *semantics.Implementation,
-	params []semantics.CanonicalParam,
 	vt preprocess.VersionTable,
+	eventFieldTypes map[string]string, // canonical types for the event struct (action-scoped)
 ) (src string, usesPacking bool, err error) {
 	// Get the version ranges for this struct.
 	ranges, ok := vt[impl.StructName]
@@ -116,8 +120,6 @@ func generateDecodeFunc(
 
 	var applicable []preprocess.VersionedLayout
 	for _, r := range ranges {
-		// Skip layouts with no upper bound that start before our minVer
-		// only if the layout changes after minVer.
 		rMax := r.MaxVer
 		if rMax == 0 {
 			rMax = 99999999
@@ -126,7 +128,6 @@ func generateDecodeFunc(
 		if implMax == 0 {
 			implMax = 99999999
 		}
-		// Overlap check: r.MinVer < implMax && rMax > minVer
 		if r.MinVer < implMax && rMax > minVer {
 			if r.Layout != nil && r.Layout.Available {
 				applicable = append(applicable, r)
@@ -149,36 +150,22 @@ func generateDecodeFunc(
 			impl.StructName, minVer, maxVer)
 	}
 
+	// Remove the per-impl eventFieldTypes — caller now passes action-scoped types.
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("// %s decodes a %s packet (struct %s).\n",
 		fnName, impl.PacketID, impl.StructName))
 	sb.WriteString(fmt.Sprintf("func %s(data []byte, packetver uint32) events.%s {\n", fnName, structName))
 	sb.WriteString(fmt.Sprintf("\tvar e events.%s\n", structName))
 
-	// Build the union of all field names present across any applicable layout.
-	// This lets generateFieldReads distinguish "field absent in this version but
-	// known in other versions" (emit zero comment) from "field name not found
-	// in any version" (emit diagnostic comment).
-	allFieldNames := make(map[string]bool)
-	for _, r := range applicable {
-		if r.Layout != nil {
-			for _, f := range r.Layout.Fields {
-				allFieldNames[f.Name] = true
-			}
-		}
-	}
-
 	if len(applicable) == 1 {
-		// Single layout — no packetver branches needed.
 		sb.WriteString("\t_ = packetver\n")
-		body, usesPack := generateFieldReads("\t", applicable[0].Layout, impl, params, allFieldNames)
+		body, usesPack := generateFieldReadsFromLayout("\t", applicable[0].Layout, eventFieldTypes)
 		sb.WriteString(body)
 		if usesPack {
 			usesPacking = true
 		}
 	} else {
-		// Multiple layouts — emit if/else chain.
-		// Sort by MinVer descending so we check newest first.
+		// Multiple layouts — emit if/else chain sorted newest first.
 		sorted := make([]preprocess.VersionedLayout, len(applicable))
 		copy(sorted, applicable)
 		sort.Slice(sorted, func(i, j int) bool { return sorted[i].MinVer > sorted[j].MinVer })
@@ -191,7 +178,7 @@ func generateDecodeFunc(
 			} else {
 				sb.WriteString(fmt.Sprintf("\t} else if packetver >= %d {\n", r.MinVer))
 			}
-			body, usesPack := generateFieldReads("\t\t", r.Layout, impl, params, allFieldNames)
+			body, usesPack := generateFieldReadsFromLayout("\t\t", r.Layout, eventFieldTypes)
 			sb.WriteString(body)
 			if usesPack {
 				usesPacking = true
@@ -204,91 +191,105 @@ func generateDecodeFunc(
 	return sb.String(), usesPacking, nil
 }
 
-// generateFieldReads emits field-read statements for each canonical param.
-// allFieldNames is the union of field names across all applicable layout versions;
-// if a field is absent from THIS layout but present in another, it is emitted as
-// an explicit zero comment rather than a "not found" diagnostic.
-func generateFieldReads(
+// buildActionEventFieldTypes builds the action-scoped canonical field type map.
+// It collects fields from ALL receive-direction struct implementations and ALL their
+// layout versions, widening types when the same field appears with different sizes
+// across structs or versions. This mirrors exactly what mergedEventFields does for
+// the events struct, so decode functions emit correct casts.
+func buildActionEventFieldTypes(a *semantics.Action, vt preprocess.VersionTable) map[string]string {
+	result := make(map[string]string)
+	for _, impl := range a.Implementations {
+		if !isReceiveStruct(impl.StructName) {
+			continue
+		}
+		ranges, ok := vt[impl.StructName]
+		if !ok {
+			continue
+		}
+		for _, vr := range ranges {
+			if vr.Layout == nil || !vr.Layout.Available {
+				continue
+			}
+			for i := range vr.Layout.Fields {
+				f := &vr.Layout.Fields[i]
+				if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
+					continue
+				}
+				goName := cFieldToGoIdent(f.Name)
+				goType := cTypeToGoType(f)
+				if existing, exists := result[goName]; !exists {
+					result[goName] = goType
+				} else if existing != goType {
+					result[goName] = widenType(existing, goType)
+				}
+			}
+		}
+	}
+	return result
+}
+
+// buildEventFieldTypes builds a map of Go field name → Go type for a single struct,
+// widening across its version ranges. Used when only one struct is in scope.
+func buildEventFieldTypes(structName string, vt preprocess.VersionTable) map[string]string {
+	result := make(map[string]string)
+	ranges, ok := vt[structName]
+	if !ok {
+		return result
+	}
+	for _, vr := range ranges {
+		if vr.Layout == nil || !vr.Layout.Available {
+			continue
+		}
+		for i := range vr.Layout.Fields {
+			f := &vr.Layout.Fields[i]
+			if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
+				continue
+			}
+			goName := cFieldToGoIdent(f.Name)
+			goType := cTypeToGoType(f)
+			if existing, exists := result[goName]; !exists {
+				result[goName] = goType
+			} else if existing != goType {
+				result[goName] = widenType(existing, goType)
+			}
+		}
+	}
+	return result
+}
+
+// generateFieldReadsFromLayout emits field-read statements derived directly from
+// the rAthena struct layout. eventFieldTypes maps Go field names to their canonical
+// (possibly widened) types in the event struct. If a layout field has a narrower
+// type than the event struct field, an implicit cast is generated.
+//
+// Fields named "PacketType" are always skipped.
+func generateFieldReadsFromLayout(
 	indent string,
 	layout *preprocess.StructLayout,
-	impl *semantics.Implementation,
-	params []semantics.CanonicalParam,
-	allFieldNames map[string]bool,
+	eventFieldTypes map[string]string,
 ) (src string, usesPacking bool) {
 	if layout == nil {
 		return fmt.Sprintf("%s// layout unavailable\n", indent), false
 	}
 
-	// Build field name → Field index map for the layout.
-	fieldByName := make(map[string]*preprocess.Field, len(layout.Fields))
-	for i := range layout.Fields {
-		fieldByName[layout.Fields[i].Name] = &layout.Fields[i]
-	}
-
 	var sb strings.Builder
 
-	for _, p := range params {
-		if p.Name == "" {
-			continue
-		}
-		// Look up the field_mapping for this param.
-		expr, ok := impl.FieldMapping[p.Name]
-		if !ok {
+	for i := range layout.Fields {
+		f := &layout.Fields[i]
+		if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
 			continue
 		}
 
-		goFieldName := paramNameToGoIdent(p.Name)
-		goType := normaliseGoType(p.Type)
-
-		// Handle explicit "field absent in this version" markers.
-		if expr == "nil" || expr == "null" || expr == "" {
-			// Field not present in this packet version — emit zero value.
-			sb.WriteString(fmt.Sprintf("%s// e.%s absent in this packet version\n",
-				indent, goFieldName))
-			continue
-		}
-
-		// Handle literal zero values ("0", "uint32(0)", "int32(0)", etc.).
-		if isZeroLiteral(expr) {
-			sb.WriteString(fmt.Sprintf("%s// e.%s = zero (field absent/defaulted in this version)\n",
-				indent, goFieldName))
-			continue
-		}
-
-		// Extract the rAthena field name from expressions like "packet.FieldName",
-		// "uint32(packet.FieldName)", or plain "FieldName".
-		rathenaField := extractFieldName(expr)
-		if rathenaField == "" {
-			// Check for direct data-slice expressions like "data[N:]" or "data[N:M]"
-			// These are used for raw byte payloads that the struct layout doesn't encode.
-			if goType == "[]byte" && (strings.HasPrefix(expr, "data[") && strings.HasSuffix(expr, "]")) {
-				sb.WriteString(fmt.Sprintf("%se.%s = %s\n", indent, goFieldName, expr))
-				continue
-			}
-			// Complex expression (e.g. serialization helper, multi-field) — emit a comment.
-			sb.WriteString(fmt.Sprintf("%s// e.%s = %s  (complex expression — implement manually)\n",
-				indent, goFieldName, expr))
-			continue
-		}
-
-		f, ok := fieldByName[rathenaField]
-		if !ok {
-			if allFieldNames[rathenaField] {
-				// Field exists in other struct versions but not this one — emit intentional zero.
-				sb.WriteString(fmt.Sprintf("%s// e.%s = zero (field %s absent in this struct version)\n",
-					indent, goFieldName, rathenaField))
-			} else {
-				// Field not found in any version — likely a mapping error.
-				sb.WriteString(fmt.Sprintf("%s// e.%s: field %s not found in layout\n",
-					indent, goFieldName, rathenaField))
-			}
-			continue
+		goFieldName := cFieldToGoIdent(f.Name)
+		// Use the canonical event type if available (may be wider than this layout version).
+		goType := cTypeToGoType(f)
+		if canonicalType, ok := eventFieldTypes[goFieldName]; ok {
+			goType = canonicalType
 		}
 
 		readExpr, isPacking := fieldReadExpr(f, goType)
 		if readExpr == "" {
-			// fieldReadExpr returned empty — cannot auto-generate for this field/type combination.
-			sb.WriteString(fmt.Sprintf("%s// e.%s: flex array type %s cannot be auto-decoded from data[%d:] (implement manually)\n",
+			sb.WriteString(fmt.Sprintf("%s// e.%s: flex array type %s at data[%d:] — implement manually\n",
 				indent, goFieldName, goType, f.Offset))
 			continue
 		}
@@ -296,148 +297,85 @@ func generateFieldReads(
 			usesPacking = true
 		}
 		sb.WriteString(fmt.Sprintf("%se.%s = %s  // rAthena: %s (offset %d, size %d)\n",
-			indent, goFieldName, readExpr, rathenaField, f.Offset, f.Size))
+			indent, goFieldName, readExpr, f.Name, f.Offset, f.Size))
 	}
 
 	return sb.String(), usesPacking
 }
 
-// isZeroLiteral returns true for expressions that represent the zero value of their type.
-// These appear in field_mapping when a packet version doesn't have a particular field
-// and the value should default to Go's zero value.
-//
-// Handled cases:
-//   - Numeric: "0", "uint8(0)", ..., "int64(0)"
-//   - Boolean: "false"
-//   - String:  `""`, `string("")`   (empty string = zero for string fields)
-func isZeroLiteral(expr string) bool {
-	expr = strings.TrimSpace(expr)
-	if expr == "0" || expr == "false" || expr == `""` || expr == `string("")` {
-		return true
+// cFieldToGoIdent converts a C struct field name to an exported Go identifier.
+// e.g. "AID" → "AID", "speed" → "Speed", "ITID" → "ITID"
+func cFieldToGoIdent(name string) string {
+	if name == "" {
+		return ""
 	}
-	// Match "typeXX(0)" patterns.
-	for _, prefix := range []string{"uint8(0)", "uint16(0)", "uint32(0)", "uint64(0)",
-		"int8(0)", "int16(0)", "int32(0)", "int64(0)"} {
-		if expr == prefix {
-			return true
-		}
+	// If already starts with uppercase, return as-is (e.g. "AID", "GID", "ITID").
+	if name[0] >= 'A' && name[0] <= 'Z' {
+		return name
 	}
-	return false
+	// Lowercase start — capitalise first letter.
+	return strings.ToUpper(name[:1]) + name[1:]
 }
 
-// goKeywordsAndLiterals is the set of Go identifiers that are NOT rAthena field names.
-// Used to guard the plain-identifier branch of extractFieldName.
-var goKeywordsAndLiterals = map[string]bool{
-	"nil": true, "true": true, "false": true,
-	"break": true, "case": true, "chan": true, "const": true, "continue": true,
-	"default": true, "defer": true, "else": true, "fallthrough": true, "for": true,
-	"func": true, "go": true, "goto": true, "if": true, "import": true,
-	"interface": true, "map": true, "package": true, "range": true, "return": true,
-	"select": true, "struct": true, "switch": true, "type": true, "var": true,
-}
-
-// extractFieldName extracts the rAthena field name from a field_mapping expression.
-// Supported forms:
-//   - "FieldName"              → "FieldName"  (plain field name, new-style)
-//   - "packet.FieldName"       → "FieldName"  (old packet.X style)
-//   - "uint32(packet.X)"       → "X"          (type-cast form, simple cast only)
-//   - "packet.X[:]"            → "X"          (slice form)
-//   - "[]byte(packet.X)"       → "X"          (byte-slice cast form)
+// cTypeToGoType derives a Go type from a preprocess.Field's C type information.
 //
-// Returns "" for complex expressions (function literals, multi-arg calls, &packet.X,
-// serialization helpers, Go literals like nil/true/false).
-func extractFieldName(expr string) string {
-	expr = strings.TrimSpace(expr)
-	if expr == "" {
-		return ""
-	}
-
-	// Reject anything that starts with "func" — inline function literals are complex.
-	if strings.HasPrefix(expr, "func") {
-		return ""
-	}
-
-	// Plain field name: no dot, no paren, no bracket, no space, starts with letter/underscore.
-	// Must not be a Go keyword, literal, or builtin type.
-	if !strings.ContainsAny(expr, ".()[]+-*/ \"") {
-		if len(expr) > 0 && (expr[0] == '_' || (expr[0] >= 'A' && expr[0] <= 'Z') || (expr[0] >= 'a' && expr[0] <= 'z')) {
-			if !goKeywordsAndLiterals[expr] {
-				return expr
-			}
+// Mapping rules:
+//   - uint8 (non-array, non-flex)  → uint8
+//   - uint16                       → uint16
+//   - uint32                       → uint32
+//   - uint64                       → uint64
+//   - int8                         → int8
+//   - int16                        → int16
+//   - int32                        → int32
+//   - int64                        → int64
+//   - char (non-array)             → uint8
+//   - char[N]                      → string  (fixed-size null-terminated)
+//   - char[]  (flex)               → string  (variable null-terminated)
+//   - uint8[3]                     → [3]byte (PosDir)
+//   - uint8[6]                     → [6]byte (MoveData)
+//   - uint8[N]  (N>0)              → [N]byte
+//   - TYPE[]   (flex, non-char)    → []byte  (raw variable trailing data)
+//   - TYPE[N]  (fixed array, >=8)  → []byte  (fixed slice in struct)
+func cTypeToGoType(f *preprocess.Field) string {
+	if f.IsFlexArray {
+		if f.BaseType == "char" {
+			return "string"
 		}
+		return "[]byte"
 	}
-
-	// Simple "packet.X" form.
-	if strings.HasPrefix(expr, "packet.") {
-		rest := strings.TrimPrefix(expr, "packet.")
-		// No further dots, brackets, or parens — but allow trailing "[:]".
-		if idx := strings.IndexAny(rest, ".[]()+*/- "); idx < 0 {
-			return rest
+	if f.IsArray {
+		if f.BaseType == "char" {
+			return "string"
 		}
-		// Allow "packet.X[:]" form.
-		if strings.HasSuffix(rest, "[:]") {
-			base := strings.TrimSuffix(rest, "[:]")
-			if !strings.ContainsAny(base, ".()[]+*/- ") {
-				return base
-			}
+		if f.BaseType == "uint8" || f.BaseType == "unsigned char" {
+			return fmt.Sprintf("[%d]byte", f.ArrayLen)
 		}
-		return ""
+		// Other fixed arrays (e.g. uint32[N]) — expose as []byte for simplicity.
+		return "[]byte"
 	}
-
-	// "[]byte(packet.X)" form — must be the entire expression (starts with "[]byte(packet.").
-	// Reject "[]byte{...}" and other forms.
-	if strings.HasPrefix(expr, "[]byte(packet.") {
-		rest := strings.TrimPrefix(expr, "[]byte(packet.")
-		// rest should be "FieldName)" — find closing paren only (no dots, brackets).
-		end := strings.IndexAny(rest, ".()[]")
-		if end > 0 && rest[end] == ')' {
-			// Valid: rest = "FieldName)"
-			return rest[:end]
-		}
-		// end <= 0 or hit non-closing-paren: malformed or empty field name.
-		return ""
+	switch f.BaseType {
+	case "uint8", "unsigned char":
+		return "uint8"
+	case "uint16":
+		return "uint16"
+	case "uint32":
+		return "uint32"
+	case "uint64":
+		return "uint64"
+	case "int8":
+		return "int8"
+	case "int16":
+		return "int16"
+	case "int32":
+		return "int32"
+	case "int64":
+		return "int64"
+	case "char":
+		return "uint8"
+	default:
+		// Unknown C type — fall back to []byte.
+		return "[]byte"
 	}
-
-	// "[3]byte(packet.X[:])" and "[6]byte(packet.X[:])" forms — fixed-size array casts.
-	for _, prefix := range []string{"[3]byte(packet.", "[6]byte(packet."} {
-		if strings.HasPrefix(expr, prefix) {
-			rest := strings.TrimPrefix(expr, prefix)
-			// rest should be "FieldName[:])" — strip "[:])" suffix.
-			if strings.HasSuffix(rest, "[:])") {
-				field := strings.TrimSuffix(rest, "[:])")
-				if !strings.ContainsAny(field, ".()[]+*/- ") && field != "" {
-					return field
-				}
-			}
-			// Also handle "FieldName)" without slice suffix.
-			end := strings.IndexAny(rest, ".()[]")
-			if end > 0 && rest[end] == ')' {
-				return rest[:end]
-			}
-			return ""
-		}
-	}
-
-	// Type-cast form: "SimpleType(packet.X)" — e.g. "uint32(packet.GID)", "int16(packet.Count)".
-	// The cast type must be a simple identifier (no spaces, no dots), so the expression
-	// starts with [a-zA-Z_] and contains exactly one "(packet." substring.
-	// Guard: reject if expr contains spaces (func literals, complex expressions).
-	if !strings.Contains(expr, " ") {
-		if idx := strings.Index(expr, "(packet."); idx > 0 {
-			// Ensure nothing precedes the cast type that would indicate complexity.
-			castType := expr[:idx]
-			if !strings.ContainsAny(castType, ".()[]+*/- ") {
-				rest := expr[idx+len("(packet."):]
-				// rest should be "FieldName)" — find the closing paren.
-				end := strings.IndexAny(rest, ".()[]")
-				if end > 0 && rest[end] == ')' {
-					return rest[:end]
-				}
-			}
-		}
-	}
-
-	return ""
 }
 
 // fieldReadExpr returns the Go expression to read a field from `data` at its offset.
@@ -446,10 +384,6 @@ func fieldReadExpr(f *preprocess.Field, goType string) (expr string, usesPacking
 	off := f.Offset
 
 	// Flex array field — emit data[offset:] to expose the variable trailing data.
-	// For char[] fields where the canonical type is string, decode as null-terminated string.
-	// For []byte targets, emit raw slice.
-	// For other slice types ([]int16, []uint16, etc.) we cannot do a zero-copy reinterpret
-	// safely, so emit data[offset:] as a comment and leave the field as a skip.
 	if f.IsFlexArray {
 		switch goType {
 		case "string":
@@ -465,26 +399,34 @@ func fieldReadExpr(f *preprocess.Field, goType string) (expr string, usesPacking
 		case "[]uint32":
 			return fmt.Sprintf("func() []uint32 { d := data[%d:]; r := make([]uint32, len(d)/4); for i := range r { r[i] = leU32(d, i*4) }; return r }()", off), false
 		default:
-			// Non-byte slice type (e.g. []int64, []uint64, struct slices). Cannot auto-decode.
-			// Emit as a comment — caller must handle manually.
 			return "", false
 		}
 	}
 
 	// Special packing fields.
 	if f.Note == "packing=WBUFPOS" || (f.IsArray && f.Size == 3 && f.BaseType == "uint8") {
-		// 3-byte PosDir — copy into [3]byte (zero alloc, no heap escape).
 		return fmt.Sprintf("[3]byte(data[%d:%d])", off, off+3), false
 	}
 	if f.Note == "packing=WBUFPOS2" || (f.IsArray && f.Size == 6 && f.BaseType == "uint8") {
-		// 6-byte MoveData — copy into [6]byte (zero alloc, no heap escape).
 		return fmt.Sprintf("[6]byte(data[%d:%d])", off, off+6), false
 	}
 
-	// When the canonical Go type is wider than the actual field size, use the
-	// narrowest safe read and cast up.  This prevents out-of-bounds reads on
-	// fields like PACKET_ZC_STATUS_CHANGE.value (uint8, 1 byte) that are
-	// widened to uint32 by the semantic layer.
+	// Fixed-size array of uint8 (other than 3 or 6 bytes already handled above).
+	if f.IsArray && (f.BaseType == "uint8" || f.BaseType == "unsigned char") {
+		return fmt.Sprintf("func() [%d]byte { var a [%d]byte; copy(a[:], data[%d:]); return a }()", f.ArrayLen, f.ArrayLen, off), false
+	}
+
+	// Fixed-size char array → string.
+	if f.IsArray && f.BaseType == "char" {
+		return fmt.Sprintf("nullTermString(data[%d:%d])", off, off+f.Size), false
+	}
+
+	// Other fixed-size non-char arrays → []byte slice of the region.
+	if f.IsArray {
+		return fmt.Sprintf("data[%d:%d]", off, off+f.Size), false
+	}
+
+	// Scalar reads — size-safe upcast if needed.
 	if !f.IsArray {
 		switch {
 		case f.Size == 1 && (goType == "uint16" || goType == "uint32" || goType == "uint64"):
@@ -522,18 +464,11 @@ func fieldReadExpr(f *preprocess.Field, goType string) (expr string, usesPacking
 	case "int64":
 		return fmt.Sprintf("leI64(data, %d)", off), false
 	case "string":
-		if f.IsArray {
-			return fmt.Sprintf("nullTermString(data[%d:%d])", off, off+f.Size), false
-		}
 		return fmt.Sprintf("nullTermString(data[%d:])", off), false
 	case "[]byte":
-		if f.IsArray {
-			return fmt.Sprintf("data[%d:%d]", off, off+f.Size), false
-		}
 		return fmt.Sprintf("data[%d:]", off), false
 	default:
 		if strings.HasPrefix(goType, "[") {
-			// Fixed-size array.
 			return fmt.Sprintf("func() %s { var a %s; copy(a[:], data[%d:]); return a }()", goType, goType, off), false
 		}
 		return fmt.Sprintf("data[%d:%d] /* %s */", off, off+f.Size, goType), false
@@ -541,15 +476,12 @@ func fieldReadExpr(f *preprocess.Field, goType string) (expr string, usesPacking
 }
 
 // packetIDtoFuncSuffix converts "0x009F" → "0x009F" (already valid as Go func name component).
-// We use the format "0x009F" with leading zeros to 4 hex digits.
 func packetIDtoFuncSuffix(id string) string {
-	// Already in "0xXXXX" form from the loader.
 	return id
 }
 
 // GenerateDecodeDirFiles generates all decode files from a semantics DB + VersionTable.
 // Returns a map of filename → Go source string.
-// Actions with no matching struct in the VersionTable are skipped with a log entry.
 func GenerateDecodeDirFiles(db *semantics.DB, vt preprocess.VersionTable) (map[string]string, []string, error) {
 	if db == nil {
 		return nil, nil, fmt.Errorf("nil DB")
@@ -568,6 +500,19 @@ func GenerateDecodeDirFiles(db *semantics.DB, vt preprocess.VersionTable) (map[s
 		action := db.Actions[name]
 		if len(action.Implementations) == 0 {
 			skipped = append(skipped, name+": no implementations")
+			continue
+		}
+
+		// Only generate decode functions for receive (S→C) packets.
+		// Send (C→S) packets are handled by the encode generator.
+		hasReceive := false
+		for _, impl := range action.Implementations {
+			if isReceiveStruct(impl.StructName) {
+				hasReceive = true
+				break
+			}
+		}
+		if !hasReceive {
 			continue
 		}
 

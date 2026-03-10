@@ -9,14 +9,12 @@ func ZcNpcMarketPurchaseResult_0x09D7(data []byte, packetver uint32) events.ZcNp
 	var e events.ZcNpcMarketPurchaseResult
 	if packetver >= 20190807 {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
+		e.Result = leU16(data, 4)  // rAthena: result (offset 4, size 2)
 		e.List = data[6:]  // rAthena: list (offset 6, size 0)
-		e.Result = data[4]  // rAthena: result (offset 4, size 2)
 	} else {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
+		e.Result = uint16(data[4])  // rAthena: result (offset 4, size 1)
 		e.List = data[5:]  // rAthena: list (offset 5, size 0)
-		e.Result = data[4]  // rAthena: result (offset 4, size 1)
 	}
 	return e
 }

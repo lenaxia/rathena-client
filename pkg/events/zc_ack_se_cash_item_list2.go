@@ -2,12 +2,5 @@
 
 package events
 
-// ZcAckSeCashItemList2 is the event emitted when a zc_ack_se_cash_item_list2 packet is received.
-// ZC_ACK_SE_CASH_ITEM_LIST2 packet (PACKET_ZC_ACK_SE_CASH_ITEM_LIST2)
-type ZcAckSeCashItemList2 struct {
-	PacketID uint16 // Packet identifier
-	PacketLength int16 // Total packet length
-	TabID uint32 // Cash shop tab ID
-	ItemCount int16 // Number of items in the list
-	Items []byte // Raw array of cash shop items - handler parses per PACKETVER
-}
+// ZcAckSeCashItemList2 is the event emitted for the zc_ack_se_cash_item_list2 action.
+type ZcAckSeCashItemList2 struct{}

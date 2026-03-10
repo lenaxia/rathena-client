@@ -2,10 +2,8 @@
 
 package events
 
-// ZcNpcMarketOpen is the event emitted when a zc_npc_market_open packet is received.
-// ZC_NPC_MARKET_OPEN packet (PACKET_ZC_NPC_MARKET_OPEN)
+// ZcNpcMarketOpen is the event emitted for the zc_npc_market_open action.
 type ZcNpcMarketOpen struct {
-	List []byte // Variable-length array of market items (13 bytes each)
-	PacketLength int16 // Total packet length including header
-	PacketType int16 // Packet type identifier (0x09D5)
+	PacketLength int16
+	List []byte
 }

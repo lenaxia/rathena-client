@@ -3,9 +3,5 @@
 package send
 
 // UseSkill is the request struct for the use_skill action.
-// Use a skill on target or location
 type UseSkill struct {
-	SkillLevel uint16 // Skill level
-	SkillID uint16 // Skill ID
-	TargetID uint32 // Target actor ID
 }

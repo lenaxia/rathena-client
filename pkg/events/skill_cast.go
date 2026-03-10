@@ -2,15 +2,15 @@
 
 package events
 
-// SkillCast is the event emitted when a skill_cast packet is received.
-// Skill cast bar display - notifies skill casting has begun
+// SkillCast is the event emitted for the skill_cast action.
 type SkillCast struct {
-	Type uint32 // Cast time in milliseconds
-	Wait uint8 // Whether cast can be interrupted
-	Unknown uint32 // Element property (fire, water, etc.)
-	SkillID uint16 // Skill being cast
-	SourceID uint32 // Caster's actor ID
-	TargetID uint32 // Target's actor ID
-	X uint16 // X coordinate of cast location
-	Y uint16 // Y coordinate of cast location
+	SrcId uint32
+	DstId uint32
+	X uint16
+	Y uint16
+	SkillId uint16
+	Element uint32
+	DelayTime uint32
+	Disposable uint8
+	AttackMT uint32
 }

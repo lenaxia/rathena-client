@@ -2,13 +2,5 @@
 
 package events
 
-// ZcAcceptEnter is the event emitted when a zc_accept_enter packet is received.
-// ZC_ACCEPT_ENTER packet (PACKET_ZC_ACCEPT_ENTER)
-type ZcAcceptEnter struct {
-	StartTime uint32 // Server tick count at map entry
-	PosDir [3]uint8 // Packed position and direction (3 bytes)
-	MapWidth uint8 // Map width in cells
-	MapHeight uint8 // Map height in cells
-	Font uint16 // Font ID
-	Sex uint8 // Character sex
-}
+// ZcAcceptEnter is the event emitted for the zc_accept_enter action.
+type ZcAcceptEnter struct{}

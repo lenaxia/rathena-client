@@ -3,7 +3,5 @@
 package send
 
 // CzNpcBarterMarketClose is the request struct for the cz_npc_barter_market_close action.
-// CZ_NPC_BARTER_MARKET_CLOSE packet (PACKET_CZ_NPC_BARTER_MARKET_CLOSE)
 type CzNpcBarterMarketClose struct {
-	PacketType int16 // packetType field
 }

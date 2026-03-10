@@ -2,9 +2,8 @@
 
 package events
 
-// ZcRoleChange is the event emitted when a zc_role_change packet is received.
-// ZC_ROLE_CHANGE packet (PACKET_ZC_ROLE_CHANGE)
+// ZcRoleChange is the event emitted for the zc_role_change action.
 type ZcRoleChange struct {
-	Flag int32 // flag field
-	PacketType int16 // packetType field
+	Flag int32
+	Name string
 }

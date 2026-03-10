@@ -2,9 +2,5 @@
 
 package events
 
-// ScNotifyBan is the event emitted when a sc_notify_ban packet is received.
-// Character selection rejection/ban notification packet
-type ScNotifyBan struct {
-	PacketType int16 // packetType field
-	Result uint8 // result field
-}
+// ScNotifyBan is the event emitted for the sc_notify_ban action.
+type ScNotifyBan struct{}

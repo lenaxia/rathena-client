@@ -119,7 +119,7 @@ func TestReplay_FullAuth_20200401(t *testing.T) {
 			sess.SetLength(0x07FB, 25)
 			sess.RegisterHandler(0x00B0, func(data []byte, pv uint32) {
 				e := decode.StatUpdate_0x00B0(data, pv)
-				if e.StatType != 0 || e.Value != 0 {
+				if e.VarID != 0 || e.Count != 0 {
 					gotStatUpdate = true
 				}
 			})
@@ -129,13 +129,13 @@ func TestReplay_FullAuth_20200401(t *testing.T) {
 			})
 			sess.RegisterHandler(0x09FF, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x09FF(data, pv)
-				if e.ID != 0 {
+				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
 			sess.RegisterHandler(0x0078, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x0078(data, pv)
-				if e.ID != 0 {
+				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
@@ -183,19 +183,19 @@ func TestReplay_Movement_20200401(t *testing.T) {
 		func(sess *session.MapSession) {
 			sess.RegisterHandler(0x09FF, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x09FF(data, pv)
-				if e.ID != 0 {
+				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
 			sess.RegisterHandler(0x0078, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x0078(data, pv)
-				if e.ID != 0 {
+				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
 			sess.RegisterHandler(0x00B0, func(data []byte, pv uint32) {
 				e := decode.StatUpdate_0x00B0(data, pv)
-				if e.StatType != 0 || e.Value != 0 {
+				if e.VarID != 0 || e.Count != 0 {
 					gotStatUpdate = true
 				}
 			})

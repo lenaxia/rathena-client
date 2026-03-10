@@ -2,11 +2,5 @@
 
 package events
 
-// ZcDeleteItemFromBody is the event emitted when a zc_delete_item_from_body packet is received.
-// ZC_DELETE_ITEM_FROM_BODY packet (PACKET_ZC_DELETE_ITEM_FROM_BODY)
-type ZcDeleteItemFromBody struct {
-	PacketID int16 // Packet identifier
-	DeleteType int16 // Reason for item deletion
-	InventoryIndex uint16 // Inventory item index
-	Amount int16 // Number of items deleted
-}
+// ZcDeleteItemFromBody is the event emitted for the zc_delete_item_from_body action.
+type ZcDeleteItemFromBody struct{}

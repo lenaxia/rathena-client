@@ -2,11 +2,9 @@
 
 package events
 
-// ZcChangeGuild is the event emitted when a zc_change_guild packet is received.
-// ZC_CHANGE_GUILD packet (PACKET_ZC_CHANGE_GUILD)
+// ZcChangeGuild is the event emitted for the zc_change_guild action.
 type ZcChangeGuild struct {
-	AID uint32 // AID field
-	EmblemId uint16 // emblem_id field
-	GuildId int32 // guild_id field
-	PacketType int16 // packetType field
+	AID uint32
+	Guild_id int32
+	Emblem_id uint32
 }

@@ -2,10 +2,5 @@
 
 package events
 
-// ZcAckCashBargainSaleItemInfo is the event emitted when a zc_ack_cash_bargain_sale_item_info packet is received.
-// ZC_ACK_CASH_BARGAIN_SALE_ITEM_INFO packet (PACKET_ZC_ACK_CASH_BARGAIN_SALE_ITEM_INFO)
-type ZcAckCashBargainSaleItemInfo struct {
-	Result uint16 // Result code
-	ItemID uint32 // Item ID
-	Price uint32 // Bargain sale price
-}
+// ZcAckCashBargainSaleItemInfo is the event emitted for the zc_ack_cash_bargain_sale_item_info action.
+type ZcAckCashBargainSaleItemInfo struct{}

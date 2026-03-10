@@ -2,10 +2,5 @@
 
 package events
 
-// EntityMove is the event emitted when a entity_move packet is received.
-// Actor teleported/warped to location
-type EntityMove struct {
-	ID uint32 // Actor unique identifier
-	Coords [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
-	Tick uint32 // Server tick
-}
+// EntityMove is the event emitted for the entity_move action.
+type EntityMove struct{}

@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDebugmsg_0x0ADB(data []byte, packetver uint32) events.ZcDebugmsg {
 	var e events.ZcDebugmsg
 	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
 	e.Color = leI32(data, 4)  // rAthena: color (offset 4, size 4)
 	e.Message = nullTermString(data[8:])  // rAthena: message (offset 8, size 0)
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }
 

@@ -12,7 +12,6 @@ func EncodeCzUseSkillStart(req send.CzUseSkillStart, packetver uint32) [10]byte 
 	// Packet ID: 0x0B10 (little-endian)
 	p[0] = 0x10
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	leU16Put(p[2:], uint16(req.SkillId))  // rAthena: skillId
 	leU16Put(p[4:], uint16(req.SkillLv))  // rAthena: skillLv
 	leU32Put(p[6:], req.TargetId)  // rAthena: targetId

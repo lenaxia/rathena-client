@@ -3,7 +3,6 @@
 package send
 
 // CharacterMove is the request struct for the character_move action.
-// Request player movement to destination (modern variant, PACKETVER >= 20180000)
 type CharacterMove struct {
-	Coords [3]byte // Destination coordinates (packed x, y, dir)
+	Dest [3]byte
 }

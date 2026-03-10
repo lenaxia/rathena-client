@@ -3,8 +3,5 @@
 package send
 
 // CzReqChangeMemberpos is the request struct for the cz_req_change_memberpos action.
-// CZ_REQ_CHANGE_MEMBERPOS packet (PACKET_CZ_REQ_CHANGE_MEMBERPOS)
 type CzReqChangeMemberpos struct {
-	PacketLength int16 // Packet length
-	MemberList []byte // Array of guild member position changes
 }

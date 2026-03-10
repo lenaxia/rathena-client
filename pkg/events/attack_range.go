@@ -2,8 +2,7 @@
 
 package events
 
-// AttackRange is the event emitted when a attack_range packet is received.
-// Notifies client of current attack range
+// AttackRange is the event emitted for the attack_range action.
 type AttackRange struct {
-	Type int16 // Current attack range
+	CurrentAttRange int16
 }

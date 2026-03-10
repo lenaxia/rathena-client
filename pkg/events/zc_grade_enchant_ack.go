@@ -2,10 +2,9 @@
 
 package events
 
-// ZcGradeEnchantAck is the event emitted when a zc_grade_enchant_ack packet is received.
-// ZC_GRADE_ENCHANT_ACK packet (PACKET_ZC_GRADE_ENCHANT_ACK)
+// ZcGradeEnchantAck is the event emitted for the zc_grade_enchant_ack action.
 type ZcGradeEnchantAck struct {
-	PacketType int16 // PacketType field
-	Grade int16 // grade field
-	Index int16 // index field
+	Index int16
+	Grade int16
+	Result []byte
 }

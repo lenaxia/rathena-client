@@ -2,8 +2,7 @@
 
 package events
 
-// ZcAckApplyMacroDetector is the event emitted when a zc_ack_apply_macro_detector packet is received.
-// ZC_ACK_APPLY_MACRO_DETECTOR packet (PACKET_ZC_ACK_APPLY_MACRO_DETECTOR)
+// ZcAckApplyMacroDetector is the event emitted for the zc_ack_apply_macro_detector action.
 type ZcAckApplyMacroDetector struct {
-	PacketType int16 // PacketType field
+	Status []byte
 }

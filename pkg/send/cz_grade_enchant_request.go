@@ -3,12 +3,10 @@
 package send
 
 // CzGradeEnchantRequest is the request struct for the cz_grade_enchant_request action.
-// CZ_GRADE_ENCHANT_REQUEST packet (PACKET_CZ_GRADE_ENCHANT_REQUEST)
 type CzGradeEnchantRequest struct {
-	PacketType int16 // PacketType field
-	BlessingFlag int8 // blessing_flag field
-	Index int16 // index field
-	ProtectFlag int8 // protect_flag field
-	MaterialIndex int32 // Material item index
-	BlessingAmount int32 // Amount of blessing to use
+	Index int16
+	Material_index []byte
+	Blessing_flag int8
+	Blessing_amount []byte
+	Protect_flag int8
 }

@@ -2,12 +2,5 @@
 
 package events
 
-// TcResult is the event emitted when a tc_result packet is received.
-// TC_RESULT packet (PACKET_TC_RESULT)
-type TcResult struct {
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
-	Type uint32 // type field
-	Unknown1 string // unknown1 field
-	Unknown2 string // unknown2 field
-}
+// TcResult is the event emitted for the tc_result action.
+type TcResult struct{}

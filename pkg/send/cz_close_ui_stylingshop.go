@@ -3,7 +3,5 @@
 package send
 
 // CzCloseUiStylingshop is the request struct for the cz_close_ui_stylingshop action.
-// CZ_CLOSE_UI_STYLINGSHOP packet (PACKET_CZ_CLOSE_UI_STYLINGSHOP)
 type CzCloseUiStylingshop struct {
-	PacketType int16 // packetType field
 }

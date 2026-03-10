@@ -9,7 +9,9 @@ func ZcViewCamerainfo_0x0A78(data []byte, packetver uint32) events.ZcViewCamerai
 	var e events.ZcViewCamerainfo
 	_ = packetver
 	e.Action = int8(data[2])  // rAthena: action (offset 2, size 1)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.Range = data[3:]  // rAthena: range (offset 3, size 4)
+	e.Rotation = data[7:]  // rAthena: rotation (offset 7, size 4)
+	e.Latitude = data[11:]  // rAthena: latitude (offset 11, size 4)
 	return e
 }
 

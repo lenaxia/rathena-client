@@ -13,7 +13,6 @@ func EncodeCzContactnpc(req send.CzContactnpc, packetver uint32) [7]byte {
 	p[0] = 0x90
 	p[1] = 0x00
 	leU32Put(p[2:], req.AID)  // rAthena: AID
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	p[6] = req.Type  // rAthena: type
 	_ = packetver
 	return p

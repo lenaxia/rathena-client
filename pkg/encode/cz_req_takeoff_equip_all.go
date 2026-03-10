@@ -12,7 +12,6 @@ func EncodeCzReqTakeoffEquipAll(req send.CzReqTakeoffEquipAll, packetver uint32)
 	// Packet ID: 0x0BAD (little-endian)
 	p[0] = 0xad
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	_ = packetver
 	return p
 }

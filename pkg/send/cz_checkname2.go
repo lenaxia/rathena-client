@@ -3,9 +3,7 @@
 package send
 
 // CzCheckname2 is the request struct for the cz_checkname2 action.
-// CZ_CHECKNAME2 packet (PACKET_CZ_CHECKNAME2)
 type CzCheckname2 struct {
-	Name string // Name field
-	PacketType int16 // PacketType field
-	OwnChar uint8 // own_char field
+	Name string
+	Own_char uint8
 }

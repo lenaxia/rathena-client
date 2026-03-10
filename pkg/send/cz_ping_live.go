@@ -3,7 +3,5 @@
 package send
 
 // CzPingLive is the request struct for the cz_ping_live action.
-// CZ_PING_LIVE packet (PACKET_CZ_PING_LIVE)
 type CzPingLive struct {
-	PacketType int16 // packetType field
 }

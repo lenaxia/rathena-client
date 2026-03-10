@@ -13,7 +13,6 @@ func EncodeCzRefiningSelectItem(req send.CzRefiningSelectItem, packetver uint32)
 	p[0] = 0xa1
 	p[1] = 0x0a
 	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

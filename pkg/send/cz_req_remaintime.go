@@ -3,7 +3,5 @@
 package send
 
 // CzReqRemaintime is the request struct for the cz_req_remaintime action.
-// CZ_REQ_REMAINTIME packet (PACKET_CZ_REQ_REMAINTIME)
 type CzReqRemaintime struct {
-	PacketType int16 // packetType field
 }

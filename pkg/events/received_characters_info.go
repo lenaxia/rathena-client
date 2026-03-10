@@ -2,13 +2,5 @@
 
 package events
 
-// ReceivedCharactersInfo is the event emitted when a received_characters_info packet is received.
-// Character slot information (normal, premium, billing slots)
-type ReceivedCharactersInfo struct {
-	BillingSlot uint8 // Billing character slots available
-	Extension string // Extension data (20 bytes)
-	NormalSlot uint8 // Normal character slots available
-	PremiumSlot uint8 // Premium character slots available
-	ProducibleSlot uint8 // Producible character slots available
-	ValidSlot uint8 // Total valid character slots
-}
+// ReceivedCharactersInfo is the event emitted for the received_characters_info action.
+type ReceivedCharactersInfo struct{}

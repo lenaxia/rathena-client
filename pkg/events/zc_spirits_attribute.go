@@ -2,10 +2,5 @@
 
 package events
 
-// ZcSpiritsAttribute is the event emitted when a zc_spirits_attribute packet is received.
-// ZC_SPIRITS_ATTRIBUTE packet (PACKET_ZC_SPIRITS_ATTRIBUTE)
-type ZcSpiritsAttribute struct {
-	ActorID uint32 // Actor ID for spirits
-	SpiritsType int16 // Type of spirits
-	Count int16 // Number of spirits
-}
+// ZcSpiritsAttribute is the event emitted for the zc_spirits_attribute action.
+type ZcSpiritsAttribute struct{}

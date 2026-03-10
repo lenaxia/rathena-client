@@ -2,10 +2,5 @@
 
 package events
 
-// ZcFriendsList is the event emitted when a zc_friends_list packet is received.
-// ZC_FRIENDS_LIST packet (PACKET_ZC_FRIENDS_LIST)
-type ZcFriendsList struct {
-	PacketID int16 // Packet identifier
-	PacketLength int16 // Total packet length
-	FriendsData []byte // Raw friends list data (variable structure based on PACKETVER)
-}
+// ZcFriendsList is the event emitted for the zc_friends_list action.
+type ZcFriendsList struct{}

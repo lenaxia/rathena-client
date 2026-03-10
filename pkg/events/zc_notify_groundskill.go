@@ -2,14 +2,12 @@
 
 package events
 
-// ZcNotifyGroundskill is the event emitted when a zc_notify_groundskill packet is received.
-// ZC_NOTIFY_GROUNDSKILL packet (PACKET_ZC_NOTIFY_GROUNDSKILL)
+// ZcNotifyGroundskill is the event emitted for the zc_notify_groundskill action.
 type ZcNotifyGroundskill struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	SKID uint16 // SKID field
-	Level int16 // level field
-	StartTime uint32 // startTime field
-	XPos int16 // xPos field
-	YPos int16 // yPos field
+	SKID uint16
+	AID uint32
+	Level int16
+	XPos int16
+	YPos int16
+	StartTime uint32
 }

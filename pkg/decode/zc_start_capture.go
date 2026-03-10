@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcStartCapture_0x019E(data []byte, packetver uint32) events.ZcStartCapture {
 	var e events.ZcStartCapture
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	return e
 }
 

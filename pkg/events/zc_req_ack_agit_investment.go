@@ -2,11 +2,9 @@
 
 package events
 
-// ZcReqAckAgitInvestment is the event emitted when a zc_req_ack_agit_investment packet is received.
-// ZC_REQ_ACK_AGIT_INVESTMENT packet (PACKET_ZC_REQ_ACK_AGIT_INVESTMENT)
+// ZcReqAckAgitInvestment is the event emitted for the zc_req_ack_agit_investment action.
 type ZcReqAckAgitInvestment struct {
-	CastleId int8 // castle_id field
-	Defense int32 // defense field
-	Economy int32 // economy field
-	PacketType int16 // packetType field
+	Castle_id int8
+	Economy int32
+	Defense int32
 }

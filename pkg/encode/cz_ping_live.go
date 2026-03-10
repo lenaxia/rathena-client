@@ -12,7 +12,6 @@ func EncodeCzPingLive(req send.CzPingLive, packetver uint32) [2]byte {
 	// Packet ID: 0x0B1C (little-endian)
 	p[0] = 0x1c
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

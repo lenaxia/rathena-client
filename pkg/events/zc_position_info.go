@@ -2,10 +2,8 @@
 
 package events
 
-// ZcPositionInfo is the event emitted when a zc_position_info packet is received.
-// ZC_POSITION_INFO packet (PACKET_ZC_POSITION_INFO)
+// ZcPositionInfo is the event emitted for the zc_position_info action.
 type ZcPositionInfo struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	PosInfo []byte // posInfo field
+	PacketLength int16
+	PosInfo []byte
 }

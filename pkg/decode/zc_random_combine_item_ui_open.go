@@ -9,10 +9,8 @@ func ZcRandomCombineItemUiOpen_0x0A4E(data []byte, packetver uint32) events.ZcRa
 	var e events.ZcRandomCombineItemUiOpen
 	if packetver >= 20181121 {
 		e.ItemId = leI32(data, 2)  // rAthena: itemId (offset 2, size 4)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	} else {
 		e.ItemId = int32(leI16(data, 2))  // rAthena: itemId (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	}
 	return e
 }

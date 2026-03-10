@@ -2,15 +2,13 @@
 
 package events
 
-// ZcAutorunSkill is the event emitted when a zc_autorun_skill packet is received.
-// ZC_AUTORUN_SKILL packet (PACKET_ZC_AUTORUN_SKILL)
+// ZcAutorunSkill is the event emitted for the zc_autorun_skill action.
 type ZcAutorunSkill struct {
-	PacketType int16 // packetType field
-	SkillId uint16 // skill_id field
-	SkillLv uint16 // skill_lv field
-	SkillRange uint16 // skill_range field
-	SkillSp uint16 // skill_sp field
-	SkillType uint32 // skill_type field
-	UpFlag uint8 // Can level up flag (1 = yes, 0 = no)
-	SkillName string // Skill name
+	Skill_id uint16
+	Skill_type uint32
+	Skill_lv uint16
+	Skill_sp uint16
+	Skill_range uint16
+	Skill_name string
+	Up_flag uint8
 }

@@ -2,12 +2,5 @@
 
 package events
 
-// MapLoaded is the event emitted when a map_loaded packet is received.
-// Map entry accepted confirmation
-type MapLoaded struct {
-	Font uint16 // Font setting (PACKETVER >= 20080102)
-	Coords [3]byte // 3-byte packed position and direction
-	SyncMapSync uint32 // Server sync tick
-	XSize uint8 // Map width
-	YSize uint8 // Map height
-}
+// MapLoaded is the event emitted for the map_loaded action.
+type MapLoaded struct{}

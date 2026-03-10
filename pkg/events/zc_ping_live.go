@@ -2,8 +2,5 @@
 
 package events
 
-// ZcPingLive is the event emitted when a zc_ping_live packet is received.
-// ZC_PING_LIVE packet (PACKET_ZC_PING_LIVE)
-type ZcPingLive struct {
-	PacketType int16 // packetType field
-}
+// ZcPingLive is the event emitted for the zc_ping_live action.
+type ZcPingLive struct{}

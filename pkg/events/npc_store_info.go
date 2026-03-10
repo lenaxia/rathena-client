@@ -2,10 +2,8 @@
 
 package events
 
-// NpcStoreInfo is the event emitted when a npc_store_info packet is received.
-// NPC shop item list
+// NpcStoreInfo is the event emitted for the npc_store_info action.
 type NpcStoreInfo struct {
-	ItemList []byte // Array of items for sale (raw bytes)
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	Items []byte
 }

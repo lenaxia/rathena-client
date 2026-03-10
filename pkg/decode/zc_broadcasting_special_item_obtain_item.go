@@ -8,29 +8,31 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) events.ZcBroadcastingSpecialItemObtainItem {
 	var e events.ZcBroadcastingSpecialItemObtainItem
 	if packetver >= 20220518 {
-		e.BoxItemID = leU32(data, 35)  // rAthena: BoxItemID (offset 35, size 4)
-		e.ItemID = leU32(data, 5)  // rAthena: ItemID (offset 5, size 4)
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.BoxItemIDLen = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
-		e.Len = int8(data[9])  // rAthena: len (offset 9, size 1)
 		e.Type = data[4]  // rAthena: type (offset 4, size 1)
+		e.ItemID = leU32(data, 5)  // rAthena: ItemID (offset 5, size 4)
+		e.Len = int8(data[9])  // rAthena: len (offset 9, size 1)
+		e.Name = nullTermString(data[10:34])  // rAthena: Name (offset 10, size 24)
+		e.BoxItemID_len = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
+		e.BoxItemID = leU32(data, 35)  // rAthena: BoxItemID (offset 35, size 4)
+		e.RefineLevel_len = int8(data[39])  // rAthena: refineLevel_len (offset 39, size 1)
+		e.RefineLevel = leU32(data, 40)  // rAthena: refineLevel (offset 40, size 4)
 	} else if packetver >= 20181121 {
-		e.BoxItemID = leU32(data, 35)  // rAthena: BoxItemID (offset 35, size 4)
+		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+		e.Type = data[4]  // rAthena: type (offset 4, size 1)
 		e.ItemID = leU32(data, 5)  // rAthena: ItemID (offset 5, size 4)
-		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.BoxItemIDLen = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
 		e.Len = int8(data[9])  // rAthena: len (offset 9, size 1)
-		e.Type = data[4]  // rAthena: type (offset 4, size 1)
+		e.Name = nullTermString(data[10:34])  // rAthena: Name (offset 10, size 24)
+		e.BoxItemID_len = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
+		e.BoxItemID = leU32(data, 35)  // rAthena: BoxItemID (offset 35, size 4)
 	} else {
-		e.BoxItemID = uint32(leU16(data, 33))  // rAthena: BoxItemID (offset 33, size 2)
-		e.ItemID = uint32(leU16(data, 5))  // rAthena: ItemID (offset 5, size 2)
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.BoxItemIDLen = int8(data[32])  // rAthena: boxItemID_len (offset 32, size 1)
-		e.Len = int8(data[7])  // rAthena: len (offset 7, size 1)
 		e.Type = data[4]  // rAthena: type (offset 4, size 1)
+		e.ItemID = uint32(leU16(data, 5))  // rAthena: ItemID (offset 5, size 2)
+		e.Len = int8(data[7])  // rAthena: len (offset 7, size 1)
+		e.Name = nullTermString(data[8:32])  // rAthena: Name (offset 8, size 24)
+		e.BoxItemID_len = int8(data[32])  // rAthena: boxItemID_len (offset 32, size 1)
+		e.BoxItemID = uint32(leU16(data, 33))  // rAthena: BoxItemID (offset 33, size 2)
 	}
 	return e
 }

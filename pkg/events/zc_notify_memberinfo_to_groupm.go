@@ -2,10 +2,9 @@
 
 package events
 
-// ZcNotifyMemberinfoToGroupm is the event emitted when a zc_notify_memberinfo_to_groupm packet is received.
-// ZC_NOTIFY_MEMBERINFO_TO_GROUPM packet (PACKET_ZC_NOTIFY_MEMBERINFO_TO_GROUPM)
+// ZcNotifyMemberinfoToGroupm is the event emitted for the zc_notify_memberinfo_to_groupm action.
 type ZcNotifyMemberinfoToGroupm struct {
-	PacketType int16 // PacketType field
-	Job int16 // job field
-	Level int16 // level field
+	AID []byte
+	Job int16
+	Level int16
 }

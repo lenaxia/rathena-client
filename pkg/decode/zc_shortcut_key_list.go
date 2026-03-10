@@ -8,15 +8,18 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcShortcutKeyList_0x02B9(data []byte, packetver uint32) events.ZcShortcutKeyList {
 	var e events.ZcShortcutKeyList
 	if packetver >= 20190522 {
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Rotate = int8(data[2])  // rAthena: rotate (offset 2, size 1)
+		e.Tab = leI16(data, 3)  // rAthena: tab (offset 3, size 2)
+		e.Hotkey = data[5:271]  // rAthena: hotkey (offset 5, size 266)
 	} else if packetver >= 20141022 {
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Rotate = int8(data[2])  // rAthena: rotate (offset 2, size 1)
+		e.Hotkey = data[3:269]  // rAthena: hotkey (offset 3, size 266)
 	} else if packetver >= 20090617 {
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Hotkey = data[2:268]  // rAthena: hotkey (offset 2, size 266)
 	} else if packetver >= 20090603 {
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Hotkey = data[2:254]  // rAthena: hotkey (offset 2, size 252)
 	} else {
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Hotkey = data[2:191]  // rAthena: hotkey (offset 2, size 189)
 	}
 	return e
 }

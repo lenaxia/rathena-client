@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func MonsterHpUpdate_0x0977(data []byte, packetver uint32) events.MonsterHpUpdate {
 	var e events.MonsterHpUpdate
 	_ = packetver
-	e.ActorID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
-	e.CurrentHP = leU32(data, 6)  // rAthena: HP (offset 6, size 4)
-	e.MaxHP = leU32(data, 10)  // rAthena: MaxHP (offset 10, size 4)
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	e.HP = leI32(data, 6)  // rAthena: HP (offset 6, size 4)
+	e.MaxHP = leI32(data, 10)  // rAthena: MaxHP (offset 10, size 4)
 	return e
 }
 

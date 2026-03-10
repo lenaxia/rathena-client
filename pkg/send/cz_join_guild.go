@@ -3,8 +3,5 @@
 package send
 
 // CzJoinGuild is the request struct for the cz_join_guild action.
-// CZ_JOIN_GUILD packet (PACKET_CZ_JOIN_GUILD)
 type CzJoinGuild struct {
-	GuildID uint32 // Guild ID to join
-	Answer int32 // Accept (1) or refuse (0) guild invitation
 }

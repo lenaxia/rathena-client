@@ -3,7 +3,5 @@
 package send
 
 // CzRodexReturn is the request struct for the cz_rodex_return action.
-// CZ_RODEX_RETURN packet (PACKET_CZ_RODEX_RETURN)
 type CzRodexReturn struct {
-	MailID uint32 // Mail message ID to return to sender
 }

@@ -2,9 +2,5 @@
 
 package events
 
-// ZcGuildNotice is the event emitted when a zc_guild_notice packet is received.
-// ZC_GUILD_NOTICE packet (PACKET_ZC_GUILD_NOTICE)
-type ZcGuildNotice struct {
-	Notice string // Guild notice message body
-	Subject string // Guild notice subject/title
-}
+// ZcGuildNotice is the event emitted for the zc_guild_notice action.
+type ZcGuildNotice struct{}

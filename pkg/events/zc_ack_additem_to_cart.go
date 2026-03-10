@@ -2,8 +2,5 @@
 
 package events
 
-// ZcAckAdditemToCart is the event emitted when a zc_ack_additem_to_cart packet is received.
-// ZC_ACK_ADDITEM_TO_CART packet (PACKET_ZC_ACK_ADDITEM_TO_CART)
-type ZcAckAdditemToCart struct {
-	Result uint8 // Result code for adding item to cart (0=success, 1=fail)
-}
+// ZcAckAdditemToCart is the event emitted for the zc_ack_additem_to_cart action.
+type ZcAckAdditemToCart struct{}

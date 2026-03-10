@@ -12,8 +12,8 @@ func EncodeSkillUse(req send.SkillUse, packetver uint32) [10]byte {
 	case packetver >= 20200401: // 0x0862
 		var p [10]byte
 		p[0] = 0x62; p[1] = 0x08
+	leU16Put(		p[2:], req.SkillLv)  // rAthena: SkillLv
 	leU16Put(		p[4:], req.SkillID)  // rAthena: SkillID
-	leU16Put(		p[2:], req.Lv)  // rAthena: SkillLv
 	leU32Put(		p[6:], req.TargetID)  // rAthena: TargetID
 		return p
 	}

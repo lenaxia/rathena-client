@@ -2,11 +2,9 @@
 
 package events
 
-// ZcSkillSelectRequest is the event emitted when a zc_skill_select_request packet is received.
-// ZC_SKILL_SELECT_REQUEST packet (PACKET_ZC_SKILL_SELECT_REQUEST)
+// ZcSkillSelectRequest is the event emitted for the zc_skill_select_request action.
 type ZcSkillSelectRequest struct {
-	Flag int32 // Request type flag (0=old compatibility, 1=Auto Shadow Spell)
-	PacketLength int16 // Total packet length including header
-	PacketType int16 // Packet type identifier (0x0442)
-	SkillIds []int16 // Array of selectable skill IDs
+	PacketLength int16
+	Flag int32
+	SkillIds []byte
 }

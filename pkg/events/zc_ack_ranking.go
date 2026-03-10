@@ -2,11 +2,5 @@
 
 package events
 
-// ZcAckRanking is the event emitted when a zc_ack_ranking packet is received.
-// ZC_ACK_RANKING packet (PACKET_ZC_ACK_RANKING)
-type ZcAckRanking struct {
-	RankingType uint16 // Ranking type
-	CharacterIDs [10]uint32 // Character IDs in ranking (top 10)
-	Points [10]uint32 // Points for each character
-	MyPoints uint32 // Player's own ranking points
-}
+// ZcAckRanking is the event emitted for the zc_ack_ranking action.
+type ZcAckRanking struct{}

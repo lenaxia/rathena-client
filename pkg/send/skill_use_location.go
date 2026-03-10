@@ -3,10 +3,5 @@
 package send
 
 // SkillUseLocation is the request struct for the skill_use_location action.
-// Use skill on ground location (area skills)
 type SkillUseLocation struct {
-	SkillID uint16 // Skill ID to use
-	Lv uint16 // Skill level to use
-	X uint16 // Target X coordinate
-	Y uint16 // Target Y coordinate
 }

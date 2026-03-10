@@ -12,7 +12,6 @@ func EncodeCzCloseMsgboxExtendBodyitemSize(req send.CzCloseMsgboxExtendBodyitemS
 	// Packet ID: 0x0B19 (little-endian)
 	p[0] = 0x19
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

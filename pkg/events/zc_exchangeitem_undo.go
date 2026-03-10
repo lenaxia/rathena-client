@@ -2,8 +2,5 @@
 
 package events
 
-// ZcExchangeitemUndo is the event emitted when a zc_exchangeitem_undo packet is received.
-// ZC_EXCHANGEITEM_UNDO packet (PACKET_ZC_EXCHANGEITEM_UNDO)
-type ZcExchangeitemUndo struct {
-	PacketID int16 // Packet identifier
-}
+// ZcExchangeitemUndo is the event emitted for the zc_exchangeitem_undo action.
+type ZcExchangeitemUndo struct{}

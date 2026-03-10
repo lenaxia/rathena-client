@@ -8,61 +8,33 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillUse_0x01DE(data []byte, packetver uint32) events.SkillUse {
 	var e events.SkillUse
 	_ = packetver
-	// e.SourceID = &packet.AID  (complex expression — implement manually)
-	// e.SkillID = &packet.SKID  (complex expression — implement manually)
-	// e.Type = func() *uint8 { v := uint8(packet.action); return &v }()  (complex expression — implement manually)
-	// e.SrcSpeed = func() *uint32 { v := uint32(packet.attackMT); return &v }()  (complex expression — implement manually)
-	// e.DstSpeed = func() *uint32 { v := uint32(packet.attackedMT); return &v }()  (complex expression — implement manually)
-	// e.Cause absent in this packet version
-	// e.Option = func() *uint16 { v := uint16(packet.count); return &v }()  (complex expression — implement manually)
-	// e.Damage = func() *uint32 { v := uint32(packet.damage); return &v }()  (complex expression — implement manually)
-	// e.Flag absent in this packet version
-	// e.Level = func() *uint16 { v := uint16(packet.level); return &v }()  (complex expression — implement manually)
-	// e.Lv absent in this packet version
-	// e.Tick = &packet.startTime  (complex expression — implement manually)
-	// e.TargetID = &packet.targetID  (complex expression — implement manually)
+	e.SKID = leU16(data, 2)  // rAthena: SKID (offset 2, size 2)
+	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
+	e.TargetID = leU32(data, 8)  // rAthena: targetID (offset 8, size 4)
+	e.StartTime = leU32(data, 12)  // rAthena: startTime (offset 12, size 4)
+	e.AttackMT = leI32(data, 16)  // rAthena: attackMT (offset 16, size 4)
+	e.AttackedMT = leI32(data, 20)  // rAthena: attackedMT (offset 20, size 4)
+	e.Damage = leI32(data, 24)  // rAthena: damage (offset 24, size 4)
+	e.Level = leI16(data, 28)  // rAthena: level (offset 28, size 2)
+	e.Count = leI16(data, 30)  // rAthena: count (offset 30, size 2)
+	e.Action = int8(data[32])  // rAthena: action (offset 32, size 1)
 	return e
 }
-
-// SKIP SkillUse_0x0113: struct PACKET_CZ_USE_SKILL not found in VersionTable
 
 // SkillUse_0x0114 decodes a 0x0114 packet (struct PACKET_ZC_NOTIFY_SKILL).
 func SkillUse_0x0114(data []byte, packetver uint32) events.SkillUse {
 	var e events.SkillUse
 	_ = packetver
-	// e.SourceID = &packet.AID  (complex expression — implement manually)
-	// e.SkillID = &packet.SKID  (complex expression — implement manually)
-	// e.Type = func() *uint8 { v := uint8(packet.action); return &v }()  (complex expression — implement manually)
-	// e.SrcSpeed = func() *uint32 { v := uint32(packet.attackMT); return &v }()  (complex expression — implement manually)
-	// e.DstSpeed = func() *uint32 { v := uint32(packet.attackedMT); return &v }()  (complex expression — implement manually)
-	// e.Cause absent in this packet version
-	// e.Option = func() *uint16 { v := uint16(packet.count); return &v }()  (complex expression — implement manually)
-	// e.Damage = func() *uint32 { v := uint32(packet.damage); return &v }()  (complex expression — implement manually)
-	// e.Flag absent in this packet version
-	// e.Level = func() *uint16 { v := uint16(packet.level); return &v }()  (complex expression — implement manually)
-	// e.Lv absent in this packet version
-	// e.Tick = &packet.startTime  (complex expression — implement manually)
-	// e.TargetID = &packet.targetID  (complex expression — implement manually)
-	return e
-}
-
-// SkillUse_0x0862 decodes a 0x0862 packet (struct SYNTH_CZ_USE_SKILL_TOID).
-func SkillUse_0x0862(data []byte, packetver uint32) events.SkillUse {
-	var e events.SkillUse
-	_ = packetver
-	// e.SourceID absent in this packet version
-	e.SkillID = leU16(data, 4)  // rAthena: SkillID (offset 4, size 2)
-	// e.Type absent in this packet version
-	// e.SrcSpeed absent in this packet version
-	// e.DstSpeed absent in this packet version
-	// e.Cause absent in this packet version
-	// e.Option absent in this packet version
-	// e.Damage absent in this packet version
-	// e.Flag absent in this packet version
-	// e.Level absent in this packet version
-	e.Lv = leU16(data, 2)  // rAthena: SkillLv (offset 2, size 2)
-	// e.Tick absent in this packet version
-	e.TargetID = leU32(data, 6)  // rAthena: TargetID (offset 6, size 4)
+	e.SKID = leU16(data, 2)  // rAthena: SKID (offset 2, size 2)
+	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
+	e.TargetID = leU32(data, 8)  // rAthena: targetID (offset 8, size 4)
+	e.StartTime = leU32(data, 12)  // rAthena: startTime (offset 12, size 4)
+	e.AttackMT = leI32(data, 16)  // rAthena: attackMT (offset 16, size 4)
+	e.AttackedMT = leI32(data, 20)  // rAthena: attackedMT (offset 20, size 4)
+	e.Damage = leI32(data, 24)  // rAthena: damage (offset 24, size 4)
+	e.Level = leI16(data, 28)  // rAthena: level (offset 28, size 2)
+	e.Count = leI16(data, 30)  // rAthena: count (offset 30, size 2)
+	e.Action = int8(data[32])  // rAthena: action (offset 32, size 1)
 	return e
 }
 

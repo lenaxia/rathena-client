@@ -3,9 +3,7 @@
 package send
 
 // CzReqUploadMacroDetector is the request struct for the cz_req_upload_macro_detector action.
-// CZ_REQ_UPLOAD_MACRO_DETECTOR packet (PACKET_CZ_REQ_UPLOAD_MACRO_DETECTOR)
 type CzReqUploadMacroDetector struct {
-	PacketType int16 // PacketType field
-	Answer string // answer field
-	ImageSize uint16 // imageSize field
+	Answer string
+	ImageSize uint16
 }

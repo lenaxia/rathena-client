@@ -3,8 +3,5 @@
 package send
 
 // CaExeHashcheck is the request struct for the ca_exe_hashcheck action.
-// CA_EXE_HASHCHECK packet (PACKET_CA_EXE_HASHCHECK)
 type CaExeHashcheck struct {
-	Hash string // hash field
-	PacketType int16 // packetType field
 }

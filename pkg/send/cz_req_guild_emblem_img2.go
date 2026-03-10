@@ -3,9 +3,7 @@
 package send
 
 // CzReqGuildEmblemImg2 is the request struct for the cz_req_guild_emblem_img2 action.
-// CZ_REQ_GUILD_EMBLEM_IMG2 packet (PACKET_CZ_REQ_GUILD_EMBLEM_IMG2)
 type CzReqGuildEmblemImg2 struct {
-	EmblemId int32 // emblem_id field
-	GuildId int32 // guild_id field
-	PacketType int16 // packetType field
+	Guild_id int32
+	Emblem_id int32
 }

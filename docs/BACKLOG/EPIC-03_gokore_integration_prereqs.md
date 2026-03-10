@@ -1,7 +1,8 @@
 # EPIC-03: goKore Integration Prerequisites
 
-**Status**: Ready for implementation  
+**Status**: COMPLETE  
 **Created**: 2026-03-09  
+**Completed**: 2026-03-10 (skeptical two-pass validation passed)  
 **Goal**: Deliver the four missing capabilities that goKore's Epic 38 requires before
 integration can begin: two codegen fixes that unblock movement and time-sync decoding,
 one new encode function for walk requests, and two encode function fixes for combat.
@@ -189,21 +190,21 @@ GCC-verified offsets, not from the generated code.
 
 ### Acceptance Criteria
 
-- [ ] `injectMapPacketStructs` function added to `internal/codegen/main.go`
-- [ ] `mapStructsToInject` slice contains `PACKET_ZC_NOTIFY_PLAYERMOVE` and
+- [x] `injectMapPacketStructs` function added to `internal/codegen/main.go`
+- [x] `mapStructsToInject` slice contains `PACKET_ZC_NOTIFY_PLAYERMOVE` and
   `PACKET_ZC_NOTIFY_TIME`
-- [ ] `pkg/decode/character_moves.go` no longer contains `// SKIP`; function
+- [x] `pkg/decode/character_moves.go` no longer contains `// SKIP`; function
   `CharacterMoves_0x0087` is present and reads `moveStartTime` and `moveData`
-- [ ] `pkg/decode/sync.go` no longer contains `// SKIP`; function `Sync_0x007F`
+- [x] `pkg/decode/sync.go` no longer contains `// SKIP`; function `Sync_0x007F`
   is present and reads `time`
-- [ ] `MoveData` comment in generated `events.CharacterMoves` does NOT say "direction"
+- [x] `MoveData` comment in generated `events.CharacterMoves` does NOT say "direction"
   (EPIC-02 Bug 13-A; verify the template fix from US-13 is in place, or apply it here)
-- [ ] Golden test for `CharacterMoves_0x0087`: 12-byte input at GCC-verified offsets,
+- [x] Golden test for `CharacterMoves_0x0087`: 12-byte input at GCC-verified offsets,
   `moveStartTime` and `moveData` assert correctly
-- [ ] Golden test for `Sync_0x007F`: 6-byte input, `time` field asserts correctly
-- [ ] `go test ./pkg/decode/` passes
-- [ ] `go build ./...` passes, `go test ./...` passes
-- [ ] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us15_versiontable_inject.md` written
+- [x] Golden test for `Sync_0x007F`: 6-byte input, `time` field asserts correctly
+- [x] `go test ./pkg/decode/` passes
+- [x] `go build ./...` passes, `go test ./...` passes
+- [x] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us15_versiontable_inject.md` written
 
 ---
 
@@ -344,15 +345,15 @@ Adjust the round-trip call to match `packing.DecodePosDir`'s actual signature.
 
 ### Acceptance Criteria
 
-- [ ] `pkg/send/move_to.go` exists with `MoveTo{X, Y uint16}` struct and header
+- [x] `pkg/send/move_to.go` exists with `MoveTo{X, Y uint16}` struct and header
   comment explaining the deviation from canonical `Coords [3]byte` params
-- [ ] `pkg/encode/move_to.go` exists with `EncodeMoveTo(req send.MoveTo, packetver uint32) [5]byte`
-- [ ] Packet ID bytes `0x5F 0x03` are correct (little-endian 0x035F)
-- [ ] `packing.EncodePosDir` is called — no manual bit packing in the encode function
-- [ ] Unit test round-trips X=100, Y=200 through encode → decode and recovers original coords
-- [ ] `go test ./pkg/encode/` passes
-- [ ] `go build ./...` passes, `go test ./...` passes
-- [ ] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us16_encode_move_to.md` written
+- [x] `pkg/encode/move_to.go` exists with `EncodeMoveTo(req send.MoveTo, packetver uint32) [5]byte`
+- [x] Packet ID bytes `0x5F 0x03` are correct (little-endian 0x035F)
+- [x] `packing.EncodePosDir` is called — no manual bit packing in the encode function
+- [x] Unit test round-trips X=100, Y=200 through encode → decode and recovers original coords
+- [x] `go test ./pkg/encode/` passes
+- [x] `go build ./...` passes, `go test ./...` passes
+- [x] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us16_encode_move_to.md` written
 
 ---
 
@@ -508,18 +509,18 @@ func TestEncodeActorAction_Attack(t *testing.T) {
 
 ### Acceptance Criteria
 
-- [ ] GCC verification run and result documented in worklog (packet ID `0x085a`
+- [x] GCC verification run and result documented in worklog (packet ID `0x085a`
   confirmed as `clif_parse_ActionRequest` at PACKETVER=20200401; `0x0437` confirmed
   as `clif_parse_WalkToXY`)
-- [ ] `pkg/encode/actor_action.go` returns a 7-byte slice with correct packet ID,
+- [x] `pkg/encode/actor_action.go` returns a 7-byte slice with correct packet ID,
   `TargetID` (LE uint32), and `Type` (uint8) at the verified positions
-- [ ] File header updated to remove `DO NOT EDIT` and reference EPIC-03
-- [ ] `encoding/binary` import added
-- [ ] Unit test `TestEncodeActorAction_Attack` passes
-- [ ] `req.Type = 7` (normal attack) produces `p[6] == 7`
-- [ ] `go test ./pkg/encode/` passes
-- [ ] `go build ./...` passes, `go test ./...` passes
-- [ ] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us17_encode_actor_action.md` written
+- [x] File header updated to remove `DO NOT EDIT` and reference EPIC-03
+- [x] `encoding/binary` import added
+- [x] Unit test `TestEncodeActorAction_Attack` passes
+- [x] `req.Type = 7` (normal attack) produces `p[6] == 7`
+- [x] `go test ./pkg/encode/` passes
+- [x] `go build ./...` passes, `go test ./...` passes
+- [x] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us17_encode_actor_action.md` written
 
 ---
 
@@ -692,40 +693,34 @@ func TestEncodeSkillUse_ToActor(t *testing.T) {
 
 ### Acceptance Criteria
 
-- [ ] GCC verification run and result documented in worklog (`0x0862` confirmed as
+- [x] GCC verification run and result documented in worklog (`0x0862` confirmed as
   `clif_parse_UseSkillToId`, 10 bytes, at PACKETVER=20200401)
-- [ ] The duplicate-condition `switch` is removed; there are no unreachable case arms
-- [ ] `EncodeSkillUse` returns a 10-byte slice with correct packet ID, `Lv`, `SkillID`,
+- [x] The duplicate-condition `switch` is removed; there are no unreachable case arms
+- [x] `EncodeSkillUse` returns a 10-byte slice with correct packet ID, `Lv`, `SkillID`,
   and `TargetID` at the verified positions
-- [ ] File header updated to remove `DO NOT EDIT` and reference EPIC-03
-- [ ] `encoding/binary` import added (was missing from the generated file)
-- [ ] Unit test `TestEncodeSkillUse_ToActor` passes
-- [ ] No 33-byte buffers remain in the file (the old wrong-size allocation is gone)
-- [ ] `go test ./pkg/encode/` passes
-- [ ] `go build ./...` passes, `go test ./...` passes
-- [ ] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us18_encode_skill_use.md` written
+- [x] File header updated to remove `DO NOT EDIT` and reference EPIC-03
+- [x] `encoding/binary` import added (was missing from the generated file)
+- [x] Unit test `TestEncodeSkillUse_ToActor` passes
+- [x] No 33-byte buffers remain in the file (the old wrong-size allocation is gone)
+- [x] `go test ./pkg/encode/` passes
+- [x] `go build ./...` passes, `go test ./...` passes
+- [x] Worklog `docs/WORKLOG/NNNN_YYYY-MM-DD_us18_encode_skill_use.md` written
 
 ---
 
 ## Exit Criteria for EPIC-03
 
-EPIC-03 is complete when all of the following are true:
+**STATUS: ALL MET — EPIC COMPLETE (skeptical two-pass validation 2026-03-10)**
 
-1. `go build ./...` — clean
-2. `go test ./...` — all pass, including the new tests from US-15 through US-18
-3. `go test -race ./pkg/...` — no data races
-4. `pkg/decode/character_moves.go` — no `// SKIP` comment; `CharacterMoves_0x0087`
-   function present and reading `moveStartTime` and `moveData`
-5. `pkg/decode/sync.go` — no `// SKIP` comment; `Sync_0x007F` function present
-   and reading `time`
-6. `pkg/encode/move_to.go` — exists; `EncodeMoveTo` returns `[5]byte` with packet ID
-   `0x5F 0x03` and packing-encoded coords
-7. `pkg/encode/actor_action.go` — returns 7-byte slice for `0x085a` with correct
-   TargetID and Type positions (GCC-verified); does not return `nil`
-8. `pkg/encode/skill_use.go` — returns 10-byte slice for `0x0862` with correct Lv,
-   SkillID, TargetID positions (GCC-verified); no duplicate condition arms; no
-   33-byte buffers
-9. All four stories have worklogs written in `docs/WORKLOG/`
+1. `go build ./...` — **PASS**
+2. `go test ./...` — **PASS** (all packages)
+3. `go test -race ./pkg/...` — **PASS** (0 races)
+4. `pkg/decode/character_moves.go` — **PASS** (no SKIP; reads `moveStartTime` at offset 2, `moveData` at offset 6)
+5. `pkg/decode/sync.go` — **PASS** (no SKIP; reads `time` at offset 2)
+6. `pkg/encode/move_to.go` — **PASS** (`[5]byte`, ID `0x5F 0x03`, `packing.EncodePosDir`)
+7. `pkg/encode/actor_action.go` — **PASS** (`[7]byte`, ID `0x5A 0x08`, TargetID at [2-5] LE, Type at [6]; 0 allocs/op)
+8. `pkg/encode/skill_use.go` — **PASS** (`[10]byte`, ID `0x62 0x08`, Lv at [2-3], SkillID at [4-5], TargetID at [6-9]; no duplicates; no 33-byte buffers; 0 allocs/op)
+9. Worklogs written — **PASS** (0027, 0029, 0031, 0034)
 
 ---
 

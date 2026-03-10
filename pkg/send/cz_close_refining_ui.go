@@ -3,7 +3,5 @@
 package send
 
 // CzCloseRefiningUi is the request struct for the cz_close_refining_ui action.
-// CZ_CLOSE_REFINING_UI packet (PACKET_CZ_CLOSE_REFINING_UI)
 type CzCloseRefiningUi struct {
-	PacketType int16 // packetType field
 }

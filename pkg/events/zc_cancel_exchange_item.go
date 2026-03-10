@@ -2,8 +2,5 @@
 
 package events
 
-// ZcCancelExchangeItem is the event emitted when a zc_cancel_exchange_item packet is received.
-// ZC_CANCEL_EXCHANGE_ITEM packet (PACKET_ZC_CANCEL_EXCHANGE_ITEM)
-type ZcCancelExchangeItem struct {
-	PacketID uint16 // Packet identifier
-}
+// ZcCancelExchangeItem is the event emitted for the zc_cancel_exchange_item action.
+type ZcCancelExchangeItem struct{}

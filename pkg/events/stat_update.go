@@ -2,9 +2,11 @@
 
 package events
 
-// StatUpdate is the event emitted when a stat_update packet is received.
-// Character stat value updated
+// StatUpdate is the event emitted for the stat_update action.
 type StatUpdate struct {
-	StatType uint16 // Type of stat being updated (SP_*)
-	Value uint32 // New stat value
+	VarID uint16
+	Count int32
+	Amount int64
+	StatusID uint16
+	Value uint8
 }

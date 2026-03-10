@@ -2,10 +2,8 @@
 
 package events
 
-// ZcSsilistItemClickAck is the event emitted when a zc_ssilist_item_click_ack packet is received.
-// ZC_SSILIST_ITEM_CLICK_ACK packet (PACKET_ZC_SSILIST_ITEM_CLICK_ACK)
+// ZcSsilistItemClickAck is the event emitted for the zc_ssilist_item_click_ack action.
 type ZcSsilistItemClickAck struct {
-	PacketType int16 // packetType field
-	X int16 // x field
-	Y int16 // y field
+	X int16
+	Y int16
 }

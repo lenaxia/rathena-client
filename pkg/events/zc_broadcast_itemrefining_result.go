@@ -2,11 +2,10 @@
 
 package events
 
-// ZcBroadcastItemrefiningResult is the event emitted when a zc_broadcast_itemrefining_result packet is received.
-// ZC_BROADCAST_ITEMREFINING_RESULT packet (PACKET_ZC_BROADCAST_ITEMREFINING_RESULT)
+// ZcBroadcastItemrefiningResult is the event emitted for the zc_broadcast_itemrefining_result action.
 type ZcBroadcastItemrefiningResult struct {
-	ItemId uint32 // itemId field
-	PacketType int16 // packetType field
-	RefineLevel int8 // refine_level field
-	Status int8 // status field
+	Name string
+	ItemId uint32
+	Refine_level int8
+	Status int8
 }

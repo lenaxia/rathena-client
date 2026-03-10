@@ -2,9 +2,5 @@
 
 package events
 
-// ZcRecovery is the event emitted when a zc_recovery packet is received.
-// ZC_RECOVERY packet (PACKET_ZC_RECOVERY)
-type ZcRecovery struct {
-	Type uint16 // Recovery type (5=HP, 7=SP)
-	Amount int16 // Amount of HP/SP recovered
-}
+// ZcRecovery is the event emitted for the zc_recovery action.
+type ZcRecovery struct{}

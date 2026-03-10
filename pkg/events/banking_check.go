@@ -2,8 +2,5 @@
 
 package events
 
-// BankingCheck is the event emitted when a banking_check packet is received.
-// Banking system availability check
-type BankingCheck struct {
-	Result uint8 // Banking availability (0=unavailable, 1=available)
-}
+// BankingCheck is the event emitted for the banking_check action.
+type BankingCheck struct{}

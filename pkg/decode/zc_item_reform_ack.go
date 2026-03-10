@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcItemReformAck_0x0B92(data []byte, packetver uint32) events.ZcItemReformAck {
 	var e events.ZcItemReformAck
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 	e.Result = int8(data[4])  // rAthena: result (offset 4, size 1)
 	return e

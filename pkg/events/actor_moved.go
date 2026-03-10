@@ -2,43 +2,42 @@
 
 package events
 
-// ActorMoved is the event emitted when a actor_moved packet is received.
-// Full entity spawn packet for moving actors (modern PACKETVER >= 20181002)
+// ActorMoved is the event emitted for the actor_moved action.
 type ActorMoved struct {
-	Lowhead uint16 // Lower headgear
-	Tophead uint16 // Upper headgear
-	Midhead uint16 // Middle headgear
-	Opt4 uint16 // Body style
-	ClothesColor uint16 // Clothes color
-	Opt1 uint16 // Body state (frozen, stunned, etc.)
-	Lv uint16 // Level for display
-	CharID uint32 // Character ID (for players)
-	Option uint32 // Effect state flags
-	Font uint16 // Font type
-	EmblemID uint16 // Guild emblem version
-	ID uint32 // Game object ID
-	GuildID uint32 // Guild ID
-	HP uint32 // Current HP
-	HairStyle uint16 // Hair style ID
-	HeadDir uint16 // Head direction
-	HairColor uint16 // Hair color
-	Opt2 uint16 // Health state (poison, curse, etc.)
-	Manner uint16 // Manner/honor points
-	IsBoss uint8 // Boss monster flag
-	Stance uint8 // PK mode flag
-	Type uint16 // Job/class ID
-	MaxHP uint32 // Maximum HP
+	GID uint32
+	Speed int16
+	BodyState int16
+	HealthState int16
+	EffectState int32
+	Job int16
+	Head uint16
+	Weapon uint32
+	Accessory uint16
+	MoveStartTime uint32
+	Accessory2 uint16
+	Accessory3 uint16
+	Headpalette int16
+	Bodypalette int16
+	HeadDir int16
+	GUID uint32
+	GEmblemVer int16
+	Honor int16
+	Virtue int32
+	IsPKModeON uint8
+	Sex uint8
 	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
-	Tick uint32 // Server tick when movement started
-	Name string // Entity name (null-terminated, variable length)
-	Len uint16 // Total packet length (variable)
-	Costume uint16 // Garment/robe sprite
-	Sex uint8 // Gender (0=female, 1=male)
-	Shield uint32 // Shield sprite ID
-	WalkSpeed uint16 // Movement speed
-	Opt3 uint32 // Additional effect flags
-	Weapon uint32 // Weapon sprite ID
-	XSize uint8 // Entity X size
-	YSize uint8 // Entity Y size
-	ObjectType uint8 // Entity type (0=PC, 5=MOB, etc.)
+	XSize uint8
+	YSize uint8
+	Clevel int16
+	Objecttype uint8
+	Font int16
+	PacketLength int16
+	Robe uint16
+	MaxHP int32
+	HP int32
+	IsBoss uint8
+	AID uint32
+	Name string
+	Body uint16
+	Shield uint32
 }

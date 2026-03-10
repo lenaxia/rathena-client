@@ -2,9 +2,7 @@
 
 package events
 
-// ZcSearchStoreInfoFailed is the event emitted when a zc_search_store_info_failed packet is received.
-// ZC_SEARCH_STORE_INFO_FAILED packet (PACKET_ZC_SEARCH_STORE_INFO_FAILED)
+// ZcSearchStoreInfoFailed is the event emitted for the zc_search_store_info_failed action.
 type ZcSearchStoreInfoFailed struct {
-	PacketType int16 // packetType field
-	Reason uint8 // reason field
+	Reason uint8
 }

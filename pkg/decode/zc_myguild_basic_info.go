@@ -9,7 +9,6 @@ func ZcMyguildBasicInfo_0x014C(data []byte, packetver uint32) events.ZcMyguildBa
 	var e events.ZcMyguildBasicInfo
 	_ = packetver
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	e.RgInfo = data[4:]  // rAthena: rgInfo (offset 4, size 0)
 	return e
 }

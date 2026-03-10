@@ -3,15 +3,5 @@
 package send
 
 // CaSsoLoginReq is the request struct for the ca_sso_login_req action.
-// SSO login request with token authentication (CA_SSO_LOGIN_REQ)
 type CaSsoLoginReq struct {
-	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
-	Ip string // Client IP address string (15 bytes)
-	MacHyphenSeparated string // MAC address with hyphens (17 bytes)
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
-	Password string // Password string (27 bytes)
-	Token string // SSO authentication token (variable length)
-	Username string // Username for SSO login (24 bytes, null-terminated)
-	Version uint32 // Client version number
 }

@@ -2,8 +2,8 @@
 
 package events
 
-// ZcDialogWindowSize is the event emitted when a zc_dialog_window_size packet is received.
-// ZC_DIALOG_WINDOW_SIZE packet (PACKET_ZC_DIALOG_WINDOW_SIZE)
+// ZcDialogWindowSize is the event emitted for the zc_dialog_window_size action.
 type ZcDialogWindowSize struct {
-	PacketType int16 // PacketType field
+	Height []byte
+	Width []byte
 }

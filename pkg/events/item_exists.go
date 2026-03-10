@@ -2,15 +2,14 @@
 
 package events
 
-// ItemExists is the event emitted when a item_exists packet is received.
-// Notifies about an item already on the ground
+// ItemExists is the event emitted for the item_exists action.
 type ItemExists struct {
-	ID uint32 // Item instance ID on ground
-	NameID uint16 // Item type ID (from item_db)
-	Identified uint8 // Whether item is identified (1) or not (0)
-	Amount uint16 // Quantity of items in stack
-	Subx uint8 // Sub-pixel X offset
-	Suby uint8 // Sub-pixel Y offset
-	X uint16 // X coordinate on map
-	Y uint16 // Y coordinate on map
+	AID uint32
+	ItemId uint32
+	Identify uint8
+	X uint16
+	Y uint16
+	Amount uint16
+	SubX uint8
+	SubY uint8
 }

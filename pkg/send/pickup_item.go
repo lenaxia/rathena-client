@@ -3,7 +3,5 @@
 package send
 
 // PickupItem is the request struct for the pickup_item action.
-// Pick up an item from the ground
 type PickupItem struct {
-	ObjectID uint32 // Ground item object ID
 }

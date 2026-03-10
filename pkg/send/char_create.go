@@ -3,16 +3,5 @@
 package send
 
 // CharCreate is the request struct for the char_create action.
-// Character creation request with stats and appearance
 type CharCreate struct {
-	Agi uint8 // Starting AGI stat value
-	Dex uint8 // Starting DEX stat value
-	HairColor uint16 // Hair color ID
-	HairStyle uint16 // Hair style ID
-	Int uint8 // Starting INT stat value
-	Luk uint8 // Starting LUK stat value
-	Name string // Character name (24 bytes, null-terminated)
-	Slot uint8 // Character slot to create in (0-based index)
-	Str uint8 // Starting STR stat value
-	Vit uint8 // Starting VIT stat value
 }

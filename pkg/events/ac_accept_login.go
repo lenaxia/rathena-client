@@ -2,14 +2,15 @@
 
 package events
 
-// AcAcceptLogin is the event emitted when a ac_accept_login packet is received.
-// Login accepted - returns session tokens and character server list
+// AcAcceptLogin is the event emitted for the ac_accept_login action.
 type AcAcceptLogin struct {
-	AccountID uint32 // Account ID assigned by server
-	ServerInfo []byte // Variable-length character server list. Handler must parse based on packet version: 32 bytes per entry for packet 0x00...
-	LastLoginIP uint32 // Last login IP address (4-byte binary)
-	LastLoginTime string // Last login timestamp string (26 bytes, null-terminated)
-	SessionID uint32 // Session token part 1 - used for character server authentication
-	SessionID2 uint32 // Session token part 2 - used for character server authentication
-	AccountSex uint8 // Account gender (0=female, 1=male, 2=server)
+	PacketLength int16
+	Login_id1 uint32
+	AID uint32
+	Login_id2 uint32
+	Last_ip uint32
+	Last_login string
+	Sex uint8
+	Char_servers []byte
+	Token string
 }

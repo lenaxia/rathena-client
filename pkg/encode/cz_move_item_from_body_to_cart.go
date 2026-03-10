@@ -12,8 +12,8 @@ func EncodeCzMoveItemFromBodyToCart(req send.CzMoveItemFromBodyToCart, packetver
 	// Packet ID: 0x0126 (little-endian)
 	p[0] = 0x26
 	p[1] = 0x01
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
+	copy(p[4:], req.Count)  // rAthena: count
 	_ = packetver
 	return p
 }

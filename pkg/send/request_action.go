@@ -3,8 +3,5 @@
 package send
 
 // RequestAction is the request struct for the request_action action.
-// Request to perform an action (attack, sit, stand, pickup)
 type RequestAction struct {
-	TargetID uint32 // Target actor ID
-	ActionType uint8 // Type of action (0=attack, 2=sit, 3=stand, etc.)
 }

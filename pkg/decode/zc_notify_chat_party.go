@@ -9,9 +9,8 @@ func ZcNotifyChatParty_0x0109(data []byte, packetver uint32) events.ZcNotifyChat
 	var e events.ZcNotifyChatParty
 	_ = packetver
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.ChatMsg = data[8:]  // rAthena: chatMsg (offset 8, size 0)
-	e.AID = leI32(data, 4)  // rAthena: AID (offset 4, size 4)
+	e.AID = data[4:]  // rAthena: AID (offset 4, size 4)
+	e.ChatMsg = nullTermString(data[8:])  // rAthena: chatMsg (offset 8, size 0)
 	return e
 }
 

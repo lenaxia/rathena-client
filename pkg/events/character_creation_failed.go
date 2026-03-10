@@ -2,8 +2,5 @@
 
 package events
 
-// CharacterCreationFailed is the event emitted when a character_creation_failed packet is received.
-// Character creation refused with error code
-type CharacterCreationFailed struct {
-	Type uint8 // Character creation error code
-}
+// CharacterCreationFailed is the event emitted for the character_creation_failed action.
+type CharacterCreationFailed struct{}

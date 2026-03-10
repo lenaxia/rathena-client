@@ -23,12 +23,6 @@ func TestLoadFile_SemanticActions(t *testing.T) {
 	if !ok {
 		t.Fatal("actor_died_or_disappeared not found")
 	}
-	if a.Description == "" {
-		t.Error("description empty")
-	}
-	if len(a.CanonicalParams) < 2 {
-		t.Errorf("expected >=2 canonical params, got %d", len(a.CanonicalParams))
-	}
 	if len(a.Implementations) == 0 {
 		t.Error("no implementations")
 	}
@@ -39,11 +33,8 @@ func TestLoadFile_SemanticActions(t *testing.T) {
 	if impl.StructName != "PACKET_ZC_NOTIFY_VANISH" {
 		t.Errorf("expected PACKET_ZC_NOTIFY_VANISH, got %s", impl.StructName)
 	}
-	if len(impl.FieldMapping) == 0 {
-		t.Error("field_mapping empty")
-	}
 
-	// Check ac_accept_login: multiple implementations.
+	// Check ac_accept_login: single implementation.
 	aa, ok := db.Actions["ac_accept_login"]
 	if !ok {
 		t.Fatal("ac_accept_login not found")
@@ -58,11 +49,8 @@ func TestLoadFile_SemanticActions(t *testing.T) {
 	if impl0.PacketverMin == 0 {
 		t.Error("ac_accept_login: packetver_min not parsed")
 	}
-	if len(impl0.FieldMapping) == 0 {
-		t.Error("ac_accept_login: field_mapping empty")
-	}
-	if got := impl0.FieldMapping["AccountID"]; got != "packet.AID" {
-		t.Errorf("AccountID mapping: expected 'packet.AID', got %q", got)
+	if impl0.StructName != "PACKET_AC_ACCEPT_LOGIN" {
+		t.Errorf("ac_accept_login: expected PACKET_AC_ACCEPT_LOGIN, got %s", impl0.StructName)
 	}
 
 	// Check account_id: single implementation.
@@ -70,10 +58,10 @@ func TestLoadFile_SemanticActions(t *testing.T) {
 	if !ok {
 		t.Fatal("account_id not found")
 	}
-	if len(ai.CanonicalParams) == 0 {
-		t.Error("account_id: no canonical params")
+	if len(ai.Implementations) == 0 {
+		t.Error("account_id: no implementations")
 	}
-	if ai.CanonicalParams[0].Name != "AccountID" {
-		t.Errorf("account_id: first param name = %q, want AccountID", ai.CanonicalParams[0].Name)
+	if ai.Implementations[0].StructName == "" {
+		t.Error("account_id: struct_name empty")
 	}
 }

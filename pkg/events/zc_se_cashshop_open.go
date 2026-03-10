@@ -2,10 +2,9 @@
 
 package events
 
-// ZcSeCashshopOpen is the event emitted when a zc_se_cashshop_open packet is received.
-// ZC_SE_CASHSHOP_OPEN packet (PACKET_ZC_SE_CASHSHOP_OPEN)
+// ZcSeCashshopOpen is the event emitted for the zc_se_cashshop_open action.
 type ZcSeCashshopOpen struct {
-	CashPoints uint32 // cashPoints field
-	KafraPoints uint32 // kafraPoints field
-	PacketType int16 // packetType field
+	CashPoints uint32
+	KafraPoints uint32
+	Tab uint32
 }

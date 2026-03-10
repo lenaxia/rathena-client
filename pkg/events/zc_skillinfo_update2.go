@@ -2,14 +2,13 @@
 
 package events
 
-// ZcSkillinfoUpdate2 is the event emitted when a zc_skillinfo_update2 packet is received.
-// ZC_SKILLINFO_UPDATE2 packet (PACKET_ZC_SKILLINFO_UPDATE2)
+// ZcSkillinfoUpdate2 is the event emitted for the zc_skillinfo_update2 action.
 type ZcSkillinfoUpdate2 struct {
-	Id uint16 // id field
-	Inf int32 // inf field
-	Level uint16 // level field
-	PacketType int16 // packetType field
-	Range2 uint16 // range2 field
-	Sp uint16 // sp field
-	UpFlag uint8 // upFlag field
+	Id uint16
+	Inf int32
+	Level uint16
+	Sp uint16
+	Range2 uint16
+	UpFlag uint8
+	Level2 uint16
 }

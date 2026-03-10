@@ -2,10 +2,8 @@
 
 package events
 
-// ZcRepairitemlist is the event emitted when a zc_repairitemlist packet is received.
-// ZC_REPAIRITEMLIST packet (PACKET_ZC_REPAIRITEMLIST)
+// ZcRepairitemlist is the event emitted for the zc_repairitemlist action.
 type ZcRepairitemlist struct {
-	Items []byte // items field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	Items []byte
 }

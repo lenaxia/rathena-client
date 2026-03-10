@@ -2,10 +2,8 @@
 
 package events
 
-// VenderFound is the event emitted when a vender_found packet is received.
-// Vending shop appeared (player merchant)
+// VenderFound is the event emitted for the vender_found action.
 type VenderFound struct {
-	ID uint32 // Vender's actor ID
-	PacketType int16 // packetType field
-	Title string // Shop name/title (80 bytes)
+	MakerAID uint32
+	StoreName string
 }

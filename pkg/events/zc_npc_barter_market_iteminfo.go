@@ -2,10 +2,8 @@
 
 package events
 
-// ZcNpcBarterMarketIteminfo is the event emitted when a zc_npc_barter_market_iteminfo packet is received.
-// ZC_NPC_BARTER_MARKET_ITEMINFO packet (PACKET_ZC_NPC_BARTER_MARKET_ITEMINFO)
+// ZcNpcBarterMarketIteminfo is the event emitted for the zc_npc_barter_market_iteminfo action.
 type ZcNpcBarterMarketIteminfo struct {
-	List []byte // list field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	List []byte
 }

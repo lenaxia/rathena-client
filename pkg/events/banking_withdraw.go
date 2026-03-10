@@ -2,10 +2,5 @@
 
 package events
 
-// BankingWithdraw is the event emitted when a banking_withdraw packet is received.
-// Banking withdrawal acknowledgment
-type BankingWithdraw struct {
-	Balance int64 // New bank balance after withdrawal
-	Result uint8 // Withdrawal result (0=failed, 1=success)
-	Amount int64 // Amount withdrawn
-}
+// BankingWithdraw is the event emitted for the banking_withdraw action.
+type BankingWithdraw struct{}

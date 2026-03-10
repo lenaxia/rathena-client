@@ -2,8 +2,5 @@
 
 package events
 
-// CastCancelled is the event emitted when a cast_cancelled packet is received.
-// Cast cancelled/interrupted notification
-type CastCancelled struct {
-	ID uint32 // Actor whose cast was cancelled
-}
+// CastCancelled is the event emitted for the cast_cancelled action.
+type CastCancelled struct{}

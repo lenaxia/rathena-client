@@ -2,9 +2,5 @@
 
 package events
 
-// ZcItemThrowAck is the event emitted when a zc_item_throw_ack packet is received.
-// ZC_ITEM_THROW_ACK packet (PACKET_ZC_ITEM_THROW_ACK)
-type ZcItemThrowAck struct {
-	Index uint16 // Inventory slot index of dropped item
-	Amount uint16 // Amount removed from inventory
-}
+// ZcItemThrowAck is the event emitted for the zc_item_throw_ack action.
+type ZcItemThrowAck struct{}

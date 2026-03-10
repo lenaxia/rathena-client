@@ -2,10 +2,9 @@
 
 package events
 
-// ZcAckPreviewMacroDetector is the event emitted when a zc_ack_preview_macro_detector packet is received.
-// ZC_ACK_PREVIEW_MACRO_DETECTOR packet (PACKET_ZC_ACK_PREVIEW_MACRO_DETECTOR)
+// ZcAckPreviewMacroDetector is the event emitted for the zc_ack_preview_macro_detector action.
 type ZcAckPreviewMacroDetector struct {
-	PacketType int16 // PacketType field
-	CaptchaKey []byte // Captcha key identifier (4-byte fixed array)
-	ImageSize uint16 // imageSize field
+	CaptchaFlag []byte
+	ImageSize uint16
+	CaptchaKey string
 }

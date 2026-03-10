@@ -3,8 +3,8 @@
 package send
 
 // CzAdventurerAgencyJoinResult is the request struct for the cz_adventurer_agency_join_result action.
-// CZ_ADVENTURER_AGENCY_JOIN_RESULT packet (PACKET_CZ_ADVENTURER_AGENCY_JOIN_RESULT)
 type CzAdventurerAgencyJoinResult struct {
-	PacketType int16 // packetType field
-	Result int8 // result field
+	GRID []byte
+	AID []byte
+	Result int8
 }

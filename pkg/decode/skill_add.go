@@ -8,11 +8,11 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillAdd_0x0111(data []byte, packetver uint32) events.SkillAdd {
 	var e events.SkillAdd
 	if packetver >= 20220216 {
-		// e.Skill = serialization.SerializeSKILLDATA(packet.skill)  (complex expression — implement manually)
+		e.Skill = data[2:]  // rAthena: skill (offset 2, size 37)
 	} else if packetver >= 20200902 {
-		// e.Skill = serialization.SerializeSKILLDATA(packet.skill)  (complex expression — implement manually)
+		e.Skill = data[2:]  // rAthena: skill (offset 2, size 15)
 	} else {
-		// e.Skill = serialization.SerializeSKILLDATA(packet.skill)  (complex expression — implement manually)
+		e.Skill = data[2:]  // rAthena: skill (offset 2, size 37)
 	}
 	return e
 }

@@ -2,10 +2,8 @@
 
 package events
 
-// ZcLonglongparChange is the event emitted when a zc_longlongpar_change packet is received.
-// ZC_LONGLONGPAR_CHANGE packet (PACKET_ZC_LONGLONGPAR_CHANGE)
+// ZcLonglongparChange is the event emitted for the zc_longlongpar_change action.
 type ZcLonglongparChange struct {
-	PacketType int16 // Packet ID
-	Val int64 // New 64-bit stat value
-	Type uint16 // Stat parameter ID (SP_* constants)
+	VarID uint16
+	Amount int64
 }

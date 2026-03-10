@@ -2,9 +2,5 @@
 
 package events
 
-// LoginError is the event emitted when a login_error packet is received.
-// Login refused - extended version with 32-bit error code
-type LoginError struct {
-	Type uint32 // Login error code - extended 32-bit version (see LOGIN_ERROR_CODES)
-	Date string // Ban expiration date string (20 bytes, null-terminated)
-}
+// LoginError is the event emitted for the login_error action.
+type LoginError struct{}

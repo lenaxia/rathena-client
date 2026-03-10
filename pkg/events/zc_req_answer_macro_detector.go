@@ -2,9 +2,8 @@
 
 package events
 
-// ZcReqAnswerMacroDetector is the event emitted when a zc_req_answer_macro_detector packet is received.
-// ZC_REQ_ANSWER_MACRO_DETECTOR packet (PACKET_ZC_REQ_ANSWER_MACRO_DETECTOR)
+// ZcReqAnswerMacroDetector is the event emitted for the zc_req_answer_macro_detector action.
 type ZcReqAnswerMacroDetector struct {
-	PacketType int16 // PacketType field
-	RetryCount uint8 // retryCount field
+	RetryCount uint8
+	Timeout []byte
 }

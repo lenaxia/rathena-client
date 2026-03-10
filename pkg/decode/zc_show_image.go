@@ -9,7 +9,6 @@ func ZcShowImage_0x01B3(data []byte, packetver uint32) events.ZcShowImage {
 	var e events.ZcShowImage
 	_ = packetver
 	e.Image = nullTermString(data[2:66])  // rAthena: image (offset 2, size 64)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	e.Type = data[66]  // rAthena: type (offset 66, size 1)
 	return e
 }

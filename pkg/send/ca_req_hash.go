@@ -3,7 +3,5 @@
 package send
 
 // CaReqHash is the request struct for the ca_req_hash action.
-// CA_REQ_HASH packet (PACKET_CA_REQ_HASH)
 type CaReqHash struct {
-	PacketType int16 // packetType field
 }

@@ -2,14 +2,5 @@
 
 package events
 
-// MapChanged is the event emitted when a map_changed packet is received.
-// Same-server map change notification
-type MapChanged struct {
-	MapName string // New map name
-	X uint16 // Spawn X coordinate on new map
-	Y uint16 // Spawn Y coordinate on new map
-	IP uint32 // Map server IP address
-	Map string // New map name (null-terminated)
-	Port uint16 // Map server port
-	Url string // Map server URL for web authentication
-}
+// MapChanged is the event emitted for the map_changed action.
+type MapChanged struct{}

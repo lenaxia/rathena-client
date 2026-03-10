@@ -2,8 +2,5 @@
 
 package events
 
-// WhisperSent is the event emitted when a whisper_sent packet is received.
-// Whisper send acknowledgment
-type WhisperSent struct {
-	Type uint8 // Result code (0=success, 1=target not found, 2=ignored by target)
-}
+// WhisperSent is the event emitted for the whisper_sent action.
+type WhisperSent struct{}

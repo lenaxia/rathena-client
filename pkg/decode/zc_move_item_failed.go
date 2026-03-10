@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcMoveItemFailed_0x0AA7(data []byte, packetver uint32) events.ZcMoveItemFailed {
 	var e events.ZcMoveItemFailed
 	_ = packetver
-	e.ItemCount = leI16(data, 4)  // rAthena: itemCount (offset 4, size 2)
 	e.ItemIndex = leI16(data, 2)  // rAthena: itemIndex (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.ItemCount = leI16(data, 4)  // rAthena: itemCount (offset 4, size 2)
 	return e
 }
 

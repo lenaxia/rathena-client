@@ -13,7 +13,6 @@ func EncodeCzNpcMarketPurchase(req send.CzNpcMarketPurchase, packetver uint32) [
 	p[0] = 0xd6
 	p[1] = 0x09
 	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: PacketLength
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	copy(p[4:], req.List)  // rAthena: list
 	_ = packetver
 	return p

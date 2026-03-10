@@ -2,11 +2,10 @@
 
 package events
 
-// ZcGradeEnchantBroadcastResult is the event emitted when a zc_grade_enchant_broadcast_result packet is received.
-// ZC_GRADE_ENCHANT_BROADCAST_RESULT packet (PACKET_ZC_GRADE_ENCHANT_BROADCAST_RESULT)
+// ZcGradeEnchantBroadcastResult is the event emitted for the zc_grade_enchant_broadcast_result action.
 type ZcGradeEnchantBroadcastResult struct {
-	Grade int16 // grade field
-	ItemId uint32 // itemId field
-	PacketType int16 // packetType field
-	Status int8 // status field
+	Name string
+	ItemId uint32
+	Grade int16
+	Status int8
 }

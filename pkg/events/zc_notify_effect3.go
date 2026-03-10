@@ -2,11 +2,9 @@
 
 package events
 
-// ZcNotifyEffect3 is the event emitted when a zc_notify_effect3 packet is received.
-// ZC_NOTIFY_EFFECT3 packet (PACKET_ZC_NOTIFY_EFFECT3)
+// ZcNotifyEffect3 is the event emitted for the zc_notify_effect3 action.
 type ZcNotifyEffect3 struct {
-	Aid uint32 // aid field
-	EffectId uint32 // effectId field
-	Num uint32 // num field
-	PacketType int16 // packetType field
+	Aid uint32
+	EffectId uint32
+	Num uint64
 }

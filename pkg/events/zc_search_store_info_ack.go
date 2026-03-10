@@ -2,13 +2,11 @@
 
 package events
 
-// ZcSearchStoreInfoAck is the event emitted when a zc_search_store_info_ack packet is received.
-// ZC_SEARCH_STORE_INFO_ACK packet (PACKET_ZC_SEARCH_STORE_INFO_ACK)
+// ZcSearchStoreInfoAck is the event emitted for the zc_search_store_info_ack action.
 type ZcSearchStoreInfoAck struct {
-	FirstPage uint8 // Flag indicating if this is the first page of results
-	Items []byte // Variable-length array of search result items (parsed by handler)
-	NextPage uint8 // Flag indicating if there is a next page of results
-	PacketLength int16 // Total packet length including header
-	PacketType int16 // Packet type identifier (0x0836)
-	UsesCount uint8 // Number of search uses remaining for the player
+	PacketLength int16
+	FirstPage uint8
+	NextPage uint8
+	UsesCount uint8
+	Items []byte
 }

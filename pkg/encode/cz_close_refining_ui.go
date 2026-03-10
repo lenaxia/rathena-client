@@ -12,7 +12,6 @@ func EncodeCzCloseRefiningUi(req send.CzCloseRefiningUi, packetver uint32) [2]by
 	// Packet ID: 0x0AA4 (little-endian)
 	p[0] = 0xa4
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

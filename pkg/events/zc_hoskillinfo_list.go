@@ -2,10 +2,5 @@
 
 package events
 
-// ZcHoskillinfoList is the event emitted when a zc_hoskillinfo_list packet is received.
-// ZC_HOSKILLINFO_LIST packet (PACKET_ZC_HOSKILLINFO_LIST)
-type ZcHoskillinfoList struct {
-	PacketID int16 // Packet identifier
-	PacketLength int16 // Total packet length
-	Skills []byte // Raw array of homunculus skills - handler parses per PACKETVER
-}
+// ZcHoskillinfoList is the event emitted for the zc_hoskillinfo_list action.
+type ZcHoskillinfoList struct{}

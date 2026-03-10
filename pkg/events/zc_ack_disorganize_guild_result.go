@@ -2,8 +2,5 @@
 
 package events
 
-// ZcAckDisorganizeGuildResult is the event emitted when a zc_ack_disorganize_guild_result packet is received.
-// ZC_ACK_DISORGANIZE_GUILD_RESULT packet (PACKET_ZC_ACK_DISORGANIZE_GUILD_RESULT)
-type ZcAckDisorganizeGuildResult struct {
-	Flag int32 // Dissolution result (0=failed, 1=success)
-}
+// ZcAckDisorganizeGuildResult is the event emitted for the zc_ack_disorganize_guild_result action.
+type ZcAckDisorganizeGuildResult struct{}

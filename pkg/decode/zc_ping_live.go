@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPingLive_0x0B1D(data []byte, packetver uint32) events.ZcPingLive {
 	var e events.ZcPingLive
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }
 

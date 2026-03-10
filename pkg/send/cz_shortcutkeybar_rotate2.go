@@ -3,9 +3,7 @@
 package send
 
 // CzShortcutkeybarRotate2 is the request struct for the cz_shortcutkeybar_rotate2 action.
-// CZ_SHORTCUTKEYBAR_ROTATE2 packet (PACKET_CZ_SHORTCUTKEYBAR_ROTATE2)
 type CzShortcutkeybarRotate2 struct {
-	PacketType int16 // packetType field
-	Rowshift uint8 // rowshift field
-	Tab uint16 // tab field
+	Tab uint16
+	Rowshift uint8
 }

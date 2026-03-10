@@ -2,8 +2,5 @@
 
 package events
 
-// DealFinalize is the event emitted when a deal_finalize packet is received.
-// Client confirms trade (OK button pressed)
-type DealFinalize struct {
-	Type uint8 // Confirmation result (0=self confirmed, 1=other confirmed)
-}
+// DealFinalize is the event emitted for the deal_finalize action.
+type DealFinalize struct{}

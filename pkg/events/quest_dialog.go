@@ -2,11 +2,5 @@
 
 package events
 
-// QuestDialog is the event emitted when a quest_dialog packet is received.
-// Quest dialog window with NPC
-type QuestDialog struct {
-	ID uint32 // NPC ID showing quest dialog
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Message string // Quest dialog message text
-}
+// QuestDialog is the event emitted for the quest_dialog action.
+type QuestDialog struct{}

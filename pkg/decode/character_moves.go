@@ -8,8 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func CharacterMoves_0x0087(data []byte, packetver uint32) events.CharacterMoves {
 	var e events.CharacterMoves
 	_ = packetver
+	e.MoveStartTime = leU32(data, 2)  // rAthena: moveStartTime (offset 2, size 4)
 	e.MoveData = [6]byte(data[6:12])  // rAthena: moveData (offset 6, size 6)
-	e.Time = leU32(data, 2)  // rAthena: moveStartTime (offset 2, size 4)
 	return e
 }
 

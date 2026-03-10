@@ -2,9 +2,7 @@
 
 package events
 
-// ZcWaitDialog is the event emitted when a zc_wait_dialog packet is received.
-// ZC_WAIT_DIALOG packet (PACKET_ZC_WAIT_DIALOG)
+// ZcWaitDialog is the event emitted for the zc_wait_dialog action.
 type ZcWaitDialog struct {
-	NpcID uint32 // NpcID field
-	PacketType int16 // PacketType field
+	NpcID uint32
 }

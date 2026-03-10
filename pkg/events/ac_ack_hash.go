@@ -2,10 +2,5 @@
 
 package events
 
-// AcAckHash is the event emitted when a ac_ack_hash packet is received.
-// AC_ACK_HASH packet (PACKET_AC_ACK_HASH)
-type AcAckHash struct {
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
-	Salt string // salt field
-}
+// AcAckHash is the event emitted for the ac_ack_hash action.
+type AcAckHash struct{}

@@ -2,11 +2,10 @@
 
 package events
 
-// ZcPcPurchaseItemlistFrommc is the event emitted when a zc_pc_purchase_itemlist_frommc packet is received.
-// ZC_PC_PURCHASE_ITEMLIST_FROMMC packet (PACKET_ZC_PC_PURCHASE_ITEMLIST_FROMMC)
+// ZcPcPurchaseItemlistFrommc is the event emitted for the zc_pc_purchase_itemlist_frommc action.
 type ZcPcPurchaseItemlistFrommc struct {
-	AID uint32 // AID field
-	Items []byte // items field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	AID uint32
+	Items []byte
+	VenderId uint32
 }

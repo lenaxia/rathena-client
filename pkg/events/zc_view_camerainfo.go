@@ -2,9 +2,10 @@
 
 package events
 
-// ZcViewCamerainfo is the event emitted when a zc_view_camerainfo packet is received.
-// ZC_VIEW_CAMERAINFO packet (PACKET_ZC_VIEW_CAMERAINFO)
+// ZcViewCamerainfo is the event emitted for the zc_view_camerainfo action.
 type ZcViewCamerainfo struct {
-	Action int8 // action field
-	PacketType int16 // packetType field
+	Action int8
+	Range []byte
+	Rotation []byte
+	Latitude []byte
 }

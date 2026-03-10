@@ -3,7 +3,5 @@
 package send
 
 // CaConnectInfoChanged is the request struct for the ca_connect_info_changed action.
-// CA_CONNECT_INFO_CHANGED packet (PACKET_CA_CONNECT_INFO_CHANGED)
 type CaConnectInfoChanged struct {
-	PacketType int16 // packetType field
 }

@@ -3,8 +3,6 @@
 package send
 
 // CzClientVersion is the request struct for the cz_client_version action.
-// CZ_CLIENT_VERSION packet (PACKET_CZ_CLIENT_VERSION)
 type CzClientVersion struct {
-	ClientVersion uint32 // clientVersion field
-	PacketType int16 // packetType field
+	ClientVersion uint32
 }

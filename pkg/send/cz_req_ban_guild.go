@@ -3,10 +3,5 @@
 package send
 
 // CzReqBanGuild is the request struct for the cz_req_ban_guild action.
-// CZ_REQ_BAN_GUILD packet (PACKET_CZ_REQ_BAN_GUILD)
 type CzReqBanGuild struct {
-	GuildID uint32 // Guild ID
-	AccountID uint32 // Account ID of member to ban
-	CharacterID uint32 // Character ID of member to ban
-	Message string // Reason for expulsion (40 bytes)
 }

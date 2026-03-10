@@ -12,7 +12,7 @@ func EncodeCharacterMove(req send.CharacterMove, packetver uint32) [5]byte {
 	// Packet ID: 0x035F (little-endian)
 	p[0] = 0x5f
 	p[1] = 0x03
-	copy(p[2:], req.Coords[:])  // rAthena: dest
+	copy(p[2:], req.Dest[:])  // rAthena: dest
 	_ = packetver
 	return p
 }

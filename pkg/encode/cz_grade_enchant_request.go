@@ -12,12 +12,11 @@ func EncodeCzGradeEnchantRequest(req send.CzGradeEnchantRequest, packetver uint3
 	// Packet ID: 0x0B5B (little-endian)
 	p[0] = 0x5b
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
-	p[8] = uint8(req.BlessingFlag)  // rAthena: blessing_flag
 	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
-	p[13] = uint8(req.ProtectFlag)  // rAthena: protect_flag
-	leU32Put(p[4:], uint32(req.MaterialIndex))  // rAthena: material_index
-	leU32Put(p[9:], uint32(req.BlessingAmount))  // rAthena: blessing_amount
+	copy(p[4:], req.Material_index)  // rAthena: material_index
+	p[8] = uint8(req.Blessing_flag)  // rAthena: blessing_flag
+	copy(p[9:], req.Blessing_amount)  // rAthena: blessing_amount
+	p[13] = uint8(req.Protect_flag)  // rAthena: protect_flag
 	_ = packetver
 	return p
 }

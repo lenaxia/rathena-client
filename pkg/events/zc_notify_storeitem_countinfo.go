@@ -2,9 +2,5 @@
 
 package events
 
-// ZcNotifyStoreitemCountinfo is the event emitted when a zc_notify_storeitem_countinfo packet is received.
-// ZC_NOTIFY_STOREITEM_COUNTINFO packet (PACKET_ZC_NOTIFY_STOREITEM_COUNTINFO)
-type ZcNotifyStoreitemCountinfo struct {
-	Items uint16 // Current number of items in storage
-	MaxItems uint16 // Maximum storage capacity
-}
+// ZcNotifyStoreitemCountinfo is the event emitted for the zc_notify_storeitem_countinfo action.
+type ZcNotifyStoreitemCountinfo struct{}

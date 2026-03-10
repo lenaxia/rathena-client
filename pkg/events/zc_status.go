@@ -2,34 +2,5 @@
 
 package events
 
-// ZcStatus is the event emitted when a zc_status packet is received.
-// ZC_STATUS packet (PACKET_ZC_STATUS)
-type ZcStatus struct {
-	AttackSpeed int16 // Attack speed (ASPD)
-	Agi uint8 // AGI stat value
-	Attack int16 // Base attack power
-	Flee int16 // Flee rate (evasion)
-	Critical int16 // Critical hit rate
-	Dex uint8 // DEX stat value
-	Hit int16 // Hit rate (accuracy)
-	Int uint8 // INT stat value
-	Def int16 // Base defense power
-	Luk uint8 // LUK stat value
-	AttackMagicMax int16 // Maximum magic attack power
-	DefMagic int16 // Base magic defense
-	AttackMagicMin int16 // Minimum magic attack power
-	AttackSpeedBonus int16 // ASPD bonus from equipment/buffs
-	FleeBonus int16 // Flee bonus from AGI/equipment
-	DefBonus int16 // Defense bonus from equipment
-	DefMagicBonus int16 // Magic defense bonus
-	PointsFree uint16 // Free status points available to distribute
-	AttackBonus int16 // Attack bonus from equipment/refining
-	PointsAgi uint8 // Points needed to increase AGI
-	PointsDex uint8 // Points needed to increase DEX
-	PointsInt uint8 // Points needed to increase INT
-	PointsLuk uint8 // Points needed to increase LUK
-	PointsStr uint8 // Points needed to increase STR
-	PointsVit uint8 // Points needed to increase VIT
-	Str uint8 // STR stat value
-	Vit uint8 // VIT stat value
-}
+// ZcStatus is the event emitted for the zc_status action.
+type ZcStatus struct{}

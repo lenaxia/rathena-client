@@ -2,8 +2,8 @@
 
 package events
 
-// ZcAutospelllist is the event emitted when a zc_autospelllist packet is received.
-// ZC_AUTOSPELLLIST packet (PACKET_ZC_AUTOSPELLLIST)
+// ZcAutospelllist is the event emitted for the zc_autospelllist action.
 type ZcAutospelllist struct {
-	PacketType int16 // packetType field
+	Skills []byte
+	PacketLength int16
 }

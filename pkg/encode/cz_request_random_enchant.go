@@ -12,8 +12,7 @@ func EncodeCzRequestRandomEnchant(req send.CzRequestRandomEnchant, packetver uin
 	// Packet ID: 0x0B9B (little-endian)
 	p[0] = 0x9b
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
-	// req.EnchantGroup: unhandled type int64 for rAthena: enchant_group
+	// req.Enchant_group: unhandled type int64 for rAthena: enchant_group
 	leU16Put(p[10:], uint16(req.Index))  // rAthena: index
 	_ = packetver
 	return p

@@ -3,11 +3,5 @@
 package send
 
 // MapLoaded is the request struct for the map_loaded action.
-// Map entry accepted confirmation
 type MapLoaded struct {
-	Font uint16 // Font setting (PACKETVER >= 20080102)
-	Coords [3]byte // 3-byte packed position and direction
-	SyncMapSync uint32 // Server sync tick
-	XSize uint8 // Map width
-	YSize uint8 // Map height
 }

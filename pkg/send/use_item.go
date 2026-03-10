@@ -3,8 +3,5 @@
 package send
 
 // UseItem is the request struct for the use_item action.
-// Use an item from inventory
 type UseItem struct {
-	Index uint16 // Inventory slot index
-	TargetID uint32 // Target actor ID (for targeted items)
 }

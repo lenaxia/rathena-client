@@ -8,11 +8,10 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSePcBuyCashitemResult_0x0849(data []byte, packetver uint32) events.ZcSePcBuyCashitemResult {
 	var e events.ZcSePcBuyCashitemResult
 	_ = packetver
-	e.CashPoints = leU32(data, 8)  // rAthena: cashPoints (offset 8, size 4)
 	e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
-	e.KafraPoints = leU32(data, 12)  // rAthena: kafraPoints (offset 12, size 4)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	e.Result = leU16(data, 6)  // rAthena: result (offset 6, size 2)
+	e.CashPoints = leU32(data, 8)  // rAthena: cashPoints (offset 8, size 4)
+	e.KafraPoints = leU32(data, 12)  // rAthena: kafraPoints (offset 12, size 4)
 	return e
 }
 

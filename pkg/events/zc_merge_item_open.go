@@ -2,10 +2,8 @@
 
 package events
 
-// ZcMergeItemOpen is the event emitted when a zc_merge_item_open packet is received.
-// ZC_MERGE_ITEM_OPEN packet (PACKET_ZC_MERGE_ITEM_OPEN)
+// ZcMergeItemOpen is the event emitted for the zc_merge_item_open action.
 type ZcMergeItemOpen struct {
-	Items []byte // items field
-	PacketLen uint16 // packetLen field
-	PacketType int16 // packetType field
+	PacketLen uint16
+	Items []byte
 }

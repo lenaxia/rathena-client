@@ -2,10 +2,8 @@
 
 package events
 
-// ZcMembermgrInfo is the event emitted when a zc_membermgr_info packet is received.
-// ZC_MEMBERMGR_INFO packet (PACKET_ZC_MEMBERMGR_INFO)
+// ZcMembermgrInfo is the event emitted for the zc_membermgr_info action.
 type ZcMembermgrInfo struct {
-	PacketType int16 // PacketType field
-	GuildMemberInfo []byte // guildMemberInfo field
-	PacketLength int16 // packetLength field
+	PacketLength int16
+	GuildMemberInfo []byte
 }

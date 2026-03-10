@@ -2,10 +2,5 @@
 
 package events
 
-// ZcStopmove is the event emitted when a zc_stopmove packet is received.
-// Actor stopped moving
-type ZcStopmove struct {
-	ID uint32 // Actor unique identifier
-	X int16 // X coordinate where actor stopped
-	Y int16 // Y coordinate where actor stopped
-}
+// ZcStopmove is the event emitted for the zc_stopmove action.
+type ZcStopmove struct{}

@@ -3,7 +3,5 @@
 package send
 
 // DealFinalize is the request struct for the deal_finalize action.
-// Client confirms trade (OK button pressed)
 type DealFinalize struct {
-	Type uint8 // Confirmation result (0=self confirmed, 1=other confirmed)
 }

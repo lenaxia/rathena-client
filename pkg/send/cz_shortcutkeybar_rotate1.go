@@ -3,8 +3,6 @@
 package send
 
 // CzShortcutkeybarRotate1 is the request struct for the cz_shortcutkeybar_rotate1 action.
-// CZ_SHORTCUTKEYBAR_ROTATE1 packet - Client request to rotate hotkey shortcut bar rows
 type CzShortcutkeybarRotate1 struct {
-	PacketType int16 // Packet identifier
-	Rowshift uint8 // Number of rows to shift/rotate
+	Rowshift uint8
 }

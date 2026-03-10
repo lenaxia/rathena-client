@@ -2,13 +2,13 @@
 
 package events
 
-// PetInfo is the event emitted when a pet_info packet is received.
-// Pet status information (hunger, intimacy, level)
+// PetInfo is the event emitted for the pet_info action.
 type PetInfo struct {
-	Accessory int16 // Pet accessory item ID
-	PacketType int16 // PacketType field
-	Type int8 // Update type flag
-	Hungry int16 // Pet hunger level (0-100)
-	Level int16 // Pet level
-	Friendly int16 // Pet intimacy level (0-1000)
+	SzName string
+	BModified int8
+	NLevel int16
+	NFullness int16
+	NRelationship int16
+	ITID int16
+	Job int16
 }

@@ -2,8 +2,7 @@
 
 package events
 
-// ZcCloseMacroDetector is the event emitted when a zc_close_macro_detector packet is received.
-// ZC_CLOSE_MACRO_DETECTOR packet (PACKET_ZC_CLOSE_MACRO_DETECTOR)
+// ZcCloseMacroDetector is the event emitted for the zc_close_macro_detector action.
 type ZcCloseMacroDetector struct {
-	PacketType int16 // PacketType field
+	Status []byte
 }

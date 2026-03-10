@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNpcMarketOpen_0x09D5(data []byte, packetver uint32) events.ZcNpcMarketOpen {
 	var e events.ZcNpcMarketOpen
 	_ = packetver
-	e.List = data[4:]  // rAthena: list (offset 4, size 0)
 	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.List = data[4:]  // rAthena: list (offset 4, size 0)
 	return e
 }
 

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcBroadcast is the event emitted when a zc_broadcast packet is received.
-// ZC_BROADCAST packet (PACKET_ZC_BROADCAST)
-type ZcBroadcast struct {
-	Message string // Broadcast message content
-}
+// ZcBroadcast is the event emitted for the zc_broadcast action.
+type ZcBroadcast struct{}

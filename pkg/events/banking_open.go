@@ -2,8 +2,5 @@
 
 package events
 
-// BankingOpen is the event emitted when a banking_open packet is received.
-// Banking window opened
-type BankingOpen struct {
-	Result uint8 // Open result (0=failed, 1=success)
-}
+// BankingOpen is the event emitted for the banking_open action.
+type BankingOpen struct{}

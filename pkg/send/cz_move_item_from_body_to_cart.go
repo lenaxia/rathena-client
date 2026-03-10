@@ -3,8 +3,7 @@
 package send
 
 // CzMoveItemFromBodyToCart is the request struct for the cz_move_item_from_body_to_cart action.
-// CZ_MOVE_ITEM_FROM_BODY_TO_CART packet (PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_CART)
 type CzMoveItemFromBodyToCart struct {
-	PacketType int16 // PacketType field
-	Index int16 // index field
+	Index int16
+	Count []byte
 }

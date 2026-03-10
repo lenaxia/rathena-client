@@ -2,11 +2,12 @@
 
 package events
 
-// ZcChangeItemOption is the event emitted when a zc_change_item_option packet is received.
-// ZC_CHANGE_ITEM_OPTION packet (PACKET_ZC_CHANGE_ITEM_OPTION)
+// ZcChangeItemOption is the event emitted for the zc_change_item_option action.
 type ZcChangeItemOption struct {
-	Index int16 // index field
-	PacketType int16 // packetType field
-	RefiningLevel int16 // refiningLevel field
-	Slot []byte // slot field
+	Index int16
+	RefiningLevel int16
+	Slot []byte
+	Option_data []byte
+	IsDamaged int8
+	Grade uint8
 }

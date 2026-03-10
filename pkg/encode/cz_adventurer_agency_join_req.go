@@ -12,7 +12,8 @@ func EncodeCzAdventurerAgencyJoinReq(req send.CzAdventurerAgencyJoinReq, packetv
 	// Packet ID: 0x0AE6 (little-endian)
 	p[0] = 0xe6
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
+	copy(p[2:], req.GID)  // rAthena: GID
+	copy(p[6:], req.AID)  // rAthena: AID
 	_ = packetver
 	return p
 }

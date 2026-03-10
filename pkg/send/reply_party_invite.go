@@ -3,8 +3,5 @@
 package send
 
 // ReplyPartyInvite is the request struct for the reply_party_invite action.
-// Reply to party invitation
 type ReplyPartyInvite struct {
-	PartyID uint32 // Party ID
-	Accept uint32 // Accept invitation (1=yes, 0=no)
 }

@@ -2,11 +2,9 @@
 
 package events
 
-// ZcNotifyChatParty is the event emitted when a zc_notify_chat_party packet is received.
-// ZC_NOTIFY_CHAT_PARTY packet (PACKET_ZC_NOTIFY_CHAT_PARTY)
+// ZcNotifyChatParty is the event emitted for the zc_notify_chat_party action.
 type ZcNotifyChatParty struct {
-	PacketLength int16 // Total packet length including header
-	PacketType int16 // Packet type identifier (0x0109)
-	ChatMsg []byte // Variable-length party chat message
-	AID int32 // Account ID of the party member who sent the message
+	PacketLength int16
+	AID []byte
+	ChatMsg string
 }

@@ -13,7 +13,9 @@ func EncodeCzViewCamerainfo(req send.CzViewCamerainfo, packetver uint32) [15]byt
 	p[0] = 0x77
 	p[1] = 0x0a
 	p[2] = uint8(req.Action)  // rAthena: action
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
+	copy(p[3:], req.Range)  // rAthena: range
+	copy(p[7:], req.Rotation)  // rAthena: rotation
+	copy(p[11:], req.Latitude)  // rAthena: latitude
 	_ = packetver
 	return p
 }

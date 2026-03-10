@@ -2,15 +2,16 @@
 
 package events
 
-// ZcAddItemToCart is the event emitted when a zc_add_item_to_cart packet is received.
-// ZC_ADD_ITEM_TO_CART packet (PACKET_ZC_ADD_ITEM_TO_CART)
+// ZcAddItemToCart is the event emitted for the zc_add_item_to_cart action.
 type ZcAddItemToCart struct {
-	Amount int32 // amount field
-	Damaged uint8 // damaged field
-	Identified uint8 // identified field
-	Index int16 // index field
-	ItemId uint32 // itemId field
-	PacketType int16 // packetType field
-	Refine uint8 // refine field
-	Slot []byte // slot field
+	Index int16
+	Amount int32
+	ItemId uint32
+	ItemType uint8
+	Identified uint8
+	Damaged uint8
+	Refine uint8
+	Slot []byte
+	Option_data []byte
+	Grade uint8
 }

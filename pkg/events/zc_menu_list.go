@@ -2,9 +2,5 @@
 
 package events
 
-// ZcMenuList is the event emitted when a zc_menu_list packet is received.
-// ZC_MENU_LIST packet (PACKET_ZC_MENU_LIST)
-type ZcMenuList struct {
-	NpcID uint32 // NPC ID
-	Menu string // Menu items string
-}
+// ZcMenuList is the event emitted for the zc_menu_list action.
+type ZcMenuList struct{}

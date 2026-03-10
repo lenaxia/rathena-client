@@ -2,9 +2,11 @@
 
 package events
 
-// ZcAckReqnameallNpc is the event emitted when a zc_ack_reqnameall_npc packet is received.
-// ZC_ACK_REQNAMEALL_NPC packet (PACKET_ZC_ACK_REQNAMEALL_NPC)
+// ZcAckReqnameallNpc is the event emitted for the zc_ack_reqnameall_npc action.
 type ZcAckReqnameallNpc struct {
-	Name string // NPC/Actor name
-	ID uint32 // Actor/NPC ID
+	Packet_id uint16
+	Gid int32
+	Name string
+	GroupId int32
+	Title string
 }

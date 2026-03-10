@@ -2,9 +2,9 @@
 
 package events
 
-// ChatMessage is the event emitted when a chat_message packet is received.
-// Public chat message received
+// ChatMessage is the event emitted for the chat_message action.
 type ChatMessage struct {
-	SenderID uint32 // Actor ID of message sender
-	Message string // Chat message text
+	PacketLength int16
+	GID uint32
+	Message string
 }

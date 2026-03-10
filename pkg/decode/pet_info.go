@@ -8,19 +8,20 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PetInfo_0x01A2(data []byte, packetver uint32) events.PetInfo {
 	var e events.PetInfo
 	if packetver >= 20081126 {
-		e.Accessory = leI16(data, 33)  // rAthena: ITID (offset 33, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.Type = int8(data[26])  // rAthena: bModified (offset 26, size 1)
-		e.Hungry = leI16(data, 29)  // rAthena: nFullness (offset 29, size 2)
-		e.Level = leI16(data, 27)  // rAthena: nLevel (offset 27, size 2)
-		e.Friendly = leI16(data, 31)  // rAthena: nRelationship (offset 31, size 2)
+		e.SzName = nullTermString(data[2:26])  // rAthena: szName (offset 2, size 24)
+		e.BModified = int8(data[26])  // rAthena: bModified (offset 26, size 1)
+		e.NLevel = leI16(data, 27)  // rAthena: nLevel (offset 27, size 2)
+		e.NFullness = leI16(data, 29)  // rAthena: nFullness (offset 29, size 2)
+		e.NRelationship = leI16(data, 31)  // rAthena: nRelationship (offset 31, size 2)
+		e.ITID = leI16(data, 33)  // rAthena: ITID (offset 33, size 2)
+		e.Job = leI16(data, 35)  // rAthena: job (offset 35, size 2)
 	} else {
-		e.Accessory = leI16(data, 33)  // rAthena: ITID (offset 33, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.Type = int8(data[26])  // rAthena: bModified (offset 26, size 1)
-		e.Hungry = leI16(data, 29)  // rAthena: nFullness (offset 29, size 2)
-		e.Level = leI16(data, 27)  // rAthena: nLevel (offset 27, size 2)
-		e.Friendly = leI16(data, 31)  // rAthena: nRelationship (offset 31, size 2)
+		e.SzName = nullTermString(data[2:26])  // rAthena: szName (offset 2, size 24)
+		e.BModified = int8(data[26])  // rAthena: bModified (offset 26, size 1)
+		e.NLevel = leI16(data, 27)  // rAthena: nLevel (offset 27, size 2)
+		e.NFullness = leI16(data, 29)  // rAthena: nFullness (offset 29, size 2)
+		e.NRelationship = leI16(data, 31)  // rAthena: nRelationship (offset 31, size 2)
+		e.ITID = leI16(data, 33)  // rAthena: ITID (offset 33, size 2)
 	}
 	return e
 }

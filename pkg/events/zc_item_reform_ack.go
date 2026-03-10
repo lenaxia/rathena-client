@@ -2,10 +2,8 @@
 
 package events
 
-// ZcItemReformAck is the event emitted when a zc_item_reform_ack packet is received.
-// ZC_ITEM_REFORM_ACK packet (PACKET_ZC_ITEM_REFORM_ACK)
+// ZcItemReformAck is the event emitted for the zc_item_reform_ack action.
 type ZcItemReformAck struct {
-	PacketType int16 // PacketType field
-	Index int16 // index field
-	Result int8 // result field
+	Index int16
+	Result int8
 }

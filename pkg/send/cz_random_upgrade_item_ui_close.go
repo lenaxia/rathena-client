@@ -3,7 +3,5 @@
 package send
 
 // CzRandomUpgradeItemUiClose is the request struct for the cz_random_upgrade_item_ui_close action.
-// CZ_RANDOM_UPGRADE_ITEM_UI_CLOSE packet (PACKET_CZ_RANDOM_UPGRADE_ITEM_UI_CLOSE)
 type CzRandomUpgradeItemUiClose struct {
-	PacketType int16 // packetType field
 }

@@ -3,7 +3,5 @@
 package send
 
 // UnequipItem is the request struct for the unequip_item action.
-// Unequip an item
 type UnequipItem struct {
-	Index uint16 // Inventory slot index
 }

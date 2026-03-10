@@ -2,12 +2,10 @@
 
 package events
 
-// ZcGoldpccafePoint is the event emitted when a zc_goldpccafe_point packet is received.
-// ZC_GOLDPCCAFE_POINT packet (PACKET_ZC_GOLDPCCAFE_POINT)
+// ZcGoldpccafePoint is the event emitted for the zc_goldpccafe_point action.
 type ZcGoldpccafePoint struct {
-	PacketType uint16 // PacketType field
-	IsActive int8 // isActive field
-	Mode int8 // mode field
-	PlayedTime int32 // playedTime field
-	Point int32 // point field
+	IsActive int8
+	Mode int8
+	Point int32
+	PlayedTime int32
 }

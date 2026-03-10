@@ -3,10 +3,5 @@
 package send
 
 // RequestCharlist is the request struct for the request_charlist action.
-// Request character list from character server
 type RequestCharlist struct {
-	AccountID uint32 // Account ID
-	SessionID1 uint32 // Login session ID 1
-	SessionID2 uint32 // Login session ID 2
-	Gender uint16 // Character gender
 }

@@ -3,10 +3,8 @@
 package send
 
 // CzUseSkillStart is the request struct for the cz_use_skill_start action.
-// CZ_USE_SKILL_START packet (PACKET_CZ_USE_SKILL_START)
 type CzUseSkillStart struct {
-	PacketType int16 // packetType field
-	SkillId int16 // skillId field
-	SkillLv int16 // skillLv field
-	TargetId uint32 // targetId field
+	SkillId int16
+	SkillLv int16
+	TargetId uint32
 }

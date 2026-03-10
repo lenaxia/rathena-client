@@ -2,8 +2,5 @@
 
 package events
 
-// ZcStartCapture is the event emitted when a zc_start_capture packet is received.
-// ZC_START_CAPTURE packet (PACKET_ZC_START_CAPTURE)
-type ZcStartCapture struct {
-	PacketType int16 // PacketType field
-}
+// ZcStartCapture is the event emitted for the zc_start_capture action.
+type ZcStartCapture struct{}

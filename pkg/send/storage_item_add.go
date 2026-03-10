@@ -3,8 +3,5 @@
 package send
 
 // StorageItemAdd is the request struct for the storage_item_add action.
-// Move item from inventory to storage
 type StorageItemAdd struct {
-	Amount uint32 // Amount of item to move to storage
-	Index uint16 // Inventory index of item to move to storage
 }

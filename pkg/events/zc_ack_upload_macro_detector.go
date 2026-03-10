@@ -2,9 +2,8 @@
 
 package events
 
-// ZcAckUploadMacroDetector is the event emitted when a zc_ack_upload_macro_detector packet is received.
-// ZC_ACK_UPLOAD_MACRO_DETECTOR packet (PACKET_ZC_ACK_UPLOAD_MACRO_DETECTOR)
+// ZcAckUploadMacroDetector is the event emitted for the zc_ack_upload_macro_detector action.
 type ZcAckUploadMacroDetector struct {
-	PacketType int16 // PacketType field
-	CaptchaKey []byte // Captcha key identifier (4-byte fixed array)
+	CaptchaKey string
+	CaptchaFlag []byte
 }

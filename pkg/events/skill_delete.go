@@ -2,8 +2,5 @@
 
 package events
 
-// SkillDelete is the event emitted when a skill_delete packet is received.
-// Remove skill from skill list
-type SkillDelete struct {
-	SkillID uint16 // Skill ID to remove
-}
+// SkillDelete is the event emitted for the skill_delete action.
+type SkillDelete struct{}

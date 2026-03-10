@@ -3,8 +3,5 @@
 package send
 
 // PublicChat is the request struct for the public_chat action.
-// Public chat message from NPC or player
 type PublicChat struct {
-	ID uint32 // Actor ID (sender) - optional, nil for client-sent messages
-	Message string // Chat message text (null-terminated) - optional, nil for some packet variants
 }

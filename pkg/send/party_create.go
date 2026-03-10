@@ -3,7 +3,5 @@
 package send
 
 // PartyCreate is the request struct for the party_create action.
-// Create a new party
 type PartyCreate struct {
-	PartyName string // Party name (24 character max)
 }

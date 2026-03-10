@@ -3,7 +3,5 @@
 package send
 
 // NpcTalkClose is the request struct for the npc_talk_close action.
-// Close NPC dialog
 type NpcTalkClose struct {
-	NPCID uint32 // NPC actor ID
 }

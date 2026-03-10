@@ -2,9 +2,5 @@
 
 package events
 
-// ZcActionFailure is the event emitted when a zc_action_failure packet is received.
-// ZC_ACTION_FAILURE packet (PACKET_ZC_ACTION_FAILURE)
-type ZcActionFailure struct {
-	PacketID uint16 // Packet identifier
-	FailureType int16 // Type of action failure (0=no arrow, 1=overweight cant attack, 2=overweight cant skill, 3=arrow equipped)
-}
+// ZcActionFailure is the event emitted for the zc_action_failure action.
+type ZcActionFailure struct{}

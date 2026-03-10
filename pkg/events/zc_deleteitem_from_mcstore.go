@@ -2,10 +2,5 @@
 
 package events
 
-// ZcDeleteitemFromMcstore is the event emitted when a zc_deleteitem_from_mcstore packet is received.
-// ZC_DELETEITEM_FROM_MCSTORE packet (PACKET_ZC_DELETEITEM_FROM_MCSTORE)
-type ZcDeleteitemFromMcstore struct {
-	PacketID int16 // Packet identifier
-	StoreIndex uint16 // Merchant store inventory index
-	Amount uint16 // Amount of items deleted
-}
+// ZcDeleteitemFromMcstore is the event emitted for the zc_deleteitem_from_mcstore action.
+type ZcDeleteitemFromMcstore struct{}

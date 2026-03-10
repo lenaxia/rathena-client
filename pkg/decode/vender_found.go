@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func VenderFound_0x0131(data []byte, packetver uint32) events.VenderFound {
 	var e events.VenderFound
 	_ = packetver
-	e.ID = leU32(data, 2)  // rAthena: makerAID (offset 2, size 4)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
-	// e.Title = strings.TrimRight(packet.storeName, "\x00")  (complex expression — implement manually)
+	e.MakerAID = leU32(data, 2)  // rAthena: makerAID (offset 2, size 4)
+	e.StoreName = nullTermString(data[6:6])  // rAthena: storeName (offset 6, size 0)
 	return e
 }
 

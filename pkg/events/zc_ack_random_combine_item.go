@@ -2,9 +2,7 @@
 
 package events
 
-// ZcAckRandomCombineItem is the event emitted when a zc_ack_random_combine_item packet is received.
-// ZC_ACK_RANDOM_COMBINE_ITEM packet (PACKET_ZC_ACK_RANDOM_COMBINE_ITEM)
+// ZcAckRandomCombineItem is the event emitted for the zc_ack_random_combine_item action.
 type ZcAckRandomCombineItem struct {
-	PacketType int16 // packetType field
-	Result int16 // result field
+	Result int16
 }

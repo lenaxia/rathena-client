@@ -2,11 +2,9 @@
 
 package events
 
-// ZcChangestatePet is the event emitted when a zc_changestate_pet packet is received.
-// ZC_CHANGESTATE_PET packet (PACKET_ZC_CHANGESTATE_PET)
+// ZcChangestatePet is the event emitted for the zc_changestate_pet action.
 type ZcChangestatePet struct {
-	PacketType int16 // PacketType field
-	Type int8 // type field
-	ID int32 // Pet game ID
-	Value int32 // State change value
+	Type int8
+	GID []byte
+	Data []byte
 }

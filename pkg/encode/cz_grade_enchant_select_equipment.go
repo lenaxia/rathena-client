@@ -12,7 +12,6 @@ func EncodeCzGradeEnchantSelectEquipment(req send.CzGradeEnchantSelectEquipment,
 	// Packet ID: 0x0B59 (little-endian)
 	p[0] = 0x59
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
 	_ = packetver
 	return p

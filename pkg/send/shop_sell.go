@@ -3,7 +3,5 @@
 package send
 
 // ShopSell is the request struct for the shop_sell action.
-// Sell items to NPC shop
 type ShopSell struct {
-	ItemList []byte // List of items to sell (variable length)
 }

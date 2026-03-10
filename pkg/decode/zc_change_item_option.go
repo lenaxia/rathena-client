@@ -9,24 +9,28 @@ func ZcChangeItemOption_0x0AB9(data []byte, packetver uint32) events.ZcChangeIte
 	var e events.ZcChangeItemOption
 	if packetver >= 20200902 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.IsDamaged = int8(data[4])  // rAthena: isDamaged (offset 4, size 1)
+		e.Slot = data[5:]  // rAthena: slot (offset 5, size 16)
+		e.Option_data = data[21:]  // rAthena: option_data (offset 21, size 0)
 		e.RefiningLevel = int16(int8(data[21]))  // rAthena: refiningLevel (offset 21, size 1)
-		// e.Slot = serialization.SerializeEQUIPSLOTINFO(packet.slot)  (complex expression — implement manually)
+		e.Grade = data[22]  // rAthena: grade (offset 22, size 1)
 	} else if packetver >= 20181121 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.IsDamaged = int8(data[4])  // rAthena: isDamaged (offset 4, size 1)
 		e.RefiningLevel = leI16(data, 5)  // rAthena: refiningLevel (offset 5, size 2)
-		// e.Slot = serialization.SerializeEQUIPSLOTINFO(packet.slot)  (complex expression — implement manually)
+		e.Slot = data[7:]  // rAthena: slot (offset 7, size 16)
+		e.Option_data = data[23:]  // rAthena: option_data (offset 23, size 0)
 	} else if packetver >= 20181017 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.IsDamaged = int8(data[4])  // rAthena: isDamaged (offset 4, size 1)
 		e.RefiningLevel = leI16(data, 5)  // rAthena: refiningLevel (offset 5, size 2)
-		// e.Slot = serialization.SerializeEQUIPSLOTINFO(packet.slot)  (complex expression — implement manually)
+		e.Slot = data[7:]  // rAthena: slot (offset 7, size 8)
+		e.Option_data = data[15:]  // rAthena: option_data (offset 15, size 0)
 	} else {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 		e.RefiningLevel = leI16(data, 4)  // rAthena: refiningLevel (offset 4, size 2)
-		// e.Slot = serialization.SerializeEQUIPSLOTINFO(packet.slot)  (complex expression — implement manually)
+		e.Slot = data[6:]  // rAthena: slot (offset 6, size 8)
+		e.Option_data = data[14:]  // rAthena: option_data (offset 14, size 0)
 	}
 	return e
 }

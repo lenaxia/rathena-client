@@ -8,11 +8,20 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckReqnameall_0x0195(data []byte, packetver uint32) events.ZcAckReqnameall {
 	var e events.ZcAckReqnameall
 	if packetver >= 20150225 {
+		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
 		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
-		e.PacketId = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
+		e.Name = nullTermString(data[6:30])  // rAthena: name (offset 6, size 24)
+		e.Party_name = nullTermString(data[30:54])  // rAthena: party_name (offset 30, size 24)
+		e.Guild_name = nullTermString(data[54:78])  // rAthena: guild_name (offset 54, size 24)
+		e.Position_name = nullTermString(data[78:102])  // rAthena: position_name (offset 78, size 24)
+		e.Title_id = leI32(data, 102)  // rAthena: title_id (offset 102, size 4)
 	} else {
+		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
 		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
-		e.PacketId = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
+		e.Name = nullTermString(data[6:30])  // rAthena: name (offset 6, size 24)
+		e.Party_name = nullTermString(data[30:54])  // rAthena: party_name (offset 30, size 24)
+		e.Guild_name = nullTermString(data[54:78])  // rAthena: guild_name (offset 54, size 24)
+		e.Position_name = nullTermString(data[78:102])  // rAthena: position_name (offset 78, size 24)
 	}
 	return e
 }

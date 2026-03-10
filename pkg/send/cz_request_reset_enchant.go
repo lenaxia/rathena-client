@@ -3,9 +3,7 @@
 package send
 
 // CzRequestResetEnchant is the request struct for the cz_request_reset_enchant action.
-// CZ_REQUEST_RESET_ENCHANT packet (PACKET_CZ_REQUEST_RESET_ENCHANT)
 type CzRequestResetEnchant struct {
-	PacketType int16 // PacketType field
-	EnchantGroup int64 // enchant_group field
-	Index int16 // index field
+	Enchant_group int64
+	Index int16
 }

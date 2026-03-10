@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcUiOpen2_0x0B9A(data []byte, packetver uint32) events.ZcUiOpen2 {
 	var e events.ZcUiOpen2
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	e.UIType = int8(data[2])  // rAthena: UIType (offset 2, size 1)
 	e.Data = leI64(data, 3)  // rAthena: data (offset 3, size 8)
 	return e

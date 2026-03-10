@@ -2,11 +2,5 @@
 
 package events
 
-// ReceivedCharacterIdAndMap is the event emitted when a received_character_id_and_map packet is received.
-// Map server connection info (legacy version, PACKETVER < 20170315)
-type ReceivedCharacterIdAndMap struct {
-	CharID uint32 // Character ID for map server authentication
-	MapIP uint32 // Map server IP address (4-byte binary)
-	MapName string // Map name (null-terminated)
-	MapPort uint16 // Map server port
-}
+// ReceivedCharacterIdAndMap is the event emitted for the received_character_id_and_map action.
+type ReceivedCharacterIdAndMap struct{}

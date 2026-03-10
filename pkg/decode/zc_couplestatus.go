@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCouplestatus_0x0141(data []byte, packetver uint32) events.ZcCouplestatus {
 	var e events.ZcCouplestatus
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.Val = leI32(data, 6)  // rAthena: defaultStatus (offset 6, size 4)
-	e.Val2 = leI32(data, 10)  // rAthena: plusStatus (offset 10, size 4)
-	e.Type = leU32(data, 2)  // rAthena: statusType (offset 2, size 4)
+	e.StatusType = leU32(data, 2)  // rAthena: statusType (offset 2, size 4)
+	e.DefaultStatus = leI32(data, 6)  // rAthena: defaultStatus (offset 6, size 4)
+	e.PlusStatus = leI32(data, 10)  // rAthena: plusStatus (offset 10, size 4)
 	return e
 }
 

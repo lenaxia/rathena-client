@@ -2,12 +2,10 @@
 
 package events
 
-// ZcUpdateCardslot is the event emitted when a zc_update_cardslot packet is received.
-// ZC_UPDATE_CARDSLOT packet (PACKET_ZC_UPDATE_CARDSLOT)
+// ZcUpdateCardslot is the event emitted for the zc_update_cardslot action.
 type ZcUpdateCardslot struct {
-	CardSlot int16 // cardSlot field
-	EquipFlag int8 // equipFlag field
-	ItemId int32 // itemId field
-	PacketType int16 // packetType field
-	WearState int16 // wearState field
+	WearState int16
+	CardSlot int16
+	ItemId int32
+	EquipFlag int8
 }

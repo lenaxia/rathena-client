@@ -3,7 +3,5 @@
 package send
 
 // CzReqExtendBodyitemSize is the request struct for the cz_req_extend_bodyitem_size action.
-// CZ_REQ_EXTEND_BODYITEM_SIZE packet (PACKET_CZ_REQ_EXTEND_BODYITEM_SIZE)
 type CzReqExtendBodyitemSize struct {
-	PacketType int16 // packetType field
 }

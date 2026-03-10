@@ -2,15 +2,15 @@
 
 package events
 
-// ZcUseskillAck is the event emitted when a zc_useskill_ack packet is received.
-// ZC_USESKILL_ACK packet (PACKET_ZC_USESKILL_ACK)
+// ZcUseskillAck is the event emitted for the zc_useskill_ack action.
 type ZcUseskillAck struct {
-	DelayTime uint32 // delayTime field
-	DstId uint32 // dstId field
-	Element uint32 // element field
-	PacketType int16 // packetType field
-	SkillId uint16 // skillId field
-	SrcId uint32 // srcId field
-	X uint16 // x field
-	Y uint16 // y field
+	SrcId uint32
+	DstId uint32
+	X uint16
+	Y uint16
+	SkillId uint16
+	Element uint32
+	DelayTime uint32
+	Disposable uint8
+	AttackMT uint32
 }

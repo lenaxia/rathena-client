@@ -2,11 +2,9 @@
 
 package events
 
-// ZcNpcMarketPurchaseResult is the event emitted when a zc_npc_market_purchase_result packet is received.
-// ZC_NPC_MARKET_PURCHASE_RESULT packet (PACKET_ZC_NPC_MARKET_PURCHASE_RESULT)
+// ZcNpcMarketPurchaseResult is the event emitted for the zc_npc_market_purchase_result action.
 type ZcNpcMarketPurchaseResult struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	List []byte // list field
-	Result uint8 // result field
+	PacketLength int16
+	Result uint16
+	List []byte
 }

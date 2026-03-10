@@ -3,8 +3,5 @@
 package send
 
 // CzPcSellItemlist is the request struct for the cz_pc_sell_itemlist action.
-// CZ_PC_SELL_ITEMLIST packet (PACKET_CZ_PC_SELL_ITEMLIST)
 type CzPcSellItemlist struct {
-	PacketLength int16 // Total packet length
-	SellList []byte // Array of items to sell
 }

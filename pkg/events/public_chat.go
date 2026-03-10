@@ -2,9 +2,9 @@
 
 package events
 
-// PublicChat is the event emitted when a public_chat packet is received.
-// Public chat message from NPC or player
+// PublicChat is the event emitted for the public_chat action.
 type PublicChat struct {
-	ID uint32 // Actor ID (sender) - optional, nil for client-sent messages
-	Message string // Chat message text (null-terminated) - optional, nil for some packet variants
+	PacketLength int16
+	GID uint32
+	Message string
 }

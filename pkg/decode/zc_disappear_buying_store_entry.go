@@ -9,7 +9,6 @@ func ZcDisappearBuyingStoreEntry_0x0816(data []byte, packetver uint32) events.Zc
 	var e events.ZcDisappearBuyingStoreEntry
 	_ = packetver
 	e.MakerAID = leU32(data, 2)  // rAthena: makerAID (offset 2, size 4)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }
 

@@ -2,18 +2,19 @@
 
 package events
 
-// ZcEquipwinMicroscope is the event emitted when a zc_equipwin_microscope packet is received.
-// ZC_EQUIPWIN_MICROSCOPE packet (PACKET_ZC_EQUIPWIN_MICROSCOPE)
+// ZcEquipwinMicroscope is the event emitted for the zc_equipwin_microscope action.
 type ZcEquipwinMicroscope struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Accessory int16 // accessory field
-	Accessory2 int16 // accessory2 field
-	Accessory3 int16 // accessory3 field
-	Bodypalette int16 // bodypalette field
-	Head int16 // head field
-	Headpalette int16 // headpalette field
-	Job int16 // job field
-	List []byte // list field
-	Sex uint8 // sex field
+	PacketLength int16
+	CharacterName string
+	Job int16
+	Head int16
+	Accessory int16
+	Accessory2 int16
+	Accessory3 int16
+	Headpalette int16
+	Bodypalette int16
+	Sex uint8
+	List []byte
+	Robe int16
+	Body2 int16
 }

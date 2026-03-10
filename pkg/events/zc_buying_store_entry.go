@@ -2,9 +2,8 @@
 
 package events
 
-// ZcBuyingStoreEntry is the event emitted when a zc_buying_store_entry packet is received.
-// ZC_BUYING_STORE_ENTRY packet (PACKET_ZC_BUYING_STORE_ENTRY)
+// ZcBuyingStoreEntry is the event emitted for the zc_buying_store_entry action.
 type ZcBuyingStoreEntry struct {
-	MakerAID uint32 // makerAID field
-	PacketType int16 // packetType field
+	MakerAID uint32
+	StoreName string
 }

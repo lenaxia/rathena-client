@@ -2,9 +2,7 @@
 
 package events
 
-// ZcSpecialpopup is the event emitted when a zc_specialpopup packet is received.
-// ZC_SPECIALPOPUP packet (PACKET_ZC_SPECIALPOPUP)
+// ZcSpecialpopup is the event emitted for the zc_specialpopup action.
 type ZcSpecialpopup struct {
-	PacketType int16 // PacketType field
-	PpId int32 // ppId field
+	PpId int32
 }

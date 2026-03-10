@@ -3,7 +3,7 @@
 package send
 
 // ShopBuy is the request struct for the shop_buy action.
-// Buy items from NPC shop
 type ShopBuy struct {
-	ItemList []byte // List of items to buy (variable length)
+	PacketLength int16
+	Items []byte
 }

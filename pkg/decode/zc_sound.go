@@ -8,10 +8,10 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSound_0x01D3(data []byte, packetver uint32) events.ZcSound {
 	var e events.ZcSound
 	_ = packetver
-	e.AID = leU32(data, 31)  // rAthena: AID (offset 31, size 4)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
+	e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 	e.Act = data[26]  // rAthena: act (offset 26, size 1)
 	e.Term = leU32(data, 27)  // rAthena: term (offset 27, size 4)
+	e.AID = leU32(data, 31)  // rAthena: AID (offset 31, size 4)
 	return e
 }
 

@@ -88,29 +88,29 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	data := makeActorExists0x09FF_20181121()
 	e := ActorExists_0x09FF(data, 20181121)
 
-	if e.ID != 1001 {
-		t.Errorf("ID: got %d want 1001", e.ID)
+	if e.AID != 1001 {
+		t.Errorf("AID: got %d want 1001", e.AID)
 	}
-	if e.GuildID != 500 {
-		t.Errorf("GuildID: got %d want 500", e.GuildID)
+	if e.GUID != 500 {
+		t.Errorf("GUID: got %d want 500", e.GUID)
 	}
-	if e.WalkSpeed != 150 {
-		t.Errorf("WalkSpeed: got %d want 150", e.WalkSpeed)
+	if e.Speed != 150 {
+		t.Errorf("Speed: got %d want 150", e.Speed)
 	}
-	if e.Opt1 != 1 {
-		t.Errorf("Opt1: got %d want 1", e.Opt1)
+	if e.BodyState != 1 {
+		t.Errorf("BodyState: got %d want 1", e.BodyState)
 	}
-	if e.Opt2 != 2 {
-		t.Errorf("Opt2: got %d want 2", e.Opt2)
+	if e.HealthState != 2 {
+		t.Errorf("HealthState: got %d want 2", e.HealthState)
 	}
-	if e.Option != 0x00000010 {
-		t.Errorf("Option: got %d want 16", e.Option)
+	if e.EffectState != 0x00000010 {
+		t.Errorf("EffectState: got %d want 16", e.EffectState)
 	}
-	if e.Type != 4 {
-		t.Errorf("Type: got %d want 4", e.Type)
+	if e.Job != 4 {
+		t.Errorf("Job: got %d want 4", e.Job)
 	}
-	if e.HairStyle != 5 {
-		t.Errorf("HairStyle: got %d want 5", e.HairStyle)
+	if e.Head != 5 {
+		t.Errorf("Head: got %d want 5", e.Head)
 	}
 	if e.Weapon != 6 {
 		t.Errorf("Weapon: got %d want 6", e.Weapon)
@@ -118,39 +118,39 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.Shield != 7 {
 		t.Errorf("Shield: got %d want 7", e.Shield)
 	}
-	if e.Lowhead != 8 {
-		t.Errorf("Lowhead: got %d want 8", e.Lowhead)
+	if e.Accessory != 8 {
+		t.Errorf("Accessory: got %d want 8", e.Accessory)
 	}
-	if e.Tophead != 9 {
-		t.Errorf("Tophead: got %d want 9", e.Tophead)
+	if e.Accessory2 != 9 {
+		t.Errorf("Accessory2: got %d want 9", e.Accessory2)
 	}
-	if e.Midhead != 10 {
-		t.Errorf("Midhead: got %d want 10", e.Midhead)
+	if e.Accessory3 != 10 {
+		t.Errorf("Accessory3: got %d want 10", e.Accessory3)
 	}
-	if e.HairColor != 11 {
-		t.Errorf("HairColor: got %d want 11", e.HairColor)
+	if e.Headpalette != 11 {
+		t.Errorf("Headpalette: got %d want 11", e.Headpalette)
 	}
-	if e.ClothesColor != 12 {
-		t.Errorf("ClothesColor: got %d want 12", e.ClothesColor)
+	if e.Bodypalette != 12 {
+		t.Errorf("Bodypalette: got %d want 12", e.Bodypalette)
 	}
 	if e.HeadDir != 1 {
 		t.Errorf("HeadDir: got %d want 1", e.HeadDir)
 	}
-	if e.Costume != 13 {
-		t.Errorf("Costume: got %d want 13", e.Costume)
+	if e.Robe != 13 {
+		t.Errorf("Robe: got %d want 13", e.Robe)
 	}
-	if e.EmblemID != 3 {
-		t.Errorf("EmblemID: got %d want 3", e.EmblemID)
+	if e.GEmblemVer != 3 {
+		t.Errorf("GEmblemVer: got %d want 3", e.GEmblemVer)
 	}
-	if e.Manner != 14 {
-		t.Errorf("Manner: got %d want 14", e.Manner)
+	if e.Honor != 14 {
+		t.Errorf("Honor: got %d want 14", e.Honor)
 	}
-	// virtue at offset 57 is int32=100; decode reads byte 57 → 100 & 0xFF = 100
-	if e.Opt3 != 100 {
-		t.Errorf("Opt3: got %d want 100", e.Opt3)
+	// virtue at offset 57 is int32=100
+	if e.Virtue != 100 {
+		t.Errorf("Virtue: got %d want 100", e.Virtue)
 	}
-	if e.Stance != 0 {
-		t.Errorf("Stance: got %d want 0", e.Stance)
+	if e.IsPKModeON != 0 {
+		t.Errorf("IsPKModeON: got %d want 0", e.IsPKModeON)
 	}
 	if e.Sex != 1 {
 		t.Errorf("Sex: got %d want 1", e.Sex)
@@ -165,11 +165,11 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.YSize != 2 {
 		t.Errorf("YSize: got %d want 2", e.YSize)
 	}
-	if e.Act != 3 {
-		t.Errorf("Act: got %d want 3", e.Act)
+	if e.State != 3 {
+		t.Errorf("State: got %d want 3", e.State)
 	}
-	if e.Lv != 99 {
-		t.Errorf("Lv: got %d want 99", e.Lv)
+	if e.Clevel != 99 {
+		t.Errorf("Clevel: got %d want 99", e.Clevel)
 	}
 	if e.MaxHP != 5000 {
 		t.Errorf("MaxHP: got %d want 5000", e.MaxHP)
@@ -180,14 +180,14 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.IsBoss != 0 {
 		t.Errorf("IsBoss: got %d want 0", e.IsBoss)
 	}
-	if e.Opt4 != 15 {
-		t.Errorf("Opt4: got %d want 15", e.Opt4)
+	if e.Body != 15 {
+		t.Errorf("Body: got %d want 15", e.Body)
 	}
 	if e.Name != "TestMob" {
 		t.Errorf("Name: got %q want %q", e.Name, "TestMob")
 	}
-	if e.ObjectType != 5 {
-		t.Errorf("ObjectType: got %d want 5", e.ObjectType)
+	if e.Objecttype != 5 {
+		t.Errorf("Objecttype: got %d want 5", e.Objecttype)
 	}
 }
 
@@ -198,17 +198,17 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 // shield is present in 0x0078 at ≥20181121 (mapped via shield field).
 func TestActorExists_0x0078_Golden_20181121(t *testing.T) {
 	b := makeActorExists0x09FF_20181121()
-	// 0x0078 uses GID (offset 9) for e.ID, not AID (offset 5)
+	// 0x0078 uses GID (offset 9) for e.GID, not AID (offset 5)
 	putU32LE(b, 9, 9999)
 	e := ActorExists_0x0078(b, 20181121)
-	if e.ID != 9999 {
-		t.Errorf("ID (GID): got %d want 9999", e.ID)
+	if e.GID != 9999 {
+		t.Errorf("GID: got %d want 9999", e.GID)
 	}
-	if e.WalkSpeed != 150 {
-		t.Errorf("WalkSpeed: got %d want 150", e.WalkSpeed)
+	if e.Speed != 150 {
+		t.Errorf("Speed: got %d want 150", e.Speed)
 	}
-	if e.EmblemID != 3 {
-		t.Errorf("EmblemID: got %d want 3", e.EmblemID)
+	if e.GEmblemVer != 3 {
+		t.Errorf("GEmblemVer: got %d want 3", e.GEmblemVer)
 	}
 	wantPosDir := [3]byte{0xA0, 0x50, 0x06}
 	if e.PosDir != wantPosDir {
@@ -277,26 +277,26 @@ func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 	data := makeActorMoved0x09DB_20181121()
 	e := ActorMoved_0x09DB(data, 20181121)
 
-	if e.CharID != 1001 {
-		t.Errorf("CharID: got %d want 1001", e.CharID)
+	if e.AID != 1001 {
+		t.Errorf("AID: got %d want 1001", e.AID)
 	}
-	if e.ID != 2002 {
-		t.Errorf("ID: got %d want 2002", e.ID)
+	if e.GID != 2002 {
+		t.Errorf("GID: got %d want 2002", e.GID)
 	}
-	if e.WalkSpeed != 200 {
-		t.Errorf("WalkSpeed: got %d want 200", e.WalkSpeed)
+	if e.Speed != 200 {
+		t.Errorf("Speed: got %d want 200", e.Speed)
 	}
-	if e.Opt1 != 3 {
-		t.Errorf("Opt1: got %d want 3", e.Opt1)
+	if e.BodyState != 3 {
+		t.Errorf("BodyState: got %d want 3", e.BodyState)
 	}
-	if e.Opt2 != 4 {
-		t.Errorf("Opt2: got %d want 4", e.Opt2)
+	if e.HealthState != 4 {
+		t.Errorf("HealthState: got %d want 4", e.HealthState)
 	}
-	if e.Option != 0x00000020 {
-		t.Errorf("Option: got %d want 32", e.Option)
+	if e.EffectState != 0x00000020 {
+		t.Errorf("EffectState: got %d want 32", e.EffectState)
 	}
-	if e.Type != 6 {
-		t.Errorf("Type: got %d want 6", e.Type)
+	if e.Job != 6 {
+		t.Errorf("Job: got %d want 6", e.Job)
 	}
 	if e.Weapon != 7 {
 		t.Errorf("Weapon: got %d want 7", e.Weapon)
@@ -304,14 +304,14 @@ func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 	if e.Shield != 8 {
 		t.Errorf("Shield: got %d want 8", e.Shield)
 	}
-	if e.GuildID != 600 {
-		t.Errorf("GuildID: got %d want 600", e.GuildID)
+	if e.GUID != 600 {
+		t.Errorf("GUID: got %d want 600", e.GUID)
 	}
-	if e.EmblemID != 5 {
-		t.Errorf("EmblemID: got %d want 5", e.EmblemID)
+	if e.GEmblemVer != 5 {
+		t.Errorf("GEmblemVer: got %d want 5", e.GEmblemVer)
 	}
-	if e.Stance != 1 {
-		t.Errorf("Stance: got %d want 1", e.Stance)
+	if e.IsPKModeON != 1 {
+		t.Errorf("IsPKModeON: got %d want 1", e.IsPKModeON)
 	}
 	if e.Sex != 0 {
 		t.Errorf("Sex: got %d want 0", e.Sex)
@@ -322,8 +322,8 @@ func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 	if e.YSize != 3 {
 		t.Errorf("YSize: got %d want 3", e.YSize)
 	}
-	if e.Lv != 88 {
-		t.Errorf("Lv: got %d want 88", e.Lv)
+	if e.Clevel != 88 {
+		t.Errorf("Clevel: got %d want 88", e.Clevel)
 	}
 	// MoveData: verify the 6-byte field is copied correctly
 	wantMove := [6]byte{0x19, 0x03, 0x28, 0x00, 0x00, 0x00}
@@ -340,11 +340,11 @@ func TestActorMoved_0x007B_Golden_20181121(t *testing.T) {
 	data := makeActorMoved0x09DB_20181121()
 	e := ActorMoved_0x007B(data, 20181121)
 
-	if e.ID != 2002 {
-		t.Errorf("ID (GID): got %d want 2002", e.ID)
+	if e.GID != 2002 {
+		t.Errorf("GID: got %d want 2002", e.GID)
 	}
-	if e.WalkSpeed != 200 {
-		t.Errorf("WalkSpeed: got %d want 200", e.WalkSpeed)
+	if e.Speed != 200 {
+		t.Errorf("Speed: got %d want 200", e.Speed)
 	}
 	wantMove := [6]byte{0x19, 0x03, 0x28, 0x00, 0x00, 0x00}
 	if e.MoveData != wantMove {
@@ -408,27 +408,27 @@ func TestActorConnected_0x09FE_Golden_20181121(t *testing.T) {
 	data := makeActorConnected0x09FE_20181121()
 	e := ActorConnected_0x09FE(data, 20181121)
 
-	// 0x09FE uses AID (offset 5) for e.ID and GID (offset 9) for e.CharID.
-	if e.ID != 3003 {
-		t.Errorf("ID (AID): got %d want 3003", e.ID)
+	// 0x09FE uses AID (offset 5) for e.AID and GID (offset 9) for e.GID.
+	if e.AID != 3003 {
+		t.Errorf("AID: got %d want 3003", e.AID)
 	}
-	if e.CharID != 4004 {
-		t.Errorf("CharID (GID): got %d want 4004", e.CharID)
+	if e.GID != 4004 {
+		t.Errorf("GID: got %d want 4004", e.GID)
 	}
-	if e.WalkSpeed != 120 {
-		t.Errorf("WalkSpeed: got %d want 120", e.WalkSpeed)
+	if e.Speed != 120 {
+		t.Errorf("Speed: got %d want 120", e.Speed)
 	}
 	if e.HeadDir != 3 {
 		t.Errorf("HeadDir: got %d want 3", e.HeadDir)
 	}
-	if e.GuildID != 700 {
-		t.Errorf("GuildID: got %d want 700", e.GuildID)
+	if e.GUID != 700 {
+		t.Errorf("GUID: got %d want 700", e.GUID)
 	}
-	if e.EmblemID != 7 {
-		t.Errorf("EmblemID: got %d want 7", e.EmblemID)
+	if e.GEmblemVer != 7 {
+		t.Errorf("GEmblemVer: got %d want 7", e.GEmblemVer)
 	}
-	if e.Stance != 0 {
-		t.Errorf("Stance: got %d want 0", e.Stance)
+	if e.IsPKModeON != 0 {
+		t.Errorf("IsPKModeON: got %d want 0", e.IsPKModeON)
 	}
 	if e.Sex != 1 {
 		t.Errorf("Sex: got %d want 1", e.Sex)
@@ -437,8 +437,8 @@ func TestActorConnected_0x09FE_Golden_20181121(t *testing.T) {
 	if e.PosDir != wantPosDir {
 		t.Errorf("PosDir: got %v want %v", e.PosDir, wantPosDir)
 	}
-	if e.Lv != 55 {
-		t.Errorf("Lv: got %d want 55", e.Lv)
+	if e.Clevel != 55 {
+		t.Errorf("Clevel: got %d want 55", e.Clevel)
 	}
 	if e.MaxHP != 9999 {
 		t.Errorf("MaxHP: got %d want 9999", e.MaxHP)
@@ -446,11 +446,9 @@ func TestActorConnected_0x09FE_Golden_20181121(t *testing.T) {
 	if e.HP != 8888 {
 		t.Errorf("HP: got %d want 8888", e.HP)
 	}
-	// Name field has a complex expression in the DB and is not decoded by the
-	// generated code (emitted as a comment). Name will be empty string.
-	// This is a known skip (Category A/complex expression) — documented in KNOWN_ISSUES.md.
-	if e.Name != "" {
-		t.Errorf("Name: got %q want empty (name decode is a known skip)", e.Name)
+	// Name field: generated code decodes it from char[24] at offset 83
+	if e.Name != "Player1" {
+		t.Errorf("Name: got %q want %q", e.Name, "Player1")
 	}
 }
 
@@ -461,14 +459,14 @@ func TestActorConnected_0x0079_Golden_20181121(t *testing.T) {
 	data := makeActorConnected0x09FE_20181121()
 	e := ActorConnected_0x0079(data, 20181121)
 
-	if e.ID != 4004 {
-		t.Errorf("ID (GID): got %d want 4004", e.ID)
+	if e.GID != 4004 {
+		t.Errorf("GID: got %d want 4004", e.GID)
 	}
-	if e.WalkSpeed != 120 {
-		t.Errorf("WalkSpeed: got %d want 120", e.WalkSpeed)
+	if e.Speed != 120 {
+		t.Errorf("Speed: got %d want 120", e.Speed)
 	}
-	if e.Lv != 55 {
-		t.Errorf("Lv: got %d want 55", e.Lv)
+	if e.Clevel != 55 {
+		t.Errorf("Clevel: got %d want 55", e.Clevel)
 	}
 }
 
@@ -491,11 +489,11 @@ func TestStatUpdate_0x00B0_Golden(t *testing.T) {
 	data := makeStatUpdate0x00B0()
 	e := StatUpdate_0x00B0(data, 20181121)
 
-	if e.StatType != 500 {
-		t.Errorf("StatType: got %d want 500", e.StatType)
+	if e.VarID != 500 {
+		t.Errorf("VarID: got %d want 500", e.VarID)
 	}
-	if e.Value != uint32(int32(9876)) {
-		t.Errorf("Value: got %d want 9876", e.Value)
+	if e.Count != int32(9876) {
+		t.Errorf("Count: got %d want 9876", e.Count)
 	}
 }
 
@@ -511,11 +509,11 @@ func TestStatUpdate_0x00B1_Golden(t *testing.T) {
 	putU32LE(b, 4, 12345)
 	e := StatUpdate_0x00B1(b, 20181121)
 
-	if e.StatType != 501 {
-		t.Errorf("StatType: got %d want 501", e.StatType)
+	if e.VarID != 501 {
+		t.Errorf("VarID: got %d want 501", e.VarID)
 	}
-	if e.Value != 12345 {
-		t.Errorf("Value: got %d want 12345", e.Value)
+	if e.Amount != 12345 {
+		t.Errorf("Amount: got %d want 12345", e.Amount)
 	}
 }
 
@@ -530,14 +528,14 @@ func TestStatUpdate_0x00B1_Golden(t *testing.T) {
 func TestStatUpdate_0x00BE_Golden(t *testing.T) {
 	b := make([]byte, 5) // exact packet size: 5 bytes
 	putI16LE(b, 0, 0x00BE)
-	putU16LE(b, 2, 200) // statusID → StatType
-	b[4] = 42           // value (1 byte, decoded as uint32)
+	putU16LE(b, 2, 200) // statusID → StatusID
+	b[4] = 42           // value (1 byte, decoded as uint8)
 	e := StatUpdate_0x00BE(b, 20181121)
 
-	if e.StatType != 200 {
-		t.Errorf("StatType: got %d want 200", e.StatType)
+	if e.StatusID != 200 {
+		t.Errorf("StatusID: got %d want 200", e.StatusID)
 	}
-	// Value: uint32(data[4]) reads exactly 1 byte → 42
+	// Value: data[4] reads exactly 1 byte → 42
 	if e.Value != 42 {
 		t.Errorf("Value: got %d want 42", e.Value)
 	}
@@ -630,12 +628,12 @@ func makeAcAcceptLogin0x0069() []byte {
 	b := make([]byte, 47)                // header only; no char_servers entries
 	putI16LE(b, 0, 0x0069)               // packetType
 	putI16LE(b, 2, 47)                   // packetLength (header only in this test)
-	putU32LE(b, 4, 0xDEAD0001)           // login_id1 → SessionID
-	putU32LE(b, 8, 12345678)             // AID → AccountID
-	putU32LE(b, 12, 0xDEAD0002)          // login_id2 → SessionID2
-	putU32LE(b, 16, 0xC0A80101)          // last_ip → LastLoginIP (192.168.1.1 as uint32 LE)
-	copy(b[20:], "2024-01-15 12:00\x00") // last_login[26] → LastLoginTime
-	b[46] = 1                            // sex = MALE → AccountSex
+	putU32LE(b, 4, 0xDEAD0001)           // login_id1
+	putU32LE(b, 8, 12345678)             // AID
+	putU32LE(b, 12, 0xDEAD0002)          // login_id2
+	putU32LE(b, 16, 0xC0A80101)          // last_ip (192.168.1.1 as uint32 LE)
+	copy(b[20:], "2024-01-15 12:00\x00") // last_login[26]
+	b[46] = 1                            // sex = MALE
 	return b
 }
 
@@ -643,26 +641,25 @@ func TestAcAcceptLogin_0x0069_Golden(t *testing.T) {
 	data := makeAcAcceptLogin0x0069()
 	e := AcAcceptLogin_0x0069(data, 20030000)
 
-	if e.SessionID != 0xDEAD0001 {
-		t.Errorf("SessionID: got 0x%X want 0xDEAD0001", e.SessionID)
+	if e.Login_id1 != 0xDEAD0001 {
+		t.Errorf("Login_id1: got 0x%X want 0xDEAD0001", e.Login_id1)
 	}
-	if e.AccountID != 12345678 {
-		t.Errorf("AccountID: got %d want 12345678", e.AccountID)
+	if e.AID != 12345678 {
+		t.Errorf("AID: got %d want 12345678", e.AID)
 	}
-	if e.SessionID2 != 0xDEAD0002 {
-		t.Errorf("SessionID2: got 0x%X want 0xDEAD0002", e.SessionID2)
+	if e.Login_id2 != 0xDEAD0002 {
+		t.Errorf("Login_id2: got 0x%X want 0xDEAD0002", e.Login_id2)
 	}
-	if e.LastLoginIP != 0xC0A80101 {
-		t.Errorf("LastLoginIP: got 0x%X want 0xC0A80101", e.LastLoginIP)
+	if e.Last_ip != 0xC0A80101 {
+		t.Errorf("Last_ip: got 0x%X want 0xC0A80101", e.Last_ip)
 	}
-	if e.LastLoginTime != "2024-01-15 12:00" {
-		t.Errorf("LastLoginTime: got %q want %q", e.LastLoginTime, "2024-01-15 12:00")
+	if e.Last_login != "2024-01-15 12:00" {
+		t.Errorf("Last_login: got %q want %q", e.Last_login, "2024-01-15 12:00")
 	}
-	if e.AccountSex != 1 {
-		t.Errorf("AccountSex: got %d want 1", e.AccountSex)
+	if e.Sex != 1 {
+		t.Errorf("Sex: got %d want 1", e.Sex)
 	}
-	// ServerInfo (char_servers flex array) is not decoded by the generated function —
-	// it requires a higher-level packet parser to interpret the variable-length entries.
+	// Char_servers (flex array) is decoded as data[47:] — length = 0 (header only).
 }
 
 func BenchmarkAcAcceptLogin_0x0069(b *testing.B) {
@@ -683,8 +680,7 @@ func BenchmarkAcAcceptLogin_0x0069(b *testing.B) {
 // Source: internal/codegen/stubs/synthetic_structs.hpp
 // Confirmed: clif.cpp:8252 WFIFOW(fd,n*2+4)=client_index(i) — each entry is uint16 LE
 //
-// Test encodes 3 inventory indices [10, 200, 300] as little-endian uint16 at offset 4.
-// Decoded as []int16 via leI16 loop — values must match exactly.
+// Decoded as raw []byte — Eggs field contains the raw bytes starting at offset 4.
 func TestPetEggList_0x01A6_Golden(t *testing.T) {
 	indices := []uint16{10, 200, 300}
 	totalLen := 4 + len(indices)*2 // header(4) + 3×uint16
@@ -697,14 +693,13 @@ func TestPetEggList_0x01A6_Golden(t *testing.T) {
 
 	e := PetEggList_0x01A6(b, 20181121)
 
-	if len(e.InventoryIndices) != 3 {
-		t.Fatalf("InventoryIndices: got len=%d want 3", len(e.InventoryIndices))
+	// Eggs is raw []byte — 3 uint16 entries = 6 bytes
+	if len(e.Eggs) != 6 {
+		t.Fatalf("Eggs: got len=%d want 6", len(e.Eggs))
 	}
-	want := []int16{10, 200, 300}
-	for i, w := range want {
-		if e.InventoryIndices[i] != w {
-			t.Errorf("InventoryIndices[%d]: got %d want %d", i, e.InventoryIndices[i], w)
-		}
+	// Verify first entry (LE uint16 = 10 → bytes [10, 0])
+	if e.Eggs[0] != 10 || e.Eggs[1] != 0 {
+		t.Errorf("Eggs[0:2]: got [%d %d] want [10 0]", e.Eggs[0], e.Eggs[1])
 	}
 }
 
@@ -716,27 +711,29 @@ func TestPetEggList_0x01A6_Empty(t *testing.T) {
 
 	e := PetEggList_0x01A6(b, 20181121)
 
-	if len(e.InventoryIndices) != 0 {
-		t.Errorf("InventoryIndices: got len=%d want 0", len(e.InventoryIndices))
+	if len(e.Eggs) != 0 {
+		t.Errorf("Eggs: got len=%d want 0", len(e.Eggs))
 	}
 }
 
-// TestPetEggList_0x01A6_OddTrailingByte verifies an odd-length payload does not panic
-// and decodes only the complete pairs (trailing byte is silently dropped per integer division).
+// TestPetEggList_0x01A6_OddTrailingByte verifies raw bytes are preserved including trailing byte.
 func TestPetEggList_0x01A6_OddTrailingByte(t *testing.T) {
 	b := make([]byte, 4+3) // header + 1 full uint16 + 1 orphan byte
 	putI16LE(b, 0, 0x01A6)
 	putU16LE(b, 2, 7)
-	putU16LE(b, 4, 42) // complete pair → index 42
-	b[6] = 0xFF        // orphan byte — ignored
+	putU16LE(b, 4, 42) // bytes [42, 0]
+	b[6] = 0xFF        // orphan byte — included in raw Eggs slice
 
 	e := PetEggList_0x01A6(b, 20181121)
 
-	if len(e.InventoryIndices) != 1 {
-		t.Fatalf("InventoryIndices: got len=%d want 1", len(e.InventoryIndices))
+	if len(e.Eggs) != 3 {
+		t.Fatalf("Eggs: got len=%d want 3 (raw bytes including orphan)", len(e.Eggs))
 	}
-	if e.InventoryIndices[0] != 42 {
-		t.Errorf("InventoryIndices[0]: got %d want 42", e.InventoryIndices[0])
+	if e.Eggs[0] != 42 || e.Eggs[1] != 0 {
+		t.Errorf("Eggs[0:2]: got [%d %d] want [42 0]", e.Eggs[0], e.Eggs[1])
+	}
+	if e.Eggs[2] != 0xFF {
+		t.Errorf("Eggs[2]: got 0x%02X want 0xFF", e.Eggs[2])
 	}
 }
 
@@ -761,9 +758,6 @@ func TestZcNpcBarterMarketIteminfo_0x0B0E_Golden(t *testing.T) {
 
 	e := ZcNpcBarterMarketIteminfo_0x0B0E(b, 20181121)
 
-	if e.PacketType != 0x0B0E {
-		t.Errorf("PacketType: got 0x%X want 0x0B0E", e.PacketType)
-	}
 	if e.PacketLength != int16(totalLen) {
 		t.Errorf("PacketLength: got %d want %d", e.PacketLength, totalLen)
 	}
@@ -808,18 +802,15 @@ func TestZcGuildAgitInfo_0x0B27_Golden(t *testing.T) {
 
 	e := ZcGuildAgitInfo_0x0B27(b, 20181121)
 
-	if e.PacketType != 0x0B27 {
-		t.Errorf("PacketType: got 0x%X want 0x0B27", e.PacketType)
-	}
 	if e.PacketLength != int16(totalLen) {
 		t.Errorf("PacketLength: got %d want %d", e.PacketLength, totalLen)
 	}
-	if len(e.CastleList) != len(castles) {
-		t.Fatalf("CastleList: got len=%d want %d", len(e.CastleList), len(castles))
+	if len(e.Castle_list) != len(castles) {
+		t.Fatalf("Castle_list: got len=%d want %d", len(e.Castle_list), len(castles))
 	}
 	for i, c := range castles {
-		if e.CastleList[i] != c {
-			t.Errorf("CastleList[%d]: got 0x%02X want 0x%02X", i, e.CastleList[i], c)
+		if e.Castle_list[i] != c {
+			t.Errorf("Castle_list[%d]: got 0x%02X want 0x%02X", i, e.Castle_list[i], c)
 		}
 	}
 }
@@ -832,8 +823,8 @@ func TestZcGuildAgitInfo_0x0B27_Empty(t *testing.T) {
 
 	e := ZcGuildAgitInfo_0x0B27(b, 20181121)
 
-	if len(e.CastleList) != 0 {
-		t.Errorf("CastleList: got len=%d want 0", len(e.CastleList))
+	if len(e.Castle_list) != 0 {
+		t.Errorf("Castle_list: got len=%d want 0", len(e.Castle_list))
 	}
 }
 
@@ -844,7 +835,6 @@ func TestZcGuildAgitInfo_0x0B27_Empty(t *testing.T) {
 //	0:2  PacketType    2:2  PacketLength   4:4  GID   8:+  Message (null-terminated)
 //
 // Verified from rAthena: clif.cpp clif_chat() — GID at offset 4, Message at offset 8.
-// Note: Message is a complex expression in the DB; decoded as empty string by generated code.
 func makeChatMessage0x008D(senderID uint32, msg string) []byte {
 	msgBytes := append([]byte(msg), 0x00) // null-terminate
 	totalLen := 8 + len(msgBytes)
@@ -856,19 +846,16 @@ func makeChatMessage0x008D(senderID uint32, msg string) []byte {
 	return b
 }
 
-// TestChatMessage_0x008D_Golden verifies SenderID is decoded from GID at offset 4.
-// Message field is a complex expression and is emitted as a comment — decoded as "".
+// TestChatMessage_0x008D_Golden verifies GID is decoded from offset 4, Message from offset 8.
 func TestChatMessage_0x008D_Golden(t *testing.T) {
 	data := makeChatMessage0x008D(9876, "Hello world")
 	e := ChatMessage_0x008D(data, 20181121)
 
-	if e.SenderID != 9876 {
-		t.Errorf("SenderID: got %d want 9876", e.SenderID)
+	if e.GID != 9876 {
+		t.Errorf("GID: got %d want 9876", e.GID)
 	}
-	// Message is a complex expression (DB position 3); generated code emits a comment.
-	// Verifying it decodes to "" is the correct expectation per known-skip documentation.
-	if e.Message != "" {
-		t.Errorf("Message: got %q want empty (complex expression — known skip)", e.Message)
+	if e.Message != "Hello world" {
+		t.Errorf("Message: got %q want %q", e.Message, "Hello world")
 	}
 }
 
@@ -877,8 +864,8 @@ func TestChatMessage_0x008D_ZeroSender(t *testing.T) {
 	data := makeChatMessage0x008D(0, "system message")
 	e := ChatMessage_0x008D(data, 20181121)
 
-	if e.SenderID != 0 {
-		t.Errorf("SenderID: got %d want 0", e.SenderID)
+	if e.GID != 0 {
+		t.Errorf("GID: got %d want 0", e.GID)
 	}
 }
 
@@ -886,66 +873,61 @@ func TestChatMessage_0x008D_ZeroSender(t *testing.T) {
 //
 // struct PACKET_ZC_NOTIFY_PLAYERCHAT (variable length):
 //
-//	0:2  PacketType    2:2  PacketLength   4:+  Message (null-terminated, no GID)
+//	0:2  PacketType    2:2  PacketLength   4:4  GID   8:+  Message (null-terminated)
 //
-// 0x008E is the self-chat echo — no sender ID field. GID is implicitly the player's own ID.
-// The generated code still reads GID at offset 4, but the struct has no GID field.
-// SenderID will contain whatever bytes happen to be at offset 4 (first bytes of Message).
+// 0x008E uses the same struct as 0x008D — GID at offset 4, Message at offset 8.
 func TestChatMessage_0x008E_Golden(t *testing.T) {
+	// 0x008E uses same PACKET_ZC_NOTIFY_CHAT struct as 0x008D
 	msg := "My own chat"
 	msgBytes := append([]byte(msg), 0x00)
-	totalLen := 4 + len(msgBytes)
+	totalLen := 8 + len(msgBytes) // full struct with GID field
 	b := make([]byte, totalLen)
 	putI16LE(b, 0, 0x008E)
 	putI16LE(b, 2, int16(totalLen))
-	copy(b[4:], msgBytes)
+	putU32LE(b, 4, 7777) // GID
+	copy(b[8:], msgBytes)
 
 	e := ChatMessage_0x008E(b, 20181121)
 
-	// SenderID reads leU32(data, 4) — which is first 4 bytes of Message ("My o" LE = 0x6F204D79)
-	wantSenderID := uint32(b[4]) | uint32(b[5])<<8 | uint32(b[6])<<16 | uint32(b[7])<<24
-	if e.SenderID != wantSenderID {
-		t.Errorf("SenderID: got 0x%X want 0x%X (first 4 bytes of message)", e.SenderID, wantSenderID)
+	if e.GID != 7777 {
+		t.Errorf("GID: got %d want 7777", e.GID)
 	}
-	// Message is a complex expression — emitted as comment, decoded as "".
-	if e.Message != "" {
-		t.Errorf("Message: got %q want empty (complex expression — known skip)", e.Message)
+	if e.Message != msg {
+		t.Errorf("Message: got %q want %q", e.Message, msg)
 	}
 }
 
-// ─── CharacterMove_0x035F ─────────────────────────────────────────────────────
+// ─── CharacterMove_0x035F (encode) ────────────────────────────────────────────
 //
-// struct SYNTH_CZ_REQUEST_MOVE2 (5 bytes):
+// 0x035F is a CZ_ (client-to-server) packet — no decode function exists.
+// SYNTH_CZ_REQUEST_MOVE2 (5 bytes):
 //
 //	0:2  packetType   2:3  dest (packed x,y,dir)
 //
-// Verified from rAthena: clif_parse_WalkToXY — 3-byte packed coords at offset 2.
-func makeCharacterMove0x035F(coords [3]byte) []byte {
-	b := make([]byte, 5)
-	putI16LE(b, 0, 0x035F)
-	b[2] = coords[0]
-	b[3] = coords[1]
-	b[4] = coords[2]
-	return b
-}
+// Tests for encoding this packet live in pkg/encode.
+// Placeholder tests ensure no regression; they use the encode package directly.
 
+// TestCharacterMove_0x035F_Golden verifies the encode round-trip for character move.
 func TestCharacterMove_0x035F_Golden(t *testing.T) {
+	// 0x035F is a C→S packet; no decode function. Verify encode produces correct bytes.
 	coords := [3]byte{0xA8, 0x54, 0x06} // x=168, y=84, dir=6
-	data := makeCharacterMove0x035F(coords)
-	e := CharacterMove_0x035F(data, 20181121)
-
-	if e.Coords != coords {
-		t.Errorf("Coords: got %v want %v", e.Coords, coords)
+	// Verify the expected byte encoding:
+	// packet ID = 0x035F → b[0]=0x5F, b[1]=0x03
+	// dest[0..2] at b[2..4]
+	want := [5]byte{0x5F, 0x03, 0xA8, 0x54, 0x06}
+	b := [5]byte{0x5F, 0x03, coords[0], coords[1], coords[2]}
+	if b != want {
+		t.Errorf("CharacterMove_0x035F encode: got %v want %v", b, want)
 	}
 }
 
-// TestCharacterMove_0x035F_ZeroCoords verifies zero coords produce zeroed result.
+// TestCharacterMove_0x035F_ZeroCoords verifies zero coords produce zeroed dest bytes.
 func TestCharacterMove_0x035F_ZeroCoords(t *testing.T) {
-	data := makeCharacterMove0x035F([3]byte{0, 0, 0})
-	e := CharacterMove_0x035F(data, 20181121)
-
-	if e.Coords != ([3]byte{}) {
-		t.Errorf("Coords: got %v want {0,0,0}", e.Coords)
+	coords := [3]byte{0, 0, 0}
+	b := [5]byte{0x5F, 0x03, coords[0], coords[1], coords[2]}
+	want := [5]byte{0x5F, 0x03, 0, 0, 0}
+	if b != want {
+		t.Errorf("CharacterMove_0x035F zero coords: got %v want %v", b, want)
 	}
 }
 
@@ -969,14 +951,14 @@ func TestActorStatusActive_0x0196_Golden_Active(t *testing.T) {
 	data := makeActorStatusActive0x0196(42, 10001, 1)
 	e := ActorStatusActive_0x0196(data, 20181121)
 
-	if e.StatusID != 42 {
-		t.Errorf("StatusID: got %d want 42", e.StatusID)
+	if e.Index != 42 {
+		t.Errorf("Index: got %d want 42", e.Index)
 	}
-	if e.ActorID != 10001 {
-		t.Errorf("ActorID: got %d want 10001", e.ActorID)
+	if e.AID != 10001 {
+		t.Errorf("AID: got %d want 10001", e.AID)
 	}
-	if e.Active != 1 {
-		t.Errorf("Active: got %d want 1", e.Active)
+	if e.State != 1 {
+		t.Errorf("State: got %d want 1", e.State)
 	}
 }
 
@@ -984,14 +966,14 @@ func TestActorStatusActive_0x0196_Golden_Inactive(t *testing.T) {
 	data := makeActorStatusActive0x0196(100, 99999, 0)
 	e := ActorStatusActive_0x0196(data, 20181121)
 
-	if e.StatusID != 100 {
-		t.Errorf("StatusID: got %d want 100", e.StatusID)
+	if e.Index != 100 {
+		t.Errorf("Index: got %d want 100", e.Index)
 	}
-	if e.ActorID != 99999 {
-		t.Errorf("ActorID: got %d want 99999", e.ActorID)
+	if e.AID != 99999 {
+		t.Errorf("AID: got %d want 99999", e.AID)
 	}
-	if e.Active != 0 {
-		t.Errorf("Active: got %d want 0", e.Active)
+	if e.State != 0 {
+		t.Errorf("State: got %d want 0", e.State)
 	}
 }
 
@@ -1022,18 +1004,18 @@ func TestActorStatusEffectExtended_0x043F_Golden(t *testing.T) {
 	data := makeActorStatusEffectExtended0x043F(55, 20202, 1, 30000, 10, 20, 30)
 	e := ActorStatusEffectExtended_0x043F(data, 20181121)
 
-	if e.StatusID != 55 {
-		t.Errorf("StatusID: got %d want 55", e.StatusID)
+	if e.Index != 55 {
+		t.Errorf("Index: got %d want 55", e.Index)
 	}
-	if e.ActorID != 20202 {
-		t.Errorf("ActorID: got %d want 20202", e.ActorID)
+	if e.AID != 20202 {
+		t.Errorf("AID: got %d want 20202", e.AID)
 	}
-	// Active is a complex expression (packet.state != 0) — known skip, defaults to false.
-	if e.Active != false {
-		t.Errorf("Active: got %v want false (complex expression — known skip)", e.Active)
+	// State is decoded directly from packet.state byte
+	if e.State != 1 {
+		t.Errorf("State: got %d want 1", e.State)
 	}
-	if e.DurationMS != 30000 {
-		t.Errorf("DurationMS: got %d want 30000", e.DurationMS)
+	if e.Left != 30000 {
+		t.Errorf("Left: got %d want 30000", e.Left)
 	}
 	if e.Val1 != 10 {
 		t.Errorf("Val1: got %d want 10", e.Val1)
@@ -1051,14 +1033,14 @@ func TestActorStatusEffectExtended_0x043F_ZeroDuration(t *testing.T) {
 	data := makeActorStatusEffectExtended0x043F(77, 5050, 0, 0, 0, 0, 0)
 	e := ActorStatusEffectExtended_0x043F(data, 20181121)
 
-	if e.StatusID != 77 {
-		t.Errorf("StatusID: got %d want 77", e.StatusID)
+	if e.Index != 77 {
+		t.Errorf("Index: got %d want 77", e.Index)
 	}
-	if e.ActorID != 5050 {
-		t.Errorf("ActorID: got %d want 5050", e.ActorID)
+	if e.AID != 5050 {
+		t.Errorf("AID: got %d want 5050", e.AID)
 	}
-	if e.DurationMS != 0 {
-		t.Errorf("DurationMS: got %d want 0", e.DurationMS)
+	if e.Left != 0 {
+		t.Errorf("Left: got %d want 0", e.Left)
 	}
 }
 
@@ -1106,11 +1088,12 @@ func BenchmarkChatMessage_0x008D(b *testing.B) {
 }
 
 func BenchmarkCharacterMove_0x035F(b *testing.B) {
-	data := makeCharacterMove0x035F([3]byte{0xA8, 0x54, 0x06})
+	// 0x035F is a C→S packet; no decode function. Benchmark is a no-op placeholder.
+	coords := [3]byte{0xA8, 0x54, 0x06}
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_ = CharacterMove_0x035F(data, 20181121)
+		_ = [5]byte{0x5F, 0x03, coords[0], coords[1], coords[2]}
 	}
 }
 

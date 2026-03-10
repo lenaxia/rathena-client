@@ -8,12 +8,12 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func MonsterRangedAttack_0x0139(data []byte, packetver uint32) events.MonsterRangedAttack {
 	var e events.MonsterRangedAttack
 	_ = packetver
-	e.Range = leI16(data, 14)  // rAthena: currentAttRange (offset 14, size 2)
-	e.ID = leU32(data, 2)  // rAthena: targetAID (offset 2, size 4)
-	e.SourceX = leI16(data, 6)  // rAthena: targetXPos (offset 6, size 2)
-	e.SourceY = leI16(data, 8)  // rAthena: targetYPos (offset 8, size 2)
-	e.TargetX = leI16(data, 10)  // rAthena: xPos (offset 10, size 2)
-	e.TargetY = leI16(data, 12)  // rAthena: yPos (offset 12, size 2)
+	e.TargetAID = leU32(data, 2)  // rAthena: targetAID (offset 2, size 4)
+	e.TargetXPos = leI16(data, 6)  // rAthena: targetXPos (offset 6, size 2)
+	e.TargetYPos = leI16(data, 8)  // rAthena: targetYPos (offset 8, size 2)
+	e.XPos = leI16(data, 10)  // rAthena: xPos (offset 10, size 2)
+	e.YPos = leI16(data, 12)  // rAthena: yPos (offset 12, size 2)
+	e.CurrentAttRange = leI16(data, 14)  // rAthena: currentAttRange (offset 14, size 2)
 	return e
 }
 

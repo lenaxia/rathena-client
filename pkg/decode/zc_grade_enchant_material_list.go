@@ -9,13 +9,12 @@ func ZcGradeEnchantMaterialList_0x0B5A(data []byte, packetver uint32) events.ZcG
 	var e events.ZcGradeEnchantMaterialList
 	_ = packetver
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	// e.BlessingInfo = []byte{}  (complex expression — implement manually)
 	e.Index = leI16(data, 4)  // rAthena: index (offset 4, size 2)
-	e.MaterialInfo = data[34:]  // rAthena: material_info (offset 34, size 0)
-	e.ProtectAmount = leI32(data, 30)  // rAthena: protect_amount (offset 30, size 4)
-	e.ProtectItemid = leI32(data, 26)  // rAthena: protect_itemid (offset 26, size 4)
-	e.SuccessChance = leI32(data, 6)  // rAthena: success_chance (offset 6, size 4)
+	e.Success_chance = leI32(data, 6)  // rAthena: success_chance (offset 6, size 4)
+	e.Blessing_info = data[10:]  // rAthena: blessing_info (offset 10, size 16)
+	e.Protect_itemid = leI32(data, 26)  // rAthena: protect_itemid (offset 26, size 4)
+	e.Protect_amount = leI32(data, 30)  // rAthena: protect_amount (offset 30, size 4)
+	e.Material_info = data[34:]  // rAthena: material_info (offset 34, size 0)
 	return e
 }
 

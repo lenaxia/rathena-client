@@ -2,15 +2,13 @@
 
 package events
 
-// ZcAckReadRodex is the event emitted when a zc_ack_read_rodex packet is received.
-// ZC_ACK_READ_RODEX packet (PACKET_ZC_ACK_READ_RODEX)
+// ZcAckReadRodex is the event emitted for the zc_ack_read_rodex action.
 type ZcAckReadRodex struct {
-	ItemCnt int8 // ItemCnt field
-	MailID int64 // MailID field
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Textcontent string // Textcontent field
-	TextcontentsLength int16 // TextcontentsLength field
-	Opentype int8 // opentype field
-	Zeny int64 // zeny field
+	PacketLength int16
+	Opentype int8
+	MailID int64
+	TextcontentsLength int16
+	Zeny int64
+	ItemCnt int8
+	Textcontent string
 }

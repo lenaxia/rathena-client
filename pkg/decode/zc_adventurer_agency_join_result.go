@@ -8,7 +8,10 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAdventurerAgencyJoinResult_0x0AFA(data []byte, packetver uint32) events.ZcAdventurerAgencyJoinResult {
 	var e events.ZcAdventurerAgencyJoinResult
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.Player_name = nullTermString(data[2:26])  // rAthena: player_name (offset 2, size 24)
+	e.Party_name = nullTermString(data[26:50])  // rAthena: party_name (offset 26, size 24)
+	e.AID = data[50:]  // rAthena: AID (offset 50, size 4)
+	e.Result = data[54:]  // rAthena: result (offset 54, size 4)
 	return e
 }
 

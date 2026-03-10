@@ -2,9 +2,7 @@
 
 package events
 
-// ZcReqAckMoveGuildAgit is the event emitted when a zc_req_ack_move_guild_agit packet is received.
-// ZC_REQ_ACK_MOVE_GUILD_AGIT packet (PACKET_ZC_REQ_ACK_MOVE_GUILD_AGIT)
+// ZcReqAckMoveGuildAgit is the event emitted for the zc_req_ack_move_guild_agit action.
 type ZcReqAckMoveGuildAgit struct {
-	PacketType int16 // packetType field
-	Result int16 // result field
+	Result int16
 }

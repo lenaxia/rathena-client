@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCompleteUploadMacroDetectorCaptcha_0x0A55(data []byte, packetver uint32) events.ZcCompleteUploadMacroDetectorCaptcha {
 	var e events.ZcCompleteUploadMacroDetectorCaptcha
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	return e
 }
 

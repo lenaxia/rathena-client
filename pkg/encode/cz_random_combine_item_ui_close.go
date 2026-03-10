@@ -12,7 +12,6 @@ func EncodeCzRandomCombineItemUiClose(req send.CzRandomCombineItemUiClose, packe
 	// Packet ID: 0x0A70 (little-endian)
 	p[0] = 0x70
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

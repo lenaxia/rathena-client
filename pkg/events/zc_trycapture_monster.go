@@ -2,9 +2,7 @@
 
 package events
 
-// ZcTrycaptureMonster is the event emitted when a zc_trycapture_monster packet is received.
-// ZC_TRYCAPTURE_MONSTER packet (PACKET_ZC_TRYCAPTURE_MONSTER)
+// ZcTrycaptureMonster is the event emitted for the zc_trycapture_monster action.
 type ZcTrycaptureMonster struct {
-	PacketType int16 // PacketType field
-	Result int8 // result field
+	Result int8
 }

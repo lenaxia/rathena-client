@@ -13,7 +13,6 @@ func EncodeCzUploadMacroDetectorCaptcha(req send.CzUploadMacroDetectorCaptcha, p
 	p[0] = 0x54
 	p[1] = 0x0a
 	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: PacketLength
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	copy(p[4:8], req.CaptchaKey)  // rAthena: captchaKey
 	copy(p[8:8], req.ImageData)  // rAthena: imageData
 	_ = packetver

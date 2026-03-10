@@ -28,8 +28,8 @@ func TestCharacterMoves_0x0087_Standard(t *testing.T) {
 	data := makeCharacterMoves0x0087(0x12345678, moveData)
 	e := CharacterMoves_0x0087(data, 20181121)
 
-	if e.Time != 0x12345678 {
-		t.Errorf("Time: got 0x%X want 0x12345678", e.Time)
+	if e.MoveStartTime != 0x12345678 {
+		t.Errorf("MoveStartTime: got 0x%X want 0x12345678", e.MoveStartTime)
 	}
 	if e.MoveData != moveData {
 		t.Errorf("MoveData: got %v want %v", e.MoveData, moveData)
@@ -42,8 +42,8 @@ func TestCharacterMoves_0x0087_ZeroTime(t *testing.T) {
 	data := makeCharacterMoves0x0087(0, moveData)
 	e := CharacterMoves_0x0087(data, 20181121)
 
-	if e.Time != 0 {
-		t.Errorf("Time: got %d want 0", e.Time)
+	if e.MoveStartTime != 0 {
+		t.Errorf("MoveStartTime: got %d want 0", e.MoveStartTime)
 	}
 	if e.MoveData != moveData {
 		t.Errorf("MoveData: got %v want %v", e.MoveData, moveData)
@@ -56,8 +56,8 @@ func TestCharacterMoves_0x0087_MaxTime(t *testing.T) {
 	data := makeCharacterMoves0x0087(0xFFFFFFFF, moveData)
 	e := CharacterMoves_0x0087(data, 20181121)
 
-	if e.Time != 0xFFFFFFFF {
-		t.Errorf("Time: got 0x%X want 0xFFFFFFFF", e.Time)
+	if e.MoveStartTime != 0xFFFFFFFF {
+		t.Errorf("MoveStartTime: got 0x%X want 0xFFFFFFFF", e.MoveStartTime)
 	}
 	if e.MoveData != moveData {
 		t.Errorf("MoveData: got %v want %v", e.MoveData, moveData)

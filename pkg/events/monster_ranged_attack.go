@@ -2,13 +2,12 @@
 
 package events
 
-// MonsterRangedAttack is the event emitted when a monster_ranged_attack packet is received.
-// Ranged attack animation from monster (shows projectile path)
+// MonsterRangedAttack is the event emitted for the monster_ranged_attack action.
 type MonsterRangedAttack struct {
-	Range int16 // Attack range
-	ID uint32 // Attacker ID (monster/actor performing ranged attack)
-	SourceX int16 // Attack source X coordinate
-	SourceY int16 // Attack source Y coordinate
-	TargetX int16 // Attack target X coordinate
-	TargetY int16 // Attack target Y coordinate
+	TargetAID uint32
+	TargetXPos int16
+	TargetYPos int16
+	XPos int16
+	YPos int16
+	CurrentAttRange int16
 }

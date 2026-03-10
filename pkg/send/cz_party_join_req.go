@@ -3,7 +3,5 @@
 package send
 
 // CzPartyJoinReq is the request struct for the cz_party_join_req action.
-// CZ_PARTY_JOIN_REQ packet (PACKET_CZ_PARTY_JOIN_REQ)
 type CzPartyJoinReq struct {
-	CharacterName string // Name of character to invite to party
 }

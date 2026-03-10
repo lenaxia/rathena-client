@@ -21,8 +21,7 @@ type EncodeInput struct {
 // For fixed-size packets, the function returns [N]byte.
 // For variable-size packets, the function returns []byte.
 //
-// The generated package is "encode". Functions take a send.<ActionName> request
-// and the packetver, and return the wire bytes.
+// Field names and Go types are derived directly from the rAthena struct layout.
 func GenerateEncodeFile(input EncodeInput) (filename string, src string, err error) {
 	a := input.Action
 	if a == nil {
@@ -45,8 +44,6 @@ func GenerateEncodeFile(input EncodeInput) (filename string, src string, err err
 	sb.WriteString("\t\"github.com/lenaxia/rathena-client/pkg/send\"\n")
 	sb.WriteString(")\n\n")
 
-	// If multiple implementations exist (different packet versions), generate
-	// a dispatcher + per-version functions.
 	if len(a.Implementations) == 1 {
 		impl := &a.Implementations[0]
 		layout := resolveLayout(impl.StructName, impl.PacketverMin, input.VersionTable)
@@ -54,10 +51,9 @@ func GenerateEncodeFile(input EncodeInput) (filename string, src string, err err
 			return "", "", fmt.Errorf("action %s: no layout for struct %s", a.Name, impl.StructName)
 		}
 
-		funcSrc := generateEncodeFunc(structName, impl, a.CanonicalParams, layout)
+		funcSrc := generateEncodeFunc(structName, impl, layout)
 		sb.WriteString(funcSrc)
 	} else {
-		// Multiple implementations — generate a dispatcher.
 		dispatchSrc := generateEncodeDispatcher(structName, a, input.VersionTable)
 		sb.WriteString(dispatchSrc)
 	}
@@ -81,14 +77,12 @@ func resolveLayout(structName string, packetverMin int, vt preprocess.VersionTab
 	if pv == 0 {
 		pv = 20030000
 	}
-	// Find the layout at the minimum packetver.
 	for i := len(ranges) - 1; i >= 0; i-- {
 		r := ranges[i]
 		if r.Layout != nil && r.Layout.Available && r.MinVer <= pv {
 			return r.Layout
 		}
 	}
-	// Fall back to first available.
 	for _, r := range ranges {
 		if r.Layout != nil && r.Layout.Available {
 			return r.Layout
@@ -97,36 +91,22 @@ func resolveLayout(structName string, packetverMin int, vt preprocess.VersionTab
 	return nil
 }
 
-// generateEncodeFunc generates a single encode function for a fixed-size packet.
+// generateEncodeFunc generates a single encode function for a packet implementation.
+// Fields are derived directly from the rAthena struct layout — no canonical_params
+// or field_mapping expressions needed.
 func generateEncodeFunc(
 	structName string,
 	impl *semantics.Implementation,
-	params []semantics.CanonicalParam,
 	layout *preprocess.StructLayout,
 ) string {
 	fnName := fmt.Sprintf("Encode%s", structName)
-	// Determine if the packet is fixed-size.
 	totalSize := layout.TotalSize
 	returnType := fmt.Sprintf("[%d]byte", totalSize)
 	if totalSize <= 0 {
 		returnType = "[]byte"
 	}
 
-	// Build a map of param name → CanonicalParam for lookup.
-	paramByName := make(map[string]semantics.CanonicalParam, len(params))
-	for _, p := range params {
-		paramByName[p.Name] = p
-	}
-
-	// Build a map of field name → layout field.
-	fieldByName := make(map[string]*preprocess.Field, len(layout.Fields))
-	for i := range layout.Fields {
-		fieldByName[layout.Fields[i].Name] = &layout.Fields[i]
-	}
-
 	var sb strings.Builder
-
-	// Write the packet ID as a hex literal comment.
 	sb.WriteString(fmt.Sprintf("// Encode%s encodes a %s (%s) packet for sending to the server.\n",
 		structName, impl.PacketID, impl.StructName))
 	sb.WriteString(fmt.Sprintf("func %s(req send.%s, packetver uint32) %s {\n", fnName, structName, returnType))
@@ -134,56 +114,31 @@ func generateEncodeFunc(
 	if totalSize > 0 {
 		sb.WriteString(fmt.Sprintf("\tvar p %s\n", returnType))
 	} else {
-		sb.WriteString(fmt.Sprintf("\tp := make([]byte, %d)\n", 4)) // fallback
+		sb.WriteString("\tp := make([]byte, 4)\n")
 	}
 
-	// Write the packet type at offset 0.
-	packetID := impl.PacketID // e.g. "0x0085"
-	// Convert to uint16 literal: lower 8 bits first (little-endian).
+	packetID := impl.PacketID
 	sb.WriteString(fmt.Sprintf("\t// Packet ID: %s (little-endian)\n", packetID))
-	sb.WriteString(fmt.Sprintf("\tp[0] = 0x%s\n", strings.ToLower(packetID[4:6]))) // low byte
-	sb.WriteString(fmt.Sprintf("\tp[1] = 0x%s\n", strings.ToLower(packetID[2:4]))) // high byte
+	sb.WriteString(fmt.Sprintf("\tp[0] = 0x%s\n", strings.ToLower(packetID[4:6])))
+	sb.WriteString(fmt.Sprintf("\tp[1] = 0x%s\n", strings.ToLower(packetID[2:4])))
 
-	_ = packetverUnused(params, impl) // suppress unused var warning
-
-	// Emit field writes for each param that has a field_mapping.
-	for _, p := range params {
-		fieldExpr, ok := impl.FieldMapping[p.Name]
-		if !ok {
+	for i := range layout.Fields {
+		f := &layout.Fields[i]
+		if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
 			continue
 		}
-		// Only handle simple "packet.FieldName" mappings for encode.
-		rathenaField := extractFieldName(fieldExpr)
-		if rathenaField == "" {
-			sb.WriteString(fmt.Sprintf("\t// %s: complex mapping %q — implement manually\n",
-				p.Name, fieldExpr))
-			continue
-		}
-		f, ok := fieldByName[rathenaField]
-		if !ok {
-			sb.WriteString(fmt.Sprintf("\t// %s: field %s not found in layout\n", p.Name, rathenaField))
-			continue
-		}
-		goType := normaliseGoType(p.Type)
-		writeStmt := fieldWriteStmt("p", f, goType, fmt.Sprintf("req.%s", paramNameToGoIdent(p.Name)))
+		goFieldName := cFieldToGoIdent(f.Name)
+		goType := cTypeToGoType(f)
+		writeStmt := fieldWriteStmt("p", f, goType, fmt.Sprintf("req.%s", goFieldName))
 		sb.WriteString(writeStmt)
 	}
 
 	sb.WriteString("\t_ = packetver\n")
-	if totalSize > 0 {
-		sb.WriteString("\treturn p\n}\n")
-	} else {
-		sb.WriteString("\treturn p\n}\n")
-	}
-
+	sb.WriteString("\treturn p\n}\n")
 	return sb.String()
 }
 
 // generateEncodeDispatcher generates a multi-version encode dispatcher.
-//
-// If all resolvable implementations have the same fixed packet size, the
-// function returns [N]byte (stack-allocated, zero allocs). Otherwise it
-// falls back to []byte.
 func generateEncodeDispatcher(
 	structName string,
 	a *semantics.Action,
@@ -191,14 +146,13 @@ func generateEncodeDispatcher(
 ) string {
 	var sb strings.Builder
 
-	// Sort implementations by packetverMin ascending.
 	impls := make([]semantics.Implementation, len(a.Implementations))
 	copy(impls, a.Implementations)
 	sort.Slice(impls, func(i, j int) bool {
 		return impls[i].PacketverMin < impls[j].PacketverMin
 	})
 
-	// Filter to only C→S implementations; S→C structs should never appear in encode.
+	// Filter to C→S implementations only.
 	sendImpls := make([]semantics.Implementation, 0, len(impls))
 	for _, impl := range impls {
 		if isSendStruct(impl.StructName) {
@@ -215,13 +169,13 @@ func generateEncodeDispatcher(
 			continue
 		}
 		if layout.TotalSize <= 0 {
-			commonSize = 0 // variable-length case
+			commonSize = 0
 			break
 		}
 		if commonSize == -1 {
 			commonSize = layout.TotalSize
 		} else if commonSize != layout.TotalSize {
-			commonSize = 0 // mixed sizes — must use []byte
+			commonSize = 0
 			break
 		}
 	}
@@ -246,7 +200,6 @@ func generateEncodeDispatcher(
 		sb.WriteString(fmt.Sprintf("\tcase packetver >= %d: // %s\n", impl.PacketverMin, impl.PacketID))
 		totalSize := layout.TotalSize
 		if commonSize > 0 {
-			// Fixed common size — stack-allocate.
 			sb.WriteString(fmt.Sprintf("\t\tvar p [%d]byte\n", commonSize))
 		} else if totalSize > 0 {
 			sb.WriteString(fmt.Sprintf("\t\tp := make([]byte, %d)\n", totalSize))
@@ -258,25 +211,14 @@ func generateEncodeDispatcher(
 			strings.ToLower(packetID[4:6]),
 			strings.ToLower(packetID[2:4])))
 
-		fieldByName := make(map[string]*preprocess.Field, len(layout.Fields))
-		for idx := range layout.Fields {
-			fieldByName[layout.Fields[idx].Name] = &layout.Fields[idx]
-		}
-		for _, p := range a.CanonicalParams {
-			fieldExpr, ok := impl.FieldMapping[p.Name]
-			if !ok {
+		for j := range layout.Fields {
+			f := &layout.Fields[j]
+			if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
 				continue
 			}
-			rathenaField := extractFieldName(fieldExpr)
-			if rathenaField == "" {
-				continue
-			}
-			f, ok := fieldByName[rathenaField]
-			if !ok {
-				continue
-			}
-			goType := normaliseGoType(p.Type)
-			writeStmt := fieldWriteStmt("\t\tp", f, goType, fmt.Sprintf("req.%s", paramNameToGoIdent(p.Name)))
+			goFieldName := cFieldToGoIdent(f.Name)
+			goType := cTypeToGoType(f)
+			writeStmt := fieldWriteStmt("\t\tp", f, goType, fmt.Sprintf("req.%s", goFieldName))
 			sb.WriteString(writeStmt)
 		}
 		sb.WriteString("\t\treturn p\n")
@@ -317,14 +259,7 @@ func fieldWriteStmt(pVar string, f *preprocess.Field, goType, reqExpr string) st
 	}
 }
 
-// packetverUnused is a helper to avoid "unused variable" issues in generated code.
-func packetverUnused(params []semantics.CanonicalParam, impl *semantics.Implementation) bool {
-	return false
-}
-
 // GenerateEncodeDirFiles generates all encode files from a semantics DB + VersionTable.
-// Only actions whose struct names start with "PACKET_CZ_" or "PACKET_CH_" are included
-// (client-to-server packets).
 func GenerateEncodeDirFiles(db *semantics.DB, vt preprocess.VersionTable) (map[string]string, []string, error) {
 	if db == nil {
 		return nil, nil, fmt.Errorf("nil DB")

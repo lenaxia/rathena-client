@@ -3,7 +3,5 @@
 package send
 
 // DealReply is the request struct for the deal_reply action.
-// Client accepts or rejects trade request
 type DealReply struct {
-	Action uint8 // Trade response (3=accept, 4=reject)
 }

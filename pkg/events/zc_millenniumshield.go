@@ -2,11 +2,5 @@
 
 package events
 
-// ZcMillenniumshield is the event emitted when a zc_millenniumshield packet is received.
-// ZC_MILLENNIUMSHIELD packet (PACKET_ZC_MILLENNIUMSHIELD)
-type ZcMillenniumshield struct {
-	PacketID int16 // Packet identifier
-	ActorID uint32 // Actor/entity ID
-	ShieldCount uint16 // Number of shield stacks
-	ShieldState uint16 // Shield state
-}
+// ZcMillenniumshield is the event emitted for the zc_millenniumshield action.
+type ZcMillenniumshield struct{}

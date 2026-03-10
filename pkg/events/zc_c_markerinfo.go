@@ -2,11 +2,9 @@
 
 package events
 
-// ZcCMarkerinfo is the event emitted when a zc_c_markerinfo packet is received.
-// ZC_C_MARKERINFO packet (PACKET_ZC_C_MARKERINFO)
+// ZcCMarkerinfo is the event emitted for the zc_c_markerinfo action.
 type ZcCMarkerinfo struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	XPos int16 // xPos field
-	YPos int16 // yPos field
+	AID uint32
+	XPos int16
+	YPos int16
 }

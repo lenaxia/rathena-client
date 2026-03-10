@@ -2,8 +2,5 @@
 
 package events
 
-// ZcOpenstore is the event emitted when a zc_openstore packet is received.
-// ZC_OPENSTORE packet (PACKET_ZC_OPENSTORE)
-type ZcOpenstore struct {
-	NumSlots uint16 // Number of allowed vending item slots
-}
+// ZcOpenstore is the event emitted for the zc_openstore action.
+type ZcOpenstore struct{}

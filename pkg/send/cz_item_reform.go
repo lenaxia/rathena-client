@@ -3,9 +3,7 @@
 package send
 
 // CzItemReform is the request struct for the cz_item_reform action.
-// CZ_ITEM_REFORM packet (PACKET_CZ_ITEM_REFORM)
 type CzItemReform struct {
-	ITID int32 // ITID field
-	PacketType int16 // PacketType field
-	Index int16 // index field
+	ITID int32
+	Index int16
 }

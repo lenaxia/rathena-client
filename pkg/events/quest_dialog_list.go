@@ -2,11 +2,5 @@
 
 package events
 
-// QuestDialogList is the event emitted when a quest_dialog_list packet is received.
-// Quest dialog menu list
-type QuestDialogList struct {
-	ID uint32 // NPC ID showing quest menu
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Message string // Quest menu text
-}
+// QuestDialogList is the event emitted for the quest_dialog_list action.
+type QuestDialogList struct{}

@@ -3,6 +3,5 @@
 package send
 
 // DealTrade is the request struct for the deal_trade action.
-// Client executes/completes trade
 type DealTrade struct {
 }

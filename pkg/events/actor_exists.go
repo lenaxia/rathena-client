@@ -2,42 +2,44 @@
 
 package events
 
-// ActorExists is the event emitted when a actor_exists packet is received.
-// Actor already exists (stationary entity visible in viewport)
+// ActorExists is the event emitted for the actor_exists action.
 type ActorExists struct {
-	EmblemID int16 // Guild emblem version
-	ID uint32 // Actor unique identifier
-	GuildID uint32 // Guild ID
-	PosDir [3]byte // Packed position and direction (3 bytes: x, y, direction)
-	Opt1 int16 // Body state (stone, freeze, stun, sleep)
-	Lv int16 // Character level
-	ClothesColor int16 // Clothes color ID
-	Option int32 // Effect state flags
-	HairColor int16 // Hair color ID
-	HairStyle int16 // Hair style ID
-	Lowhead int16 // Lower headgear sprite
-	HeadDir int16 // Head direction
-	Midhead int16 // Middle headgear sprite
-	Tophead int16 // Upper headgear sprite
-	Opt2 int16 // Health state (poison, curse, silence, etc)
-	Stance uint8 // PK mode status
-	Type int16 // Job class ID
-	Manner int16 // Manner points
-	Sex uint8 // Gender (0=female, 1=male)
-	Shield int16 // Shield sprite ID
-	WalkSpeed int16 // Movement speed
-	Act uint8 // Actor state/action
-	Opt3 uint8 // Virtue/effect state
-	Weapon int16 // Weapon sprite ID
-	XSize uint8 // X size for collision
-	YSize uint8 // Y size for collision
-	HP int32 // Current HP
-	MaxHP int32 // Maximum HP
-	Name string // Entity name
-	IsBoss uint8 // Boss monster flag
-	Opt4 int16 // Body style
-	Costume int16 // Garment/robe sprite
-	ObjectType uint8 // Entity type (0=PC, 5=MOB, etc.)
-	CharID uint32 // Character ID (for players)
-	Font int16 // Font type
+	GID uint32
+	Speed int16
+	BodyState int16
+	HealthState int16
+	EffectState int32
+	Job int16
+	Head uint16
+	Weapon uint32
+	Accessory uint16
+	Accessory2 uint16
+	Accessory3 uint16
+	Headpalette int16
+	Bodypalette int16
+	HeadDir int16
+	GUID uint32
+	GEmblemVer int16
+	Honor int16
+	Virtue int32
+	IsPKModeON uint8
+	Sex uint8
+	PosDir [3]byte
+	XSize uint8
+	YSize uint8
+	State uint8
+	Clevel int16
+	Font int16
+	PacketLength int16
+	Objecttype uint8
+	Robe uint16
+	MaxHP int32
+	HP int32
+	IsBoss uint8
+	AID uint32
+	Name string
+	Body uint16
+	Shield uint32
+	MoveStartTime uint32
+	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
 }

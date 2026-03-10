@@ -2,10 +2,8 @@
 
 package events
 
-// ZcAckOpenMsgboxExtendBodyitemSize is the event emitted when a zc_ack_open_msgbox_extend_bodyitem_size packet is received.
-// ZC_ACK_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE packet (PACKET_ZC_ACK_OPEN_MSGBOX_EXTEND_BODYITEM_SIZE)
+// ZcAckOpenMsgboxExtendBodyitemSize is the event emitted for the zc_ack_open_msgbox_extend_bodyitem_size action.
 type ZcAckOpenMsgboxExtendBodyitemSize struct {
-	ItemId uint32 // itemId field
-	PacketType int16 // packetType field
-	Result uint8 // result field
+	Result uint8
+	ItemId uint32
 }

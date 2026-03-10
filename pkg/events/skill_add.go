@@ -2,8 +2,7 @@
 
 package events
 
-// SkillAdd is the event emitted when a skill_add packet is received.
-// Add new skill to skill list
+// SkillAdd is the event emitted for the skill_add action.
 type SkillAdd struct {
-	Skill []byte // skill field (struct SKILLDATA)
+	Skill []byte
 }

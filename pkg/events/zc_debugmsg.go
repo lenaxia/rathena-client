@@ -2,11 +2,9 @@
 
 package events
 
-// ZcDebugmsg is the event emitted when a zc_debugmsg packet is received.
-// ZC_DEBUGMSG packet (PACKET_ZC_DEBUGMSG)
+// ZcDebugmsg is the event emitted for the zc_debugmsg action.
 type ZcDebugmsg struct {
-	Color int32 // color field
-	Message string // message field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	Color int32
+	Message string
 }

@@ -3,6 +3,5 @@
 package send
 
 // CzReqLeaveGroup is the request struct for the cz_req_leave_group action.
-// CZ_REQ_LEAVE_GROUP packet (PACKET_CZ_REQ_LEAVE_GROUP)
 type CzReqLeaveGroup struct {
 }

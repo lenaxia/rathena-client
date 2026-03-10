@@ -2,8 +2,8 @@
 
 package events
 
-// SkillsList is the event emitted when a skills_list packet is received.
-// Complete list of character skills
+// SkillsList is the event emitted for the skills_list action.
 type SkillsList struct {
-	Skills []byte // skills field (struct SKILLDATA[])
+	PacketLength int16
+	Skills []byte
 }

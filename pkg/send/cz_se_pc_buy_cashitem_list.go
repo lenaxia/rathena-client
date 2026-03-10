@@ -3,9 +3,5 @@
 package send
 
 // CzSePcBuyCashitemList is the request struct for the cz_se_pc_buy_cashitem_list action.
-// CZ_SE_PC_BUY_CASHITEM_LIST packet (PACKET_CZ_SE_PC_BUY_CASHITEM_LIST)
 type CzSePcBuyCashitemList struct {
-	ItemCount uint16 // Number of items to purchase
-	KafraPoints uint32 // Kafra points to use for purchase
-	Items []byte // Variable-length array of cash shop purchase items. Handler must parse based on PACKETVER
 }

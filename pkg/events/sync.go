@@ -2,8 +2,7 @@
 
 package events
 
-// Sync is the event emitted when a sync packet is received.
-// Server time synchronization
+// Sync is the event emitted for the sync action.
 type Sync struct {
-	Time uint32 // Server tick/time for synchronization
+	Time uint32
 }

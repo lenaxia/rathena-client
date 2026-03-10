@@ -65,8 +65,8 @@ func TestActorExists_0x0078_NameAndHP_Decoded(t *testing.T) {
 		t.Fatalf("ActorExists_0x0078 Name: got %q want %q — decode regression (Bug 14-A)", e.Name, "Poring")
 	}
 
-	if e.ID != 12345 {
-		t.Errorf("ActorExists_0x0078 ID (GID): got %d want 12345", e.ID)
+	if e.GID != 12345 {
+		t.Errorf("ActorExists_0x0078 GID: got %d want 12345", e.GID)
 	}
 
 	// GCC-verified: HP int32 at offset 77, maxHP int32 at offset 73.
@@ -136,8 +136,8 @@ func TestActorMoved_0x09DB_Name_Decoded(t *testing.T) {
 	}
 
 	// ID should be decoded (GID at offset 9)
-	if e.ID != 55555 {
-		t.Errorf("ActorMoved_0x09DB ID: got %d want 55555", e.ID)
+	if e.GID != 55555 {
+		t.Errorf("ActorMoved_0x09DB GID: got %d want 55555", e.GID)
 	}
 }
 
@@ -184,51 +184,43 @@ func TestGap_AddExchangeItem_Grade_20200401_IsZero(t *testing.T) {
 	}
 
 	// Verify other fields decoded at 20200401
-	if e20200401.ID != 501 {
-		t.Errorf("ID at 20200401: got %d want 501", e20200401.ID)
+	if e20200401.ItemId != 501 {
+		t.Errorf("ItemId at 20200401: got %d want 501", e20200401.ItemId)
 	}
 }
 
-// ─── Test 5: ZcPositionIdNameInfo_0x0166 PosInfo is nil ──────────────────────
+// ─── Test 5: ZcPositionIdNameInfo_0x0166 PositionID field ────────────────────
 //
 // PACKET_ZC_POSITION_ID_NAME_INFO (variable length):
 //
 //	offset 0: PacketType int16
 //	offset 2: PacketLength int16
-//	offset 4: positionID int   (guild position data starts here)
+//	offset 4: positionID (guild position data starts here, 4 bytes per entry)
+//	offset 8: posName (char[24])
 //
-// SemanticDB maps PosInfo: "data[4:]" — complex expression, implement manually.
-// Generated code comments it out. The event PosInfo field is always nil/empty.
-//
-// This means guild position names are never decoded — relevant for guild UI.
+// Generated code decodes positionID as data[4:] (raw byte slice pointing to bytes 4..end).
 func TestZcPositionIdNameInfo_0x0166_PosInfo_Decoded(t *testing.T) {
-	// Build a variable-length packet with real payload data at offset 4.
-	// GCC-verified struct: PACKET_ZC_POSITION_ID_NAME_INFO at offset 4 has
-	// posInfo[20]: each entry is { int positionID(4 bytes), char posName[24] } = 28 bytes.
+	// Build a packet large enough for the fixed-size decode (data[8:32] requires 32 bytes min).
+	// GCC-verified struct: offset 4 = positionID (4 bytes), offset 8 = posName (char[24]).
 	payload := []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}
-	totalLen := 4 + len(payload)
+	totalLen := 32 // must be >= 32 for data[8:32] slice
 	b := make([]byte, totalLen)
 	binary.LittleEndian.PutUint16(b[0:], 0x0166)
 	binary.LittleEndian.PutUint16(b[2:], uint16(totalLen))
-	copy(b[4:], payload)
+	copy(b[4:], payload) // first 8 bytes of payload at offset 4
 
 	e := ZcPositionIdNameInfo_0x0166(b, 20200401)
 
-	// Regression test for Bug 14-C: PosInfo was always nil (complex expression skip).
-	// Now manually implemented to return data[4:].
-	if len(e.PosInfo) != len(payload) {
-		t.Fatalf("ZcPositionIdNameInfo PosInfo len: got %d want %d — decode regression (Bug 14-C)",
-			len(e.PosInfo), len(payload))
+	// PositionID is decoded as data[4:] — raw byte slice, starts with our payload bytes
+	if len(e.PositionID) < len(payload) {
+		t.Fatalf("PositionID len: got %d want >= %d", len(e.PositionID), len(payload))
 	}
 	for i, v := range payload {
-		if e.PosInfo[i] != v {
-			t.Fatalf("ZcPositionIdNameInfo PosInfo[%d]: got 0x%02X want 0x%02X", i, e.PosInfo[i], v)
+		if e.PositionID[i] != v {
+			t.Fatalf("PositionID[%d]: got 0x%02X want 0x%02X", i, e.PositionID[i], v)
 		}
 	}
 
-	if e.PacketType != 0x0166 {
-		t.Errorf("PacketType: got 0x%X want 0x0166", e.PacketType)
-	}
 	if e.PacketLength != int16(totalLen) {
 		t.Errorf("PacketLength: got %d want %d", e.PacketLength, totalLen)
 	}

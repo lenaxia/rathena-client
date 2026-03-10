@@ -2,22 +2,22 @@
 
 package events
 
-// ZcGuildInfo is the event emitted when a zc_guild_info packet is received.
-// ZC_GUILD_INFO packet (PACKET_ZC_GUILD_INFO)
+// ZcGuildInfo is the event emitted for the zc_guild_info action.
 type ZcGuildInfo struct {
-	GuildID int32 // Guild ID
-	Emblem int32 // Guild emblem version ID
-	Exp int32 // Current guild experience points
-	Name string // Guild name
-	Honor int32 // Guild honor points
-	Level int32 // Guild level
-	Castle string // Guild castle/agit name
-	Master int32 // Guild master character ID
-	NextExp int32 // Experience needed for next guild level
-	MaxMember int32 // Maximum guild member capacity
-	Points int32 // Guild skill points available
-	Average int32 // Average level of guild members
-	ConMember int32 // Number of connected guild members
-	Virtue int32 // Guild virtue points
-	Zeny int32 // Guild treasury zeny amount
+	GDID []byte
+	Level []byte
+	UserNum []byte
+	MaxUserNum []byte
+	UserAverageLevel []byte
+	Exp []byte
+	MaxExp []byte
+	Point []byte
+	Honor []byte
+	Virtue []byte
+	EmblemVersion []byte
+	Guildname string
+	MasterName string
+	ManageLand string
+	Zeny []byte
+	MasterGID []byte
 }

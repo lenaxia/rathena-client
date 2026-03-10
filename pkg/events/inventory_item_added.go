@@ -2,17 +2,22 @@
 
 package events
 
-// InventoryItemAdded is the event emitted when a inventory_item_added packet is received.
-// Item added to inventory (pickup result)
+// InventoryItemAdded is the event emitted for the inventory_item_added action.
 type InventoryItemAdded struct {
-	Index uint16 // Inventory slot index
-	Amount uint16 // Item quantity
-	NameID uint32 // Item type ID from item_db
-	Identified bool // Whether item is identified
-	Broken bool // Whether item is broken
-	Upgrade uint8 // Refining/upgrade level
-	Cards []byte // Equipment card slots
-	EquipLocation uint32 // Equipment location flags
-	Type uint8 // Item type category
-	Fail uint8 // Result code (0=success, other=failure)
+	Index uint16
+	Count uint16
+	Nameid uint32
+	IsIdentified uint8
+	IsDamaged uint8
+	RefiningLevel uint8
+	Slot []byte
+	Location uint32
+	Type uint8
+	Result uint8
+	HireExpireDate int32
+	BindOnEquipType uint16
+	Option_data []byte
+	Favorite uint8
+	Look uint16
+	Grade uint8
 }

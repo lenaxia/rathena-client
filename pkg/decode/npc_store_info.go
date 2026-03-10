@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func NpcStoreInfo_0x00C6(data []byte, packetver uint32) events.NpcStoreInfo {
 	var e events.NpcStoreInfo
 	_ = packetver
-	// e.ItemList = func() []byte { var buf []byte; for _, item := range packet.items { if itemBytes, err := item.ToPacket(0); err == nil { buf = append(buf, itemBytes[2:]...) }; }; return buf }()  (complex expression — implement manually)
 	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+	e.Items = data[4:]  // rAthena: items (offset 4, size 0)
 	return e
 }
 

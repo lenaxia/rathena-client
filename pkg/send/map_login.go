@@ -3,12 +3,5 @@
 package send
 
 // MapLogin is the request struct for the map_login action.
-// Map server login request (client → map server)
 type MapLogin struct {
-	AccountID uint32 // Account ID from login server
-	SessionID int32 // Session authentication code (login_id1)
-	CharID uint32 // Character ID from character selection
-	PacketType int16 // Packet ID
-	Sex uint8 // Character gender (0=female, 1=male)
-	Tick uint32 // Client timestamp
 }

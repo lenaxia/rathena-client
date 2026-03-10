@@ -3,8 +3,5 @@
 package send
 
 // PinCodeResponse is the request struct for the pin_code_response action.
-// Submit PIN code to server
 type PinCodeResponse struct {
-	AccountID uint32 // Account ID
-	Pin [4]byte // Encrypted PIN code (4 bytes)
 }

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcOpenRefiningUi is the event emitted when a zc_open_refining_ui packet is received.
-// ZC_OPEN_REFINING_UI packet (PACKET_ZC_OPEN_REFINING_UI)
-type ZcOpenRefiningUi struct {
-	PacketType int16 // packetType field
-}
+// ZcOpenRefiningUi is the event emitted for the zc_open_refining_ui action.
+type ZcOpenRefiningUi struct{}

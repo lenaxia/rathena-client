@@ -2,12 +2,5 @@
 
 package events
 
-// ReceivedMapServerInfo is the event emitted when a received_map_server_info packet is received.
-// Map server connection information
-type ReceivedMapServerInfo struct {
-	CharID uint32 // Character ID for map server authentication
-	MapIP uint32 // Map server IP address (4 bytes)
-	MapName string // Map name (null-terminated)
-	MapPort uint16 // Map server port
-	MapUrl string // Map server URL for web-based authentication (128 bytes, null-terminated)
-}
+// ReceivedMapServerInfo is the event emitted for the received_map_server_info action.
+type ReceivedMapServerInfo struct{}

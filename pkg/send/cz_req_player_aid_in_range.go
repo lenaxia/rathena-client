@@ -3,10 +3,8 @@
 package send
 
 // CzReqPlayerAidInRange is the request struct for the cz_req_player_aid_in_range action.
-// CZ_REQ_PLAYER_AID_IN_RANGE packet (PACKET_CZ_REQ_PLAYER_AID_IN_RANGE)
 type CzReqPlayerAidInRange struct {
-	PacketType int16 // PacketType field
-	RadiusRange int8 // RadiusRange field
-	XPos int16 // xPos field
-	YPos int16 // yPos field
+	XPos int16
+	YPos int16
+	RadiusRange int8
 }

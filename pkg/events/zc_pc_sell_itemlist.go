@@ -2,10 +2,5 @@
 
 package events
 
-// ZcPcSellItemlist is the event emitted when a zc_pc_sell_itemlist packet is received.
-// ZC_PC_SELL_ITEMLIST packet (PACKET_ZC_PC_SELL_ITEMLIST)
-type ZcPcSellItemlist struct {
-	PacketType int16 // Packet type identifier (0x00C7)
-	PacketLength int16 // Total packet length including header
-	Items []byte // Array of sellable items (10 bytes each: index, price, overcharge)
-}
+// ZcPcSellItemlist is the event emitted for the zc_pc_sell_itemlist action.
+type ZcPcSellItemlist struct{}

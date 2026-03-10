@@ -2,8 +2,5 @@
 
 package events
 
-// ZcAckOpenstore2 is the event emitted when a zc_ack_openstore2 packet is received.
-// ZC_ACK_OPENSTORE2 packet (PACKET_ZC_ACK_OPENSTORE2)
-type ZcAckOpenstore2 struct {
-	Result uint8 // Store open result
-}
+// ZcAckOpenstore2 is the event emitted for the zc_ack_openstore2 action.
+type ZcAckOpenstore2 struct{}

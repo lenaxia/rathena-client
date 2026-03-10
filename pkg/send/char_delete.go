@@ -3,8 +3,5 @@
 package send
 
 // CharDelete is the request struct for the char_delete action.
-// Character deletion request with verification
 type CharDelete struct {
-	CharID uint32 // Character ID to delete
-	Email string // Email or birthdate for verification (40-50 bytes)
 }

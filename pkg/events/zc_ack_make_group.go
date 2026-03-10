@@ -2,9 +2,7 @@
 
 package events
 
-// ZcAckMakeGroup is the event emitted when a zc_ack_make_group packet is received.
-// ZC_ACK_MAKE_GROUP packet (PACKET_ZC_ACK_MAKE_GROUP)
+// ZcAckMakeGroup is the event emitted for the zc_ack_make_group action.
 type ZcAckMakeGroup struct {
-	PacketType int16 // PacketType field
-	Result int8 // result field
+	Result int8
 }

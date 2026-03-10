@@ -3,7 +3,5 @@
 package send
 
 // DealInitiate is the request struct for the deal_initiate action.
-// Client requests trade with another player
 type DealInitiate struct {
-	TargetID uint32 // Account ID of player to trade with
 }

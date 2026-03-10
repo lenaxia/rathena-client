@@ -3,6 +3,5 @@
 package send
 
 // CzResetSkill is the request struct for the cz_reset_skill action.
-// CZ_RESET_SKILL packet (PACKET_CZ_RESET_SKILL)
 type CzResetSkill struct {
 }

@@ -3,11 +3,9 @@
 package send
 
 // CzPcPurchaseItemlistFrommc2 is the request struct for the cz_pc_purchase_itemlist_frommc2 action.
-// CZ_PC_PURCHASE_ITEMLIST_FROMMC2 packet (PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC2)
 type CzPcPurchaseItemlistFrommc2 struct {
-	AID uint32 // AID field
-	UniqueID uint32 // UniqueID field
-	List []byte // list field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	AID uint32
+	UniqueID uint32
+	List []byte
 }

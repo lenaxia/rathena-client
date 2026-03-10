@@ -2,10 +2,5 @@
 
 package events
 
-// ZcDeleteItemFromCart is the event emitted when a zc_delete_item_from_cart packet is received.
-// ZC_DELETE_ITEM_FROM_CART packet (PACKET_ZC_DELETE_ITEM_FROM_CART)
-type ZcDeleteItemFromCart struct {
-	PacketID int16 // Packet identifier
-	CartIndex uint16 // Cart item index
-	Amount int32 // Amount of items deleted
-}
+// ZcDeleteItemFromCart is the event emitted for the zc_delete_item_from_cart action.
+type ZcDeleteItemFromCart struct{}

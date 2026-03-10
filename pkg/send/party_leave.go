@@ -3,6 +3,5 @@
 package send
 
 // PartyLeave is the request struct for the party_leave action.
-// Leave current party
 type PartyLeave struct {
 }

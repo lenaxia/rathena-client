@@ -3,7 +3,5 @@
 package send
 
 // CzReqJoinGroup is the request struct for the cz_req_join_group action.
-// CZ_REQ_JOIN_GROUP packet (PACKET_CZ_REQ_JOIN_GROUP)
 type CzReqJoinGroup struct {
-	AccountID uint32 // Account ID to invite to party
 }

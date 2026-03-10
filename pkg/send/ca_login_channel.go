@@ -3,12 +3,5 @@
 package send
 
 // CaLoginChannel is the request struct for the ca_login_channel action.
-// Login with Rijndael encrypted password (CA_LOGIN_CHANNEL)
 type CaLoginChannel struct {
-	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
-	Ip string // Client IP address string (variable length)
-	IsGravityID uint8 // Gravity ID authentication flag (1=yes, 0=no)
-	Mac string // MAC address string (variable length)
-	PacketType int16 // packetType field
-	Version uint32 // Client version number
 }

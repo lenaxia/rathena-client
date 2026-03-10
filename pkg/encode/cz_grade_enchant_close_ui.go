@@ -12,7 +12,6 @@ func EncodeCzGradeEnchantCloseUi(req send.CzGradeEnchantCloseUi, packetver uint3
 	// Packet ID: 0x0B5C (little-endian)
 	p[0] = 0x5c
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	_ = packetver
 	return p
 }

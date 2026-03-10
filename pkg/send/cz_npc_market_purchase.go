@@ -3,9 +3,7 @@
 package send
 
 // CzNpcMarketPurchase is the request struct for the cz_npc_market_purchase action.
-// CZ_NPC_MARKET_PURCHASE packet (PACKET_CZ_NPC_MARKET_PURCHASE)
 type CzNpcMarketPurchase struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	List []byte // list field
+	PacketLength int16
+	List []byte
 }

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcNotifyActorinit is the event emitted when a zc_notify_actorinit packet is received.
-// ZC_NOTIFY_ACTORINIT packet (PACKET_ZC_NOTIFY_ACTORINIT)
-type ZcNotifyActorinit struct {
-	PacketType int16 // packetType field
-}
+// ZcNotifyActorinit is the event emitted for the zc_notify_actorinit action.
+type ZcNotifyActorinit struct{}

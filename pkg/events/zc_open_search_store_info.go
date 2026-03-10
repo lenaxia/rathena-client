@@ -2,10 +2,8 @@
 
 package events
 
-// ZcOpenSearchStoreInfo is the event emitted when a zc_open_search_store_info packet is received.
-// ZC_OPEN_SEARCH_STORE_INFO packet (PACKET_ZC_OPEN_SEARCH_STORE_INFO)
+// ZcOpenSearchStoreInfo is the event emitted for the zc_open_search_store_info action.
 type ZcOpenSearchStoreInfo struct {
-	Effect uint16 // effect field
-	PacketType int16 // packetType field
-	RemainingUses uint8 // remainingUses field
+	Effect uint16
+	RemainingUses uint8
 }

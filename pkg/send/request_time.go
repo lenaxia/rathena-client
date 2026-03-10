@@ -3,7 +3,5 @@
 package send
 
 // RequestTime is the request struct for the request_time action.
-// Request server time synchronization
 type RequestTime struct {
-	ClientTick uint32 // Client timestamp for time synchronization
 }

@@ -12,7 +12,6 @@ func EncodeCzPartyConfig(req send.CzPartyConfig, packetver uint32) [3]byte {
 	// Packet ID: 0x02C8 (little-endian)
 	p[0] = 0xc8
 	p[1] = 0x02
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	p[2] = req.RefuseInvite  // rAthena: refuseInvite
 	_ = packetver
 	return p

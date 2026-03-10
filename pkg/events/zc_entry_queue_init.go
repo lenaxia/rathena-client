@@ -2,8 +2,5 @@
 
 package events
 
-// ZcEntryQueueInit is the event emitted when a zc_entry_queue_init packet is received.
-// ZC_ENTRY_QUEUE_INIT packet (PACKET_ZC_ENTRY_QUEUE_INIT)
-type ZcEntryQueueInit struct {
-	PacketID int16 // Packet identifier
-}
+// ZcEntryQueueInit is the event emitted for the zc_entry_queue_init action.
+type ZcEntryQueueInit struct{}

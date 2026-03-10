@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcOpenRefiningUi_0x0AA0(data []byte, packetver uint32) events.ZcOpenRefiningUi {
 	var e events.ZcOpenRefiningUi
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }
 

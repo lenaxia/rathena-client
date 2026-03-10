@@ -3,8 +3,5 @@
 package send
 
 // DealAddOther is the request struct for the deal_add_other action.
-// Client adds item to trade window
 type DealAddOther struct {
-	Amount uint32 // Amount of item to add to trade
-	Index uint16 // Inventory index of item to add
 }

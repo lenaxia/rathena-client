@@ -3,7 +3,5 @@
 package send
 
 // ItemTake is the request struct for the item_take action.
-// Request to pick up item from ground
 type ItemTake struct {
-	ID uint32 // Ground item entity ID to pick up
 }

@@ -2,8 +2,5 @@
 
 package events
 
-// ReceivedCharactersPage is the event emitted when a received_characters_page packet is received.
-// Paginated character list response
-type ReceivedCharactersPage struct {
-	Characters []byte // characters field (CHARACTER_INFO[])
-}
+// ReceivedCharactersPage is the event emitted for the received_characters_page action.
+type ReceivedCharactersPage struct{}

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcItemDisappear is the event emitted when a zc_item_disappear packet is received.
-// ZC_ITEM_DISAPPEAR packet (PACKET_ZC_ITEM_DISAPPEAR)
-type ZcItemDisappear struct {
-	ID uint32 // Item actor ID that disappeared from ground
-}
+// ZcItemDisappear is the event emitted for the zc_item_disappear action.
+type ZcItemDisappear struct{}

@@ -10,13 +10,11 @@ func ZcNotifyEffect3_0x0284(data []byte, packetver uint32) events.ZcNotifyEffect
 	if packetver >= 20191127 {
 		e.Aid = leU32(data, 2)  // rAthena: aid (offset 2, size 4)
 		e.EffectId = leU32(data, 6)  // rAthena: effectId (offset 6, size 4)
-		e.Num = leU32(data, 10)  // rAthena: num (offset 10, size 8)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Num = leU64(data, 10)  // rAthena: num (offset 10, size 8)
 	} else {
 		e.Aid = leU32(data, 2)  // rAthena: aid (offset 2, size 4)
 		e.EffectId = leU32(data, 6)  // rAthena: effectId (offset 6, size 4)
-		e.Num = leU32(data, 10)  // rAthena: num (offset 10, size 4)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
+		e.Num = uint64(leU32(data, 10))  // rAthena: num (offset 10, size 4)
 	}
 	return e
 }

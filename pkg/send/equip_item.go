@@ -3,8 +3,5 @@
 package send
 
 // EquipItem is the request struct for the equip_item action.
-// Equip an item from inventory
 type EquipItem struct {
-	Index uint16 // Inventory slot index
-	WearLocation uint16 // Equipment slot position (bitmask)
 }

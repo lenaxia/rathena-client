@@ -2,7 +2,5 @@
 
 package decode
 
-// SKIP DealFinalize_0x00EB: struct PACKET_CZ_CONCLUDE_EXCHANGE_ITEM not found in VersionTable
-
 // SKIP DealFinalize_0x00EC: struct PACKET_ZC_CONCLUDE_EXCHANGE_ITEM not found in VersionTable
 

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcCloseStore is the event emitted when a zc_close_store packet is received.
-// ZC_CLOSE_STORE packet (PACKET_ZC_CLOSE_STORE)
-type ZcCloseStore struct {
-	PacketID int16 // Packet identifier
-}
+// ZcCloseStore is the event emitted for the zc_close_store action.
+type ZcCloseStore struct{}

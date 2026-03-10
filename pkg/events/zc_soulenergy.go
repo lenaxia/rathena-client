@@ -2,10 +2,8 @@
 
 package events
 
-// ZcSoulenergy is the event emitted when a zc_soulenergy packet is received.
-// ZC_SOULENERGY packet (PACKET_ZC_SOULENERGY)
+// ZcSoulenergy is the event emitted for the zc_soulenergy action.
 type ZcSoulenergy struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	Num uint16 // num field
+	AID uint32
+	Num uint16
 }

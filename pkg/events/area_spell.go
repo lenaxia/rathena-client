@@ -2,13 +2,15 @@
 
 package events
 
-// AreaSpell is the event emitted when a area_spell packet is received.
-// Ground skill placed on map (area effect spell entry)
+// AreaSpell is the event emitted for the area_spell action.
 type AreaSpell struct {
-	ID uint32 // Ground skill entry ID (unique identifier for this skill instance)
-	SourceID uint32 // Actor ID of the skill caster
-	IsVisible uint8 // Visibility flag (1=visible, 0=hidden)
-	Type uint8 // Skill type/ID (which skill was placed)
-	X int16 // X coordinate of ground skill
-	Y int16 // Y coordinate of ground skill
+	AID uint32
+	CreatorAID uint32
+	XPos int16
+	YPos int16
+	Job int32
+	IsVisible uint8
+	PacketLength int16
+	RadiusRange int8
+	Level uint8
 }

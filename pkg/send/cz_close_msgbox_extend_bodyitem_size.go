@@ -3,7 +3,5 @@
 package send
 
 // CzCloseMsgboxExtendBodyitemSize is the request struct for the cz_close_msgbox_extend_bodyitem_size action.
-// CZ_CLOSE_MSGBOX_EXTEND_BODYITEM_SIZE packet (PACKET_CZ_CLOSE_MSGBOX_EXTEND_BODYITEM_SIZE)
 type CzCloseMsgboxExtendBodyitemSize struct {
-	PacketType int16 // packetType field
 }

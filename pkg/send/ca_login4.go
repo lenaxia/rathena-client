@@ -3,11 +3,5 @@
 package send
 
 // CaLogin4 is the request struct for the ca_login4 action.
-// Login with salted password and MAC address (CA_LOGIN4)
 type CaLogin4 struct {
-	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
-	Mac string // MAC address string (variable length)
-	PacketType int16 // packetType field
-	PasswordSalted string // Salted password hash (16 bytes)
-	Version uint32 // Client version number
 }

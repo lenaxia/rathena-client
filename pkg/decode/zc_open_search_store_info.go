@@ -9,12 +9,9 @@ func ZcOpenSearchStoreInfo_0x083A(data []byte, packetver uint32) events.ZcOpenSe
 	var e events.ZcOpenSearchStoreInfo
 	if packetver >= 20100701 {
 		e.Effect = leU16(data, 2)  // rAthena: effect (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 		e.RemainingUses = data[4]  // rAthena: remainingUses (offset 4, size 1)
 	} else {
 		e.Effect = leU16(data, 2)  // rAthena: effect (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
-		// e.RemainingUses = zero (field remainingUses absent in this struct version)
 	}
 	return e
 }

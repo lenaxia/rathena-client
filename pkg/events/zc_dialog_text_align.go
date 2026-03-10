@@ -2,9 +2,7 @@
 
 package events
 
-// ZcDialogTextAlign is the event emitted when a zc_dialog_text_align packet is received.
-// ZC_DIALOG_TEXT_ALIGN packet (PACKET_ZC_DIALOG_TEXT_ALIGN)
+// ZcDialogTextAlign is the event emitted for the zc_dialog_text_align action.
 type ZcDialogTextAlign struct {
-	PacketType int16 // PacketType field
-	Align uint8 // align field
+	Align uint8
 }

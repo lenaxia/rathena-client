@@ -3,11 +3,9 @@
 package send
 
 // CzUsePackageitem is the request struct for the cz_use_packageitem action.
-// CZ_USE_PACKAGEITEM packet (PACKET_CZ_USE_PACKAGEITEM)
 type CzUsePackageitem struct {
-	AID uint32 // AID field
-	BoxIndex uint32 // BoxIndex field
-	PacketType int16 // PacketType field
-	Index uint16 // index field
-	ItemID uint32 // itemID field
+	Index uint16
+	AID uint32
+	ItemID uint32
+	BoxIndex uint32
 }

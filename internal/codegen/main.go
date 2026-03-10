@@ -116,13 +116,13 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 
 	// Step 6: Generate event structs (pkg/events/*.go)
 	log.Println("Generating event structs...")
-	if err := genEvents(db, outDir); err != nil {
+	if err := genEvents(db, vt, outDir); err != nil {
 		return fmt.Errorf("events: %w", err)
 	}
 
 	// Step 7: Generate send request types (pkg/send/*.go)
 	log.Println("Generating send request types...")
-	if err := genSend(db, outDir); err != nil {
+	if err := genSend(db, vt, outDir); err != nil {
 		return fmt.Errorf("send: %w", err)
 	}
 
@@ -854,8 +854,8 @@ func parseHexID(s string) (uint64, error) {
 	return strconv.ParseUint(s, 16, 16)
 }
 
-func genEvents(db *semantics.DB, outDir string) error {
-	files, err := gen.GenerateEventsDirFiles(db)
+func genEvents(db *semantics.DB, vt preprocess.VersionTable, outDir string) error {
+	files, err := gen.GenerateEventsDirFiles(db, vt)
 	if err != nil {
 		return err
 	}
@@ -872,8 +872,8 @@ func genEvents(db *semantics.DB, outDir string) error {
 	return nil
 }
 
-func genSend(db *semantics.DB, outDir string) error {
-	files, err := gen.GenerateSendDirFiles(db)
+func genSend(db *semantics.DB, vt preprocess.VersionTable, outDir string) error {
+	files, err := gen.GenerateSendDirFiles(db, vt)
 	if err != nil {
 		return err
 	}

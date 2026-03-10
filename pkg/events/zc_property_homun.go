@@ -2,29 +2,28 @@
 
 package events
 
-// ZcPropertyHomun is the event emitted when a zc_property_homun packet is received.
-// ZC_PROPERTY_HOMUN packet (PACKET_ZC_PROPERTY_HOMUN)
+// ZcPropertyHomun is the event emitted for the zc_property_homun action.
 type ZcPropertyHomun struct {
-	Amotion uint16 // amotion field
-	Atk2 uint16 // atk2 field
-	Crit uint16 // crit field
-	Def uint16 // def field
-	Exp uint32 // exp field
-	ExpNext uint32 // expNext field
-	Flags uint8 // flags field
-	Flee uint16 // flee field
-	Hit uint16 // hit field
-	Hp uint16 // hp field
-	Hunger uint16 // hunger field
-	Intimacy uint16 // intimacy field
-	ItemId uint32 // itemId field
-	Level uint16 // level field
-	Matk uint16 // matk field
-	MaxHp uint16 // maxHp field
-	MaxSp uint16 // maxSp field
-	Mdef uint16 // mdef field
-	PacketType int16 // packetType field
-	Range uint16 // range field
-	SkillPoints uint16 // skillPoints field
-	Sp uint16 // sp field
+	Name string
+	Flags uint8
+	Level uint16
+	Hunger uint16
+	Intimacy uint16
+	ItemId uint32
+	Atk2 uint16
+	Matk uint16
+	Hit uint16
+	Crit uint16
+	Def uint16
+	Mdef uint16
+	Flee uint16
+	Amotion uint16
+	Hp uint32
+	MaxHp uint32
+	Sp uint32
+	MaxSp uint32
+	Exp int64
+	ExpNext int64
+	SkillPoints uint16
+	Range uint16
 }

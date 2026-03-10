@@ -2,16 +2,15 @@
 
 package events
 
-// ZcItemPickupParty is the event emitted when a zc_item_pickup_party packet is received.
-// ZC_ITEM_PICKUP_PARTY packet (PACKET_ZC_ITEM_PICKUP_PARTY)
+// ZcItemPickupParty is the event emitted for the zc_item_pickup_party action.
 type ZcItemPickupParty struct {
-	AID uint32 // AID field
-	Damaged uint8 // damaged field
-	Identified uint8 // identified field
-	ItemId uint32 // itemId field
-	ItemType uint8 // itemType field
-	Location uint16 // location field
-	PacketType int16 // packetType field
-	Refine uint8 // refine field
-	Slot []byte // slot field
+	AID uint32
+	ItemId uint32
+	Identified uint8
+	Damaged uint8
+	Refine uint8
+	Slot []byte
+	Location uint16
+	ItemType uint8
+	Grade uint8
 }

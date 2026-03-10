@@ -2,10 +2,8 @@
 
 package events
 
-// ZcShowImage is the event emitted when a zc_show_image packet is received.
-// ZC_SHOW_IMAGE packet (PACKET_ZC_SHOW_IMAGE)
+// ZcShowImage is the event emitted for the zc_show_image action.
 type ZcShowImage struct {
-	Image string // image field
-	PacketType int16 // packetType field
-	Type uint8 // type field
+	Image string
+	Type uint8
 }

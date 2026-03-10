@@ -9,7 +9,6 @@ func ZcSpirits_0x01D0(data []byte, packetver uint32) events.ZcSpirits {
 	var e events.ZcSpirits
 	_ = packetver
 	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	e.Num = leI16(data, 6)  // rAthena: num (offset 6, size 2)
 	return e
 }

@@ -3,8 +3,5 @@
 package send
 
 // CzReqDisorganizeGuild is the request struct for the cz_req_disorganize_guild action.
-// CZ_REQ_DISORGANIZE_GUILD packet (PACKET_CZ_REQ_DISORGANIZE_GUILD)
 type CzReqDisorganizeGuild struct {
-	PacketType int16 // Packet type identifier (0x015D)
-	Key [40]byte // Guild master name for verification (40-byte string)
 }

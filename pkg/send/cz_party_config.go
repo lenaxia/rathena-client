@@ -3,8 +3,6 @@
 package send
 
 // CzPartyConfig is the request struct for the cz_party_config action.
-// CZ_PARTY_CONFIG packet (PACKET_CZ_PARTY_CONFIG)
 type CzPartyConfig struct {
-	PacketType int16 // packetType field
-	RefuseInvite uint8 // refuseInvite field
+	RefuseInvite uint8
 }

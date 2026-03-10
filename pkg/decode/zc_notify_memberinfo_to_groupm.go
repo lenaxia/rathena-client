@@ -8,7 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyMemberinfoToGroupm_0x0ABD(data []byte, packetver uint32) events.ZcNotifyMemberinfoToGroupm {
 	var e events.ZcNotifyMemberinfoToGroupm
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
+	e.AID = data[2:]  // rAthena: AID (offset 2, size 4)
 	e.Job = leI16(data, 6)  // rAthena: job (offset 6, size 2)
 	e.Level = leI16(data, 8)  // rAthena: level (offset 8, size 2)
 	return e

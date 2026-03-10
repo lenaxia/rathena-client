@@ -12,7 +12,6 @@ func EncodeCzShortcutkeybarRotate1(req send.CzShortcutkeybarRotate1, packetver u
 	// Packet ID: 0x0A01 (little-endian)
 	p[0] = 0x01
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	p[2] = req.Rowshift  // rAthena: rowshift
 	_ = packetver
 	return p

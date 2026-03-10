@@ -2,9 +2,5 @@
 
 package events
 
-// DealRequest is the event emitted when a deal_request packet is received.
-// Server acknowledges trade request (alternate packet ID)
-type DealRequest struct {
-	User string // Name of player requesting trade
-	Type uint8 // Trade result code (0=accept, 1=reject, 2=busy, 3=weight, 4=distance)
-}
+// DealRequest is the event emitted for the deal_request action.
+type DealRequest struct{}

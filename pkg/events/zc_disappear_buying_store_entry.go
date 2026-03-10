@@ -2,9 +2,7 @@
 
 package events
 
-// ZcDisappearBuyingStoreEntry is the event emitted when a zc_disappear_buying_store_entry packet is received.
-// ZC_DISAPPEAR_BUYING_STORE_ENTRY packet (PACKET_ZC_DISAPPEAR_BUYING_STORE_ENTRY)
+// ZcDisappearBuyingStoreEntry is the event emitted for the zc_disappear_buying_store_entry action.
 type ZcDisappearBuyingStoreEntry struct {
-	MakerAID uint32 // makerAID field
-	PacketType int16 // packetType field
+	MakerAID uint32
 }

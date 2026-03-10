@@ -3,11 +3,5 @@
 package send
 
 // CaLoginPcbang is the request struct for the ca_login_pcbang action.
-// Login from PC Bang with Rijndael encrypted password (CA_LOGIN_PCBANG)
 type CaLoginPcbang struct {
-	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
-	Ip string // Client IP address string (16 bytes)
-	Mac string // MAC address string (13 bytes)
-	PacketType int16 // packetType field
-	Version uint32 // Client version number
 }

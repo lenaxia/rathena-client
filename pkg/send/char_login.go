@@ -3,7 +3,5 @@
 package send
 
 // CharLogin is the request struct for the char_login action.
-// Character selection request (client → char server)
 type CharLogin struct {
-	Slot uint8 // Character slot number to select (0-based index)
 }

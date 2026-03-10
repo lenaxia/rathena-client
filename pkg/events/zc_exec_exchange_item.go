@@ -2,8 +2,5 @@
 
 package events
 
-// ZcExecExchangeItem is the event emitted when a zc_exec_exchange_item packet is received.
-// ZC_EXEC_EXCHANGE_ITEM packet (PACKET_ZC_EXEC_EXCHANGE_ITEM)
-type ZcExecExchangeItem struct {
-	Type uint8 // Execution result (0=success)
-}
+// ZcExecExchangeItem is the event emitted for the zc_exec_exchange_item action.
+type ZcExecExchangeItem struct{}

@@ -2,8 +2,5 @@
 
 package events
 
-// ZcEquipArrow is the event emitted when a zc_equip_arrow packet is received.
-// ZC_EQUIP_ARROW packet (PACKET_ZC_EQUIP_ARROW)
-type ZcEquipArrow struct {
-	Index uint16 // Arrow inventory index
-}
+// ZcEquipArrow is the event emitted for the zc_equip_arrow action.
+type ZcEquipArrow struct{}

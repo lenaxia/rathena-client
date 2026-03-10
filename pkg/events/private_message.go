@@ -2,11 +2,11 @@
 
 package events
 
-// PrivateMessage is the event emitted when a private_message packet is received.
-// Private message (whisper) from another player
+// PrivateMessage is the event emitted for the private_message action.
 type PrivateMessage struct {
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Sender string // Sender character name (24 bytes, null-terminated)
-	Message string // Whisper message text (variable length, null-terminated)
+	PacketLength int16
+	Sender string
+	Message string
+	IsAdmin int32
+	SenderGID uint32
 }

@@ -2,9 +2,7 @@
 
 package events
 
-// ZcOpenReformUi is the event emitted when a zc_open_reform_ui packet is received.
-// ZC_OPEN_REFORM_UI packet (PACKET_ZC_OPEN_REFORM_UI)
+// ZcOpenReformUi is the event emitted for the zc_open_reform_ui action.
 type ZcOpenReformUi struct {
-	ITID int32 // ITID field
-	PacketType int16 // PacketType field
+	ITID int32
 }

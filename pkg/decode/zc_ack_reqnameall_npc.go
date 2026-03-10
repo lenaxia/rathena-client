@@ -8,11 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckReqnameallNpc_0x0095(data []byte, packetver uint32) events.ZcAckReqnameallNpc {
 	var e events.ZcAckReqnameallNpc
 	if packetver >= 20171207 {
-		// e.Name = strings.TrimRight(string(packet.name[:]), "\x00")  (complex expression — implement manually)
-		e.ID = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
+		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
+		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
+		e.GroupId = leI32(data, 6)  // rAthena: groupId (offset 6, size 4)
+		e.Name = nullTermString(data[10:34])  // rAthena: name (offset 10, size 24)
+		e.Title = nullTermString(data[34:58])  // rAthena: title (offset 34, size 24)
 	} else {
-		// e.Name = strings.TrimRight(string(packet.name[:]), "\x00")  (complex expression — implement manually)
-		e.ID = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
+		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
+		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
+		e.Name = nullTermString(data[6:30])  // rAthena: name (offset 6, size 24)
 	}
 	return e
 }

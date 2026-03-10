@@ -3,10 +3,5 @@
 package send
 
 // CaLogin2 is the request struct for the ca_login2 action.
-// Login with MD5 hashed password (CA_LOGIN2)
 type CaLogin2 struct {
-	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
-	PacketType int16 // packetType field
-	PasswordSaltedMd5 string // MD5 hashed password (16 bytes)
-	Version uint32 // Client version number
 }

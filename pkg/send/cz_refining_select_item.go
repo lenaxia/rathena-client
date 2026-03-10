@@ -3,8 +3,6 @@
 package send
 
 // CzRefiningSelectItem is the request struct for the cz_refining_select_item action.
-// CZ_REFINING_SELECT_ITEM packet (PACKET_CZ_REFINING_SELECT_ITEM)
 type CzRefiningSelectItem struct {
-	Index int16 // index field
-	PacketType int16 // packetType field
+	Index int16
 }

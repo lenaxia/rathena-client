@@ -2,10 +2,8 @@
 
 package events
 
-// ZcSpirits is the event emitted when a zc_spirits packet is received.
-// ZC_SPIRITS packet (PACKET_ZC_SPIRITS)
+// ZcSpirits is the event emitted for the zc_spirits action.
 type ZcSpirits struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	Num int16 // num field
+	AID uint32
+	Num int16
 }

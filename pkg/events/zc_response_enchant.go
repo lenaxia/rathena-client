@@ -2,10 +2,8 @@
 
 package events
 
-// ZcResponseEnchant is the event emitted when a zc_response_enchant packet is received.
-// ZC_RESPONSE_ENCHANT packet (PACKET_ZC_RESPONSE_ENCHANT)
+// ZcResponseEnchant is the event emitted for the zc_response_enchant action.
 type ZcResponseEnchant struct {
-	ITID uint32 // ITID field
-	PacketType int16 // PacketType field
-	MsgId int32 // msgId field
+	MsgId int32
+	ITID uint32
 }

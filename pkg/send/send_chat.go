@@ -3,7 +3,5 @@
 package send
 
 // SendChat is the request struct for the send_chat action.
-// Send public chat message
 type SendChat struct {
-	Message string // Chat message text (variable length)
 }

@@ -3,7 +3,5 @@
 package send
 
 // TimeSyncResponse is the request struct for the time_sync_response action.
-// Respond to time sync request from server
 type TimeSyncResponse struct {
-	Time uint32 // Client tick time
 }

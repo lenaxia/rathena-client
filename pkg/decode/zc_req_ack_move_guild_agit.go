@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcReqAckMoveGuildAgit_0x0B2E(data []byte, packetver uint32) events.ZcReqAckMoveGuildAgit {
 	var e events.ZcReqAckMoveGuildAgit
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	e.Result = leI16(data, 2)  // rAthena: result (offset 2, size 2)
 	return e
 }

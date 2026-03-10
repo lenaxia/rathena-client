@@ -2,10 +2,9 @@
 
 package events
 
-// ZcNotifyPositionToGroupm is the event emitted when a zc_notify_position_to_groupm packet is received.
-// Notify party member position/location
+// ZcNotifyPositionToGroupm is the event emitted for the zc_notify_position_to_groupm action.
 type ZcNotifyPositionToGroupm struct {
-	X uint16 // X coordinate
-	Y uint16 // Y coordinate
-	AccountID uint32 // Account ID of party member
+	AID []byte
+	XPos int16
+	YPos int16
 }

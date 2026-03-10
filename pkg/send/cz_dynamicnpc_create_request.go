@@ -3,7 +3,6 @@
 package send
 
 // CzDynamicnpcCreateRequest is the request struct for the cz_dynamicnpc_create_request action.
-// CZ_DYNAMICNPC_CREATE_REQUEST packet (PACKET_CZ_DYNAMICNPC_CREATE_REQUEST)
 type CzDynamicnpcCreateRequest struct {
-	PacketType uint16 // PacketType field
+	Name string
 }

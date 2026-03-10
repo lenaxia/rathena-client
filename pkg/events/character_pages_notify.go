@@ -2,9 +2,5 @@
 
 package events
 
-// CharacterPagesNotify is the event emitted when a character_pages_notify packet is received.
-// Character list page count notification
-type CharacterPagesNotify struct {
-	TotalPages uint32 // Total number of character pages
-	Slots uint32 // slots field (uint32)
-}
+// CharacterPagesNotify is the event emitted for the character_pages_notify action.
+type CharacterPagesNotify struct{}

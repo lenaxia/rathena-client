@@ -12,10 +12,9 @@ func EncodeCzShortcutKeyChange2(req send.CzShortcutKeyChange2, packetver uint32)
 	// Packet ID: 0x0B21 (little-endian)
 	p[0] = 0x21
 	p[1] = 0x0b
-	// Hotkey: complex mapping "func() []byte { bytes, _ := packet.Hotkey.ToPacket(0); if len(bytes) > 2 { return bytes[2:] }; return []byte{} }()" — implement manually
-	leU16Put(p[4:], req.Index)  // rAthena: index
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	leU16Put(p[2:], req.Tab)  // rAthena: tab
+	leU16Put(p[4:], req.Index)  // rAthena: index
+	copy(p[6:], req.Hotkey)  // rAthena: hotkey
 	_ = packetver
 	return p
 }

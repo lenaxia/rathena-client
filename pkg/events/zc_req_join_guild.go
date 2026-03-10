@@ -2,9 +2,5 @@
 
 package events
 
-// ZcReqJoinGuild is the event emitted when a zc_req_join_guild packet is received.
-// ZC_REQ_JOIN_GUILD packet (PACKET_ZC_REQ_JOIN_GUILD)
-type ZcReqJoinGuild struct {
-	GuildID uint32 // Guild ID of inviting guild
-	GuildName string // Name of guild inviting player
-}
+// ZcReqJoinGuild is the event emitted for the zc_req_join_guild action.
+type ZcReqJoinGuild struct{}

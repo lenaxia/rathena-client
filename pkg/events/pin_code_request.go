@@ -2,10 +2,5 @@
 
 package events
 
-// PinCodeRequest is the event emitted when a pin_code_request packet is received.
-// PIN code request/validation
-type PinCodeRequest struct {
-	AccountID uint32 // Account ID
-	Flag uint16 // PIN request type/result
-	Seed uint32 // Encryption seed for PIN
-}
+// PinCodeRequest is the event emitted for the pin_code_request action.
+type PinCodeRequest struct{}

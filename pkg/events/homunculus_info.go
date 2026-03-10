@@ -2,11 +2,5 @@
 
 package events
 
-// HomunculusInfo is the event emitted when a homunculus_info packet is received.
-// Homunculus state change notification (intimacy, hunger, accessory, etc.)
-type HomunculusInfo struct {
-	State uint8 // State type indicator (0=pre-init, 1=intimacy changed, 2=hunger changed, 3=accessory changed, 4=headtype changed)
-	ID uint32 // Homunculus game ID
-	Val uint32 // Value data (meaning depends on state: intimacy value, hunger value, accessory ID, or headtype ID)
-	StateType uint8 // Type of mercenary state change
-}
+// HomunculusInfo is the event emitted for the homunculus_info action.
+type HomunculusInfo struct{}

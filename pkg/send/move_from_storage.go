@@ -3,8 +3,5 @@
 package send
 
 // MoveFromStorage is the request struct for the move_from_storage action.
-// Move item from storage to inventory
 type MoveFromStorage struct {
-	Index uint16 // Storage slot index
-	Amount uint32 // Quantity to move
 }

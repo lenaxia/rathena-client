@@ -2,10 +2,11 @@
 
 package events
 
-// ZcAdventurerAgencyJoinReq is the event emitted when a zc_adventurer_agency_join_req packet is received.
-// ZC_ADVENTURER_AGENCY_JOIN_REQ packet (PACKET_ZC_ADVENTURER_AGENCY_JOIN_REQ)
+// ZcAdventurerAgencyJoinReq is the event emitted for the zc_adventurer_agency_join_req action.
 type ZcAdventurerAgencyJoinReq struct {
-	Job int16 // job field
-	Level int16 // level field
-	PacketType int16 // packetType field
+	GRID []byte
+	AID []byte
+	GroupName string
+	Level int16
+	Job int16
 }

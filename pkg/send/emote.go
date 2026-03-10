@@ -3,7 +3,5 @@
 package send
 
 // Emote is the request struct for the emote action.
-// Display an emotion/emote animation
 type Emote struct {
-	EmoteID uint8 // Emotion/emote ID (0-based index)
 }

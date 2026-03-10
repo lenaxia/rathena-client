@@ -3,7 +3,5 @@
 package send
 
 // CzCloseUiEnchant is the request struct for the cz_close_ui_enchant action.
-// CZ_CLOSE_UI_ENCHANT packet (PACKET_CZ_CLOSE_UI_ENCHANT)
 type CzCloseUiEnchant struct {
-	PacketType int16 // PacketType field
 }

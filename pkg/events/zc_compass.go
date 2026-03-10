@@ -2,12 +2,5 @@
 
 package events
 
-// ZcCompass is the event emitted when a zc_compass packet is received.
-// ZC_COMPASS packet (PACKET_ZC_COMPASS)
-type ZcCompass struct {
-	PacketID int16 // Packet identifier
-	NpcID uint32 // NPC ID for compass marker
-	MarkerType uint32 // Compass marker type (0=show, 1=hide, 2=blink)
-	X uint32 // X coordinate for compass marker
-	Y uint32 // Y coordinate for compass marker
-}
+// ZcCompass is the event emitted for the zc_compass action.
+type ZcCompass struct{}

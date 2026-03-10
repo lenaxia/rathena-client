@@ -12,7 +12,6 @@ func EncodeCzCloseReformUi(req send.CzCloseReformUi, packetver uint32) [2]byte {
 	// Packet ID: 0x0B90 (little-endian)
 	p[0] = 0x90
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	_ = packetver
 	return p
 }

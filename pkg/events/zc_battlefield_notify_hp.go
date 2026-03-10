@@ -2,11 +2,10 @@
 
 package events
 
-// ZcBattlefieldNotifyHp is the event emitted when a zc_battlefield_notify_hp packet is received.
-// ZC_BATTLEFIELD_NOTIFY_HP packet (PACKET_ZC_BATTLEFIELD_NOTIFY_HP)
+// ZcBattlefieldNotifyHp is the event emitted for the zc_battlefield_notify_hp action.
 type ZcBattlefieldNotifyHp struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	Hp int32 // hp field
-	Maxhp int32 // maxhp field
+	AID uint32
+	Name string
+	Hp int16
+	Maxhp int16
 }

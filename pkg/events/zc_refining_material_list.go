@@ -2,12 +2,10 @@
 
 package events
 
-// ZcRefiningMaterialList is the event emitted when a zc_refining_material_list packet is received.
-// ZC_REFINING_MATERIAL_LIST packet (PACKET_ZC_REFINING_MATERIAL_LIST)
+// ZcRefiningMaterialList is the event emitted for the zc_refining_material_list action.
 type ZcRefiningMaterialList struct {
-	BlacksmithBlessing int8 // blacksmithBlessing field
-	ItemIndex int16 // itemIndex field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
-	Req []byte // req field
+	PacketLength int16
+	ItemIndex int16
+	BlacksmithBlessing int8
+	Req []byte
 }

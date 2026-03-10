@@ -2,12 +2,10 @@
 
 package events
 
-// ZcSePcBuyCashitemResult is the event emitted when a zc_se_pc_buy_cashitem_result packet is received.
-// ZC_SE_PC_BUY_CASHITEM_RESULT packet (PACKET_ZC_SE_PC_BUY_CASHITEM_RESULT)
+// ZcSePcBuyCashitemResult is the event emitted for the zc_se_pc_buy_cashitem_result action.
 type ZcSePcBuyCashitemResult struct {
-	CashPoints uint32 // cashPoints field
-	ItemId uint32 // itemId field
-	KafraPoints uint32 // kafraPoints field
-	PacketType int16 // packetType field
-	Result uint16 // result field
+	ItemId uint32
+	Result uint16
+	CashPoints uint32
+	KafraPoints uint32
 }

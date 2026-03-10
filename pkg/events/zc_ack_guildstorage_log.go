@@ -2,10 +2,5 @@
 
 package events
 
-// ZcAckGuildstorageLog is the event emitted when a zc_ack_guildstorage_log packet is received.
-// ZC_ACK_GUILDSTORAGE_LOG packet (PACKET_ZC_ACK_GUILDSTORAGE_LOG)
-type ZcAckGuildstorageLog struct {
-	Result uint16 // Result/status code
-	LogEntryCount uint16 // Number of log entries
-	LogEntries []byte // Raw array of log entries - handler parses per PACKETVER
-}
+// ZcAckGuildstorageLog is the event emitted for the zc_ack_guildstorage_log action.
+type ZcAckGuildstorageLog struct{}

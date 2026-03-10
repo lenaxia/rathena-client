@@ -12,7 +12,6 @@ func EncodeCzCmdResetcooltime(req send.CzCmdResetcooltime, packetver uint32) [2]
 	// Packet ID: 0x0A88 (little-endian)
 	p[0] = 0x88
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

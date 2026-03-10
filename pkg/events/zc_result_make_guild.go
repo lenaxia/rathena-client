@@ -2,8 +2,5 @@
 
 package events
 
-// ZcResultMakeGuild is the event emitted when a zc_result_make_guild packet is received.
-// ZC_RESULT_MAKE_GUILD packet (PACKET_ZC_RESULT_MAKE_GUILD)
-type ZcResultMakeGuild struct {
-	Type uint8 // Creation result (0=success, 1=invalid name, 2=already in guild, 3=same name exists)
-}
+// ZcResultMakeGuild is the event emitted for the zc_result_make_guild action.
+type ZcResultMakeGuild struct{}

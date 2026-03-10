@@ -3,7 +3,5 @@
 package send
 
 // CzReqTakeoffEquipAll is the request struct for the cz_req_takeoff_equip_all action.
-// CZ_REQ_TAKEOFF_EQUIP_ALL packet (PACKET_CZ_REQ_TAKEOFF_EQUIP_ALL)
 type CzReqTakeoffEquipAll struct {
-	PacketType int16 // PacketType field
 }

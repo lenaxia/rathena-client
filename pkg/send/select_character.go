@@ -3,7 +3,5 @@
 package send
 
 // SelectCharacter is the request struct for the select_character action.
-// Select a character to login
 type SelectCharacter struct {
-	Slot uint8 // Character slot number
 }

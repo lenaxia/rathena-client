@@ -3,6 +3,5 @@
 package send
 
 // EnterWorld is the request struct for the enter_world action.
-// Notify server that map has loaded and client is ready
 type EnterWorld struct {
 }

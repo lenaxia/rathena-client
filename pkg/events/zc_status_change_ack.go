@@ -2,11 +2,9 @@
 
 package events
 
-// ZcStatusChangeAck is the event emitted when a zc_status_change_ack packet is received.
-// ZC_STATUS_CHANGE_ACK packet (PACKET_ZC_STATUS_CHANGE_ACK)
+// ZcStatusChangeAck is the event emitted for the zc_status_change_ack action.
 type ZcStatusChangeAck struct {
-	Ok uint8 // ok field
-	PacketType int16 // packetType field
-	Sp uint16 // sp field
-	Value uint8 // value field
+	Sp uint16
+	Ok uint8
+	Value uint8
 }

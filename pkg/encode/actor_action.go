@@ -12,8 +12,8 @@ func EncodeActorAction(req send.ActorAction, packetver uint32) [7]byte {
 	case packetver >= 20200401: // 0x085A
 		var p [7]byte
 		p[0] = 0x5a; p[1] = 0x08
-			p[6] = req.Type  // rAthena: Action
-	leU32Put(		p[2:], req.TargetID)  // rAthena: TargetGID
+	leU32Put(		p[2:], req.TargetGID)  // rAthena: TargetGID
+			p[6] = req.Action  // rAthena: Action
 		return p
 	}
 	panic("EncodeActorAction: no matching packetver implementation — unimplemented")

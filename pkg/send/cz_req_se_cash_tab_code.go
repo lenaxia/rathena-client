@@ -3,7 +3,5 @@
 package send
 
 // CzReqSeCashTabCode is the request struct for the cz_req_se_cash_tab_code action.
-// CZ_REQ_SE_CASH_TAB_CODE packet (PACKET_CZ_REQ_SE_CASH_TAB_CODE)
 type CzReqSeCashTabCode struct {
-	TabCode int16 // Cash shop tab identifier to request
 }

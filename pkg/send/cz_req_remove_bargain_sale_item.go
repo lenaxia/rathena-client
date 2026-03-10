@@ -3,8 +3,5 @@
 package send
 
 // CzReqRemoveBargainSaleItem is the request struct for the cz_req_remove_bargain_sale_item action.
-// CZ_REQ_REMOVE_BARGAIN_SALE_ITEM packet (PACKET_CZ_REQ_REMOVE_BARGAIN_SALE_ITEM)
 type CzReqRemoveBargainSaleItem struct {
-	AccountID uint32 // Account ID
-	ItemID uint16 // Item ID to remove from bargain sale
 }

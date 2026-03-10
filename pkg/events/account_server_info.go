@@ -2,15 +2,15 @@
 
 package events
 
-// AccountServerInfo is the event emitted when a account_server_info packet is received.
-// Account info and server list
+// AccountServerInfo is the event emitted for the account_server_info action.
 type AccountServerInfo struct {
-	AccountID uint32 // Account ID
-	ServerInfo []byte // Variable-length server list (32 bytes per server)
-	LastLoginIP uint32 // Last login IP address
-	LastLoginTime string // Last login timestamp string
-	SessionID uint32 // Session ID 1
-	SessionID2 uint32 // Session ID 2
-	AccountSex uint8 // Account gender
-	WebAuthToken string // Web authentication token (WEB_AUTH_TOKEN_LENGTH=17, PACKETVER >= 20170315)
+	PacketLength int16
+	Login_id1 uint32
+	AID uint32
+	Login_id2 uint32
+	Last_ip uint32
+	Last_login string
+	Sex uint8
+	Char_servers []byte
+	Token string
 }

@@ -2,10 +2,5 @@
 
 package events
 
-// ZcAckItemcomposition is the event emitted when a zc_ack_itemcomposition packet is received.
-// ZC_ACK_ITEMCOMPOSITION packet (PACKET_ZC_ACK_ITEMCOMPOSITION)
-type ZcAckItemcomposition struct {
-	EquipIndex uint16 // Inventory index of the equipment item
-	CardIndex uint16 // Inventory index of the card item
-	Result uint8 // Card composition result (0=success, 1=failure)
-}
+// ZcAckItemcomposition is the event emitted for the zc_ack_itemcomposition action.
+type ZcAckItemcomposition struct{}

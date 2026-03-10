@@ -3,7 +3,7 @@
 package send
 
 // MarketPurchase is the request struct for the market_purchase action.
-// Purchase items from NPC market shop
 type MarketPurchase struct {
-	ItemList []byte // List of items to purchase (variable length)
+	PacketLength int16
+	List []byte
 }

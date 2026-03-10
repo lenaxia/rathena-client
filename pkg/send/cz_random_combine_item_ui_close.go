@@ -3,7 +3,5 @@
 package send
 
 // CzRandomCombineItemUiClose is the request struct for the cz_random_combine_item_ui_close action.
-// CZ_RANDOM_COMBINE_ITEM_UI_CLOSE packet (PACKET_CZ_RANDOM_COMBINE_ITEM_UI_CLOSE)
 type CzRandomCombineItemUiClose struct {
-	PacketType int16 // packetType field
 }

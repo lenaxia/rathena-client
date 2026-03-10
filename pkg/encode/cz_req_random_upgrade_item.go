@@ -12,9 +12,8 @@ func EncodeCzReqRandomUpgradeItem(req send.CzReqRandomUpgradeItem, packetver uin
 	// Packet ID: 0x0AB6 (little-endian)
 	p[0] = 0xb6
 	p[1] = 0x0a
+	leU16Put(p[2:], req.ItemId)  // rAthena: itemId
 	leU16Put(p[4:], req.Index)  // rAthena: index
-	leU32Put(p[2:], req.ItemId)  // rAthena: itemId
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

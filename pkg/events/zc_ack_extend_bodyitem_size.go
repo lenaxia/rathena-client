@@ -2,9 +2,7 @@
 
 package events
 
-// ZcAckExtendBodyitemSize is the event emitted when a zc_ack_extend_bodyitem_size packet is received.
-// ZC_ACK_EXTEND_BODYITEM_SIZE packet (PACKET_ZC_ACK_EXTEND_BODYITEM_SIZE)
+// ZcAckExtendBodyitemSize is the event emitted for the zc_ack_extend_bodyitem_size action.
 type ZcAckExtendBodyitemSize struct {
-	PacketType int16 // packetType field
-	Result uint8 // result field
+	Result uint8
 }

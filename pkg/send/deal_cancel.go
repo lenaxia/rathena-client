@@ -3,6 +3,5 @@
 package send
 
 // DealCancel is the request struct for the deal_cancel action.
-// Client cancels current trade
 type DealCancel struct {
 }

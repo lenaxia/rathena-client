@@ -12,10 +12,9 @@ func EncodeCzReqRefining(req send.CzReqRefining, packetver uint32) [7]byte {
 	// Packet ID: 0x0AA3 (little-endian)
 	p[0] = 0xa3
 	p[1] = 0x0a
-	p[6] = uint8(req.BlacksmithBlessing)  // rAthena: blacksmithBlessing
 	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
-	leU32Put(p[4:], req.ItemId)  // rAthena: itemId
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
+	leU16Put(p[4:], req.ItemId)  // rAthena: itemId
+	p[6] = uint8(req.BlacksmithBlessing)  // rAthena: blacksmithBlessing
 	_ = packetver
 	return p
 }

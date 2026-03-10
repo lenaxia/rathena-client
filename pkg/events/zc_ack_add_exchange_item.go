@@ -2,13 +2,5 @@
 
 package events
 
-// ZcAckAddExchangeItem is the event emitted when a zc_ack_add_exchange_item packet is received.
-// ZC_ACK_ADD_EXCHANGE_ITEM packet (PACKET_ZC_ACK_ADD_EXCHANGE_ITEM)
-type ZcAckAddExchangeItem struct {
-	Amount int32 // Item quantity being traded
-	Broken uint8 // Whether item is damaged/broken (1=yes, 0=no)
-	Identified uint8 // Whether item is identified (1=yes, 0=no)
-	NameID uint32 // Item ID being added to trade
-	Type uint8 // Item type classification
-	Upgrade uint8 // Item refine/upgrade level
-}
+// ZcAckAddExchangeItem is the event emitted for the zc_ack_add_exchange_item action.
+type ZcAckAddExchangeItem struct{}

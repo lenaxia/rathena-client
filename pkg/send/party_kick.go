@@ -3,8 +3,5 @@
 package send
 
 // PartyKick is the request struct for the party_kick action.
-// Kick/expel a member from the party
 type PartyKick struct {
-	AccountID uint32 // Account ID of the party member to kick
-	CharacterName string // Name of the character to kick from party
 }

@@ -8,23 +8,23 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ItemExists_0x009D(data []byte, packetver uint32) events.ItemExists {
 	var e events.ItemExists
 	if packetver >= 20181121 {
-		e.ID = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
-		// e.NameID = zero (field absent/defaulted in this version)
-		e.Identified = data[10]  // rAthena: identify (offset 10, size 1)
-		e.Amount = leU16(data, 15)  // rAthena: amount (offset 15, size 2)
-		e.Subx = data[17]  // rAthena: subX (offset 17, size 1)
-		e.Suby = data[18]  // rAthena: subY (offset 18, size 1)
+		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
+		e.ItemId = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
+		e.Identify = data[10]  // rAthena: identify (offset 10, size 1)
 		e.X = leU16(data, 11)  // rAthena: x (offset 11, size 2)
 		e.Y = leU16(data, 13)  // rAthena: y (offset 13, size 2)
+		e.Amount = leU16(data, 15)  // rAthena: amount (offset 15, size 2)
+		e.SubX = data[17]  // rAthena: subX (offset 17, size 1)
+		e.SubY = data[18]  // rAthena: subY (offset 18, size 1)
 	} else {
-		e.ID = uint32(leU16(data, 6))  // rAthena: itemId (offset 6, size 2)
-		// e.NameID = zero (field absent/defaulted in this version)
-		e.Identified = data[8]  // rAthena: identify (offset 8, size 1)
-		e.Amount = leU16(data, 13)  // rAthena: amount (offset 13, size 2)
-		e.Subx = data[15]  // rAthena: subX (offset 15, size 1)
-		e.Suby = data[16]  // rAthena: subY (offset 16, size 1)
+		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
+		e.ItemId = uint32(leU16(data, 6))  // rAthena: itemId (offset 6, size 2)
+		e.Identify = data[8]  // rAthena: identify (offset 8, size 1)
 		e.X = leU16(data, 9)  // rAthena: x (offset 9, size 2)
 		e.Y = leU16(data, 11)  // rAthena: y (offset 11, size 2)
+		e.Amount = leU16(data, 13)  // rAthena: amount (offset 13, size 2)
+		e.SubX = data[15]  // rAthena: subX (offset 15, size 1)
+		e.SubY = data[16]  // rAthena: subY (offset 16, size 1)
 	}
 	return e
 }

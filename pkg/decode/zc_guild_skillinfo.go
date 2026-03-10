@@ -9,9 +9,8 @@ func ZcGuildSkillinfo_0x0162(data []byte, packetver uint32) events.ZcGuildSkilli
 	var e events.ZcGuildSkillinfo
 	_ = packetver
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.SkillInfo = data[6:]  // rAthena: skillInfo (offset 6, size 0)
 	e.SkillPoint = leI16(data, 4)  // rAthena: skillPoint (offset 4, size 2)
+	e.SkillInfo = data[6:]  // rAthena: skillInfo (offset 6, size 0)
 	return e
 }
 

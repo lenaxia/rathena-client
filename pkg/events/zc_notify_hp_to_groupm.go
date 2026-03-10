@@ -2,10 +2,9 @@
 
 package events
 
-// ZcNotifyHpToGroupm is the event emitted when a zc_notify_hp_to_groupm packet is received.
-// Notify party member HP information
+// ZcNotifyHpToGroupm is the event emitted for the zc_notify_hp_to_groupm action.
 type ZcNotifyHpToGroupm struct {
-	AccountID uint32 // Account ID of party member
-	Hp uint16 // Current HP
-	MaxHP uint16 // Maximum HP
+	AID uint32
+	Hp int16
+	Maxhp int16
 }

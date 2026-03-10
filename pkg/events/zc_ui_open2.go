@@ -2,10 +2,8 @@
 
 package events
 
-// ZcUiOpen2 is the event emitted when a zc_ui_open2 packet is received.
-// ZC_UI_OPEN2 packet (PACKET_ZC_UI_OPEN2)
+// ZcUiOpen2 is the event emitted for the zc_ui_open2 action.
 type ZcUiOpen2 struct {
-	PacketType int16 // PacketType field
-	UIType int8 // UIType field
-	Data int64 // data field
+	UIType int8
+	Data int64
 }

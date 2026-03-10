@@ -2,9 +2,7 @@
 
 package events
 
-// ZcAckRandomUpgradeItem is the event emitted when a zc_ack_random_upgrade_item packet is received.
-// ZC_ACK_RANDOM_UPGRADE_ITEM packet (PACKET_ZC_ACK_RANDOM_UPGRADE_ITEM)
+// ZcAckRandomUpgradeItem is the event emitted for the zc_ack_random_upgrade_item action.
 type ZcAckRandomUpgradeItem struct {
-	PacketType int16 // packetType field
-	Result uint16 // result field
+	Result uint16
 }

@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckMakeGroup_0x00FA(data []byte, packetver uint32) events.ZcAckMakeGroup {
 	var e events.ZcAckMakeGroup
 	_ = packetver
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
 	e.Result = int8(data[2])  // rAthena: result (offset 2, size 1)
 	return e
 }

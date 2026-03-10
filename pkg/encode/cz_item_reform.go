@@ -13,7 +13,6 @@ func EncodeCzItemReform(req send.CzItemReform, packetver uint32) [8]byte {
 	p[0] = 0x91
 	p[1] = 0x0b
 	leU32Put(p[2:], uint32(req.ITID))  // rAthena: ITID
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	leU16Put(p[6:], uint16(req.Index))  // rAthena: index
 	_ = packetver
 	return p

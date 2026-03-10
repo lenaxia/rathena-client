@@ -3,8 +3,6 @@
 package send
 
 // CzReqMoveGuildAgit is the request struct for the cz_req_move_guild_agit action.
-// CZ_REQ_MOVE_GUILD_AGIT packet (PACKET_CZ_REQ_MOVE_GUILD_AGIT)
 type CzReqMoveGuildAgit struct {
-	CastleId int8 // castle_id field
-	PacketType int16 // packetType field
+	Castle_id int8
 }

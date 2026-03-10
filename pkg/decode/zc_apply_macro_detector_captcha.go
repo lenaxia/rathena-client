@@ -9,9 +9,8 @@ func ZcApplyMacroDetectorCaptcha_0x0A59(data []byte, packetver uint32) events.Zc
 	var e events.ZcApplyMacroDetectorCaptcha
 	_ = packetver
 	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.CaptchaKey = func() [4]byte { var a [4]byte; copy(a[:], data[4:]); return a }()  // rAthena: captchaKey (offset 4, size 4)
-	e.ImageData = data[8:]  // rAthena: imageData (offset 8, size 0)
+	e.CaptchaKey = nullTermString(data[4:8])  // rAthena: captchaKey (offset 4, size 4)
+	e.ImageData = nullTermString(data[8:])  // rAthena: imageData (offset 8, size 0)
 	return e
 }
 

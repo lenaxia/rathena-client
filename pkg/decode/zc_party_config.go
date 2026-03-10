@@ -9,7 +9,6 @@ func ZcPartyConfig_0x02C9(data []byte, packetver uint32) events.ZcPartyConfig {
 	var e events.ZcPartyConfig
 	_ = packetver
 	e.DenyPartyInvites = data[2]  // rAthena: denyPartyInvites (offset 2, size 1)
-	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }
 

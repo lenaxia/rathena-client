@@ -2,9 +2,13 @@
 
 package events
 
-// ZcAckReqnameall is the event emitted when a zc_ack_reqnameall packet is received.
-// ZC_ACK_REQNAMEALL packet (PACKET_ZC_ACK_REQNAMEALL)
+// ZcAckReqnameall is the event emitted for the zc_ack_reqnameall action.
 type ZcAckReqnameall struct {
-	Gid int32 // gid field
-	PacketId uint16 // packet_id field
+	Packet_id uint16
+	Gid int32
+	Name string
+	Party_name string
+	Guild_name string
+	Position_name string
+	Title_id int32
 }

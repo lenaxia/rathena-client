@@ -2,9 +2,7 @@
 
 package events
 
-// ZcRandomCombineItemUiOpen is the event emitted when a zc_random_combine_item_ui_open packet is received.
-// ZC_RANDOM_COMBINE_ITEM_UI_OPEN packet (PACKET_ZC_RANDOM_COMBINE_ITEM_UI_OPEN)
+// ZcRandomCombineItemUiOpen is the event emitted for the zc_random_combine_item_ui_open action.
 type ZcRandomCombineItemUiOpen struct {
-	ItemId int32 // itemId field
-	PacketType int16 // packetType field
+	ItemId int32
 }

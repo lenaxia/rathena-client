@@ -2,8 +2,8 @@
 
 package events
 
-// SelfChat is the event emitted when a self_chat packet is received.
-// Own character's chat message echo
+// SelfChat is the event emitted for the self_chat action.
 type SelfChat struct {
-	Message string // Chat message text (null-terminated)
+	PacketLength int16
+	Message string
 }

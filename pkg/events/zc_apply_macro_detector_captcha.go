@@ -2,11 +2,9 @@
 
 package events
 
-// ZcApplyMacroDetectorCaptcha is the event emitted when a zc_apply_macro_detector_captcha packet is received.
-// ZC_APPLY_MACRO_DETECTOR_CAPTCHA packet (PACKET_ZC_APPLY_MACRO_DETECTOR_CAPTCHA)
+// ZcApplyMacroDetectorCaptcha is the event emitted for the zc_apply_macro_detector_captcha action.
 type ZcApplyMacroDetectorCaptcha struct {
-	PacketLength int16 // Total packet length including header
-	PacketType int16 // Packet type identifier (0x0A59)
-	CaptchaKey [4]byte // 4-byte CAPTCHA key identifier
-	ImageData []byte // Variable-length CAPTCHA image data
+	PacketLength int16
+	CaptchaKey string
+	ImageData string
 }

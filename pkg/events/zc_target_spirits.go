@@ -2,10 +2,5 @@
 
 package events
 
-// ZcTargetSpirits is the event emitted when a zc_target_spirits packet is received.
-// ZC_TARGET_SPIRITS packet (PACKET_ZC_TARGET_SPIRITS)
-type ZcTargetSpirits struct {
-	ActorID uint32 // Target actor ID
-	Count int16 // Number of spirits
-	UnknownValue int16 // Unknown value
-}
+// ZcTargetSpirits is the event emitted for the zc_target_spirits action.
+type ZcTargetSpirits struct{}

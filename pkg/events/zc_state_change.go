@@ -2,13 +2,11 @@
 
 package events
 
-// ZcStateChange is the event emitted when a zc_state_change packet is received.
-// ZC_STATE_CHANGE packet (PACKET_ZC_STATE_CHANGE)
+// ZcStateChange is the event emitted for the zc_state_change action.
 type ZcStateChange struct {
-	ID uint32 // Actor ID (character or NPC)
-	PacketType int16 // PacketType field
-	Opt1 int16 // Body state (OPT1: stone=1, freeze=2, stun=3, sleep=4, poison=6)
-	Option int32 // Effect state bitfield (OPTION: sight=1, hide=2, cloak=4, cart=8, falcon=16, riding=32, invisible=64)
-	Opt2 int16 // Health state (OPT2: curse=1, blind=2, signumcrucis=4)
-	Stance int8 // PK mode flag (1=PK mode enabled, 0=disabled)
+	AID uint32
+	BodyState int16
+	HealthState int16
+	EffectState int32
+	IsPKModeON int8
 }

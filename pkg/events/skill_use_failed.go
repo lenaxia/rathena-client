@@ -2,12 +2,11 @@
 
 package events
 
-// SkillUseFailed is the event emitted when a skill_use_failed packet is received.
-// Skill usage failed notification
+// SkillUseFailed is the event emitted for the skill_use_failed action.
 type SkillUseFailed struct {
-	Btype uint32 // Basic type/category
-	Cause uint8 // Failure reason code
-	Flag uint8 // Additional flags
-	ItemId uint16 // Required item ID (if applicable)
-	SkillID uint16 // Skill ID that failed
+	SkillId uint16
+	Btype int32
+	ItemId uint32
+	Flag uint8
+	Cause uint8
 }

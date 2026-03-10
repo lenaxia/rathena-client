@@ -1,6 +1,8 @@
-// Package semantics loads the semantic_actions section of semantics/mappings.yaml
-// into Go structs. It uses a minimal hand-written YAML parser that handles the
-// specific subset of YAML used in mappings.yaml — no external dependencies.
+// Package semantics loads semantics/mappings.yaml into Go structs.
+// The file contains only a semantic_actions section — groupings of packet IDs
+// under named actions with their rAthena struct names. All field derivation is
+// done directly from the rAthena VersionTable; there are no canonical_params or
+// field_mapping expressions.
 package semantics
 
 import (
@@ -10,28 +12,17 @@ import (
 	"strings"
 )
 
-// CanonicalParam is one entry in an action's canonical_params list.
-type CanonicalParam struct {
-	Name     string
-	Type     string
-	Semantic string
-}
-
 // Implementation is one packet ID variant for a semantic action.
 type Implementation struct {
-	PacketID     string            // e.g. "0x009F"
-	PacketverMin int               // e.g. 20030000
-	PacketverMax int               // 0 = no upper bound
-	StructName   string            // rAthena struct name, e.g. PACKET_ZC_NOTIFY_VANISH
-	FieldMapping map[string]string // canonical param → Go expression
+	PacketID     string // e.g. "0x009F"
+	PacketverMin int    // e.g. 20030000
+	PacketverMax int    // 0 = no upper bound
+	StructName   string // rAthena struct name, e.g. PACKET_ZC_NOTIFY_VANISH
 }
 
 // Action is a single semantic action from the semantic_actions section.
 type Action struct {
 	Name            string
-	Description     string
-	OpenkoreName    string
-	CanonicalParams []CanonicalParam
 	Implementations []Implementation
 }
 
@@ -61,8 +52,15 @@ func LoadFile(path string) (*DB, error) {
 }
 
 // parse extracts the semantic_actions section and builds a DB.
+//
+// Expected indentation:
+//
+//	0  spaces — "semantic_actions:"
+//	4  spaces — action name key  (e.g. "    actor_exists:")
+//	8  spaces — "implementations:"
+//	12 spaces — list item        (e.g. "            - packet_id: ...")
+//	14 spaces — continuation     (struct_name, packetver_min, packetver_max)
 func parse(lines []string) (*DB, error) {
-	// Find the start of the semantic_actions section.
 	start := -1
 	for i, l := range lines {
 		if strings.TrimSpace(l) == "semantic_actions:" {
@@ -76,41 +74,18 @@ func parse(lines []string) (*DB, error) {
 
 	db := &DB{Actions: make(map[string]*Action)}
 
-	// State machine: we iterate line by line within the semantic_actions block.
-	// Indentation levels:
-	//   4 spaces  — action name key (e.g. "    ac_accept_login:")
-	//   8 spaces  — action field (name, description, canonical_params, implementations)
-	//   12 spaces — list item start "- " or map value
-	//   16 spaces — param/impl field
-	//   20 spaces — field_mapping key
-	//
-	// We detect blocks by indent level.
-
-	type state int
-	const (
-		sTop      state = iota // inside semantic_actions, looking for action name
-		sAction                // inside an action, looking for action fields
-		sParams                // inside canonical_params list
-		sParam                 // inside a single param
-		sImpls                 // inside implementations list
-		sImpl                  // inside a single implementation
-		sFieldMap              // inside field_mapping
-	)
-
-	cur := sTop
-	var action *Action
-	var param *CanonicalParam
-	var impl *Implementation
+	var curAction *Action
+	var curImpl *Implementation
+	inImpls := false
 
 	for i := start; i < len(lines); i++ {
 		raw := lines[i]
 
-		// Stop at top-level keys that follow semantic_actions (e.g. "version:")
+		// Stop at next top-level key (no leading space).
 		if len(raw) > 0 && raw[0] != ' ' && raw[0] != '\t' {
 			break
 		}
 
-		// Skip blank lines and comment lines.
 		trimmed := strings.TrimSpace(raw)
 		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
 			continue
@@ -118,239 +93,101 @@ func parse(lines []string) (*DB, error) {
 
 		indent := countIndent(raw)
 
-		switch cur {
-		case sTop:
-			// Expect "    <action_name>:" at indent 4.
-			if indent == 4 && strings.HasSuffix(trimmed, ":") {
-				name := strings.TrimSuffix(trimmed, ":")
-				name = unquote(name)
-				action = &Action{Name: name}
-				db.Actions[name] = action
-				cur = sAction
+		switch {
+		case indent == 4 && strings.HasSuffix(trimmed, ":"):
+			// New action name.
+			name := unquote(strings.TrimSuffix(trimmed, ":"))
+			curAction = &Action{Name: name}
+			db.Actions[name] = curAction
+			inImpls = false
+			curImpl = nil
+
+		case indent == 8:
+			if trimmed == "implementations:" {
+				inImpls = true
 			}
 
-		case sAction:
-			if indent == 4 {
-				// New top-level action (shouldn't happen without colon, but guard).
-				if strings.HasSuffix(trimmed, ":") {
-					name := strings.TrimSuffix(trimmed, ":")
-					name = unquote(name)
-					action = &Action{Name: name}
-					db.Actions[name] = action
-				}
-				continue
+		case indent == 12 && inImpls && strings.HasPrefix(trimmed, "- "):
+			// Start of a new implementation entry.
+			curImpl = &Implementation{}
+			if curAction != nil {
+				curAction.Implementations = append(curAction.Implementations, *curImpl)
+				curImpl = &curAction.Implementations[len(curAction.Implementations)-1]
 			}
-			if indent < 8 {
-				// Stepped out of action scope.
-				cur = sTop
-				i-- // re-process this line
-				continue
-			}
-			if indent == 8 {
-				k, v := splitKV(trimmed)
-				switch k {
-				case "name":
-					action.Name = unquote(v)
-				case "description":
-					action.Description = unquote(v)
-				case "openkore_name":
-					action.OpenkoreName = unquote(v)
-				case "canonical_params":
-					// value is empty (block sequence follows)
-					cur = sParams
-				case "implementations":
-					cur = sImpls
-				}
-			}
+			rest := strings.TrimPrefix(trimmed, "- ")
+			k, v := splitKV(rest)
+			setImplField(curImpl, k, v)
 
-		case sParams:
-			if indent < 8 {
-				cur = sTop
-				i--
-				continue
-			}
-			if indent == 8 {
-				// Stepped out of canonical_params to another action field.
-				k, _ := splitKV(trimmed)
-				switch k {
-				case "implementations":
-					cur = sImpls
-				default:
-					// Some other field (shouldn't happen normally).
-					cur = sAction
-					i--
-				}
-				continue
-			}
-			// indent == 12: list items "- name: ..."
-			if indent == 12 && strings.HasPrefix(trimmed, "- ") {
-				// Start of a new param entry.
-				param = &CanonicalParam{}
-				action.CanonicalParams = append(action.CanonicalParams, *param)
-				// The param pointer must point to the slice element.
-				param = &action.CanonicalParams[len(action.CanonicalParams)-1]
-				cur = sParam
-				// Parse the inline key-value after "- ".
-				rest := strings.TrimPrefix(trimmed, "- ")
-				k, v := splitKV(rest)
-				setParamField(param, k, v)
-				continue
-			}
-			// indent == 14: continuation fields of a param.
-			if indent == 14 {
-				if param != nil {
-					k, v := splitKV(trimmed)
-					setParamField(param, k, v)
-				}
-				continue
-			}
-
-		case sParam:
-			if indent < 12 {
-				// Left the param list entirely.
-				cur = sAction
-				i--
-				continue
-			}
-			if indent == 12 {
-				if strings.HasPrefix(trimmed, "- ") {
-					// Next param.
-					param = &CanonicalParam{}
-					action.CanonicalParams = append(action.CanonicalParams, *param)
-					param = &action.CanonicalParams[len(action.CanonicalParams)-1]
-					rest := strings.TrimPrefix(trimmed, "- ")
-					k, v := splitKV(rest)
-					setParamField(param, k, v)
-				} else {
-					// Back to sParams level without a list item — transition.
-					cur = sParams
-					i--
-				}
-				continue
-			}
-			if indent >= 14 {
-				if param != nil {
-					k, v := splitKV(trimmed)
-					setParamField(param, k, v)
-				}
-				continue
-			}
-
-		case sImpls:
-			if indent < 8 {
-				cur = sTop
-				i--
-				continue
-			}
-			if indent == 8 {
-				// Another action-level field after implementations.
-				cur = sAction
-				i--
-				continue
-			}
-			// indent == 12: list items "- packet_id: ..."
-			if indent == 12 && strings.HasPrefix(trimmed, "- ") {
-				impl = &Implementation{FieldMapping: make(map[string]string)}
-				action.Implementations = append(action.Implementations, *impl)
-				impl = &action.Implementations[len(action.Implementations)-1]
-				cur = sImpl
-				rest := strings.TrimPrefix(trimmed, "- ")
-				k, v := splitKV(rest)
-				setImplField(impl, k, v)
-				continue
-			}
-
-		case sImpl:
-			if indent < 12 {
-				cur = sAction
-				i--
-				continue
-			}
-			if indent == 12 {
-				if strings.HasPrefix(trimmed, "- ") {
-					// Next implementation.
-					impl = &Implementation{FieldMapping: make(map[string]string)}
-					action.Implementations = append(action.Implementations, *impl)
-					impl = &action.Implementations[len(action.Implementations)-1]
-					rest := strings.TrimPrefix(trimmed, "- ")
-					k, v := splitKV(rest)
-					setImplField(impl, k, v)
-				} else {
-					cur = sImpls
-					i--
-				}
-				continue
-			}
-			// indent == 14: continuation fields of a list item (aligned to content after "- ").
-			if indent == 14 {
-				k, v := splitKV(trimmed)
-				switch k {
-				case "field_mapping":
-					cur = sFieldMap
-				case "packetver_range":
-					// list items follow at indent 16; skip the key line, handled below.
-				default:
-					setImplField(impl, k, v)
-				}
-				continue
-			}
-			// indent == 16: packetver_range list items.
-			if indent == 16 {
-				if strings.HasPrefix(trimmed, "- ") {
-					val := strings.TrimPrefix(trimmed, "- ")
-					val = strings.TrimSpace(val)
-					if val != "null" && val != "" {
-						if impl.PacketverMin == 0 {
-							parseIntInto(val, &impl.PacketverMin)
-						} else {
-							parseIntInto(val, &impl.PacketverMax)
-						}
-					}
-				}
-				continue
-			}
-
-		case sFieldMap:
-			if indent < 12 {
-				// Stepped out of the implementations list entirely.
-				cur = sAction
-				i--
-				continue
-			}
-			if indent == 12 {
-				if strings.HasPrefix(trimmed, "- ") {
-					// Next implementation in the list.
-					impl = &Implementation{FieldMapping: make(map[string]string)}
-					action.Implementations = append(action.Implementations, *impl)
-					impl = &action.Implementations[len(action.Implementations)-1]
-					cur = sImpl
-					rest := strings.TrimPrefix(trimmed, "- ")
-					k, v := splitKV(rest)
-					setImplField(impl, k, v)
-				} else {
-					// Non-list line at indent 12 — back to sImpls.
-					cur = sImpls
-					i--
-				}
-				continue
-			}
-			if indent == 14 {
-				// End of field_mapping — back to impl continuation fields.
-				cur = sImpl
-				i--
-				continue
-			}
-			if indent == 16 {
-				k, v := splitKV(trimmed)
-				if impl != nil && k != "" {
-					impl.FieldMapping[k] = v
-				}
-				continue
-			}
+		case indent == 14 && curImpl != nil:
+			k, v := splitKV(trimmed)
+			setImplField(curImpl, k, v)
 		}
 	}
 
 	return db, nil
+}
+
+// PacketMapping holds the minimal data needed for the S→C length join pass:
+// packet ID, direction (derived from struct name), and rAthena struct name.
+type PacketMapping struct {
+	PacketID      string // e.g. "0x00B0" (normalised uppercase hex)
+	Direction     string // "send" or "receive"
+	RathenaStruct string // e.g. "PACKET_ZC_PAR_CHANGE"
+}
+
+// LoadMappings derives a flat list of PacketMapping from the semantic_actions
+// section. Direction is inferred from the struct name prefix:
+//   - ZC_ / HC_ / AC_ / SC_ / TC_ prefixes → "receive" (server-to-client)
+//   - Everything else                        → "send"    (client-to-server)
+//
+// SYNTH_ZC_* and SYNTH_HC_* are also treated as receive. packet_* lowercase
+// structs represent receive packets by convention.
+func LoadMappings(path string) ([]PacketMapping, error) {
+	db, err := LoadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	seen := make(map[string]bool) // deduplicate packet_id
+	var results []PacketMapping
+
+	for _, action := range db.Actions {
+		for _, impl := range action.Implementations {
+			if impl.PacketID == "" || impl.StructName == "" {
+				continue
+			}
+			key := impl.PacketID
+			if seen[key] {
+				continue
+			}
+			seen[key] = true
+			results = append(results, PacketMapping{
+				PacketID:      normPacketID(impl.PacketID),
+				Direction:     inferDirection(impl.StructName),
+				RathenaStruct: impl.StructName,
+			})
+		}
+	}
+
+	return results, nil
+}
+
+// inferDirection returns "receive" for server→client structs, "send" otherwise.
+func inferDirection(structName string) string {
+	upper := strings.ToUpper(structName)
+	for _, prefix := range []string{
+		"PACKET_ZC_", "PACKET_HC_", "PACKET_AC_", "PACKET_SC_", "PACKET_TC_",
+		"SYNTH_ZC_", "SYNTH_HC_",
+	} {
+		if strings.HasPrefix(upper, prefix) {
+			return "receive"
+		}
+	}
+	// lowercase packet_* structs (packet_idle_unit, packet_unit_walking, etc.)
+	if strings.HasPrefix(structName, "packet_") {
+		return "receive"
+	}
+	return "send"
 }
 
 // --- helpers ---
@@ -370,7 +207,6 @@ func countIndent(s string) int {
 }
 
 // splitKV splits "key: value" → ("key", "value").
-// value may be empty (block scalar follows).
 func splitKV(s string) (key, val string) {
 	idx := strings.Index(s, ":")
 	if idx < 0 {
@@ -383,7 +219,7 @@ func splitKV(s string) (key, val string) {
 	return
 }
 
-// unquote strips surrounding single or double quotes and unescapes \\n, \\.
+// unquote strips surrounding single or double quotes.
 func unquote(s string) string {
 	s = strings.TrimSpace(s)
 	if len(s) >= 2 {
@@ -395,21 +231,9 @@ func unquote(s string) string {
 	return s
 }
 
-func setParamField(p *CanonicalParam, k, v string) {
-	switch k {
-	case "name":
-		p.Name = v
-	case "type":
-		p.Type = v
-	case "semantic":
-		p.Semantic = v
-	}
-}
-
 func setImplField(impl *Implementation, k, v string) {
 	switch k {
 	case "packet_id":
-		// Normalise to "0x009F" form (lower-case 0x, upper-case hex digits).
 		lower := strings.ToLower(v)
 		if strings.HasPrefix(lower, "0x") {
 			impl.PacketID = "0x" + strings.ToUpper(lower[2:])
@@ -418,6 +242,10 @@ func setImplField(impl *Implementation, k, v string) {
 		}
 	case "struct_name":
 		impl.StructName = v
+	case "packetver_min":
+		parseIntInto(v, &impl.PacketverMin)
+	case "packetver_max":
+		parseIntInto(v, &impl.PacketverMax)
 	}
 }
 
@@ -430,93 +258,6 @@ func parseIntInto(s string, dst *int) {
 		}
 	}
 	*dst = n
-}
-
-// PacketMapping holds the packet-level metadata from the mappings: section.
-// Only the fields needed for length generation are populated.
-type PacketMapping struct {
-	PacketID      string // e.g. "0x00B0" (normalised uppercase hex)
-	Direction     string // "send" or "receive"
-	RathenaStruct string // e.g. "PACKET_ZC_PAR_CHANGE"
-}
-
-// LoadMappings parses only the mappings: section of mappings.yaml and returns
-// a slice of PacketMapping for all entries that have a non-empty rathena_struct.
-// It uses a simple line-by-line scanner and only extracts the three fields needed
-// for the S→C length join pass.
-func LoadMappings(path string) ([]PacketMapping, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("open %s: %w", path, err)
-	}
-	defer f.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(f)
-	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("scan %s: %w", path, err)
-	}
-	return parseMappings(lines), nil
-}
-
-// parseMappings scans lines for the mappings: block and extracts packet_id,
-// direction, and rathena_struct for each list entry.
-func parseMappings(lines []string) []PacketMapping {
-	inMappings := false
-	var results []PacketMapping
-	var cur PacketMapping
-
-	flush := func() {
-		if cur.PacketID != "" && cur.RathenaStruct != "" {
-			results = append(results, cur)
-		}
-		cur = PacketMapping{}
-	}
-
-	for _, raw := range lines {
-		if !inMappings {
-			if strings.TrimSpace(raw) == "mappings:" {
-				inMappings = true
-			}
-			continue
-		}
-		// Stop at the next top-level key (no leading space).
-		if len(raw) > 0 && raw[0] != ' ' && raw[0] != '\t' {
-			break
-		}
-
-		trimmed := strings.TrimSpace(raw)
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
-			continue
-		}
-
-		// A "- packet_id:" line starts a new mapping entry.
-		if strings.HasPrefix(trimmed, "- ") {
-			flush()
-			rest := strings.TrimPrefix(trimmed, "- ")
-			k, v := splitKV(rest)
-			if k == "packet_id" {
-				cur.PacketID = normPacketID(unquote(v))
-			}
-			continue
-		}
-
-		k, v := splitKV(trimmed)
-		switch k {
-		case "packet_id":
-			cur.PacketID = normPacketID(unquote(v))
-		case "direction":
-			cur.Direction = unquote(v)
-		case "rathena_struct":
-			cur.RathenaStruct = unquote(v)
-		}
-	}
-	flush()
-	return results
 }
 
 // normPacketID normalises a packet ID to "0xABCD" form (uppercase hex digits).

@@ -2,9 +2,5 @@
 
 package events
 
-// ZcEquipitemDamaged is the event emitted when a zc_equipitem_damaged packet is received.
-// ZC_EQUIPITEM_DAMAGED packet (PACKET_ZC_EQUIPITEM_DAMAGED)
-type ZcEquipitemDamaged struct {
-	ID uint32 // Actor ID
-	Slot uint16 // Equipment slot that was damaged
-}
+// ZcEquipitemDamaged is the event emitted for the zc_equipitem_damaged action.
+type ZcEquipitemDamaged struct{}

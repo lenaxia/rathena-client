@@ -2,11 +2,10 @@
 
 package events
 
-// ZcReqWearEquipAck is the event emitted when a zc_req_wear_equip_ack packet is received.
-// ZC_REQ_WEAR_EQUIP_ACK packet (PACKET_ZC_REQ_WEAR_EQUIP_ACK)
+// ZcReqWearEquipAck is the event emitted for the zc_req_wear_equip_ack action.
 type ZcReqWearEquipAck struct {
-	PacketType int16 // PacketType field
-	Index uint16 // index field
-	Result uint8 // result field
-	WearLocation uint16 // wearLocation field
+	Index uint16
+	WearLocation uint32
+	Result uint8
+	WItemSpriteNumber uint16
 }

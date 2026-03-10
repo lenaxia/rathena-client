@@ -2,9 +2,5 @@
 
 package events
 
-// ZcClearDialog is the event emitted when a zc_clear_dialog packet is received.
-// ZC_CLEAR_DIALOG packet (PACKET_ZC_CLEAR_DIALOG)
-type ZcClearDialog struct {
-	PacketID int16 // Packet identifier
-	NpcID uint32 // NPC game ID to clear dialog for
-}
+// ZcClearDialog is the event emitted for the zc_clear_dialog action.
+type ZcClearDialog struct{}

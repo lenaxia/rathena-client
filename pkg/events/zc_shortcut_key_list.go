@@ -2,8 +2,9 @@
 
 package events
 
-// ZcShortcutKeyList is the event emitted when a zc_shortcut_key_list packet is received.
-// ZC_SHORTCUT_KEY_LIST packet (PACKET_ZC_SHORTCUT_KEY_LIST)
+// ZcShortcutKeyList is the event emitted for the zc_shortcut_key_list action.
 type ZcShortcutKeyList struct {
-	PacketType int16 // packetType field
+	Hotkey []byte
+	Rotate int8
+	Tab int16
 }

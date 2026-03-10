@@ -2,9 +2,5 @@
 
 package events
 
-// ZcDeleteItemFromStore is the event emitted when a zc_delete_item_from_store packet is received.
-// ZC_DELETE_ITEM_FROM_STORE packet (PACKET_ZC_DELETE_ITEM_FROM_STORE)
-type ZcDeleteItemFromStore struct {
-	Index uint16 // Storage slot index of removed item
-	Amount uint32 // Amount removed from storage
-}
+// ZcDeleteItemFromStore is the event emitted for the zc_delete_item_from_store action.
+type ZcDeleteItemFromStore struct{}

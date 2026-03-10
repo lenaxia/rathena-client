@@ -2,8 +2,5 @@
 
 package events
 
-// ZcOpenEditdlg is the event emitted when a zc_open_editdlg packet is received.
-// ZC_OPEN_EDITDLG packet (PACKET_ZC_OPEN_EDITDLG)
-type ZcOpenEditdlg struct {
-	NpcID uint32 // NPC ID
-}
+// ZcOpenEditdlg is the event emitted for the zc_open_editdlg action.
+type ZcOpenEditdlg struct{}

@@ -2,8 +2,8 @@
 
 package events
 
-// PetEggList is the event emitted when a pet_egg_list packet is received.
-// List of pet eggs in inventory for hatching
+// PetEggList is the event emitted for the pet_egg_list action.
 type PetEggList struct {
-	InventoryIndices []int16 // Array of inventory indices pointing to pet eggs
+	PacketLength uint16
+	Eggs []byte
 }

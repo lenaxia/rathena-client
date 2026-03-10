@@ -2,8 +2,8 @@
 
 package events
 
-// ZcDialogWindowPos2 is the event emitted when a zc_dialog_window_pos2 packet is received.
-// ZC_DIALOG_WINDOW_POS2 packet (PACKET_ZC_DIALOG_WINDOW_POS2)
+// ZcDialogWindowPos2 is the event emitted for the zc_dialog_window_pos2 action.
 type ZcDialogWindowPos2 struct {
-	PacketType int16 // PacketType field
+	X []byte
+	Y []byte
 }

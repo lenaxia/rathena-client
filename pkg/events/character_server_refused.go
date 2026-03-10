@@ -2,8 +2,5 @@
 
 package events
 
-// CharacterServerRefused is the event emitted when a character_server_refused packet is received.
-// Character server entry refused
-type CharacterServerRefused struct {
-	ErrorCode uint8 // Reason for refusal
-}
+// CharacterServerRefused is the event emitted for the character_server_refused action.
+type CharacterServerRefused struct{}

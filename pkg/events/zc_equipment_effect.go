@@ -2,12 +2,10 @@
 
 package events
 
-// ZcEquipmentEffect is the event emitted when a zc_equipment_effect packet is received.
-// ZC_EQUIPMENT_EFFECT packet (PACKET_ZC_EQUIPMENT_EFFECT)
+// ZcEquipmentEffect is the event emitted for the zc_equipment_effect action.
 type ZcEquipmentEffect struct {
-	Aid uint32 // aid field
-	Effects []byte // effects field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
-	Status int8 // status field
+	PacketLength int16
+	Aid uint32
+	Status int8
+	Effects []byte
 }

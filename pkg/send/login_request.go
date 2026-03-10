@@ -3,7 +3,5 @@
 package send
 
 // LoginRequest is the request struct for the login_request action.
-// Client login authentication request with credentials
 type LoginRequest struct {
-	Version uint32 // Client version number
 }

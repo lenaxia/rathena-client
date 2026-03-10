@@ -3,8 +3,6 @@
 package send
 
 // CzUninstallation is the request struct for the cz_uninstallation action.
-// CZ_UNINSTALLATION packet (PACKET_CZ_UNINSTALLATION)
 type CzUninstallation struct {
-	InstallationKind uint8 // InstallationKind field
-	PacketType int16 // PacketType field
+	InstallationKind uint8
 }

@@ -2,10 +2,9 @@
 
 package events
 
-// ZcDeleteMemberFromGroup is the event emitted when a zc_delete_member_from_group packet is received.
-// Notification that a party member has left or been kicked from the party
+// ZcDeleteMemberFromGroup is the event emitted for the zc_delete_member_from_group action.
 type ZcDeleteMemberFromGroup struct {
-	Result uint8 // Reason for leaving (0=leave, 1=kicked)
-	AccountID uint32 // Account ID of the party member who left
-	CharacterName string // Name of the character who left the party
+	AID []byte
+	CharacterName string
+	Result int8
 }

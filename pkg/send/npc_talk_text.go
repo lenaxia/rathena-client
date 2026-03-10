@@ -3,8 +3,5 @@
 package send
 
 // NpcTalkText is the request struct for the npc_talk_text action.
-// Send text input to NPC dialog
 type NpcTalkText struct {
-	NPCID uint32 // NPC actor ID
-	Text string // Text input (variable length string)
 }

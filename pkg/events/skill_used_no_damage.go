@@ -2,12 +2,11 @@
 
 package events
 
-// SkillUsedNoDamage is the event emitted when a skill_used_no_damage packet is received.
-// Non-damaging skill execution (buffs, heals, support)
+// SkillUsedNoDamage is the event emitted for the skill_used_no_damage action.
 type SkillUsedNoDamage struct {
-	SkillID uint16 // Skill ID being used
-	Amount uint16 // Skill level
-	Success uint8 // Success flag (1=success, 0=failure)
-	SourceID uint32 // Caster actor ID
-	TargetID uint32 // Target actor ID
+	SKID uint16
+	Level int32
+	TargetAID uint32
+	SrcAID uint32
+	Result int8
 }

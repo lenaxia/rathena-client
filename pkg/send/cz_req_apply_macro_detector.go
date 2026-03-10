@@ -3,8 +3,6 @@
 package send
 
 // CzReqApplyMacroDetector is the request struct for the cz_req_apply_macro_detector action.
-// CZ_REQ_APPLY_MACRO_DETECTOR packet (PACKET_CZ_REQ_APPLY_MACRO_DETECTOR)
 type CzReqApplyMacroDetector struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
+	AID uint32
 }

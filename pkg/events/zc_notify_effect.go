@@ -2,9 +2,5 @@
 
 package events
 
-// ZcNotifyEffect is the event emitted when a zc_notify_effect packet is received.
-// Visual status effect notification
-type ZcNotifyEffect struct {
-	ID uint32 // Actor ID
-	EffectID uint32 // Visual effect ID to display
-}
+// ZcNotifyEffect is the event emitted for the zc_notify_effect action.
+type ZcNotifyEffect struct{}

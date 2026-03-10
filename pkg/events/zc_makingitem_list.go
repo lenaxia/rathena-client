@@ -2,11 +2,9 @@
 
 package events
 
-// ZcMakingitemList is the event emitted when a zc_makingitem_list packet is received.
-// ZC_MAKINGITEM_LIST packet (PACKET_ZC_MAKINGITEM_LIST)
+// ZcMakingitemList is the event emitted for the zc_makingitem_list action.
 type ZcMakingitemList struct {
-	Items []byte // items field
-	MakeItem uint16 // makeItem field
-	PacketLength int16 // packetLength field
-	PacketType int16 // packetType field
+	PacketLength int16
+	MakeItem uint16
+	Items []byte
 }

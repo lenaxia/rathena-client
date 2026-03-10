@@ -2,11 +2,10 @@
 
 package events
 
-// ZcSound is the event emitted when a zc_sound packet is received.
-// ZC_SOUND packet (PACKET_ZC_SOUND)
+// ZcSound is the event emitted for the zc_sound action.
 type ZcSound struct {
-	AID uint32 // AID field
-	PacketType int16 // PacketType field
-	Act uint8 // act field
-	Term uint32 // term field
+	Name string
+	Act uint8
+	Term uint32
+	AID uint32
 }

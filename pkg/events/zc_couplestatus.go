@@ -2,11 +2,9 @@
 
 package events
 
-// ZcCouplestatus is the event emitted when a zc_couplestatus packet is received.
-// ZC_COUPLESTATUS packet (PACKET_ZC_COUPLESTATUS)
+// ZcCouplestatus is the event emitted for the zc_couplestatus action.
 type ZcCouplestatus struct {
-	PacketType int16 // Packet ID
-	Val int32 // Base stat value (without bonuses)
-	Val2 int32 // Bonus stat value (from equipment/buffs)
-	Type uint32 // Status type identifier
+	StatusType uint32
+	DefaultStatus int32
+	PlusStatus int32
 }

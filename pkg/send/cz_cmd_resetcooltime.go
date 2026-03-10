@@ -3,7 +3,5 @@
 package send
 
 // CzCmdResetcooltime is the request struct for the cz_cmd_resetcooltime action.
-// CZ_CMD_RESETCOOLTIME packet (PACKET_CZ_CMD_RESETCOOLTIME)
 type CzCmdResetcooltime struct {
-	PacketType int16 // packetType field
 }

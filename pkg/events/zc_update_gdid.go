@@ -2,12 +2,13 @@
 
 package events
 
-// ZcUpdateGdid is the event emitted when a zc_update_gdid packet is received.
-// ZC_UPDATE_GDID packet (PACKET_ZC_UPDATE_GDID)
+// ZcUpdateGdid is the event emitted for the zc_update_gdid action.
 type ZcUpdateGdid struct {
-	PacketType int16 // PacketType field
-	GuildId uint32 // guildId field
-	InterSid int32 // interSid field
-	IsMaster uint8 // isMaster field
-	Mode uint32 // mode field
+	GuildId uint32
+	EmblemVersion []byte
+	Mode uint32
+	IsMaster uint8
+	InterSid int32
+	GuildName string
+	MasterGID uint32
 }

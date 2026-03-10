@@ -3,8 +3,6 @@
 package send
 
 // CzReqAgitInvestment is the request struct for the cz_req_agit_investment action.
-// CZ_REQ_AGIT_INVESTMENT packet (PACKET_CZ_REQ_AGIT_INVESTMENT)
 type CzReqAgitInvestment struct {
-	CastleId int8 // castle_id field
-	PacketType int16 // packetType field
+	Castle_id int8
 }

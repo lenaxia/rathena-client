@@ -2,8 +2,5 @@
 
 package events
 
-// ItemDisappeared is the event emitted when a item_disappeared packet is received.
-// Item disappeared from ground
-type ItemDisappeared struct {
-	ID uint32 // Item actor ID that disappeared
-}
+// ItemDisappeared is the event emitted for the item_disappeared action.
+type ItemDisappeared struct{}

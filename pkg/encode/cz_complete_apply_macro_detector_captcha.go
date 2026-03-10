@@ -12,7 +12,6 @@ func EncodeCzCompleteApplyMacroDetectorCaptcha(req send.CzCompleteApplyMacroDete
 	// Packet ID: 0x0A5A (little-endian)
 	p[0] = 0x5a
 	p[1] = 0x0a
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
 	_ = packetver
 	return p
 }

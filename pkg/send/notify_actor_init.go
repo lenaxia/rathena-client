@@ -3,6 +3,5 @@
 package send
 
 // NotifyActorInit is the request struct for the notify_actor_init action.
-// Notify server that client actor is initialized and ready
 type NotifyActorInit struct {
 }

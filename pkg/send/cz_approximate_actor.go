@@ -3,10 +3,8 @@
 package send
 
 // CzApproximateActor is the request struct for the cz_approximate_actor action.
-// CZ_APPROXIMATE_ACTOR packet (PACKET_CZ_APPROXIMATE_ACTOR)
 type CzApproximateActor struct {
-	PacketType int16 // PacketType field
-	MasterGID uint32 // masterGID field
-	Unused1 uint16 // unused1 field
-	Unused2 uint8 // unused2 field
+	MasterGID uint32
+	Unused1 uint16
+	Unused2 uint8
 }

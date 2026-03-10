@@ -2,8 +2,5 @@
 
 package events
 
-// ZcAckCreateChatroom is the event emitted when a zc_ack_create_chatroom packet is received.
-// ZC_ACK_CREATE_CHATROOM packet (PACKET_ZC_ACK_CREATE_CHATROOM)
-type ZcAckCreateChatroom struct {
-	Result uint8 // Result code - 0=success, 1=room limit exceeded, 2=same room exists
-}
+// ZcAckCreateChatroom is the event emitted for the zc_ack_create_chatroom action.
+type ZcAckCreateChatroom struct{}

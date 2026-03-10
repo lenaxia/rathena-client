@@ -2,9 +2,5 @@
 
 package events
 
-// SystemChat is the event emitted when a system_chat packet is received.
-// System broadcast message sent to all players
-type SystemChat struct {
-	PacketLength int16 // Packet length including header
-	Message string // System broadcast message text
-}
+// SystemChat is the event emitted for the system_chat action.
+type SystemChat struct{}

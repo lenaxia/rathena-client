@@ -8,19 +8,17 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPersonalInfomation_0x08CB(data []byte, packetver uint32) events.ZcPersonalInfomation {
 	var e events.ZcPersonalInfomation
 	if packetver >= 20120503 {
+		e.Length = leI16(data, 2)  // rAthena: length (offset 2, size 2)
+		e.Total_exp = leI32(data, 4)  // rAthena: total_exp (offset 4, size 4)
+		e.Total_death = leI32(data, 8)  // rAthena: total_death (offset 8, size 4)
+		e.Total_drop = leI32(data, 12)  // rAthena: total_drop (offset 12, size 4)
 		e.Details = data[16:]  // rAthena: details (offset 16, size 0)
-		e.Length = leI16(data, 2)  // rAthena: length (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
-		e.TotalDeath = leI16(data, 8)  // rAthena: total_death (offset 8, size 4)
-		e.TotalDrop = leI16(data, 12)  // rAthena: total_drop (offset 12, size 4)
-		e.TotalExp = leI16(data, 4)  // rAthena: total_exp (offset 4, size 4)
 	} else {
-		e.Details = data[10:]  // rAthena: details (offset 10, size 0)
 		e.Length = leI16(data, 2)  // rAthena: length (offset 2, size 2)
-		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
-		e.TotalDeath = leI16(data, 6)  // rAthena: total_death (offset 6, size 2)
-		e.TotalDrop = leI16(data, 8)  // rAthena: total_drop (offset 8, size 2)
-		e.TotalExp = leI16(data, 4)  // rAthena: total_exp (offset 4, size 2)
+		e.Total_exp = int32(leI16(data, 4))  // rAthena: total_exp (offset 4, size 2)
+		e.Total_death = int32(leI16(data, 6))  // rAthena: total_death (offset 6, size 2)
+		e.Total_drop = int32(leI16(data, 8))  // rAthena: total_drop (offset 8, size 2)
+		e.Details = data[10:]  // rAthena: details (offset 10, size 0)
 	}
 	return e
 }

@@ -3,15 +3,7 @@
 package send
 
 // ActorAction is the request struct for the actor_action action.
-// Notifies client of an actor's action (attack, pickup, sit, stand)
 type ActorAction struct {
-	SourceID uint32 // Actor performing the action
-	Type uint8 // Type of action being performed
-	AttackerMoveTime int32 // Attacker's movement time
-	VictimMoveTime int32 // Victim's movement time
-	Div int16 // Hit count (for multi-hit attacks)
-	Damage int32 // Primary damage value
-	Damage2 int32 // Secondary damage (dual-wield left hand)
-	Time uint32 // Server tick when action started
-	TargetID uint32 // Target of the action (if applicable)
+	TargetGID uint32
+	Action uint8
 }

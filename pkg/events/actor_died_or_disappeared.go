@@ -2,9 +2,5 @@
 
 package events
 
-// ActorDiedOrDisappeared is the event emitted when a actor_died_or_disappeared packet is received.
-// Actor vanished (died or left screen)
-type ActorDiedOrDisappeared struct {
-	ID uint32 // Game object ID of the vanishing actor
-	Type uint8 // Reason for vanishing
-}
+// ActorDiedOrDisappeared is the event emitted for the actor_died_or_disappeared action.
+type ActorDiedOrDisappeared struct{}

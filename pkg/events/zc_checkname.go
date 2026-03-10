@@ -2,12 +2,10 @@
 
 package events
 
-// ZcCheckname is the event emitted when a zc_checkname packet is received.
-// ZC_CHECKNAME packet (PACKET_ZC_CHECKNAME)
+// ZcCheckname is the event emitted for the zc_checkname action.
 type ZcCheckname struct {
-	BaseLevel int16 // Character base level
-	CharId int32 // Character ID being checked
-	Class int16 // Character class/job ID
-	PacketType int16 // Packet type identifier (0x0A14)
-	Name [24]byte // Character name (24-byte string)
+	CharId int32
+	Class int16
+	BaseLevel int16
+	Name string
 }

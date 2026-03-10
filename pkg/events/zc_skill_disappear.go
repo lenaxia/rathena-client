@@ -2,8 +2,5 @@
 
 package events
 
-// ZcSkillDisappear is the event emitted when a zc_skill_disappear packet is received.
-// Ground skill disappeared from map (area effect spell removed)
-type ZcSkillDisappear struct {
-	ID uint32 // Ground skill entry ID to remove
-}
+// ZcSkillDisappear is the event emitted for the zc_skill_disappear action.
+type ZcSkillDisappear struct{}

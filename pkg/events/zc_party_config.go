@@ -2,9 +2,7 @@
 
 package events
 
-// ZcPartyConfig is the event emitted when a zc_party_config packet is received.
-// ZC_PARTY_CONFIG packet (PACKET_ZC_PARTY_CONFIG)
+// ZcPartyConfig is the event emitted for the zc_party_config action.
 type ZcPartyConfig struct {
-	DenyPartyInvites uint8 // denyPartyInvites field
-	PacketType int16 // packetType field
+	DenyPartyInvites uint8
 }

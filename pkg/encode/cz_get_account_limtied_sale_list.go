@@ -12,7 +12,6 @@ func EncodeCzGetAccountLimtiedSaleList(req send.CzGetAccountLimtiedSaleList, pac
 	// Packet ID: 0x0B4C (little-endian)
 	p[0] = 0x4c
 	p[1] = 0x0b
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

@@ -12,10 +12,9 @@ func EncodeCzReqRandomCombineItem(req send.CzReqRandomCombineItem, packetver uin
 	// Packet ID: 0x0A4F (little-endian)
 	p[0] = 0x4f
 	p[1] = 0x0a
-	leU32Put(p[4:], uint32(req.ItemId))  // rAthena: itemId
-	copy(p[6:], req.Items)  // rAthena: items
 	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
+	leU16Put(p[4:], uint16(req.ItemId))  // rAthena: itemId
+	copy(p[6:], req.Items)  // rAthena: items
 	_ = packetver
 	return p
 }

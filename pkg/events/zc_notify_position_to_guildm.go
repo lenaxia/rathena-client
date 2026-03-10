@@ -2,10 +2,5 @@
 
 package events
 
-// ZcNotifyPositionToGuildm is the event emitted when a zc_notify_position_to_guildm packet is received.
-// ZC_NOTIFY_POSITION_TO_GUILDM packet (PACKET_ZC_NOTIFY_POSITION_TO_GUILDM)
-type ZcNotifyPositionToGuildm struct {
-	ID uint32 // Account ID of guild member
-	X int16 // X coordinate
-	Y int16 // Y coordinate
-}
+// ZcNotifyPositionToGuildm is the event emitted for the zc_notify_position_to_guildm action.
+type ZcNotifyPositionToGuildm struct{}

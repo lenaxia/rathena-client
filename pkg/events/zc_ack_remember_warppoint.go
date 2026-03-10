@@ -2,8 +2,5 @@
 
 package events
 
-// ZcAckRememberWarppoint is the event emitted when a zc_ack_remember_warppoint packet is received.
-// ZC_ACK_REMEMBER_WARPPOINT packet (PACKET_ZC_ACK_REMEMBER_WARPPOINT)
-type ZcAckRememberWarppoint struct {
-	Result uint8 // Success/failure flag (0=success, 1=failure)
-}
+// ZcAckRememberWarppoint is the event emitted for the zc_ack_remember_warppoint action.
+type ZcAckRememberWarppoint struct{}

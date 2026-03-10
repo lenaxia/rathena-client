@@ -3,8 +3,6 @@
 package send
 
 // CzUseSkillEnd is the request struct for the cz_use_skill_end action.
-// CZ_USE_SKILL_END packet (PACKET_CZ_USE_SKILL_END)
 type CzUseSkillEnd struct {
-	PacketType int16 // packetType field
-	SkillId int16 // skillId field
+	SkillId int16
 }

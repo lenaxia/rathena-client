@@ -2,9 +2,7 @@
 
 package events
 
-// ZcAckCloseRoulette is the event emitted when a zc_ack_close_roulette packet is received.
-// ZC_ACK_CLOSE_ROULETTE packet (PACKET_ZC_ACK_CLOSE_ROULETTE)
+// ZcAckCloseRoulette is the event emitted for the zc_ack_close_roulette action.
 type ZcAckCloseRoulette struct {
-	PacketType int16 // packetType field
-	Result uint8 // result field
+	Result uint8
 }

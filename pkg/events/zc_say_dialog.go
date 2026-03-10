@@ -2,11 +2,9 @@
 
 package events
 
-// ZcSayDialog is the event emitted when a zc_say_dialog packet is received.
-// ZC_SAY_DIALOG packet (PACKET_ZC_SAY_DIALOG)
+// ZcSayDialog is the event emitted for the zc_say_dialog action.
 type ZcSayDialog struct {
-	NpcID uint32 // NpcID field
-	PacketLength int16 // PacketLength field
-	PacketType int16 // PacketType field
-	Message string // message field
+	PacketLength int16
+	NpcID uint32
+	Message string
 }

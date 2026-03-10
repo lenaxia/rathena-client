@@ -12,7 +12,6 @@ func EncodeCzReqRemaintime(req send.CzReqRemaintime, packetver uint32) [2]byte {
 	// Packet ID: 0x01C0 (little-endian)
 	p[0] = 0xc0
 	p[1] = 0x01
-	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: packetType
 	_ = packetver
 	return p
 }

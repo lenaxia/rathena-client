@@ -3,7 +3,5 @@
 package send
 
 // CzCloseReformUi is the request struct for the cz_close_reform_ui action.
-// CZ_CLOSE_REFORM_UI packet (PACKET_CZ_CLOSE_REFORM_UI)
 type CzCloseReformUi struct {
-	PacketType int16 // PacketType field
 }

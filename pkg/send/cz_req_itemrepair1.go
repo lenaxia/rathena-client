@@ -3,8 +3,6 @@
 package send
 
 // CzReqItemrepair1 is the request struct for the cz_req_itemrepair1 action.
-// CZ_REQ_ITEMREPAIR1 packet (PACKET_CZ_REQ_ITEMREPAIR1)
 type CzReqItemrepair1 struct {
-	Item []byte // item field
-	PacketType int16 // packetType field
+	Item []byte
 }

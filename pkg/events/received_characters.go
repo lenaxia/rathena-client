@@ -2,12 +2,5 @@
 
 package events
 
-// ReceivedCharacters is the event emitted when a received_characters packet is received.
-// Character list from char server
-type ReceivedCharacters struct {
-	CharInfo []byte // Variable-length character data array
-	Extension string // Extension data (20 bytes)
-	PremiumEnd uint8 // Premium slot end index
-	PremiumStart uint8 // Premium slot start index
-	TotalSlots uint8 // Total character slots
-}
+// ReceivedCharacters is the event emitted for the received_characters action.
+type ReceivedCharacters struct{}

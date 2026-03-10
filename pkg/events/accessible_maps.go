@@ -2,8 +2,5 @@
 
 package events
 
-// AccessibleMaps is the event emitted when a accessible_maps packet is received.
-// List of accessible maps (sent instead of 0x0AC5 for some server configurations)
-type AccessibleMaps struct {
-	Maps []byte // Variable-length array of accessible maps (20 bytes each: 4-byte status + 16-byte map name)
-}
+// AccessibleMaps is the event emitted for the accessible_maps action.
+type AccessibleMaps struct{}

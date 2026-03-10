@@ -2,20 +2,16 @@
 
 package events
 
-// SkillUse is the event emitted when a skill_use packet is received.
-// Damaging skill execution with damage numbers
+// SkillUse is the event emitted for the skill_use action.
 type SkillUse struct {
-	SourceID uint32 // Actor using the skill - optional
-	SkillID uint16 // Skill ID being used - optional
-	Type uint8 // Action type/result - optional
-	SrcSpeed uint32 // Caster's attack motion time - optional
-	DstSpeed uint32 // Target's attack motion time - optional
-	Cause uint8 // Failure cause - optional
-	Option uint16 // Hit count for multi-hit skills - optional
-	Damage uint32 // Damage dealt - optional
-	Flag uint8 // Additional flag - optional
-	Level uint16 // Skill level used - optional
-	Lv uint16 // Skill level to use - optional
-	Tick uint32 // Server tick when skill executed - optional
-	TargetID uint32 // Target actor ID - optional
+	SKID uint16
+	AID uint32
+	TargetID uint32
+	StartTime uint32
+	AttackMT int32
+	AttackedMT int32
+	Damage int32
+	Level int16
+	Count int16
+	Action int8
 }

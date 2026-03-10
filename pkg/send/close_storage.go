@@ -3,6 +3,5 @@
 package send
 
 // CloseStorage is the request struct for the close_storage action.
-// Close storage window
 type CloseStorage struct {
 }
