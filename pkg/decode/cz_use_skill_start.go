@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzUseSkillStart_0x0B10 decodes a 0x0B10 packet (struct PACKET_CZ_USE_SKILL_START).
 func CzUseSkillStart_0x0B10(data []byte, packetver uint32) events.CzUseSkillStart {

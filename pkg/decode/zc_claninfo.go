@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcClaninfo_0x098A decodes a 0x098A packet (struct PACKET_ZC_CLANINFO).
 func ZcClaninfo_0x098A(data []byte, packetver uint32) events.ZcClaninfo {

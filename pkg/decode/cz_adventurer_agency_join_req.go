@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzAdventurerAgencyJoinReq_0x0AE6 decodes a 0x0AE6 packet (struct PACKET_CZ_ADVENTURER_AGENCY_JOIN_REQ).
 func CzAdventurerAgencyJoinReq_0x0AE6(data []byte, packetver uint32) events.CzAdventurerAgencyJoinReq {

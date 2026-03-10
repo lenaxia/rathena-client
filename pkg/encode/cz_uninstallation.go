@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzUninstallation encodes a 0x0B35 (PACKET_CZ_UNINSTALLATION) packet for sending to the server.

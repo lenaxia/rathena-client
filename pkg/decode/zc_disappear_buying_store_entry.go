@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcDisappearBuyingStoreEntry_0x0816 decodes a 0x0816 packet (struct PACKET_ZC_DISAPPEAR_BUYING_STORE_ENTRY).
 func ZcDisappearBuyingStoreEntry_0x0816(data []byte, packetver uint32) events.ZcDisappearBuyingStoreEntry {

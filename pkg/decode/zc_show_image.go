@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcShowImage_0x01B3 decodes a 0x01B3 packet (struct PACKET_ZC_SHOW_IMAGE).
 func ZcShowImage_0x01B3(data []byte, packetver uint32) events.ZcShowImage {

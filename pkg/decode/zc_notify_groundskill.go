@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyGroundskill_0x0117 decodes a 0x0117 packet (struct PACKET_ZC_NOTIFY_GROUNDSKILL).
 func ZcNotifyGroundskill_0x0117(data []byte, packetver uint32) events.ZcNotifyGroundskill {

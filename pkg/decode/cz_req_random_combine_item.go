@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqRandomCombineItem_0x0A4F decodes a 0x0A4F packet (struct PACKET_CZ_REQ_RANDOM_COMBINE_ITEM).
 func CzReqRandomCombineItem_0x0A4F(data []byte, packetver uint32) events.CzReqRandomCombineItem {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzMoveItemFromBodyToCart_0x0126 decodes a 0x0126 packet (struct PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_CART).
 func CzMoveItemFromBodyToCart_0x0126(data []byte, packetver uint32) events.CzMoveItemFromBodyToCart {

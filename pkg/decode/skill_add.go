@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillAdd_0x0111 decodes a 0x0111 packet (struct PACKET_ZC_ADD_SKILL).
 func SkillAdd_0x0111(data []byte, packetver uint32) events.SkillAdd {

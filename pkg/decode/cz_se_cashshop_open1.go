@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzSeCashshopOpen1_0x0844 decodes a 0x0844 packet (struct PACKET_CZ_SE_CASHSHOP_OPEN1).
 func CzSeCashshopOpen1_0x0844(data []byte, packetver uint32) events.CzSeCashshopOpen1 {

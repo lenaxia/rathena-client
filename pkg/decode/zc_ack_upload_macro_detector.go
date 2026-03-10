@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckUploadMacroDetector_0x0A53 decodes a 0x0A53 packet (struct PACKET_ZC_ACK_UPLOAD_MACRO_DETECTOR).
 func ZcAckUploadMacroDetector_0x0A53(data []byte, packetver uint32) events.ZcAckUploadMacroDetector {

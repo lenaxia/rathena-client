@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyHpToGroupm_0x0106 decodes a 0x0106 packet (struct PACKET_ZC_NOTIFY_HP_TO_GROUPM).
 func ZcNotifyHpToGroupm_0x0106(data []byte, packetver uint32) events.ZcNotifyHpToGroupm {

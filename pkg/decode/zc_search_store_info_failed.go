@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSearchStoreInfoFailed_0x0837 decodes a 0x0837 packet (struct PACKET_ZC_SEARCH_STORE_INFO_FAILED).
 func ZcSearchStoreInfoFailed_0x0837(data []byte, packetver uint32) events.ZcSearchStoreInfoFailed {

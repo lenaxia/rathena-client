@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcLonglongparChange_0x0ACB decodes a 0x0ACB packet (struct PACKET_ZC_LONGLONGPAR_CHANGE).
 func ZcLonglongparChange_0x0ACB(data []byte, packetver uint32) events.ZcLonglongparChange {

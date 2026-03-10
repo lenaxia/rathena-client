@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSpecialpopup_0x0BBE decodes a 0x0BBE packet (struct PACKET_ZC_SPECIALPOPUP).
 func ZcSpecialpopup_0x0BBE(data []byte, packetver uint32) events.ZcSpecialpopup {

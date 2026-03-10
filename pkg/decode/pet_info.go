@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // PetInfo_0x01A2 decodes a 0x01A2 packet (struct PACKET_ZC_PROPERTY_PET).
 func PetInfo_0x01A2(data []byte, packetver uint32) events.PetInfo {

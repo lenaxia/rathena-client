@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcDeleteMemberFromGroup_0x0105 decodes a 0x0105 packet (struct PACKET_ZC_DELETE_MEMBER_FROM_GROUP).
 func ZcDeleteMemberFromGroup_0x0105(data []byte, packetver uint32) events.ZcDeleteMemberFromGroup {

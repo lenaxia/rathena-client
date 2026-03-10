@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCharacterMove encodes a 0x035F (SYNTH_CZ_REQUEST_MOVE2) packet for sending to the server.

@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzDynamicnpcCreateRequest encodes a 0x0A16 (PACKET_CZ_DYNAMICNPC_CREATE_REQUEST) packet for sending to the server.

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcStateChange_0x0119 decodes a 0x0119 packet (struct PACKET_ZC_STATE_CHANGE).
 func ZcStateChange_0x0119(data []byte, packetver uint32) events.ZcStateChange {

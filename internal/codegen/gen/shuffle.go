@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/preprocess"
+	"github.com/lenaxia/rathena-client/internal/codegen/preprocess"
 )
 
 // ShuffleEntry maps a base C→S packet ID to its shuffled ID at a specific PACKETVER.

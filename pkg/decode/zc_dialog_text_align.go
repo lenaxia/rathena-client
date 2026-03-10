@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcDialogTextAlign_0x0BA1 decodes a 0x0BA1 packet (struct PACKET_ZC_DIALOG_TEXT_ALIGN).
 func ZcDialogTextAlign_0x0BA1(data []byte, packetver uint32) events.ZcDialogTextAlign {

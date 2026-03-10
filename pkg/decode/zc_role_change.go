@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcRoleChange_0x00E1 decodes a 0x00E1 packet (struct PACKET_ZC_ROLE_CHANGE).
 func ZcRoleChange_0x00E1(data []byte, packetver uint32) events.ZcRoleChange {

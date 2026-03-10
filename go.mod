@@ -1,3 +1,3 @@
-module github.com/lenaxia/ragnarok-go-client
+module github.com/lenaxia/rathena-client
 
 go 1.24.0

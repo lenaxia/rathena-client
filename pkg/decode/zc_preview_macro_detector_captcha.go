@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcPreviewMacroDetectorCaptcha_0x0A6B decodes a 0x0A6B packet (struct PACKET_ZC_PREVIEW_MACRO_DETECTOR_CAPTCHA).
 func ZcPreviewMacroDetectorCaptcha_0x0A6B(data []byte, packetver uint32) events.ZcPreviewMacroDetectorCaptcha {

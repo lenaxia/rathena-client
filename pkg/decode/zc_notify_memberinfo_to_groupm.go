@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyMemberinfoToGroupm_0x0ABD decodes a 0x0ABD packet (struct PACKET_ZC_NOTIFY_MEMBERINFO_TO_GROUPM).
 func ZcNotifyMemberinfoToGroupm_0x0ABD(data []byte, packetver uint32) events.ZcNotifyMemberinfoToGroupm {

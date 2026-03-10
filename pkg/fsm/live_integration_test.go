@@ -12,9 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/decode"
-	"github.com/lenaxia/ragnarok-go-client/pkg/fsm"
-	"github.com/lenaxia/ragnarok-go-client/pkg/session"
+	"github.com/lenaxia/rathena-client/pkg/decode"
+	"github.com/lenaxia/rathena-client/pkg/fsm"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 func envOrDefault(key, def string) string {

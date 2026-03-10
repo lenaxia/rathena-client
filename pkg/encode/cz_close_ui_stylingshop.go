@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzCloseUiStylingshop encodes a 0x0A48 (PACKET_CZ_CLOSE_UI_STYLINGSHOP) packet for sending to the server.

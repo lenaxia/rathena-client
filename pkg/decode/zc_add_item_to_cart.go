@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAddItemToCart_0x0124 decodes a 0x0124 packet (struct PACKET_ZC_ADD_ITEM_TO_CART).
 func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCart {

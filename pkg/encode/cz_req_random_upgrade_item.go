@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzReqRandomUpgradeItem encodes a 0x0AB6 (PACKET_CZ_REQ_RANDOM_UPGRADE_ITEM) packet for sending to the server.

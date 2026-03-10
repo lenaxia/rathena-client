@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // VenderFound_0x0131 decodes a 0x0131 packet (struct PACKET_ZC_STORE_ENTRY).
 func VenderFound_0x0131(data []byte, packetver uint32) events.VenderFound {

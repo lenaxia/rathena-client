@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckMergeItem_0x096F decodes a 0x096F packet (struct PACKET_ZC_ACK_MERGE_ITEM).
 func ZcAckMergeItem_0x096F(data []byte, packetver uint32) events.ZcAckMergeItem {

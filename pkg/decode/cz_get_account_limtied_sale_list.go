@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzGetAccountLimtiedSaleList_0x0B4C decodes a 0x0B4C packet (struct PACKET_CZ_GET_ACCOUNT_LIMTIED_SALE_LIST).
 func CzGetAccountLimtiedSaleList_0x0B4C(data []byte, packetver uint32) events.CzGetAccountLimtiedSaleList {

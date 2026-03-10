@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SKIP ActorAction_0x008A: struct PACKET_ZC_NOTIFY_ACT not found in VersionTable
 

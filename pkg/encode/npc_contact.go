@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeNpcContact encodes a 0x0090 (PACKET_CZ_CONTACTNPC) packet for sending to the server.

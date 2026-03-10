@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqItemrepair2_0x0B66 decodes a 0x0B66 packet (struct PACKET_CZ_REQ_ITEMREPAIR2).
 func CzReqItemrepair2_0x0B66(data []byte, packetver uint32) events.CzReqItemrepair2 {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzRandomUpgradeItemUiClose_0x0AB5 decodes a 0x0AB5 packet (struct PACKET_CZ_RANDOM_UPGRADE_ITEM_UI_CLOSE).
 func CzRandomUpgradeItemUiClose_0x0AB5(data []byte, packetver uint32) events.CzRandomUpgradeItemUiClose {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAddItemToStore_0x00F4 decodes a 0x00F4 packet (struct PACKET_ZC_ADD_ITEM_TO_STORE).
 func ZcAddItemToStore_0x00F4(data []byte, packetver uint32) events.ZcAddItemToStore {

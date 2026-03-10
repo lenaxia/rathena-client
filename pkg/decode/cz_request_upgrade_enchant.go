@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzRequestUpgradeEnchant_0x0B9D decodes a 0x0B9D packet (struct PACKET_CZ_REQUEST_UPGRADE_ENCHANT).
 func CzRequestUpgradeEnchant_0x0B9D(data []byte, packetver uint32) events.CzRequestUpgradeEnchant {

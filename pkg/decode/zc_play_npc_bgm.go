@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcPlayNpcBgm_0x07FE decodes a 0x07FE packet (struct PACKET_ZC_PLAY_NPC_BGM).
 func ZcPlayNpcBgm_0x07FE(data []byte, packetver uint32) events.ZcPlayNpcBgm {

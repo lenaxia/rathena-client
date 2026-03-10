@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzRequestResetEnchant_0x0B9E decodes a 0x0B9E packet (struct PACKET_CZ_REQUEST_RESET_ENCHANT).
 func CzRequestResetEnchant_0x0B9E(data []byte, packetver uint32) events.CzRequestResetEnchant {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSsilistItemClickAck_0x083D decodes a 0x083D packet (struct PACKET_ZC_SSILIST_ITEM_CLICK_ACK).
 func ZcSsilistItemClickAck_0x083D(data []byte, packetver uint32) events.ZcSsilistItemClickAck {

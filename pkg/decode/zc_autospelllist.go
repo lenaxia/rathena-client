@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAutospelllist_0x01CD decodes a 0x01CD packet (struct PACKET_ZC_AUTOSPELLLIST).
 func ZcAutospelllist_0x01CD(data []byte, packetver uint32) events.ZcAutospelllist {

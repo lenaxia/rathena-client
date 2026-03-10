@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/gen"
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/semantics"
+	"github.com/lenaxia/rathena-client/internal/codegen/gen"
+	"github.com/lenaxia/rathena-client/internal/codegen/semantics"
 )
 
 func TestLoaderDeepValidation(t *testing.T) {

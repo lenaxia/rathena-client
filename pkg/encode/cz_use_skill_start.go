@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzUseSkillStart encodes a 0x0B10 (PACKET_CZ_USE_SKILL_START) packet for sending to the server.

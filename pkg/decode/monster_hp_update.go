@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // MonsterHpUpdate_0x0977 decodes a 0x0977 packet (struct packet_monster_hp).
 func MonsterHpUpdate_0x0977(data []byte, packetver uint32) events.MonsterHpUpdate {

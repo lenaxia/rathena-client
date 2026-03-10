@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSoulenergy_0x0B73 decodes a 0x0B73 packet (struct PACKET_ZC_SOULENERGY).
 func ZcSoulenergy_0x0B73(data []byte, packetver uint32) events.ZcSoulenergy {

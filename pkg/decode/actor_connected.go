@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ActorConnected_0x0079 decodes a 0x0079 packet (struct packet_spawn_unit).
 func ActorConnected_0x0079(data []byte, packetver uint32) events.ActorConnected {

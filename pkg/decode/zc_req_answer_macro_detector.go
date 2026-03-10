@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcReqAnswerMacroDetector_0x0A5B decodes a 0x0A5B packet (struct PACKET_ZC_REQ_ANSWER_MACRO_DETECTOR).
 func ZcReqAnswerMacroDetector_0x0A5B(data []byte, packetver uint32) events.ZcReqAnswerMacroDetector {

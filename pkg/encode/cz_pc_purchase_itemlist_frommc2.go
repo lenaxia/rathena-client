@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzPcPurchaseItemlistFrommc2 encodes a 0x0801 (PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC2) packet for sending to the server.

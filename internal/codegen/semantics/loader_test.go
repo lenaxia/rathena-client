@@ -3,7 +3,7 @@ package semantics_test
 import (
 	"testing"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/semantics"
+	"github.com/lenaxia/rathena-client/internal/codegen/semantics"
 )
 
 func TestLoadFile_SemanticActions(t *testing.T) {

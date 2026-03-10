@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqTakeoffEquipAll_0x0BAD decodes a 0x0BAD packet (struct PACKET_CZ_REQ_TAKEOFF_EQUIP_ALL).
 func CzReqTakeoffEquipAll_0x0BAD(data []byte, packetver uint32) events.CzReqTakeoffEquipAll {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ActorExists_0x0078 decodes a 0x0078 packet (struct packet_idle_unit).
 func ActorExists_0x0078(data []byte, packetver uint32) events.ActorExists {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyChatParty_0x0109 decodes a 0x0109 packet (struct PACKET_ZC_NOTIFY_CHAT_PARTY).
 func ZcNotifyChatParty_0x0109(data []byte, packetver uint32) events.ZcNotifyChatParty {

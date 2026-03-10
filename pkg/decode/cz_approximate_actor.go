@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzApproximateActor_0x0BB0 decodes a 0x0BB0 packet (struct PACKET_CZ_APPROXIMATE_ACTOR).
 func CzApproximateActor_0x0BB0(data []byte, packetver uint32) events.CzApproximateActor {

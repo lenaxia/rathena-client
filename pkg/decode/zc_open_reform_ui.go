@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcOpenReformUi_0x0B8F decodes a 0x0B8F packet (struct PACKET_ZC_OPEN_REFORM_UI).
 func ZcOpenReformUi_0x0B8F(data []byte, packetver uint32) events.ZcOpenReformUi {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcExtendBodyitemSize_0x0B18 decodes a 0x0B18 packet (struct PACKET_ZC_EXTEND_BODYITEM_SIZE).
 func ZcExtendBodyitemSize_0x0B18(data []byte, packetver uint32) events.ZcExtendBodyitemSize {

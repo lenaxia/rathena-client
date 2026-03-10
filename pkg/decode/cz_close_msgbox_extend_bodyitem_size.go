@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzCloseMsgboxExtendBodyitemSize_0x0B19 decodes a 0x0B19 packet (struct PACKET_CZ_CLOSE_MSGBOX_EXTEND_BODYITEM_SIZE).
 func CzCloseMsgboxExtendBodyitemSize_0x0B19(data []byte, packetver uint32) events.CzCloseMsgboxExtendBodyitemSize {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // NpcStoreInfo_0x00C6 decodes a 0x00C6 packet (struct PACKET_ZC_PC_PURCHASE_ITEMLIST).
 func NpcStoreInfo_0x00C6(data []byte, packetver uint32) events.NpcStoreInfo {

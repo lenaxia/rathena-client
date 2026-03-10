@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcChangeGuild_0x01B4 decodes a 0x01B4 packet (struct PACKET_ZC_CHANGE_GUILD).
 func ZcChangeGuild_0x01B4(data []byte, packetver uint32) events.ZcChangeGuild {

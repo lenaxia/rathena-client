@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcGoldpccafePoint_0x0A15 decodes a 0x0A15 packet (struct PACKET_ZC_GOLDPCCAFE_POINT).
 func ZcGoldpccafePoint_0x0A15(data []byte, packetver uint32) events.ZcGoldpccafePoint {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcResponseEnchant_0x0B9F decodes a 0x0B9F packet (struct PACKET_ZC_RESPONSE_ENCHANT).
 func ZcResponseEnchant_0x0B9F(data []byte, packetver uint32) events.ZcResponseEnchant {

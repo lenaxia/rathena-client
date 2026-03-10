@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSePcBuyCashitemResult_0x0849 decodes a 0x0849 packet (struct PACKET_ZC_SE_PC_BUY_CASHITEM_RESULT).
 func ZcSePcBuyCashitemResult_0x0849(data []byte, packetver uint32) events.ZcSePcBuyCashitemResult {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyPositionToGroupm_0x0107 decodes a 0x0107 packet (struct PACKET_ZC_NOTIFY_POSITION_TO_GROUPM).
 func ZcNotifyPositionToGroupm_0x0107(data []byte, packetver uint32) events.ZcNotifyPositionToGroupm {

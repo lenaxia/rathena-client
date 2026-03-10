@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcUiOpen2_0x0B9A decodes a 0x0B9A packet (struct PACKET_ZC_UI_OPEN2).
 func ZcUiOpen2_0x0B9A(data []byte, packetver uint32) events.ZcUiOpen2 {

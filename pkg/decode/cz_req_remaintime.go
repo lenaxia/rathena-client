@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqRemaintime_0x01C0 decodes a 0x01C0 packet (struct PACKET_CZ_REQ_REMAINTIME).
 func CzReqRemaintime_0x01C0(data []byte, packetver uint32) events.CzReqRemaintime {

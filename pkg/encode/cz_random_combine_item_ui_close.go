@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzRandomCombineItemUiClose encodes a 0x0A70 (PACKET_CZ_RANDOM_COMBINE_ITEM_UI_CLOSE) packet for sending to the server.

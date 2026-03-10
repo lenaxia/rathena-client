@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzRequestPerfectEnchant encodes a 0x0B9C (PACKET_CZ_REQUEST_PERFECT_ENCHANT) packet for sending to the server.

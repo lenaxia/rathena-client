@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAutorunSkill_0x0147 decodes a 0x0147 packet (struct PACKET_ZC_AUTORUN_SKILL).
 func ZcAutorunSkill_0x0147(data []byte, packetver uint32) events.ZcAutorunSkill {

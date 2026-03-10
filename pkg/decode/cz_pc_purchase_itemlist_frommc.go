@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzPcPurchaseItemlistFrommc_0x0134 decodes a 0x0134 packet (struct PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC).
 func CzPcPurchaseItemlistFrommc_0x0134(data []byte, packetver uint32) events.CzPcPurchaseItemlistFrommc {

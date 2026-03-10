@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // EntitySpawn_0x007C decodes a 0x007C packet (struct packet_spawn_unit2).
 func EntitySpawn_0x007C(data []byte, packetver uint32) events.EntitySpawn {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillUseFailed_0x0110 decodes a 0x0110 packet (struct PACKET_ZC_ACK_TOUSESKILL).
 func SkillUseFailed_0x0110(data []byte, packetver uint32) events.SkillUseFailed {

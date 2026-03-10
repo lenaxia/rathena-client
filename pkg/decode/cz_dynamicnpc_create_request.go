@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzDynamicnpcCreateRequest_0x0A16 decodes a 0x0A16 packet (struct PACKET_CZ_DYNAMICNPC_CREATE_REQUEST).
 func CzDynamicnpcCreateRequest_0x0A16(data []byte, packetver uint32) events.CzDynamicnpcCreateRequest {

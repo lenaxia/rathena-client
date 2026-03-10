@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqRandomUpgradeItem_0x0AB6 decodes a 0x0AB6 packet (struct PACKET_CZ_REQ_RANDOM_UPGRADE_ITEM).
 func CzReqRandomUpgradeItem_0x0AB6(data []byte, packetver uint32) events.CzReqRandomUpgradeItem {

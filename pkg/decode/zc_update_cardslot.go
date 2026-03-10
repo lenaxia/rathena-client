@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcUpdateCardslot_0x0A3F decodes a 0x0A3F packet (struct PACKET_ZC_UPDATE_CARDSLOT).
 func ZcUpdateCardslot_0x0A3F(data []byte, packetver uint32) events.ZcUpdateCardslot {

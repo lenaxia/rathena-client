@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqPreviewMacroDetector_0x0A69 decodes a 0x0A69 packet (struct PACKET_CZ_REQ_PREVIEW_MACRO_DETECTOR).
 func CzReqPreviewMacroDetector_0x0A69(data []byte, packetver uint32) events.CzReqPreviewMacroDetector {

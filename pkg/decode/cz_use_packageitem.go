@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzUsePackageitem_0x0BAF decodes a 0x0BAF packet (struct PACKET_CZ_USE_PACKAGEITEM).
 func CzUsePackageitem_0x0BAF(data []byte, packetver uint32) events.CzUsePackageitem {

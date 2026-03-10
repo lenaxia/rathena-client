@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzReqGuildEmblemImg2 encodes a 0x0B1E (PACKET_CZ_REQ_GUILD_EMBLEM_IMG2) packet for sending to the server.

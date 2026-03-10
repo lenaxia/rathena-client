@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillCast_0x07FB decodes a 0x07FB packet (struct PACKET_ZC_USESKILL_ACK).
 func SkillCast_0x07FB(data []byte, packetver uint32) events.SkillCast {

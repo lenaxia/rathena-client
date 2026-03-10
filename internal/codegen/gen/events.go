@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/semantics"
+	"github.com/lenaxia/rathena-client/internal/codegen/semantics"
 )
 
 // EventsInput describes a single semantic action to generate an event struct for.

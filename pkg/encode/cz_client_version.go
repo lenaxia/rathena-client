@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzClientVersion encodes a 0x044A (PACKET_CZ_CLIENT_VERSION) packet for sending to the server.

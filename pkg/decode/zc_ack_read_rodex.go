@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckReadRodex_0x09EB decodes a 0x09EB packet (struct PACKET_ZC_ACK_READ_RODEX).
 func ZcAckReadRodex_0x09EB(data []byte, packetver uint32) events.ZcAckReadRodex {

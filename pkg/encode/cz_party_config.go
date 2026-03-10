@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzPartyConfig encodes a 0x02C8 (PACKET_CZ_PARTY_CONFIG) packet for sending to the server.

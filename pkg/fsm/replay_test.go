@@ -17,8 +17,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/decode"
-	"github.com/lenaxia/ragnarok-go-client/pkg/session"
+	"github.com/lenaxia/rathena-client/pkg/decode"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // testFixturePath returns the path to a fixture file in the package's testdata dir.

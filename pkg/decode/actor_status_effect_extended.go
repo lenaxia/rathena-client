@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ActorStatusEffectExtended_0x043F decodes a 0x043F packet (struct packet_status_change2).
 func ActorStatusEffectExtended_0x043F(data []byte, packetver uint32) events.ActorStatusEffectExtended {

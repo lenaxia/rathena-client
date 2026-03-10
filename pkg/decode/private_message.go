@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // PrivateMessage_0x0097 decodes a 0x0097 packet (struct PACKET_ZC_WHISPER).
 func PrivateMessage_0x0097(data []byte, packetver uint32) events.PrivateMessage {

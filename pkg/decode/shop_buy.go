@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ShopBuy_0x00C8 decodes a 0x00C8 packet (struct PACKET_CZ_PC_PURCHASE_ITEMLIST).
 func ShopBuy_0x00C8(data []byte, packetver uint32) events.ShopBuy {

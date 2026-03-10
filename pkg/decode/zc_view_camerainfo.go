@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcViewCamerainfo_0x0A78 decodes a 0x0A78 packet (struct PACKET_ZC_VIEW_CAMERAINFO).
 func ZcViewCamerainfo_0x0A78(data []byte, packetver uint32) events.ZcViewCamerainfo {

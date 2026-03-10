@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNpcBarterMarketIteminfo_0x0B0E decodes a 0x0B0E packet (struct PACKET_ZC_NPC_BARTER_MARKET_ITEMINFO).
 func ZcNpcBarterMarketIteminfo_0x0B0E(data []byte, packetver uint32) events.ZcNpcBarterMarketIteminfo {

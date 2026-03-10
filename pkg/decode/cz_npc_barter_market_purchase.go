@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzNpcBarterMarketPurchase_0x0B0F decodes a 0x0B0F packet (struct PACKET_CZ_NPC_BARTER_MARKET_PURCHASE).
 func CzNpcBarterMarketPurchase_0x0B0F(data []byte, packetver uint32) events.CzNpcBarterMarketPurchase {

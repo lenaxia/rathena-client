@@ -3,7 +3,7 @@ package preprocess_test
 import (
 	"testing"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/preprocess"
+	"github.com/lenaxia/rathena-client/internal/codegen/preprocess"
 )
 
 // TestParseStructBody_ScalarFields verifies parsing of simple scalar fields.

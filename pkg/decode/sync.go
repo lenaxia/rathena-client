@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // Sync_0x007F decodes a 0x007F packet (struct PACKET_ZC_NOTIFY_TIME).
 func Sync_0x007F(data []byte, packetver uint32) events.Sync {

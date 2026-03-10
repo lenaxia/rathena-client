@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // MoveTo_0x0085 decodes a 0x0085 packet (struct SYNTH_CZ_REQUEST_MOVE).
 func MoveTo_0x0085(data []byte, packetver uint32) events.MoveTo {

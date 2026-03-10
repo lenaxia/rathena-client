@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzGetAccountLimtiedSaleList encodes a 0x0B4C (PACKET_CZ_GET_ACCOUNT_LIMTIED_SALE_LIST) packet for sending to the server.

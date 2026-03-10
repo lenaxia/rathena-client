@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzChooseMenuZero_0x0BA8 decodes a 0x0BA8 packet (struct PACKET_CZ_CHOOSE_MENU_ZERO).
 func CzChooseMenuZero_0x0BA8(data []byte, packetver uint32) events.CzChooseMenuZero {

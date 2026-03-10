@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcDebugmsg_0x0ADB decodes a 0x0ADB packet (struct PACKET_ZC_DEBUGMSG).
 func ZcDebugmsg_0x0ADB(data []byte, packetver uint32) events.ZcDebugmsg {

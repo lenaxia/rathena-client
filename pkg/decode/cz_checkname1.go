@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzCheckname1_0x0A13 decodes a 0x0A13 packet (struct PACKET_CZ_CHECKNAME1).
 func CzCheckname1_0x0A13(data []byte, packetver uint32) events.CzCheckname1 {

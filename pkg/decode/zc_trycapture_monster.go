@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcTrycaptureMonster_0x01A0 decodes a 0x01A0 packet (struct PACKET_ZC_TRYCAPTURE_MONSTER).
 func ZcTrycaptureMonster_0x01A0(data []byte, packetver uint32) events.ZcTrycaptureMonster {

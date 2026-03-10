@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeShopBuy encodes a 0x00C8 (PACKET_CZ_PC_PURCHASE_ITEMLIST) packet for sending to the server.

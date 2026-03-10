@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcDialogWindowPos2_0x0BB5 decodes a 0x0BB5 packet (struct PACKET_ZC_DIALOG_WINDOW_POS2).
 func ZcDialogWindowPos2_0x0BB5(data []byte, packetver uint32) events.ZcDialogWindowPos2 {

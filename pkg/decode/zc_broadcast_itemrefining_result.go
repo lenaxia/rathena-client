@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcBroadcastItemrefiningResult_0x0ADA decodes a 0x0ADA packet (struct PACKET_ZC_BROADCAST_ITEMREFINING_RESULT).
 func ZcBroadcastItemrefiningResult_0x0ADA(data []byte, packetver uint32) events.ZcBroadcastItemrefiningResult {

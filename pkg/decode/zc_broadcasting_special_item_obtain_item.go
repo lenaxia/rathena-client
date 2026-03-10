@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcBroadcastingSpecialItemObtainItem_0x07FD decodes a 0x07FD packet (struct PACKET_ZC_BROADCASTING_SPECIAL_ITEM_OBTAIN_item).
 func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) events.ZcBroadcastingSpecialItemObtainItem {

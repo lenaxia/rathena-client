@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcReqWearEquipAck_0x00AA decodes a 0x00AA packet (struct PACKET_ZC_REQ_WEAR_EQUIP_ACK).
 func ZcReqWearEquipAck_0x00AA(data []byte, packetver uint32) events.ZcReqWearEquipAck {

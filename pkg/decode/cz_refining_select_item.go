@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzRefiningSelectItem_0x0AA1 decodes a 0x0AA1 packet (struct PACKET_CZ_REFINING_SELECT_ITEM).
 func CzRefiningSelectItem_0x0AA1(data []byte, packetver uint32) events.CzRefiningSelectItem {

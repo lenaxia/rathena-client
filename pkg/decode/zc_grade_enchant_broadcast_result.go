@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcGradeEnchantBroadcastResult_0x0B5E decodes a 0x0B5E packet (struct PACKET_ZC_GRADE_ENCHANT_BROADCAST_RESULT).
 func ZcGradeEnchantBroadcastResult_0x0B5E(data []byte, packetver uint32) events.ZcGradeEnchantBroadcastResult {

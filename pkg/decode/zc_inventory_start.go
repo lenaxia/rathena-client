@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcInventoryStart_0x0B08 decodes a 0x0B08 packet (struct PACKET_ZC_INVENTORY_START).
 func ZcInventoryStart_0x0B08(data []byte, packetver uint32) events.ZcInventoryStart {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcPropertyHomun_0x022E decodes a 0x022E packet (struct PACKET_ZC_PROPERTY_HOMUN).
 func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomun {

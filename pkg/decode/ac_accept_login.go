@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // AcAcceptLogin_0x0069 decodes a 0x0069 packet (struct PACKET_AC_ACCEPT_LOGIN).
 func AcAcceptLogin_0x0069(data []byte, packetver uint32) events.AcAcceptLogin {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // StatUpdate_0x00B0 decodes a 0x00B0 packet (struct PACKET_ZC_PAR_CHANGE).
 func StatUpdate_0x00B0(data []byte, packetver uint32) events.StatUpdate {

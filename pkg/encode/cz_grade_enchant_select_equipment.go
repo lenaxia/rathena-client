@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzGradeEnchantSelectEquipment encodes a 0x0B59 (PACKET_CZ_GRADE_ENCHANT_SELECT_EQUIPMENT) packet for sending to the server.

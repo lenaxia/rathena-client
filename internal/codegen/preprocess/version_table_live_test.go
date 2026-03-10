@@ -5,7 +5,7 @@ package preprocess_test
 import (
 	"os"
 	"testing"
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/preprocess"
+	"github.com/lenaxia/rathena-client/internal/codegen/preprocess"
 )
 
 // TestBuildVersionTable_PacketIdleUnit tests the version table builder against

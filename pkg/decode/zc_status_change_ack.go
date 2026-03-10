@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcStatusChangeAck_0x00BC decodes a 0x00BC packet (struct PACKET_ZC_STATUS_CHANGE_ACK).
 func ZcStatusChangeAck_0x00BC(data []byte, packetver uint32) events.ZcStatusChangeAck {

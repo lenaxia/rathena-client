@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzGradeEnchantCloseUi encodes a 0x0B5C (PACKET_CZ_GRADE_ENCHANT_CLOSE_UI) packet for sending to the server.

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckTakeoffEquipAll_0x0BAE decodes a 0x0BAE packet (struct PACKET_ZC_ACK_TAKEOFF_EQUIP_ALL).
 func ZcAckTakeoffEquipAll_0x0BAE(data []byte, packetver uint32) events.ZcAckTakeoffEquipAll {

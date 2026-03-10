@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckAddItemRodex_0x0A05 decodes a 0x0A05 packet (struct PACKET_ZC_ACK_ADD_ITEM_RODEX).
 func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItemRodex {

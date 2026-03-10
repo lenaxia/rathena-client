@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzRequestPerfectEnchant_0x0B9C decodes a 0x0B9C packet (struct PACKET_CZ_REQUEST_PERFECT_ENCHANT).
 func CzRequestPerfectEnchant_0x0B9C(data []byte, packetver uint32) events.CzRequestPerfectEnchant {

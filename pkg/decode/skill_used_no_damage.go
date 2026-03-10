@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillUsedNoDamage_0x011A decodes a 0x011A packet (struct PACKET_ZC_USE_SKILL).
 func SkillUsedNoDamage_0x011A(data []byte, packetver uint32) events.SkillUsedNoDamage {

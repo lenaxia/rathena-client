@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcTalkboxChatcontents_0x0191 decodes a 0x0191 packet (struct PACKET_ZC_TALKBOX_CHATCONTENTS).
 func ZcTalkboxChatcontents_0x0191(data []byte, packetver uint32) events.ZcTalkboxChatcontents {

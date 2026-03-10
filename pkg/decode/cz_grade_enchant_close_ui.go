@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzGradeEnchantCloseUi_0x0B5C decodes a 0x0B5C packet (struct PACKET_CZ_GRADE_ENCHANT_CLOSE_UI).
 func CzGradeEnchantCloseUi_0x0B5C(data []byte, packetver uint32) events.CzGradeEnchantCloseUi {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckPlayerAidInRange_0x0A6D decodes a 0x0A6D packet (struct PACKET_ZC_ACK_PLAYER_AID_IN_RANGE).
 func ZcAckPlayerAidInRange_0x0A6D(data []byte, packetver uint32) events.ZcAckPlayerAidInRange {

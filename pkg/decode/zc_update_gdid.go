@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcUpdateGdid_0x016C decodes a 0x016C packet (struct PACKET_ZC_UPDATE_GDID).
 func ZcUpdateGdid_0x016C(data []byte, packetver uint32) events.ZcUpdateGdid {

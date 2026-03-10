@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzPcPurchaseItemlistFrommc2_0x0801 decodes a 0x0801 packet (struct PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC2).
 func CzPcPurchaseItemlistFrommc2_0x0801(data []byte, packetver uint32) events.CzPcPurchaseItemlistFrommc2 {

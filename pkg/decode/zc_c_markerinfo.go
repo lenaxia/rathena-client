@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcCMarkerinfo_0x09C1 decodes a 0x09C1 packet (struct PACKET_ZC_C_MARKERINFO).
 func ZcCMarkerinfo_0x09C1(data []byte, packetver uint32) events.ZcCMarkerinfo {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcDialogWindowSize_0x0BA2 decodes a 0x0BA2 packet (struct PACKET_ZC_DIALOG_WINDOW_SIZE).
 func ZcDialogWindowSize_0x0BA2(data []byte, packetver uint32) events.ZcDialogWindowSize {

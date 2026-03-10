@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzShortcutkeybarRotate2_0x0B22 decodes a 0x0B22 packet (struct PACKET_CZ_SHORTCUTKEYBAR_ROTATE2).
 func CzShortcutkeybarRotate2_0x0B22(data []byte, packetver uint32) events.CzShortcutkeybarRotate2 {

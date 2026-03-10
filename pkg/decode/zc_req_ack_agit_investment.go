@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcReqAckAgitInvestment_0x0B2D decodes a 0x0B2D packet (struct PACKET_ZC_REQ_ACK_AGIT_INVESTMENT).
 func ZcReqAckAgitInvestment_0x0B2D(data []byte, packetver uint32) events.ZcReqAckAgitInvestment {

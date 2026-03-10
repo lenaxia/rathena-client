@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqMoveGuildAgit_0x0B28 decodes a 0x0B28 packet (struct PACKET_CZ_REQ_MOVE_GUILD_AGIT).
 func CzReqMoveGuildAgit_0x0B28(data []byte, packetver uint32) events.CzReqMoveGuildAgit {

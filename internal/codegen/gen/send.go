@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/semantics"
+	"github.com/lenaxia/rathena-client/internal/codegen/semantics"
 )
 
 // SendInput describes a single semantic action to generate a send request struct for.

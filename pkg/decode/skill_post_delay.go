@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillPostDelay_0x043D decodes a 0x043D packet (struct PACKET_ZC_SKILL_POSTDELAY).
 func SkillPostDelay_0x043D(data []byte, packetver uint32) events.SkillPostDelay {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyActorinit_0x0B1B decodes a 0x0B1B packet (struct PACKET_ZC_NOTIFY_ACTORINIT).
 func ZcNotifyActorinit_0x0B1B(data []byte, packetver uint32) events.ZcNotifyActorinit {

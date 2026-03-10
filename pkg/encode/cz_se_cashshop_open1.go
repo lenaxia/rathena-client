@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzSeCashshopOpen1 encodes a 0x0844 (PACKET_CZ_SE_CASHSHOP_OPEN1) packet for sending to the server.

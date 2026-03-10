@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // AttackRange_0x013A decodes a 0x013A packet (struct PACKET_ZC_ATTACK_RANGE).
 func AttackRange_0x013A(data []byte, packetver uint32) events.AttackRange {

@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzMoveItemFromBodyToCart encodes a 0x0126 (PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_CART) packet for sending to the server.

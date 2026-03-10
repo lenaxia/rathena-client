@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcRepairitemlist_0x01FC decodes a 0x01FC packet (struct PACKET_ZC_REPAIRITEMLIST).
 func ZcRepairitemlist_0x01FC(data []byte, packetver uint32) events.ZcRepairitemlist {

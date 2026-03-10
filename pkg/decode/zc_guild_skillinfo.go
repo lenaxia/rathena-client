@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcGuildSkillinfo_0x0162 decodes a 0x0162 packet (struct PACKET_ZC_GUILD_SKILLINFO).
 func ZcGuildSkillinfo_0x0162(data []byte, packetver uint32) events.ZcGuildSkillinfo {

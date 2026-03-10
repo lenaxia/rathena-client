@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzApproximateActor encodes a 0x0BB0 (PACKET_CZ_APPROXIMATE_ACTOR) packet for sending to the server.

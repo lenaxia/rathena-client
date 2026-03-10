@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSayDialog_0x00B4 decodes a 0x00B4 packet (struct PACKET_ZC_SAY_DIALOG).
 func ZcSayDialog_0x00B4(data []byte, packetver uint32) events.ZcSayDialog {

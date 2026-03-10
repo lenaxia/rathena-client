@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzReqApplyMacroDetector encodes a 0x0A56 (PACKET_CZ_REQ_APPLY_MACRO_DETECTOR) packet for sending to the server.

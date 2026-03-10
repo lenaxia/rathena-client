@@ -7,7 +7,7 @@ package packing_test
 import (
 	"testing"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/packing"
+	"github.com/lenaxia/rathena-client/pkg/packing"
 )
 
 // posDirCase is a single WBUFPOS / RBUFPOS test vector.

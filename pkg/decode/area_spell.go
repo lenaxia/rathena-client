@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // AreaSpell_0x011F decodes a 0x011F packet (struct packet_skill_entry).
 func AreaSpell_0x011F(data []byte, packetver uint32) events.AreaSpell {

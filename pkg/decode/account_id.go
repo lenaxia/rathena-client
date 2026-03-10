@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // AccountId_0x0283 decodes a 0x0283 packet (struct SYNTH_ZC_AID).
 func AccountId_0x0283(data []byte, packetver uint32) events.AccountId {

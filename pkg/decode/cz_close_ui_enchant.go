@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzCloseUiEnchant_0x0BA0 decodes a 0x0BA0 packet (struct PACKET_CZ_CLOSE_UI_ENCHANT).
 func CzCloseUiEnchant_0x0BA0(data []byte, packetver uint32) events.CzCloseUiEnchant {

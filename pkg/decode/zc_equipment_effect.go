@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcEquipmentEffect_0x0A3B decodes a 0x0A3B packet (struct PACKET_ZC_EQUIPMENT_EFFECT).
 func ZcEquipmentEffect_0x0A3B(data []byte, packetver uint32) events.ZcEquipmentEffect {

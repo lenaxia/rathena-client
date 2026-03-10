@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcItemPickupParty_0x02B8 decodes a 0x02B8 packet (struct PACKET_ZC_ITEM_PICKUP_PARTY).
 func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickupParty {

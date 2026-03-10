@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcOpenSearchStoreInfo_0x083A decodes a 0x083A packet (struct PACKET_ZC_OPEN_SEARCH_STORE_INFO).
 func ZcOpenSearchStoreInfo_0x083A(data []byte, packetver uint32) events.ZcOpenSearchStoreInfo {

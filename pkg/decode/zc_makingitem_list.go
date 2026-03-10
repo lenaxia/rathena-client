@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcMakingitemList_0x025A decodes a 0x025A packet (struct PACKET_ZC_MAKINGITEM_LIST).
 func ZcMakingitemList_0x025A(data []byte, packetver uint32) events.ZcMakingitemList {

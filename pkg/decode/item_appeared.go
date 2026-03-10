@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ItemAppeared_0x009E decodes a 0x009E packet (struct packet_dropflooritem).
 func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {

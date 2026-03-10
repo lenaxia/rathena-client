@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzReqAgitInvestment encodes a 0x0B2C (PACKET_CZ_REQ_AGIT_INVESTMENT) packet for sending to the server.

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcCloseMacroDetector_0x0A5D decodes a 0x0A5D packet (struct PACKET_ZC_CLOSE_MACRO_DETECTOR).
 func ZcCloseMacroDetector_0x0A5D(data []byte, packetver uint32) events.ZcCloseMacroDetector {

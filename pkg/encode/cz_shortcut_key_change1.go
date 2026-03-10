@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzShortcutKeyChange1 encodes a 0x02BA (PACKET_CZ_SHORTCUT_KEY_CHANGE1) packet for sending to the server.

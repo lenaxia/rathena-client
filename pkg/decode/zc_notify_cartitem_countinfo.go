@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyCartitemCountinfo_0x0121 decodes a 0x0121 packet (struct PACKET_ZC_NOTIFY_CARTITEM_COUNTINFO).
 func ZcNotifyCartitemCountinfo_0x0121(data []byte, packetver uint32) events.ZcNotifyCartitemCountinfo {

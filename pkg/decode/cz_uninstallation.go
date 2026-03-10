@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzUninstallation_0x0B35 decodes a 0x0B35 packet (struct PACKET_CZ_UNINSTALLATION).
 func CzUninstallation_0x0B35(data []byte, packetver uint32) events.CzUninstallation {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSound_0x01D3 decodes a 0x01D3 packet (struct PACKET_ZC_SOUND).
 func ZcSound_0x01D3(data []byte, packetver uint32) events.ZcSound {

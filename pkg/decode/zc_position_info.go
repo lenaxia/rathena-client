@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcPositionInfo_0x0160 decodes a 0x0160 packet (struct PACKET_ZC_POSITION_INFO).
 func ZcPositionInfo_0x0160(data []byte, packetver uint32) events.ZcPositionInfo {

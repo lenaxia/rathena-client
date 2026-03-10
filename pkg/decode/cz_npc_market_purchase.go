@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzNpcMarketPurchase_0x09D6 decodes a 0x09D6 packet (struct PACKET_CZ_NPC_MARKET_PURCHASE).
 func CzNpcMarketPurchase_0x09D6(data []byte, packetver uint32) events.CzNpcMarketPurchase {

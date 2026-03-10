@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckReqnameall_0x0195 decodes a 0x0195 packet (struct PACKET_ZC_ACK_REQNAMEALL).
 func ZcAckReqnameall_0x0195(data []byte, packetver uint32) events.ZcAckReqnameall {

@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzNpcBarterMarketPurchase encodes a 0x0B0F (PACKET_CZ_NPC_BARTER_MARKET_PURCHASE) packet for sending to the server.

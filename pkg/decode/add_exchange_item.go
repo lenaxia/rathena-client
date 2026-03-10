@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // AddExchangeItem_0x00E9 decodes a 0x00E9 packet (struct PACKET_ZC_ADD_EXCHANGE_ITEM).
 func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeItem {

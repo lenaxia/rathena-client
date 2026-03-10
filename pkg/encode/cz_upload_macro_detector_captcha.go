@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzUploadMacroDetectorCaptcha encodes a 0x0A54 (PACKET_CZ_UPLOAD_MACRO_DETECTOR_CAPTCHA) packet for sending to the server.

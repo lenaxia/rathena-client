@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcNotifyEffect3_0x0284 decodes a 0x0284 packet (struct PACKET_ZC_NOTIFY_EFFECT3).
 func ZcNotifyEffect3_0x0284(data []byte, packetver uint32) events.ZcNotifyEffect3 {

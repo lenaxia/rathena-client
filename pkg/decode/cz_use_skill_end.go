@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzUseSkillEnd_0x0B11 decodes a 0x0B11 packet (struct PACKET_CZ_USE_SKILL_END).
 func CzUseSkillEnd_0x0B11(data []byte, packetver uint32) events.CzUseSkillEnd {

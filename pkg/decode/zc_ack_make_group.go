@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckMakeGroup_0x00FA decodes a 0x00FA packet (struct PACKET_ZC_ACK_MAKE_GROUP).
 func ZcAckMakeGroup_0x00FA(data []byte, packetver uint32) events.ZcAckMakeGroup {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSkillinfoUpdate2_0x07E1 decodes a 0x07E1 packet (struct PACKET_ZC_SKILLINFO_UPDATE2).
 func ZcSkillinfoUpdate2_0x07E1(data []byte, packetver uint32) events.ZcSkillinfoUpdate2 {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // NpcContact_0x0090 decodes a 0x0090 packet (struct PACKET_CZ_CONTACTNPC).
 func NpcContact_0x0090(data []byte, packetver uint32) events.NpcContact {

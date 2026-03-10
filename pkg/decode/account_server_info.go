@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // AccountServerInfo_0x0AC4 decodes a 0x0AC4 packet (struct PACKET_AC_ACCEPT_LOGIN).
 func AccountServerInfo_0x0AC4(data []byte, packetver uint32) events.AccountServerInfo {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzRandomCombineItemUiClose_0x0A70 decodes a 0x0A70 packet (struct PACKET_CZ_RANDOM_COMBINE_ITEM_UI_CLOSE).
 func CzRandomCombineItemUiClose_0x0A70(data []byte, packetver uint32) events.CzRandomCombineItemUiClose {

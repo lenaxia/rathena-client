@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzRequestRandomEnchant encodes a 0x0B9B (PACKET_CZ_REQUEST_RANDOM_ENCHANT) packet for sending to the server.

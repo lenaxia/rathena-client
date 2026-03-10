@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzShortcutkeybarRotate2 encodes a 0x0B22 (PACKET_CZ_SHORTCUTKEYBAR_ROTATE2) packet for sending to the server.

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqItemrepair1_0x01FD decodes a 0x01FD packet (struct PACKET_CZ_REQ_ITEMREPAIR1).
 func CzReqItemrepair1_0x01FD(data []byte, packetver uint32) events.CzReqItemrepair1 {

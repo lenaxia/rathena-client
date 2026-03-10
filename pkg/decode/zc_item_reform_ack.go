@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcItemReformAck_0x0B92 decodes a 0x0B92 packet (struct PACKET_ZC_ITEM_REFORM_ACK).
 func ZcItemReformAck_0x0B92(data []byte, packetver uint32) events.ZcItemReformAck {

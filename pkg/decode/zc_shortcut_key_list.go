@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcShortcutKeyList_0x02B9 decodes a 0x02B9 packet (struct PACKET_ZC_SHORTCUT_KEY_LIST).
 func ZcShortcutKeyList_0x02B9(data []byte, packetver uint32) events.ZcShortcutKeyList {

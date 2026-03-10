@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillsList_0x010F decodes a 0x010F packet (struct PACKET_ZC_SKILLINFO_LIST).
 func SkillsList_0x010F(data []byte, packetver uint32) events.SkillsList {

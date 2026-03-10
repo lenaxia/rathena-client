@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // InventoryItemAdded_0x00A0 decodes a 0x00A0 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
 func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryItemAdded {

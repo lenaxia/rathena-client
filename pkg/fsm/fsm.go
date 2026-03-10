@@ -17,7 +17,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/session"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // Dialer is provided by goKore. The FSM calls it for each of the three server

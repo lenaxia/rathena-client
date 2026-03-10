@@ -18,9 +18,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/gen"
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/preprocess"
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/semantics"
+	"github.com/lenaxia/rathena-client/internal/codegen/gen"
+	"github.com/lenaxia/rathena-client/internal/codegen/preprocess"
+	"github.com/lenaxia/rathena-client/internal/codegen/semantics"
 )
 
 func main() {

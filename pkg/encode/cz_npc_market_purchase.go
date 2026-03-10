@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzNpcMarketPurchase encodes a 0x09D6 (PACKET_CZ_NPC_MARKET_PURCHASE) packet for sending to the server.

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzClientVersion_0x044A decodes a 0x044A packet (struct PACKET_CZ_CLIENT_VERSION).
 func CzClientVersion_0x044A(data []byte, packetver uint32) events.CzClientVersion {

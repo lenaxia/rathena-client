@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcUseskillAck_0x013E decodes a 0x013E packet (struct PACKET_ZC_USESKILL_ACK).
 func ZcUseskillAck_0x013E(data []byte, packetver uint32) events.ZcUseskillAck {

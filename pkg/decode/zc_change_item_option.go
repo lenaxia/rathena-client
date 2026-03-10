@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcChangeItemOption_0x0AB9 decodes a 0x0AB9 packet (struct PACKET_ZC_CHANGE_ITEM_OPTION).
 func ZcChangeItemOption_0x0AB9(data []byte, packetver uint32) events.ZcChangeItemOption {

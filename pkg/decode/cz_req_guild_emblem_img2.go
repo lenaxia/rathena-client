@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzReqGuildEmblemImg2_0x0B1E decodes a 0x0B1E packet (struct PACKET_CZ_REQ_GUILD_EMBLEM_IMG2).
 func CzReqGuildEmblemImg2_0x0B1E(data []byte, packetver uint32) events.CzReqGuildEmblemImg2 {

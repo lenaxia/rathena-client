@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzShortcutKeyChange1_0x02BA decodes a 0x02BA packet (struct PACKET_CZ_SHORTCUT_KEY_CHANGE1).
 func CzShortcutKeyChange1_0x02BA(data []byte, packetver uint32) events.CzShortcutKeyChange1 {

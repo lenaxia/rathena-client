@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CharacterMove_0x035F decodes a 0x035F packet (struct SYNTH_CZ_REQUEST_MOVE2).
 func CharacterMove_0x035F(data []byte, packetver uint32) events.CharacterMove {

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // MarketPurchase_0x0134 decodes a 0x0134 packet (struct PACKET_CZ_NPC_MARKET_PURCHASE).
 func MarketPurchase_0x0134(data []byte, packetver uint32) events.MarketPurchase {

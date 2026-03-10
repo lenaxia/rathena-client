@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/session"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // BenchmarkFeed_SmallFixedPacket benchmarks Feed processing a small fixed-length packet.

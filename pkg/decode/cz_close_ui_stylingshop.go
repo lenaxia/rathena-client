@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzCloseUiStylingshop_0x0A48 decodes a 0x0A48 packet (struct PACKET_CZ_CLOSE_UI_STYLINGSHOP).
 func CzCloseUiStylingshop_0x0A48(data []byte, packetver uint32) events.CzCloseUiStylingshop {

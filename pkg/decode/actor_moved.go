@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ActorMoved_0x007B decodes a 0x007B packet (struct packet_unit_walking).
 func ActorMoved_0x007B(data []byte, packetver uint32) events.ActorMoved {

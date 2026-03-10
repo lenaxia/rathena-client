@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcBattlefieldNotifyHp_0x02E0 decodes a 0x02E0 packet (struct PACKET_ZC_BATTLEFIELD_NOTIFY_HP).
 func ZcBattlefieldNotifyHp_0x02E0(data []byte, packetver uint32) events.ZcBattlefieldNotifyHp {

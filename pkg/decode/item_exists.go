@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ItemExists_0x009D decodes a 0x009D packet (struct PACKET_ZC_ITEM_ENTRY).
 func ItemExists_0x009D(data []byte, packetver uint32) events.ItemExists {

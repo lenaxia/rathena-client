@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzPartyConfig_0x02C8 decodes a 0x02C8 packet (struct PACKET_CZ_PARTY_CONFIG).
 func CzPartyConfig_0x02C8(data []byte, packetver uint32) events.CzPartyConfig {

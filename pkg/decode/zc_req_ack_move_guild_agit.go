@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcReqAckMoveGuildAgit_0x0B2E decodes a 0x0B2E packet (struct PACKET_ZC_REQ_ACK_MOVE_GUILD_AGIT).
 func ZcReqAckMoveGuildAgit_0x0B2E(data []byte, packetver uint32) events.ZcReqAckMoveGuildAgit {

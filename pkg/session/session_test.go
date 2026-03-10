@@ -6,9 +6,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/decode"
-	"github.com/lenaxia/ragnarok-go-client/pkg/events"
-	"github.com/lenaxia/ragnarok-go-client/pkg/session"
+	"github.com/lenaxia/rathena-client/pkg/decode"
+	"github.com/lenaxia/rathena-client/pkg/events"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // makeFrame constructs a minimal fixed-length packet frame:

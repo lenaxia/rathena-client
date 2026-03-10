@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // PetEggList_0x01A6 decodes a 0x01A6 packet (struct SYNTH_ZC_PETEGG_LIST).
 func PetEggList_0x01A6(data []byte, packetver uint32) events.PetEggList {

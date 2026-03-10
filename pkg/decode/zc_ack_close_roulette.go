@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcAckCloseRoulette_0x0A1E decodes a 0x0A1E packet (struct PACKET_ZC_ACK_CLOSE_ROULETTE).
 func ZcAckCloseRoulette_0x0A1E(data []byte, packetver uint32) events.ZcAckCloseRoulette {

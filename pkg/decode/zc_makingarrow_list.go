@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcMakingarrowList_0x01AD decodes a 0x01AD packet (struct PACKET_ZC_MAKINGARROW_LIST).
 func ZcMakingarrowList_0x01AD(data []byte, packetver uint32) events.ZcMakingarrowList {

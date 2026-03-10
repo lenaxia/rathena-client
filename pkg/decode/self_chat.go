@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SelfChat_0x008E decodes a 0x008E packet (struct PACKET_ZC_NOTIFY_PLAYERCHAT).
 func SelfChat_0x008E(data []byte, packetver uint32) events.SelfChat {

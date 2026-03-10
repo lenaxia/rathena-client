@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lenaxia/ragnarok-go-client/pkg/session"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // ── Test helpers ──────────────────────────────────────────────────────────────

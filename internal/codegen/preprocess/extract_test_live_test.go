@@ -3,7 +3,7 @@
 package preprocess_test
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/internal/codegen/preprocess"
+	"github.com/lenaxia/rathena-client/internal/codegen/preprocess"
 	"os"
 	"testing"
 )

@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // SkillUse_0x01DE decodes a 0x01DE packet (struct PACKET_ZC_NOTIFY_SKILL).
 func SkillUse_0x01DE(data []byte, packetver uint32) events.SkillUse {

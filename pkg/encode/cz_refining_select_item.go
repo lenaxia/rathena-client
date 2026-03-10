@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzRefiningSelectItem encodes a 0x0AA1 (PACKET_CZ_REFINING_SELECT_ITEM) packet for sending to the server.

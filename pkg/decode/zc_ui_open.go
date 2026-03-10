@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcUiOpen_0x0A38 decodes a 0x0A38 packet (struct PACKET_ZC_UI_OPEN).
 func ZcUiOpen_0x0A38(data []byte, packetver uint32) events.ZcUiOpen {

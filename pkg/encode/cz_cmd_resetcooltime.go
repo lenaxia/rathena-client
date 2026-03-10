@@ -3,7 +3,7 @@
 package encode
 
 import (
-	"github.com/lenaxia/ragnarok-go-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeCzCmdResetcooltime encodes a 0x0A88 (PACKET_CZ_CMD_RESETCOOLTIME) packet for sending to the server.

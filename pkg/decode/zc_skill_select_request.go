@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSkillSelectRequest_0x0442 decodes a 0x0442 packet (struct PACKET_ZC_SKILL_SELECT_REQUEST).
 func ZcSkillSelectRequest_0x0442(data []byte, packetver uint32) events.ZcSkillSelectRequest {

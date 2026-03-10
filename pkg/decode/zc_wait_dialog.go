@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcWaitDialog_0x00B5 decodes a 0x00B5 packet (struct PACKET_ZC_WAIT_DIALOG).
 func ZcWaitDialog_0x00B5(data []byte, packetver uint32) events.ZcWaitDialog {

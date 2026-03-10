@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // PublicChat_0x008D decodes a 0x008D packet (struct PACKET_ZC_NOTIFY_CHAT).
 func PublicChat_0x008D(data []byte, packetver uint32) events.PublicChat {

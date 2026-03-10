@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // CzCmdResetcooltime_0x0A88 decodes a 0x0A88 packet (struct PACKET_CZ_CMD_RESETCOOLTIME).
 func CzCmdResetcooltime_0x0A88(data []byte, packetver uint32) events.CzCmdResetcooltime {

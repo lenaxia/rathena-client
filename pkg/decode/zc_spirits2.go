@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcSpirits2_0x01E1 decodes a 0x01E1 packet (struct PACKET_ZC_SPIRITS2).
 func ZcSpirits2_0x01E1(data []byte, packetver uint32) events.ZcSpirits2 {

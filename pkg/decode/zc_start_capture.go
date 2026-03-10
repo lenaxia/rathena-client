@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ZcStartCapture_0x019E decodes a 0x019E packet (struct PACKET_ZC_START_CAPTURE).
 func ZcStartCapture_0x019E(data []byte, packetver uint32) events.ZcStartCapture {

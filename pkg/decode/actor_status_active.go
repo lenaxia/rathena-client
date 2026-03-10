@@ -2,7 +2,7 @@
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ActorStatusActive_0x0196 decodes a 0x0196 packet (struct packet_sc_notick).
 func ActorStatusActive_0x0196(data []byte, packetver uint32) events.ActorStatusActive {
