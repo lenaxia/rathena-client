@@ -5,6 +5,6 @@ package events
 // CharacterMoves is the event emitted when a character_moves packet is received.
 // Player character is moving
 type CharacterMoves struct {
-	MoveData [6]byte // Packed coordinates: from_x, from_y, to_x, to_y (6 bytes)
-	Time uint32 // Server tick when movement started
+	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack. Byte 5 is NOT direction.
+	Time     uint32  // Server tick when movement started
 }

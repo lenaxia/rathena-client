@@ -98,6 +98,14 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  VersionTable now has %d structs (after common injection)", len(vt))
 
+	// Step 4d: Inject structs from src/map/packets.hpp.
+	// These are not in packets_struct.hpp so buildVersionTable never sees them.
+	log.Println("Injecting map/packets.hpp struct layouts...")
+	if err := injectMapPacketStructs(cfg, vt); err != nil {
+		return fmt.Errorf("inject map packet structs: %w", err)
+	}
+	log.Printf("  VersionTable now has %d structs (after map injection)", len(vt))
+
 	// Step 5: Generate length tables (session/lengths_*.go).
 	// Must run after VersionTable is built so S→C lengths can be joined from struct sizes.
 	log.Println("Generating length tables...")
@@ -181,6 +189,14 @@ func injectSynthetic(cfg preprocess.Config, vt preprocess.VersionTable) error {
 // Each struct name must exactly match the C struct name in that header.
 var commonStructsToInject = []string{
 	"PACKET_AC_ACCEPT_LOGIN",
+}
+
+// mapStructsToInject is the set of struct names from src/map/packets.hpp that
+// should be injected into the VersionTable for decode codegen.
+// Each struct name must exactly match the C struct name in that header.
+var mapStructsToInject = []string{
+	"PACKET_ZC_NOTIFY_PLAYERMOVE",
+	"PACKET_ZC_NOTIFY_TIME",
 }
 
 // injectCommonPacketStructs processes common/packets.hpp at all its PACKETVER
@@ -269,6 +285,96 @@ func injectCommonPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable
 
 	if injected == 0 {
 		return fmt.Errorf("injectCommonPacketStructs: no structs injected (wanted: %v)", commonStructsToInject)
+	}
+	return nil
+}
+
+// injectMapPacketStructs processes src/map/packets.hpp at all its PACKETVER
+// breakpoints and injects the structs listed in mapStructsToInject into the
+// VersionTable. This is necessary because packets.hpp is not processed by
+// buildVersionTable (which only reads packets_struct.hpp from the map server).
+func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) error {
+	packetsFile := filepath.Join(cfg.RathenaRoot, "src", "map", "packets.hpp")
+	allDates, err := preprocess.ExtractBreakpointsFromFile(packetsFile)
+	if err != nil {
+		return fmt.Errorf("extract map/packets.hpp breakpoints: %w", err)
+	}
+	allDates = preprocess.SortBreakpoints(append([]uint32{20030000}, allDates...))
+
+	type versionedDB struct {
+		ver uint32
+		db  preprocess.StructDB
+	}
+	var snapshots []versionedDB
+	for _, pv := range allDates {
+		preprocessed, err := preprocess.Preprocess(cfg, preprocess.SourcePackets, pv)
+		if err != nil {
+			log.Printf("  WARNING: preprocess map/packets.hpp at %d failed: %v", pv, err)
+			continue
+		}
+		db, err := preprocess.ExtractStructs(preprocessed, pv)
+		if err != nil {
+			log.Printf("  WARNING: ExtractStructs map/packets.hpp at %d failed: %v", pv, err)
+			continue
+		}
+		snapshots = append(snapshots, versionedDB{ver: pv, db: db})
+	}
+
+	if len(snapshots) == 0 {
+		return fmt.Errorf("injectMapPacketStructs: no snapshots extracted from map/packets.hpp")
+	}
+
+	injected := 0
+	for _, structName := range mapStructsToInject {
+		// Collect version ranges where this struct appears and has a distinct layout.
+		var ranges []preprocess.VersionedLayout
+		for i, snap := range snapshots {
+			layout, ok := snap.db[structName]
+			if !ok || layout == nil || !layout.Available {
+				continue
+			}
+			// Determine the MaxVer for this range: the MinVer of the next snapshot that
+			// has a different layout (or 0 if this is the last one).
+			minVer := snap.ver
+			maxVer := uint32(0)
+			for j := i + 1; j < len(snapshots); j++ {
+				next, ok := snapshots[j].db[structName]
+				if !ok || next == nil || !next.Available {
+					continue
+				}
+				if next.TotalSize != layout.TotalSize || len(next.Fields) != len(layout.Fields) {
+					maxVer = snapshots[j].ver
+					break
+				}
+			}
+			// Only add a new range if it has a different layout than the previous.
+			if len(ranges) > 0 {
+				prev := ranges[len(ranges)-1]
+				if prev.Layout != nil && prev.Layout.TotalSize == layout.TotalSize &&
+					len(prev.Layout.Fields) == len(layout.Fields) {
+					// Same layout — extend previous range's MaxVer.
+					ranges[len(ranges)-1].MaxVer = maxVer
+					continue
+				}
+			}
+			l := *layout
+			ranges = append(ranges, preprocess.VersionedLayout{
+				MinVer: minVer,
+				MaxVer: maxVer,
+				Layout: &l,
+			})
+		}
+		if len(ranges) == 0 {
+			log.Printf("  WARNING: struct %s not found in any map/packets.hpp snapshot", structName)
+			continue
+		}
+		vt[structName] = ranges
+		injected++
+		log.Printf("  Injected %s: %d version range(s)", structName, len(ranges))
+	}
+
+	if injected == 0 {
+		return fmt.Errorf("injectMapPacketStructs: no map packet structs injected (wanted: %v)", mapStructsToInject)
 	}
 	return nil
 }

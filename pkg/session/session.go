@@ -20,6 +20,12 @@ import (
 // HandlerFunc is a callback invoked synchronously by Feed() for each decoded frame.
 // data is the complete frame bytes including the 2-byte packet ID header.
 // packetver is the PACKETVER the session was constructed with.
+//
+// IMPORTANT: string fields in decoded events (e.g. event.Name) are zero-copy aliases
+// into the session receive buffer. They are valid only for the duration of this callback.
+// Do NOT store them past the return of HandlerFunc. To retain a string, copy it first:
+//
+//	name = decode.CopyString(event.Name)
 type HandlerFunc func(data []byte, packetver uint32)
 
 // ErrUnknownPacket is returned by Feed() when an unrecognised packet ID is
@@ -70,7 +76,6 @@ func (c *sessionCore) feed(data []byte) error {
 	// Step 1: append data to recvBuf.
 	c.recvBuf = append(c.recvBuf, data...)
 
-	consumed := 0
 	for len(c.recvBuf) >= 2 {
 		// Step 2a: read packet ID.
 		packetID := binary.LittleEndian.Uint16(c.recvBuf[:2])
@@ -84,6 +89,10 @@ func (c *sessionCore) feed(data []byte) error {
 				goto done // not enough bytes to read the length field yet
 			}
 			frameLen = int(binary.LittleEndian.Uint16(c.recvBuf[2:4]))
+			if frameLen < 4 {
+				c.faulted = true
+				return ErrUnknownPacket{ID: packetID}
+			}
 		case frameLen == 0:
 			// Unknown packet: stream is desynced.
 			c.faulted = true
@@ -101,16 +110,13 @@ func (c *sessionCore) feed(data []byte) error {
 		}
 
 		// Step 2e: advance.
-		consumed += frameLen
 		c.recvBuf = c.recvBuf[frameLen:]
 	}
 
 done:
 	// Step 3: copy-to-front to prevent the backing array from being abandoned.
-	if consumed > 0 {
-		n := copy(c.buf, c.recvBuf)
-		c.recvBuf = c.buf[:n]
-	}
+	n := copy(c.buf, c.recvBuf)
+	c.recvBuf = c.buf[:n]
 	return nil
 }
 

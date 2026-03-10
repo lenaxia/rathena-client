@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP Sync_0x007F: struct PACKET_ZC_NOTIFY_TIME not found in VersionTable
+import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+
+// Sync_0x007F decodes a 0x007F packet (struct PACKET_ZC_NOTIFY_TIME).
+func Sync_0x007F(data []byte, packetver uint32) events.Sync {
+	var e events.Sync
+	_ = packetver
+	e.Time = leU32(data, 2)  // rAthena: time (offset 2, size 4)
+	return e
+}
 

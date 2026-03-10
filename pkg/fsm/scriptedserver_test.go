@@ -175,6 +175,9 @@ func (s *ScriptedServer) servePhase(conn net.Conn, phaseData []byte, phaseIdx in
 	// Step 3: Drain remaining C→S bytes in a background goroutine so writes don't
 	// deadlock. net.Pipe synchronises reads and writes; if the FSM sends C→S while
 	// we're in a Write, the goroutine will consume them so the FSM isn't blocked.
+	// Lifecycle: this goroutine exits when conn.Read returns an error, which happens
+	// when defer conn.Close() fires at the end of servePhase. It is not explicitly
+	// joined; it exits cleanly via the error return path.
 	go func() {
 		buf := make([]byte, 4096)
 		for {

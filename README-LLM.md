@@ -523,9 +523,12 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 
 **Known open issues** (non-blocking for Phase 7):
 - SemanticDB has validation errors (run `semantics_validate`). Not blockers for Phase 7.
-- lengths_char.go: HC_ACCEPT_MAKECHAR (0x006D/0x0B6F) sizes may still be wrong — nested struct CHARACTER_INFO not fully resolved by codegen. Needs re-validation after worklog 0014 fixes land.
-- `go build ./...` has unused-import warnings in some generated pkg/decode files (pre-existing, not introduced by Phase 5).
-- US-02: `lengths_map.go` partially populated; FSM works around via `SetLength` for auth-phase packets.
+- lengths_char.go: HC_ACCEPT_MAKECHAR (0x006D/0x0B6F) sizes may still be wrong — nested struct CHARACTER_INFO not fully resolved by codegen.
+- `go build ./...` has unused-import warnings in some generated pkg/decode files (pre-existing).
+- `lengths_map.go` partially populated; FSM uses `SetLength` for auth-phase packets where needed.
+- Some encode functions (e.g. `EncodeSkillUse`) emit stub-only output — the field-filling codegen is incomplete for complex C→S packets. These stubs build and test clean but send zero-filled payloads beyond the packet ID.
+- Cat-C field skips: decode functions with `MoveData[6]` in walking-unit packets emit `// complex expression — implement manually` comments. The `PosDir` fields in these functions must be filled in by hand (see worklog 0024).
+- ~132 total "complex expression — implement manually" decode gaps across `pkg/decode/`. See `docs/ADDING_PACKETS.md §7` for the full inventory and fix approach.
 
 **Out of scope — not planned:**
 - **Homunculus packets** (`ZC_PROPERTY_HOMUN`, `ZC_FEED_MER`, `ZC_PROPERTY_HOMUN_*`, `PACKET_CZ_*_HOMUN`, etc.) — homunculus support is not planned for the initial goKore integration. The generated decode stubs exist but the known type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`) in those stubs will not be fixed.
@@ -1123,6 +1126,8 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 
 | File | Purpose | When to Check |
 |---|---|---|
+| `docs/USAGE.md` | Integration guide for consumers — how to wire FSM, sessions, decode, encode | Before integrating with goKore or any consumer |
+| `docs/ADDING_PACKETS.md` | How to fix decode gaps, implement stub encodes, add new packets/PACKETVERs | Before implementing any packet decode/encode work |
 | `docs/DESIGN/HLD.md` §9 | Package descriptions with code examples | Before implementing any package |
 | `docs/DESIGN/HLD.md` §4 | FSM public API + state machine | Before implementing pkg/fsm |
 | `docs/DESIGN/HLD.md` §6 | Codegen pipeline spec | Before implementing internal/codegen |
@@ -1155,7 +1160,8 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 
 ---
 
-**Last Updated**: 2026-03-08 (session 0015 — Phase 6 pkg/fsm complete; 21 FSM tests pass; MapSession.SetLength added)
-**Design Authority**: `docs/DESIGN/HLD.md` (Draft v9 — pending fixes from 2026-03-06 audit)
+**Last Updated**: 2026-03-09 (session 0024 — Phases 0–6 complete; 25 work logs; US06/US07/US08/US09/US10 complete)
+**Design Authority**: `docs/DESIGN/HLD.md` (Draft v9)
 **Ground Truth**: GCC preprocessor output against `~/personal/rathena/src/`
 **Packet Cross-Reference**: `semantics/mappings.yaml` via `gokore-semantics` MCP (306 known errors — verify against GCC before trusting)
+**Consumer Integration Guide**: `docs/USAGE.md`

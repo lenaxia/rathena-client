@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP CharacterMoves_0x0087: struct PACKET_ZC_NOTIFY_PLAYERMOVE not found in VersionTable
+import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+
+// CharacterMoves_0x0087 decodes a 0x0087 packet (struct PACKET_ZC_NOTIFY_PLAYERMOVE).
+func CharacterMoves_0x0087(data []byte, packetver uint32) events.CharacterMoves {
+	var e events.CharacterMoves
+	_ = packetver
+	e.MoveData = [6]byte(data[6:12])  // rAthena: moveData (offset 6, size 6)
+	e.Time = leU32(data, 2)  // rAthena: moveStartTime (offset 2, size 4)
+	return e
+}
 

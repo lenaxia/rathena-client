@@ -37271,7 +37271,7 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NOTIFY_TIME
               field_mapping:
-                Time: packet.Time
+                Time: packet.time
     system_chat:
         name: system_chat
         description: System broadcast message sent to all players

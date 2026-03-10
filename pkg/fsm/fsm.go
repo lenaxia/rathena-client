@@ -47,6 +47,10 @@ type Credentials struct {
 // CharServerInfo describes a character server entry parsed from the login
 // server's accept packet (0x0069 / 0x0AC4).
 type CharServerInfo struct {
+	// IP is the char server's IPv4 address in big-endian (network) byte order,
+	// as written by rAthena's htonl() call.
+	// To format as a dotted-decimal string:
+	//   fmt.Sprintf("%d.%d.%d.%d", IP>>24, (IP>>16)&0xFF, (IP>>8)&0xFF, IP&0xFF)
 	IP   uint32
 	Port uint16
 	Name string
@@ -83,11 +87,13 @@ type ConnectionFSM struct {
 	readBuf [4096]byte
 }
 
+const defaultStepTimeout = 30 * time.Second
+
 // New creates a ConnectionFSM. server and creds are stored for every Connect
 // call (including reconnects). Changing either requires creating a new FSM.
 func New(server ServerConfig, creds Credentials, dialer Dialer) *ConnectionFSM {
 	if server.StepTimeout == 0 {
-		server.StepTimeout = 30 * time.Second
+		server.StepTimeout = defaultStepTimeout
 	}
 	return &ConnectionFSM{
 		server: server,
@@ -164,10 +170,7 @@ func (f *ConnectionFSM) Connect(ctx context.Context) error {
 }
 
 func (f *ConnectionFSM) stepTimeout() time.Duration {
-	if f.server.StepTimeout > 0 {
-		return f.server.StepTimeout
-	}
-	return 30 * time.Second
+	return f.server.StepTimeout
 }
 
 // connect is the internal implementation of Connect (no OnFailed dispatch).
@@ -300,13 +303,12 @@ type charPhaseResult struct {
 	err     error
 
 	// char list accumulation
-	rawChars     []byte // accumulated CHARACTER_INFO bytes
-	charTotal    uint32 // total characters expected (from 0x09A0)
-	pagesTotal   uint32 // total pages expected (from 0x09A0)
-	pagesRecv    uint32 // pages received so far
-	got09A0      bool   // whether we received HC_CHARLIST_NOTIFY
-	gotCharList  bool   // whether char list is complete and OnCharList was called
-	selectedSlot uint8
+	rawChars      []byte // accumulated CHARACTER_INFO bytes
+	charsExpected uint32 // total from 0x09A0; we send one CH_CHARLIST_REQ per character
+	pagesRecv     uint32 // 0x099D responses received so far
+	got09A0       bool   // whether we received HC_CHARLIST_NOTIFY
+	gotCharList   bool   // whether char list is complete and OnCharList was called
+	selectedSlot  uint8
 }
 
 // runCharPhase dials the char server, drives the char auth state machine, and
@@ -446,21 +448,27 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	// 0x09A0 HC_CHARLIST_NOTIFY: total characters and pages
 	// struct: int16 + uint32 total
 	// Source: common/packets.hpp PACKET_HC_CHARLIST_NOTIFY, size=6
+	var writeErr error
 	charSess.RegisterHandler(0x09A0, func(data []byte, pv uint32) {
 		if len(data) < 6 {
 			return
 		}
 		total := binary.LittleEndian.Uint32(data[2:6])
-		res.charTotal = total
-		res.pagesTotal = total // rAthena sends one page per char in practice; we treat total == pages
+		// total is the character count from 0x09A0; we send one CH_CHARLIST_REQ per
+		// character and expect one 0x099D response per character (rAthena sends one
+		// char per page in practice).
+		res.charsExpected = total
 		res.got09A0 = true
 
-		// Send CH_CHARLIST_REQ (0x09A1) — one per page
+		// Send CH_CHARLIST_REQ (0x09A1) — one per character
 		// struct: int16 packetType only (size=2)
 		// Source: common/packets.hpp PACKET_CH_CHARLIST_REQ, size=2
 		for i := uint32(0); i < total; i++ {
 			pkt := buildCharlistReq()
-			_ = writeDeadline(conn, pkt, f.stepTimeout())
+			if err := writeDeadline(conn, pkt, f.stepTimeout()); err != nil {
+				writeErr = err
+				return
+			}
 		}
 	})
 
@@ -472,7 +480,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			res.rawChars = append(res.rawChars, data[4:]...)
 		}
 		res.pagesRecv++
-		if res.got09A0 && res.pagesRecv >= res.pagesTotal {
+		if res.got09A0 && res.pagesRecv >= res.charsExpected {
 			slot := f.pickCharSlot(res.rawChars)
 			res.selectedSlot = slot
 			res.gotCharList = true
@@ -480,10 +488,12 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	})
 
 	// Inner feed loop: runs until charList ready, then sends 0x0066, then waits for zone info.
-	charDone := &res.done
 	slotSent := false
 
 	for !res.done {
+		if writeErr != nil {
+			return "", fmt.Errorf("fsm: send charlist req: %w", writeErr)
+		}
 		if res.gotCharList && !slotSent {
 			// Send 0x0066 CH_SELECT_CHAR
 			selPkt := buildSelectCharPacket(res.selectedSlot)
@@ -496,7 +506,10 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		if err := f.feedStep(conn, charSess, f.stepTimeout()); err != nil {
 			return "", fmt.Errorf("fsm: char feed: %w", err)
 		}
-		_ = charDone
+	}
+
+	if writeErr != nil {
+		return "", fmt.Errorf("fsm: send charlist req: %w", writeErr)
 	}
 
 	if res.err != nil {
@@ -527,6 +540,12 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	if err != nil {
 		return fmt.Errorf("fsm: dial map %s: %w", mapAddr, err)
 	}
+	connTransferred := false
+	defer func() {
+		if !connTransferred {
+			conn.Close()
+		}
+	}()
 
 	mapSess := session.NewMapSession(f.server.Packetver)
 
@@ -542,7 +561,6 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	enterPkt := buildMapEnterPacket(f.accountID, f.charID, f.sessionID1, f.sex)
 	encodePacketID(mapSess, enterPkt)
 	if err := writeDeadline(conn, enterPkt, f.stepTimeout()); err != nil {
-		conn.Close()
 		return fmt.Errorf("fsm: send map enter: %w", err)
 	}
 
@@ -625,20 +643,23 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	}
 
 	if err := f.feedUntil(conn, mapSess, f.stepTimeout(), &res.done); err != nil {
-		conn.Close()
 		return fmt.Errorf("fsm: map feed: %w", err)
 	}
 	if res.err != nil {
-		conn.Close()
 		return res.err
 	}
 
 	// Hand off the conn and mapSess to goKore via OnReady.
 	// After this call the FSM releases conn — goKore owns it.
+	// connTransferred is set to true before calling onReady so that the deferred
+	// conn.Close() does not fire on the normal hand-off path.
+	// NOTE: if onReady panics, connTransferred is already true and the defer will
+	// NOT close conn. This is intentional: the caller (goKore) is responsible for
+	// recovering from its own callback panics and closing the connection.
 	if f.onReady != nil {
+		connTransferred = true
 		f.onReady(mapSess, conn)
 	}
-	// Do NOT close conn here — goKore owns it from this point.
 	return nil
 }
 

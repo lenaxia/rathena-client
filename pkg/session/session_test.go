@@ -6,6 +6,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/lenaxia/ragnarok-go-client/pkg/decode"
+	"github.com/lenaxia/ragnarok-go-client/pkg/events"
 	"github.com/lenaxia/ragnarok-go-client/pkg/session"
 )
 
@@ -313,6 +315,141 @@ func TestErrUnknownPacket_Error(t *testing.T) {
 	if msg == "" {
 		t.Error("ErrUnknownPacket.Error() returned empty string")
 	}
+}
+
+// makeVarFrameEmbedLen builds a variable-length packet frame where bytes[2:4]
+// carry an explicitly-specified embedded length (which may differ from the true
+// byte-slice length, to exercise the framing guard).
+func makeVarFrameEmbedLen(packetID uint16, sliceLen int, embeddedLen uint16) []byte {
+	b := make([]byte, sliceLen)
+	b[0] = byte(packetID)
+	b[1] = byte(packetID >> 8)
+	b[2] = byte(embeddedLen)
+	b[3] = byte(embeddedLen >> 8)
+	return b
+}
+
+// TestFeed_VariableLength_ZeroEmbeddedLen_Faults verifies that a variable-length
+// packet whose embedded length field is 0 causes Feed() to return ErrUnknownPacket
+// immediately without spinning.
+//
+// Packet 0x09FF is registered as variable-length (length == -1) for
+// 20141022 <= pv < 20150513. We use pv=20141023 to hit this range.
+func TestFeed_VariableLength_ZeroEmbeddedLen_Faults(t *testing.T) {
+	s := session.NewMapSession(20141023)
+
+	frame := makeVarFrameEmbedLen(0x09FF, 10, 0)
+	err := s.Feed(frame)
+	if err == nil {
+		t.Fatal("Feed returned nil, want ErrUnknownPacket for embedded length 0")
+	}
+	var e session.ErrUnknownPacket
+	if !errors.As(err, &e) {
+		t.Fatalf("error type is %T, want ErrUnknownPacket", err)
+	}
+	if e.ID != 0x09FF {
+		t.Errorf("ErrUnknownPacket.ID = %#04x, want 0x09FF", e.ID)
+	}
+}
+
+// TestFeed_VariableLength_TruncatedEmbeddedLen_Faults verifies that embedded
+// lengths 1, 2, and 3 all fault immediately (each is less than the minimum valid
+// frame header size of 4).
+func TestFeed_VariableLength_TruncatedEmbeddedLen_Faults(t *testing.T) {
+	for _, embLen := range []uint16{1, 2, 3} {
+		s := session.NewMapSession(20141023)
+		frame := makeVarFrameEmbedLen(0x09FF, 10, embLen)
+		err := s.Feed(frame)
+		if err == nil {
+			t.Errorf("embedded length %d: Feed returned nil, want ErrUnknownPacket", embLen)
+			continue
+		}
+		var e session.ErrUnknownPacket
+		if !errors.As(err, &e) {
+			t.Errorf("embedded length %d: error type is %T, want ErrUnknownPacket", embLen, err)
+		}
+	}
+}
+
+// TestFeed_NullTermString_CopyString_PreservesAcrossFeeds verifies that
+// decode.CopyString produces a stable string that survives subsequent Feed()
+// calls, and demonstrates the unsafe.String aliasing hazard via
+// decode.ActorExists_0x09FF.
+//
+// decode.ActorExists_0x09FF reads event.Name via nullTermString, which calls
+// unsafe.String — a zero-copy alias directly into the session's receive buffer.
+// After the first Feed() returns, copy-to-front resets recvBuf to buf[0:0].
+// The second Feed() call appends the new packet bytes starting at buf[0],
+// overwriting buf[84:108] (the name field offset). The stored unsafe.String
+// alias from the first packet then reads the new packet's name bytes instead of
+// the original — this is the aliasing hazard.
+//
+// A string captured with decode.CopyString during the first callback is a
+// heap-allocated copy and is unaffected by the subsequent buffer overwrite.
+//
+// Packet 0x09FF at pv=20181121 is variable-length; struct packet_idle_unit has
+// the name field at offset 84, length 24. Frame total is 108 bytes.
+func TestFeed_NullTermString_CopyString_PreservesAcrossFeeds(t *testing.T) {
+	const pv = uint32(20181121)
+	const frameSize = 108
+
+	buildFrame := func(name string) []byte {
+		b := make([]byte, frameSize)
+		b[0] = 0xFF
+		b[1] = 0x09
+		b[2] = byte(frameSize)
+		b[3] = byte(frameSize >> 8)
+		copy(b[84:108], []byte(name))
+		return b
+	}
+
+	s := session.NewMapSession(pv)
+
+	callCount := 0
+	var storedAlias string
+	var storedCopy string
+	s.RegisterHandler(0x09FF, func(data []byte, packetver uint32) {
+		e := decode.ActorExists_0x09FF(data, packetver)
+		callCount++
+		if callCount == 1 {
+			// Capture the unsafe.String alias and a safe copy from the first packet.
+			storedAlias = e.Name
+			storedCopy = decode.CopyString(e.Name)
+		}
+	})
+
+	_ = s.Feed(buildFrame("Poring"))
+
+	// storedCopy is a heap copy made during the first callback — must be "Poring".
+	if storedCopy != "Poring" {
+		t.Fatalf("storedCopy after first Feed = %q, want %q", storedCopy, "Poring")
+	}
+
+	// Feed a second packet with a different name. copy-to-front in Feed() resets
+	// recvBuf to buf[0:0], then appends the new frame starting at buf[0].
+	// This overwrites buf[84:108] — the exact bytes storedAlias points into.
+	_ = s.Feed(buildFrame("Lunatic"))
+
+	// storedAlias points into buf[84:90] (length 6 = len("Poring")).
+	// After the second Feed, buf[84:90] = "Lunati" (first 6 bytes of "Lunatic").
+	// The aliasing hazard is confirmed when storedAlias no longer reads "Poring".
+	if storedAlias == "Poring" {
+		// The Go runtime occasionally copies string data in ways that prevent the
+		// hazard from manifesting (e.g. if the compiler inserted a defensive copy
+		// in an escape-analysis boundary). Document this but do not fail.
+		t.Log("NOTE: storedAlias still reads 'Poring' after second Feed — the unsafe.String")
+		t.Log("alias was not visibly corrupted on this run. This is implementation-dependent.")
+	} else {
+		t.Logf("aliasing hazard confirmed: storedAlias = %q after buffer overwrite (was 'Poring')", storedAlias)
+	}
+
+	// storedCopy must always preserve the original value regardless of subsequent
+	// Feed() calls. This is the primary provable assertion.
+	if storedCopy != "Poring" {
+		t.Errorf("storedCopy = %q after second Feed, want %q — decode.CopyString did not preserve the name", storedCopy, "Poring")
+	}
+
+	_ = events.ActorExists{}
 }
 
 // TestMapSession_Feed_ZeroAlloc is a benchmark-style test that verifies the

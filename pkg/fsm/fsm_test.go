@@ -902,6 +902,246 @@ func TestConnect_ContextCancellation(t *testing.T) {
 	}
 }
 
+// failAfterNWritesConn wraps a net.Conn and returns an error on the (n+1)th Write call.
+// Used to simulate a write failure inside the 0x09A0 handler without closing the read side.
+type failAfterNWritesConn struct {
+	net.Conn
+	allowedWrites int
+	writeCount    int
+}
+
+func (c *failAfterNWritesConn) Write(b []byte) (int, error) {
+	c.writeCount++
+	if c.writeCount > c.allowedWrites {
+		return 0, fmt.Errorf("simulated write failure (write #%d)", c.writeCount)
+	}
+	return c.Conn.Write(b)
+}
+
+// TestConnect_WriteError_In09A0Handler verifies that a write error inside the
+// 0x09A0 handler is propagated as a real error (not a step timeout).
+//
+// The FSM uses a failAfterNWritesConn that allows only the initial writes
+// (CA_LOGIN, CH_ENTER, the first 0x09A1) and then fails. This means the second
+// 0x09A1 inside the 0x09A0 handler loop fails with a write error.
+//
+// Before Bug 12-B is fixed: _ = writeDeadline(...) discards the error.
+// The FSM then enters feedStep waiting for 0x099D responses that never come
+// because the conn's writes were failing. Eventually feedStep returns a timeout
+// (StepTimeout expires). Connect returns a "step timeout" error.
+//
+// After the fix: the closure-captured writeErr is checked after the feed loop
+// and returned as "fsm: send charlist req: ..." before any timeout.
+//
+// This test is sensitive to exactly how many writes happen before 0x09A0 fires.
+// The sequence on the char phase: (1) SetDeadline, (2) CH_ENTER write, (3) echo
+// read, then session feeds start — 0x09A0 fires in-feed, writes 0x09A1 twice.
+// allowedWrites = 2 (the CH_ENTER write + first 0x09A1) so the second 0x09A1 fails.
+//
+// NOTE: The writes being counted include SetDeadline → write pairs from writeDeadline.
+// Each writeDeadline call results in exactly one Write call on the conn.
+// Writes in order on char conn: (1) CH_ENTER, (2) first 0x09A1, (3) second 0x09A1.
+// allowedWrites=2 lets 1 and 2 succeed; 3 fails.
+func TestConnect_WriteError_In09A0Handler(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+	}
+	charScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17) // CH_ENTER
+		writeAccountIDEcho(t, conn, aid)
+		mustWrite(t, conn, buildHC082D())
+		mustWrite(t, conn, buildCharEnterAccept(nil))
+		// Send 0x09A0 with total=2 — FSM will try to send 2x 0x09A1
+		mustWrite(t, conn, buildHCCharlistNotify(2))
+		// Drain the first 0x09A1 that succeeds; second write on FSM side will fail.
+		mustDrain(t, conn, 2)
+		// Keep the server alive (no close) so the FSM read side doesn't get EOF.
+		// The FSM's write failure should propagate, not cause an EOF read.
+		// If Bug 12-B is not fixed, FSM will wait for 0x099D until StepTimeout.
+		time.Sleep(10 * time.Second) // hold open longer than StepTimeout (3s)
+	}
+
+	// wrappingDialer intercepts the char phase dial and wraps the conn to inject a write failure.
+	// The dialer index tracks which phase we're on: 0=login, 1=char, 2=map.
+	dialIdx := 0
+	wrappingDialer := func(ctx context.Context, addr string) (net.Conn, error) {
+		i := dialIdx
+		dialIdx++
+		client, server := net.Pipe()
+		var script serverScript
+		switch i {
+		case 0:
+			script = loginScript
+		case 1:
+			script = charScript
+		}
+		go func() {
+			defer server.Close()
+			if script != nil {
+				script(t, server)
+			}
+		}()
+		if i == 1 {
+			// Wrap char conn: allow 2 writes (CH_ENTER + first 0x09A1), fail the third.
+			return &failAfterNWritesConn{Conn: client, allowedWrites: 2}, nil
+		}
+		return client, nil
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   pv,
+		StepTimeout: 3 * time.Second,
+	}
+	creds := Credentials{}
+
+	loginFSM := New(server, creds, wrappingDialer)
+
+	start := time.Now()
+	err := loginFSM.Connect(context.Background())
+	elapsed := time.Since(start)
+
+	if err == nil {
+		t.Fatal("expected error when char write fails mid-handler, got nil")
+	}
+	// The write error must be propagated immediately — well before StepTimeout (3s).
+	// If Bug 12-B were not fixed, the FSM would wait for 0x099D that never arrives
+	// and return an "i/o timeout" after the full StepTimeout elapses.
+	if elapsed >= time.Second {
+		t.Errorf("write error not propagated promptly: elapsed %v >= 1s (StepTimeout=3s); error: %v",
+			elapsed, err)
+	}
+	if strings.Contains(err.Error(), "i/o timeout") {
+		t.Errorf("got timeout error instead of write error (Bug 12-B not fixed?): %v", err)
+	}
+}
+
+// TestConnect_ContextCancelled verifies behaviour when Connect is called with an
+// already-cancelled context. The FSM passes ctx directly to the dialer; if the
+// dialer respects ctx, Connect should return immediately. If the dialer ignores
+// ctx (e.g., net.Pipe-based stubs), the behaviour depends on the dialer.
+//
+// This test documents the current FSM contract: the FSM does NOT check ctx before
+// calling the dialer — context cancellation is the dialer's responsibility. A
+// context-aware dialer (like the one used in production with net.DialContext) will
+// return ctx.Err() immediately when ctx is cancelled. The test uses a ctx-aware
+// dialer stub to confirm the error propagates.
+func TestConnect_ContextCancelled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // already cancelled before Connect is called
+
+	ctxDialer := func(ctx context.Context, addr string) (net.Conn, error) {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+		// If ctx is not done yet, return a stub conn (should not reach here).
+		client, server := net.Pipe()
+		go server.Close()
+		return client, nil
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   20180307,
+		StepTimeout: 5 * time.Second,
+	}
+	creds := Credentials{}
+
+	loginFSM := New(server, creds, ctxDialer)
+	err := loginFSM.Connect(ctx)
+	if err == nil {
+		t.Fatal("expected error when context is already cancelled, got nil")
+	}
+	if !strings.Contains(err.Error(), "cancel") && !strings.Contains(err.Error(), "context") {
+		t.Errorf("expected context cancellation error, got: %v", err)
+	}
+}
+
+// TestConnect_OnReady_Nil_ConnClosed verifies that when no OnReady callback is
+// registered, the map connection is still closed after Connect returns.
+// Before Bug 12-E is fixed, runMapPhase has no defer conn.Close() — when
+// onReady == nil the conn is never closed and the file descriptor leaks.
+// After the fix, the flag-guarded defer closes conn in the nil-onReady path.
+//
+// Verification: after Connect returns, the server's end of the map pipe must
+// receive an EOF (conn.Read returns io.EOF), indicating the client side was closed.
+func TestConnect_OnReady_Nil_ConnClosed(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+	const charID = uint32(100001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	// mapConnClosed is written by the map script goroutine when it detects EOF.
+	mapConnClosed := make(chan struct{})
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+	}
+	charScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
+		mustWrite(t, conn, buildHC082D())
+		mustWrite(t, conn, buildCharEnterAccept(nil))
+		mustWrite(t, conn, buildHCCharlistNotify(1))
+		mustDrain(t, conn, 2) // 0x09A1
+		mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+		mustDrain(t, conn, 3) // 0x0066
+		mustWrite(t, conn, buildHCNotifyZonesvrPost(charID, mapIP, mapPort))
+	}
+	mapScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 19) // CZ_ENTER
+		mustWrite(t, conn, buildZCAID(aid))
+		mustWrite(t, conn, buildZCAcceptEnter(pv)) // 0x02EB
+		mustDrain(t, conn, 2)                      // 0x007D
+		mustDrain(t, conn, 6)                      // 0x0360
+		// Now attempt a read — when the FSM closes its end, we get EOF.
+		_ = conn.SetDeadline(time.Now().Add(3 * time.Second))
+		buf := make([]byte, 1)
+		_, err := conn.Read(buf)
+		if err != nil {
+			close(mapConnClosed)
+		}
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   pv,
+		StepTimeout: 5 * time.Second,
+	}
+	creds := Credentials{}
+
+	// Deliberately do NOT register OnReady — this is the nil-onReady path (Bug 12-E).
+	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript))
+
+	if err := loginFSM.Connect(context.Background()); err != nil {
+		t.Fatalf("Connect: %v", err)
+	}
+
+	// Verify the server-side of the map connection sees EOF after Connect returns.
+	select {
+	case <-mapConnClosed:
+		// conn was closed — bug is fixed.
+	case <-time.After(3 * time.Second):
+		t.Fatal("map conn was not closed after Connect returned with nil OnReady — Bug 12-E not fixed")
+	}
+}
+
 // ── Packet builder unit tests ─────────────────────────────────────────────────
 
 func TestBuildLoginPacket(t *testing.T) {

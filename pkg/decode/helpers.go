@@ -63,3 +63,8 @@ func nullTermString(b []byte) string {
 	}
 	return unsafe.String(unsafe.SliceData(b), n)
 }
+
+// CopyString returns a heap-allocated copy of s that is safe to retain beyond
+// the HandlerFunc callback lifetime. Use this whenever any string field from a
+// decoded event must outlive the handler.
+func CopyString(s string) string { return string([]byte(s)) }
