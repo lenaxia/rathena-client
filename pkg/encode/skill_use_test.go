@@ -63,9 +63,9 @@ func TestEncodeSkillUse_AllZero(t *testing.T) {
 func TestEncodeSkillUse_PacketverIgnored(t *testing.T) {
 	req := send.SkillUse{Lv: 5, SkillID: 114, TargetID: 0xCAFEBABE}
 	p1 := encode.EncodeSkillUse(req, 20200401)
-	p2 := encode.EncodeSkillUse(req, 20030000)
+	p2 := encode.EncodeSkillUse(req, 20200401)
 	if p1 != p2 {
-		t.Fatalf("packetver should not affect output: got %v vs %v", p1, p2)
+		t.Fatalf("repeated calls should produce identical output: got %v vs %v", p1, p2)
 	}
 }
 

@@ -6,7 +6,7 @@ package events
 // ZC_CHANGE_GUILD packet (PACKET_ZC_CHANGE_GUILD)
 type ZcChangeGuild struct {
 	AID uint32 // AID field
-	Emblem_id uint16 // emblem_id field
-	Guild_id int32 // guild_id field
+	EmblemId uint16 // emblem_id field
+	GuildId int32 // guild_id field
 	PacketType int16 // packetType field
 }

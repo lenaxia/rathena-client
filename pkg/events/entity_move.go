@@ -6,6 +6,6 @@ package events
 // Actor teleported/warped to location
 type EntityMove struct {
 	ID uint32 // Actor unique identifier
-	Coords [6]byte // Packed movement data: 6 bytes with from(x,y) + to(x,y) + sub-coords (OpenKore: makeCoordsFromTo unpacks this)
+	Coords [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
 	Tick uint32 // Server tick
 }

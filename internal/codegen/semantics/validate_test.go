@@ -139,8 +139,8 @@ func TestLoaderImplCounts(t *testing.T) {
 		}
 	}
 	t.Logf("totalImpls=%d totalParams=%d multiImpl=%d", totalImpls, totalParams, multiImpl)
-	if totalImpls != 475 {
-		t.Errorf("totalImpls=%d want 475", totalImpls)
+	if totalImpls != 477 {
+		t.Errorf("totalImpls=%d want 477", totalImpls)
 	}
 	if totalParams != 1386 {
 		t.Errorf("totalParams=%d want 1386", totalParams)

@@ -14,7 +14,7 @@ func EncodeCzCheckname2(req send.CzCheckname2, packetver uint32) [27]byte {
 	p[1] = 0x0b
 	copy(p[2:26], req.Name)  // rAthena: Name
 	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
-	p[26] = req.Own_char  // rAthena: own_char
+	p[26] = req.OwnChar  // rAthena: own_char
 	_ = packetver
 	return p
 }

@@ -5,7 +5,7 @@ package events
 // CaLoginPcbang is the event emitted when a ca_login_pcbang packet is received.
 // Login from PC Bang with Rijndael encrypted password (CA_LOGIN_PCBANG)
 type CaLoginPcbang struct {
-	Master_version uint8 // Client type identifier (see CLIENT_TYPES)
+	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
 	Ip string // Client IP address string (16 bytes)
 	Mac string // MAC address string (13 bytes)
 	PacketType int16 // packetType field

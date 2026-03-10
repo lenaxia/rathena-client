@@ -50,7 +50,7 @@ func GenerateSendFile(input SendInput) (filename string, src string, err error) 
 		goType := normaliseGoType(p.Type)
 		comment := ""
 		if p.Semantic != "" {
-			comment = " // " + sanitiseComment(p.Semantic)
+			comment = " // " + fixScalarNilComment(sanitiseComment(p.Semantic), goType)
 		}
 		sb.WriteString(fmt.Sprintf("\t%s %s%s\n", fieldName, goType, comment))
 	}
@@ -85,9 +85,7 @@ func GenerateSendDirFiles(db *semantics.DB) (map[string]string, error) {
 		// Only generate send types for C→S packets.
 		isSend := false
 		for _, impl := range action.Implementations {
-			if strings.HasPrefix(impl.StructName, "PACKET_CZ_") ||
-				strings.HasPrefix(impl.StructName, "PACKET_CH_") ||
-				strings.HasPrefix(impl.StructName, "PACKET_CA_") {
+			if isSendStruct(impl.StructName) {
 				isSend = true
 				break
 			}

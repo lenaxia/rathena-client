@@ -5,5 +5,5 @@ package events
 // RequestCharacterPage is the event emitted when a request_character_page packet is received.
 // Request character list page from server
 type RequestCharacterPage struct {
-	Page_number uint8 // Character page number to request (0-based)
+	PageNumber uint8 // Character page number to request (0-based)
 }

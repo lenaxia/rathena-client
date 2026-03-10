@@ -8,8 +8,8 @@ type SkillUse struct {
 	SourceID uint32 // Actor using the skill - optional
 	SkillID uint16 // Skill ID being used - optional
 	Type uint8 // Action type/result - optional
-	Src_speed uint32 // Caster's attack motion time - optional
-	Dst_speed uint32 // Target's attack motion time - optional
+	SrcSpeed uint32 // Caster's attack motion time - optional
+	DstSpeed uint32 // Target's attack motion time - optional
 	Cause uint8 // Failure cause - optional
 	Option uint16 // Hit count for multi-hit skills - optional
 	Damage uint32 // Damage dealt - optional

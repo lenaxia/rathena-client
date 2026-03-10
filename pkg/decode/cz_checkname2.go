@@ -10,7 +10,7 @@ func CzCheckname2_0x0B97(data []byte, packetver uint32) events.CzCheckname2 {
 	_ = packetver
 	e.Name = nullTermString(data[2:26])  // rAthena: Name (offset 2, size 24)
 	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.Own_char = data[26]  // rAthena: own_char (offset 26, size 1)
+	e.OwnChar = data[26]  // rAthena: own_char (offset 26, size 1)
 	return e
 }
 

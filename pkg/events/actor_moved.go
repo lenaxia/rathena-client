@@ -9,7 +9,7 @@ type ActorMoved struct {
 	Tophead uint16 // Upper headgear
 	Midhead uint16 // Middle headgear
 	Opt4 uint16 // Body style
-	Clothes_color uint16 // Clothes color
+	ClothesColor uint16 // Clothes color
 	Opt1 uint16 // Body state (frozen, stunned, etc.)
 	Lv uint16 // Level for display
 	CharID uint32 // Character ID (for players)
@@ -19,26 +19,26 @@ type ActorMoved struct {
 	ID uint32 // Game object ID
 	GuildID uint32 // Guild ID
 	HP uint32 // Current HP
-	Hair_style uint16 // Hair style ID
-	Head_dir uint16 // Head direction
-	Hair_color uint16 // Hair color
+	HairStyle uint16 // Hair style ID
+	HeadDir uint16 // Head direction
+	HairColor uint16 // Hair color
 	Opt2 uint16 // Health state (poison, curse, etc.)
 	Manner uint16 // Manner/honor points
 	IsBoss uint8 // Boss monster flag
 	Stance uint8 // PK mode flag
 	Type uint16 // Job/class ID
 	MaxHP uint32 // Maximum HP
-	MoveData [6]byte // Packed movement coordinates (6 bytes: from_x, from_y, to_x, to_y, direction)
+	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
 	Tick uint32 // Server tick when movement started
 	Name string // Entity name (null-terminated, variable length)
 	Len uint16 // Total packet length (variable)
 	Costume uint16 // Garment/robe sprite
 	Sex uint8 // Gender (0=female, 1=male)
 	Shield uint32 // Shield sprite ID
-	Walk_speed uint16 // Movement speed
+	WalkSpeed uint16 // Movement speed
 	Opt3 uint32 // Additional effect flags
 	Weapon uint32 // Weapon sprite ID
 	XSize uint8 // Entity X size
 	YSize uint8 // Entity Y size
-	Object_type uint8 // Entity type (0=PC, 5=MOB, etc.)
+	ObjectType uint8 // Entity type (0=PC, 5=MOB, etc.)
 }

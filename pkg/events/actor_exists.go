@@ -11,12 +11,12 @@ type ActorExists struct {
 	PosDir [3]byte // Packed position and direction (3 bytes: x, y, direction)
 	Opt1 int16 // Body state (stone, freeze, stun, sleep)
 	Lv int16 // Character level
-	Clothes_color int16 // Clothes color ID
+	ClothesColor int16 // Clothes color ID
 	Option int32 // Effect state flags
-	Hair_color int16 // Hair color ID
-	Hair_style int16 // Hair style ID
+	HairColor int16 // Hair color ID
+	HairStyle int16 // Hair style ID
 	Lowhead int16 // Lower headgear sprite
-	Head_dir int16 // Head direction
+	HeadDir int16 // Head direction
 	Midhead int16 // Middle headgear sprite
 	Tophead int16 // Upper headgear sprite
 	Opt2 int16 // Health state (poison, curse, silence, etc)
@@ -25,7 +25,7 @@ type ActorExists struct {
 	Manner int16 // Manner points
 	Sex uint8 // Gender (0=female, 1=male)
 	Shield int16 // Shield sprite ID
-	Walk_speed int16 // Movement speed
+	WalkSpeed int16 // Movement speed
 	Act uint8 // Actor state/action
 	Opt3 uint8 // Virtue/effect state
 	Weapon int16 // Weapon sprite ID
@@ -37,7 +37,7 @@ type ActorExists struct {
 	IsBoss uint8 // Boss monster flag
 	Opt4 int16 // Body style
 	Costume int16 // Garment/robe sprite
-	Object_type uint8 // Entity type (0=PC, 5=MOB, etc.)
+	ObjectType uint8 // Entity type (0=PC, 5=MOB, etc.)
 	CharID uint32 // Character ID (for players)
 	Font int16 // Font type
 }

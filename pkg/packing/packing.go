@@ -77,7 +77,8 @@ func DecodeMoveData(data []byte) (fromX, fromY, toX, toY uint16, sx0, sy0 uint8)
 
 // EncodeMoveData encodes a movement record into a 6-byte WBUFPOS2-format array.
 // fromX, fromY, toX, toY must be valid 10-bit map coordinates (0–1023).
-// sx0 and sy0 must be 4-bit values (0–15); upper bits are masked off.
+// sx0 and sy0 are sub-cell interpolation offsets (normally 0–15); if either exceeds 15, the upper bits
+// are masked off before encoding.
 func EncodeMoveData(fromX, fromY, toX, toY uint16, sx0, sy0 uint8) [6]byte {
 	var p [6]byte
 	p[0] = uint8(fromX >> 2)
@@ -85,6 +86,6 @@ func EncodeMoveData(fromX, fromY, toX, toY uint16, sx0, sy0 uint8) [6]byte {
 	p[2] = uint8((fromY << 4) | ((toX >> 6) & 0x0f))
 	p[3] = uint8((toX << 2) | ((toY >> 8) & 0x03))
 	p[4] = uint8(toY)
-	p[5] = uint8((sx0 << 4) | (sy0 & 0x0f))
+	p[5] = uint8(((sx0 & 0x0f) << 4) | (sy0 & 0x0f))
 	return p
 }

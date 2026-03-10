@@ -7,5 +7,5 @@ package events
 type CzCheckname2 struct {
 	Name string // Name field
 	PacketType int16 // PacketType field
-	Own_char uint8 // own_char field
+	OwnChar uint8 // own_char field
 }

@@ -5,7 +5,7 @@ package events
 // MasterLogin is the event emitted when a master_login packet is received.
 // Login authentication packet (client → auth server)
 type MasterLogin struct {
-	Master_version uint8 // Client type identifier
+	MasterVersion uint8 // Client type identifier
 	Password string // Account password (null-terminated, null-padded)
 	Username string // Account username (null-terminated, null-padded)
 	Version uint32 // Client version number

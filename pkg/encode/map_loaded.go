@@ -6,9 +6,9 @@ import (
 	"github.com/lenaxia/ragnarok-go-client/pkg/send"
 )
 
-// EncodeMapLoaded encodes a move request for the appropriate packet version.
+// EncodeMapLoaded encodes a MapLoaded packet for the appropriate packet version.
 func EncodeMapLoaded(req send.MapLoaded, packetver uint32) []byte {
 	switch {
 	}
-	return nil
+	panic("EncodeMapLoaded: no matching packetver implementation — unimplemented")
 }

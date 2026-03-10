@@ -5,9 +5,9 @@ package events
 // CaSsoLoginReq is the event emitted when a ca_sso_login_req packet is received.
 // SSO login request with token authentication (CA_SSO_LOGIN_REQ)
 type CaSsoLoginReq struct {
-	Master_version uint8 // Client type identifier (see CLIENT_TYPES)
+	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
 	Ip string // Client IP address string (15 bytes)
-	Mac_hyphen_separated string // MAC address with hyphens (17 bytes)
+	MacHyphenSeparated string // MAC address with hyphens (17 bytes)
 	PacketLength int16 // packetLength field
 	PacketType int16 // packetType field
 	Password string // Password string (27 bytes)

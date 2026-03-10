@@ -8,7 +8,7 @@ type ZcPersonalInfomation struct {
 	Details []byte // details field
 	Length int16 // length field
 	PacketType int16 // packetType field
-	Total_death int16 // total_death field
-	Total_drop int16 // total_drop field
-	Total_exp int16 // total_exp field
+	TotalDeath int16 // total_death field
+	TotalDrop int16 // total_drop field
+	TotalExp int16 // total_exp field
 }

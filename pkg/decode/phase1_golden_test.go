@@ -47,20 +47,20 @@ func makeActorExists0x09FF_20181121() []byte {
 	b[4] = 5                    // objecttype = MOB
 	putU32LE(b, 5, 1001)        // AID → e.ID
 	putU32LE(b, 9, 2002)        // GID (not mapped in actor_exists_0x09FF)
-	putI16LE(b, 13, 150)        // speed → Walk_speed
+	putI16LE(b, 13, 150)        // speed → WalkSpeed
 	putI16LE(b, 15, 1)          // bodyState → Opt1
 	putI16LE(b, 17, 2)          // healthState → Opt2
 	putI32LE(b, 19, 0x00000010) // effectState → Option
 	putI16LE(b, 23, 4)          // job → Type
-	putU16LE(b, 25, 5)          // head → Hair_style
+	putU16LE(b, 25, 5)          // head → HairStyle
 	putU32LE(b, 27, 6)          // weapon → Weapon
 	putU32LE(b, 31, 7)          // shield → Shield
 	putU16LE(b, 35, 8)          // accessory → Lowhead
 	putU16LE(b, 37, 9)          // accessory2 → Tophead
 	putU16LE(b, 39, 10)         // accessory3 → Midhead
-	putI16LE(b, 41, 11)         // headpalette → Hair_color
-	putI16LE(b, 43, 12)         // bodypalette → Clothes_color
-	putI16LE(b, 45, 1)          // headDir → Head_dir
+	putI16LE(b, 41, 11)         // headpalette → HairColor
+	putI16LE(b, 43, 12)         // bodypalette → ClothesColor
+	putI16LE(b, 45, 1)          // headDir → HeadDir
 	putU16LE(b, 47, 13)         // robe → Costume
 	putU32LE(b, 49, 500)        // GUID → GuildID
 	putI16LE(b, 53, 3)          // GEmblemVer → EmblemID
@@ -94,8 +94,8 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.GuildID != 500 {
 		t.Errorf("GuildID: got %d want 500", e.GuildID)
 	}
-	if e.Walk_speed != 150 {
-		t.Errorf("Walk_speed: got %d want 150", e.Walk_speed)
+	if e.WalkSpeed != 150 {
+		t.Errorf("WalkSpeed: got %d want 150", e.WalkSpeed)
 	}
 	if e.Opt1 != 1 {
 		t.Errorf("Opt1: got %d want 1", e.Opt1)
@@ -109,8 +109,8 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.Type != 4 {
 		t.Errorf("Type: got %d want 4", e.Type)
 	}
-	if e.Hair_style != 5 {
-		t.Errorf("Hair_style: got %d want 5", e.Hair_style)
+	if e.HairStyle != 5 {
+		t.Errorf("HairStyle: got %d want 5", e.HairStyle)
 	}
 	if e.Weapon != 6 {
 		t.Errorf("Weapon: got %d want 6", e.Weapon)
@@ -127,14 +127,14 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.Midhead != 10 {
 		t.Errorf("Midhead: got %d want 10", e.Midhead)
 	}
-	if e.Hair_color != 11 {
-		t.Errorf("Hair_color: got %d want 11", e.Hair_color)
+	if e.HairColor != 11 {
+		t.Errorf("HairColor: got %d want 11", e.HairColor)
 	}
-	if e.Clothes_color != 12 {
-		t.Errorf("Clothes_color: got %d want 12", e.Clothes_color)
+	if e.ClothesColor != 12 {
+		t.Errorf("ClothesColor: got %d want 12", e.ClothesColor)
 	}
-	if e.Head_dir != 1 {
-		t.Errorf("Head_dir: got %d want 1", e.Head_dir)
+	if e.HeadDir != 1 {
+		t.Errorf("HeadDir: got %d want 1", e.HeadDir)
 	}
 	if e.Costume != 13 {
 		t.Errorf("Costume: got %d want 13", e.Costume)
@@ -186,8 +186,8 @@ func TestActorExists_0x09FF_Golden_20181121(t *testing.T) {
 	if e.Name != "TestMob" {
 		t.Errorf("Name: got %q want %q", e.Name, "TestMob")
 	}
-	if e.Object_type != 5 {
-		t.Errorf("Object_type: got %d want 5", e.Object_type)
+	if e.ObjectType != 5 {
+		t.Errorf("ObjectType: got %d want 5", e.ObjectType)
 	}
 }
 
@@ -204,8 +204,8 @@ func TestActorExists_0x0078_Golden_20181121(t *testing.T) {
 	if e.ID != 9999 {
 		t.Errorf("ID (GID): got %d want 9999", e.ID)
 	}
-	if e.Walk_speed != 150 {
-		t.Errorf("Walk_speed: got %d want 150", e.Walk_speed)
+	if e.WalkSpeed != 150 {
+		t.Errorf("WalkSpeed: got %d want 150", e.WalkSpeed)
 	}
 	if e.EmblemID != 3 {
 		t.Errorf("EmblemID: got %d want 3", e.EmblemID)
@@ -243,7 +243,7 @@ func makeActorMoved0x09DB_20181121() []byte {
 	b[4] = 5                    // objecttype
 	putU32LE(b, 5, 1001)        // AID → CharID
 	putU32LE(b, 9, 2002)        // GID → ID
-	putI16LE(b, 13, 200)        // speed → Walk_speed
+	putI16LE(b, 13, 200)        // speed → WalkSpeed
 	putU16LE(b, 15, 3)          // bodyState → Opt1
 	putU16LE(b, 17, 4)          // healthState → Opt2
 	putU32LE(b, 19, 0x00000020) // effectState → Option
@@ -268,7 +268,7 @@ func makeActorMoved0x09DB_20181121() []byte {
 	b[73] = 2           // xSize → XSize
 	b[74] = 3           // ySize → YSize
 	putU16LE(b, 75, 88) // clevel → Lv
-	putI16LE(b, 49, 2)  // headDir → Head_dir
+	putI16LE(b, 49, 2)  // headDir → HeadDir
 	putU16LE(b, 41, 10) // accessory2 → (not mapped in actor_moved for 0x09DB, skip)
 	return b
 }
@@ -283,8 +283,8 @@ func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 	if e.ID != 2002 {
 		t.Errorf("ID: got %d want 2002", e.ID)
 	}
-	if e.Walk_speed != 200 {
-		t.Errorf("Walk_speed: got %d want 200", e.Walk_speed)
+	if e.WalkSpeed != 200 {
+		t.Errorf("WalkSpeed: got %d want 200", e.WalkSpeed)
 	}
 	if e.Opt1 != 3 {
 		t.Errorf("Opt1: got %d want 3", e.Opt1)
@@ -343,8 +343,8 @@ func TestActorMoved_0x007B_Golden_20181121(t *testing.T) {
 	if e.ID != 2002 {
 		t.Errorf("ID (GID): got %d want 2002", e.ID)
 	}
-	if e.Walk_speed != 200 {
-		t.Errorf("Walk_speed: got %d want 200", e.Walk_speed)
+	if e.WalkSpeed != 200 {
+		t.Errorf("WalkSpeed: got %d want 200", e.WalkSpeed)
 	}
 	wantMove := [6]byte{0x19, 0x03, 0x28, 0x00, 0x00, 0x00}
 	if e.MoveData != wantMove {
@@ -378,14 +378,14 @@ func makeActorConnected0x09FE_20181121() []byte {
 	b[4] = 1                    // objecttype = PC
 	putU32LE(b, 5, 3003)        // AID
 	putU32LE(b, 9, 4004)        // GID → ID
-	putI16LE(b, 13, 120)        // speed → Walk_speed
+	putI16LE(b, 13, 120)        // speed → WalkSpeed
 	putI16LE(b, 15, 0)          // bodyState → Opt1
 	putI16LE(b, 17, 0)          // healthState → Opt2
 	putI32LE(b, 19, 0)          // effectState → Option
 	putI16LE(b, 23, 0)          // job → Type (0=novice)
 	putU32LE(b, 27, 0)          // weapon
 	putU32LE(b, 31, 0)          // shield
-	putI16LE(b, 45, 3)          // headDir → Head_dir
+	putI16LE(b, 45, 3)          // headDir → HeadDir
 	putU32LE(b, 49, 700)        // GUID → GuildID
 	putI16LE(b, 53, 7)          // GEmblemVer → EmblemID
 	putI32LE(b, 57, 50)         // virtue → Opt3 (byte 57)
@@ -415,11 +415,11 @@ func TestActorConnected_0x09FE_Golden_20181121(t *testing.T) {
 	if e.CharID != 4004 {
 		t.Errorf("CharID (GID): got %d want 4004", e.CharID)
 	}
-	if e.Walk_speed != 120 {
-		t.Errorf("Walk_speed: got %d want 120", e.Walk_speed)
+	if e.WalkSpeed != 120 {
+		t.Errorf("WalkSpeed: got %d want 120", e.WalkSpeed)
 	}
-	if e.Head_dir != 3 {
-		t.Errorf("Head_dir: got %d want 3", e.Head_dir)
+	if e.HeadDir != 3 {
+		t.Errorf("HeadDir: got %d want 3", e.HeadDir)
 	}
 	if e.GuildID != 700 {
 		t.Errorf("GuildID: got %d want 700", e.GuildID)
@@ -464,8 +464,8 @@ func TestActorConnected_0x0079_Golden_20181121(t *testing.T) {
 	if e.ID != 4004 {
 		t.Errorf("ID (GID): got %d want 4004", e.ID)
 	}
-	if e.Walk_speed != 120 {
-		t.Errorf("Walk_speed: got %d want 120", e.Walk_speed)
+	if e.WalkSpeed != 120 {
+		t.Errorf("WalkSpeed: got %d want 120", e.WalkSpeed)
 	}
 	if e.Lv != 55 {
 		t.Errorf("Lv: got %d want 55", e.Lv)
@@ -814,12 +814,12 @@ func TestZcGuildAgitInfo_0x0B27_Golden(t *testing.T) {
 	if e.PacketLength != int16(totalLen) {
 		t.Errorf("PacketLength: got %d want %d", e.PacketLength, totalLen)
 	}
-	if len(e.Castle_list) != len(castles) {
-		t.Fatalf("Castle_list: got len=%d want %d", len(e.Castle_list), len(castles))
+	if len(e.CastleList) != len(castles) {
+		t.Fatalf("CastleList: got len=%d want %d", len(e.CastleList), len(castles))
 	}
 	for i, c := range castles {
-		if e.Castle_list[i] != c {
-			t.Errorf("Castle_list[%d]: got 0x%02X want 0x%02X", i, e.Castle_list[i], c)
+		if e.CastleList[i] != c {
+			t.Errorf("CastleList[%d]: got 0x%02X want 0x%02X", i, e.CastleList[i], c)
 		}
 	}
 }
@@ -832,8 +832,8 @@ func TestZcGuildAgitInfo_0x0B27_Empty(t *testing.T) {
 
 	e := ZcGuildAgitInfo_0x0B27(b, 20181121)
 
-	if len(e.Castle_list) != 0 {
-		t.Errorf("Castle_list: got len=%d want 0", len(e.Castle_list))
+	if len(e.CastleList) != 0 {
+		t.Errorf("CastleList: got len=%d want 0", len(e.CastleList))
 	}
 }
 

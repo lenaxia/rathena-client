@@ -5,7 +5,7 @@ package events
 // ZcStatus is the event emitted when a zc_status packet is received.
 // ZC_STATUS packet (PACKET_ZC_STATUS)
 type ZcStatus struct {
-	Attack_speed int16 // Attack speed (ASPD)
+	AttackSpeed int16 // Attack speed (ASPD)
 	Agi uint8 // AGI stat value
 	Attack int16 // Base attack power
 	Flee int16 // Flee rate (evasion)
@@ -15,21 +15,21 @@ type ZcStatus struct {
 	Int uint8 // INT stat value
 	Def int16 // Base defense power
 	Luk uint8 // LUK stat value
-	Attack_magic_max int16 // Maximum magic attack power
-	Def_magic int16 // Base magic defense
-	Attack_magic_min int16 // Minimum magic attack power
-	Attack_speed_bonus int16 // ASPD bonus from equipment/buffs
-	Flee_bonus int16 // Flee bonus from AGI/equipment
-	Def_bonus int16 // Defense bonus from equipment
-	Def_magic_bonus int16 // Magic defense bonus
-	Points_free uint16 // Free status points available to distribute
-	Attack_bonus int16 // Attack bonus from equipment/refining
-	Points_agi uint8 // Points needed to increase AGI
-	Points_dex uint8 // Points needed to increase DEX
-	Points_int uint8 // Points needed to increase INT
-	Points_luk uint8 // Points needed to increase LUK
-	Points_str uint8 // Points needed to increase STR
-	Points_vit uint8 // Points needed to increase VIT
+	AttackMagicMax int16 // Maximum magic attack power
+	DefMagic int16 // Base magic defense
+	AttackMagicMin int16 // Minimum magic attack power
+	AttackSpeedBonus int16 // ASPD bonus from equipment/buffs
+	FleeBonus int16 // Flee bonus from AGI/equipment
+	DefBonus int16 // Defense bonus from equipment
+	DefMagicBonus int16 // Magic defense bonus
+	PointsFree uint16 // Free status points available to distribute
+	AttackBonus int16 // Attack bonus from equipment/refining
+	PointsAgi uint8 // Points needed to increase AGI
+	PointsDex uint8 // Points needed to increase DEX
+	PointsInt uint8 // Points needed to increase INT
+	PointsLuk uint8 // Points needed to increase LUK
+	PointsStr uint8 // Points needed to increase STR
+	PointsVit uint8 // Points needed to increase VIT
 	Str uint8 // STR stat value
 	Vit uint8 // VIT stat value
 }

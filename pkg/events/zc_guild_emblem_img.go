@@ -5,9 +5,9 @@ package events
 // ZcGuildEmblemImg is the event emitted when a zc_guild_emblem_img packet is received.
 // ZC_GUILD_EMBLEM_IMG packet (PACKET_ZC_GUILD_EMBLEM_IMG)
 type ZcGuildEmblemImg struct {
-	Emblem_data string // emblem_data field
-	Emblem_id uint32 // emblem_id field
-	Guild_id int32 // guild_id field
+	EmblemData string // emblem_data field
+	EmblemId uint32 // emblem_id field
+	GuildId int32 // guild_id field
 	PacketLength int16 // packetLength field
 	PacketType int16 // packetType field
 }

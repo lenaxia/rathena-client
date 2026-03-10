@@ -5,5 +5,5 @@ package events
 // CharacterBlocked is the event emitted when a character_blocked packet is received.
 // Blocked/banned character notification
 type CharacterBlocked struct {
-	Characters_raw []byte // Raw character entries data (24 bytes per entry - 4 bytes CID + 20 bytes unblock_time)
+	CharactersRaw []byte // Raw character entries data (24 bytes per entry - 4 bytes CID + 20 bytes unblock_time)
 }

@@ -8,7 +8,7 @@ import "github.com/lenaxia/ragnarok-go-client/pkg/events"
 func CzReqAgitInvestment_0x0B2C(data []byte, packetver uint32) events.CzReqAgitInvestment {
 	var e events.CzReqAgitInvestment
 	_ = packetver
-	e.Castle_id = int8(data[2])  // rAthena: castle_id (offset 2, size 1)
+	e.CastleId = int8(data[2])  // rAthena: castle_id (offset 2, size 1)
 	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }

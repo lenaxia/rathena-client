@@ -5,7 +5,7 @@ package send
 // MasterLogin is the request struct for the master_login action.
 // Login authentication packet (client → auth server)
 type MasterLogin struct {
-	Master_version uint8 // Client type identifier
+	MasterVersion uint8 // Client type identifier
 	Password string // Account password (null-terminated, null-padded)
 	Username string // Account username (null-terminated, null-padded)
 	Version uint32 // Client version number

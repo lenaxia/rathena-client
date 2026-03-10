@@ -5,8 +5,8 @@ package events
 // CaLogin2 is the event emitted when a ca_login2 packet is received.
 // Login with MD5 hashed password (CA_LOGIN2)
 type CaLogin2 struct {
-	Master_version uint8 // Client type identifier (see CLIENT_TYPES)
+	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
 	PacketType int16 // packetType field
-	Password_salted_md5 string // MD5 hashed password (16 bytes)
+	PasswordSaltedMd5 string // MD5 hashed password (16 bytes)
 	Version uint32 // Client version number
 }

@@ -6,9 +6,9 @@ import (
 	"github.com/lenaxia/ragnarok-go-client/pkg/send"
 )
 
-// EncodeDealFinalize encodes a move request for the appropriate packet version.
+// EncodeDealFinalize encodes a DealFinalize packet for the appropriate packet version.
 func EncodeDealFinalize(req send.DealFinalize, packetver uint32) []byte {
 	switch {
 	}
-	return nil
+	panic("EncodeDealFinalize: no matching packetver implementation — unimplemented")
 }

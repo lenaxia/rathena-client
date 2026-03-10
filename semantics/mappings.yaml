@@ -31401,6 +31401,21 @@ semantic_actions:
                 Time: "0"
                 Type: packet.Action
                 VictimMoveTime: "0"
+            - packet_id: "0x085A"
+              packetver_range:
+                - 20200401
+                - null
+              struct_name: SYNTH_CZ_REQUEST_ACT
+              field_mapping:
+                AttackerMoveTime: int32(0)
+                Damage: int32(0)
+                Damage2: int32(0)
+                Div: int16(0)
+                SourceID: uint32(0)
+                TargetID: packet.TargetGID
+                Time: uint32(0)
+                Type: packet.Action
+                VictimMoveTime: int32(0)
     actor_connected:
         name: actor_connected
         description: Actor appeared/connected (entering viewport, spawning)
@@ -31813,27 +31828,27 @@ semantic_actions:
                 CharID: uint32(0)
                 Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
-                Costume: int16(0)
+                Costume: int16(packet.robe)
                 EmblemID: packet.GEmblemVer
-                Font: int16(0)
+                Font: int16(packet.font)
                 GuildID: packet.GUID
-                HP: int32(0)
+                HP: packet.HP
                 Hair_color: packet.headpalette
                 Hair_style: packet.head
                 Head_dir: packet.headDir
                 ID: packet.GID
-                IsBoss: uint8(0)
+                IsBoss: packet.isBoss
                 Lowhead: packet.accessory
                 Lv: packet.clevel
                 Manner: packet.honor
-                MaxHP: int32(0)
+                MaxHP: packet.maxHP
                 Midhead: packet.accessory3
-                Name: string("")
-                Object_type: uint8(0)
+                Name: string(packet.name)
+                Object_type: packet.objecttype
                 Opt1: packet.bodyState
                 Opt2: packet.healthState
                 Opt3: packet.virtue
-                Opt4: int16(0)
+                Opt4: int16(packet.body)
                 Option: packet.effectState
                 PosDir: '[3]byte(packet.PosDir[:])'
                 Sex: packet.sex
@@ -31855,27 +31870,27 @@ semantic_actions:
                 CharID: uint32(0)
                 Clothes_color: packet.bodypalette
                 Coords: uint32(packet.PosDir)
-                Costume: int16(0)
+                Costume: int16(packet.robe)
                 EmblemID: packet.GEmblemVer
-                Font: int16(0)
+                Font: int16(packet.font)
                 GuildID: packet.GUID
-                HP: int32(0)
+                HP: packet.HP
                 Hair_color: packet.headpalette
                 Hair_style: packet.head
                 Head_dir: packet.headDir
                 ID: packet.GID
-                IsBoss: uint8(0)
+                IsBoss: packet.isBoss
                 Lowhead: packet.accessory
                 Lv: packet.clevel
                 Manner: packet.honor
-                MaxHP: int32(0)
+                MaxHP: packet.maxHP
                 Midhead: packet.accessory3
-                Name: string("")
-                Object_type: uint8(0)
+                Name: string(packet.name)
+                Object_type: packet.objecttype
                 Opt1: packet.bodyState
                 Opt2: packet.healthState
                 Opt3: packet.virtue
-                Opt4: int16(0)
+                Opt4: int16(packet.body)
                 Option: packet.effectState
                 PosDir: '[3]byte(packet.PosDir[:])'
                 Sex: packet.sex
@@ -32238,7 +32253,7 @@ semantic_actions:
                 MaxHP: uint32(packet.maxHP)
                 Midhead: packet.accessory3
                 MoveData: '[6]byte(packet.MoveData[:])'
-                Name: strings.TrimRight(string(packet.name), "\x00")
+                Name: string(packet.name)
                 Object_type: packet.objecttype
                 Opt1: uint16(packet.bodyState)
                 Opt2: uint16(packet.healthState)
@@ -37064,6 +37079,25 @@ semantic_actions:
                 TargetID: '&packet.targetID'
                 Tick: '&packet.startTime'
                 Type: func() *uint8 { v := uint8(packet.action); return &v }()
+            - packet_id: "0x0862"
+              packetver_range:
+                - 20200401
+                - null
+              struct_name: SYNTH_CZ_USE_SKILL_TOID
+              field_mapping:
+                Cause: nil
+                Damage: nil
+                Dst_speed: nil
+                Flag: nil
+                Level: nil
+                Lv: packet.SkillLv
+                Option: nil
+                SkillID: packet.SkillID
+                SourceID: nil
+                Src_speed: nil
+                TargetID: packet.TargetID
+                Tick: nil
+                Type: nil
     skill_use_failed:
         name: skill_use_failed
         description: Skill usage failed notification

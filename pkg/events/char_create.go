@@ -7,8 +7,8 @@ package events
 type CharCreate struct {
 	Agi uint8 // Starting AGI stat value
 	Dex uint8 // Starting DEX stat value
-	Hair_color uint16 // Hair color ID
-	Hair_style uint16 // Hair style ID
+	HairColor uint16 // Hair color ID
+	HairStyle uint16 // Hair style ID
 	Int uint8 // Starting INT stat value
 	Luk uint8 // Starting LUK stat value
 	Name string // Character name (24 bytes, null-terminated)

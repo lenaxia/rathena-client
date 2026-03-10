@@ -6,9 +6,9 @@ import (
 	"github.com/lenaxia/ragnarok-go-client/pkg/send"
 )
 
-// EncodeSendChat encodes a move request for the appropriate packet version.
+// EncodeSendChat encodes a SendChat packet for the appropriate packet version.
 func EncodeSendChat(req send.SendChat, packetver uint32) []byte {
 	switch {
 	}
-	return nil
+	panic("EncodeSendChat: no matching packetver implementation — unimplemented")
 }

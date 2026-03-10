@@ -56,8 +56,10 @@ func GenerateEventsFile(input EventsInput) (filename string, src string, err err
 		fieldName := paramNameToGoIdent(p.Name)
 		goType := normaliseGoType(p.Type)
 		comment := ""
-		if p.Semantic != "" {
-			comment = " // " + sanitiseComment(p.Semantic)
+		if goType == "[6]byte" {
+			comment = " // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack."
+		} else if p.Semantic != "" {
+			comment = " // " + fixScalarNilComment(sanitiseComment(p.Semantic), goType)
 		}
 		sb.WriteString(fmt.Sprintf("\t%s %s%s\n", fieldName, goType, comment))
 	}
@@ -121,10 +123,14 @@ func actionNameToFilename(name string) string {
 }
 
 // paramNameToGoIdent converts a param name to an exported Go identifier.
-// Names that are already PascalCase are returned as-is.
-// Names that are snake_case or lowercase are converted.
+// Both snake_case and Mixed_case names are converted to PascalCase.
 func paramNameToGoIdent(name string) string {
-	// If the name already starts with uppercase, treat as PascalCase.
+	// Always apply snake_case → PascalCase conversion to handle names like
+	// "Clothes_color" (starts uppercase but contains underscores).
+	if strings.Contains(name, "_") {
+		return actionNameToGoIdent(name)
+	}
+	// If the name already starts with uppercase and has no underscores, treat as PascalCase.
 	if len(name) > 0 && unicode.IsUpper(rune(name[0])) {
 		return name
 	}
@@ -188,4 +194,20 @@ func sanitiseComment(s string) string {
 		s = s[:117] + "..."
 	}
 	return s
+}
+
+// fixScalarNilComment replaces "may be nil" language in comments for scalar Go types
+// (uint8/uint16/uint32/uint64/int8/int16/int32/int64) with "zero if absent", since
+// scalar types in Go cannot be nil.
+func fixScalarNilComment(comment, goType string) string {
+	scalarTypes := map[string]bool{
+		"uint8": true, "uint16": true, "uint32": true, "uint64": true,
+		"int8": true, "int16": true, "int32": true, "int64": true,
+		"bool": true,
+	}
+	if !scalarTypes[goType] {
+		return comment
+	}
+	comment = strings.ReplaceAll(comment, "may be nil", "zero if absent")
+	return comment
 }

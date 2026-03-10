@@ -6,6 +6,6 @@ package events
 // Client selects an accessible map from the list sent by 0x0840
 type SelectAccessibleMap struct {
 	Mapnumber int8 // Index of selected map from 0x0840 list
-	Packet_type int16 // Packet ID (0x0841)
+	PacketType int16 // Packet ID (0x0841)
 	Slot int8 // Character slot number
 }

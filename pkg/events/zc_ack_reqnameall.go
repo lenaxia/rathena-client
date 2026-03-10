@@ -6,5 +6,5 @@ package events
 // ZC_ACK_REQNAMEALL packet (PACKET_ZC_ACK_REQNAMEALL)
 type ZcAckReqnameall struct {
 	Gid int32 // gid field
-	Packet_id uint16 // packet_id field
+	PacketId uint16 // packet_id field
 }

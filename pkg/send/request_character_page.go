@@ -5,5 +5,5 @@ package send
 // RequestCharacterPage is the request struct for the request_character_page action.
 // Request character list page from server
 type RequestCharacterPage struct {
-	Page_number uint8 // Character page number to request (0-based)
+	PageNumber uint8 // Character page number to request (0-based)
 }

@@ -12,7 +12,7 @@ func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) e
 		e.ItemID = leU32(data, 5)  // rAthena: ItemID (offset 5, size 4)
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.BoxItemID_len = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
+		e.BoxItemIDLen = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
 		e.Len = int8(data[9])  // rAthena: len (offset 9, size 1)
 		e.Type = data[4]  // rAthena: type (offset 4, size 1)
 	} else if packetver >= 20181121 {
@@ -20,7 +20,7 @@ func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) e
 		e.ItemID = leU32(data, 5)  // rAthena: ItemID (offset 5, size 4)
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.BoxItemID_len = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
+		e.BoxItemIDLen = int8(data[34])  // rAthena: boxItemID_len (offset 34, size 1)
 		e.Len = int8(data[9])  // rAthena: len (offset 9, size 1)
 		e.Type = data[4]  // rAthena: type (offset 4, size 1)
 	} else {
@@ -28,7 +28,7 @@ func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) e
 		e.ItemID = uint32(leU16(data, 5))  // rAthena: ItemID (offset 5, size 2)
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-		e.BoxItemID_len = int8(data[32])  // rAthena: boxItemID_len (offset 32, size 1)
+		e.BoxItemIDLen = int8(data[32])  // rAthena: boxItemID_len (offset 32, size 1)
 		e.Len = int8(data[7])  // rAthena: len (offset 7, size 1)
 		e.Type = data[4]  // rAthena: type (offset 4, size 1)
 	}

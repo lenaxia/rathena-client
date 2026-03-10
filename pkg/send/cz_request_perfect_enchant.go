@@ -7,6 +7,6 @@ package send
 type CzRequestPerfectEnchant struct {
 	ITID uint32 // ITID field
 	PacketType int16 // PacketType field
-	Enchant_group int64 // enchant_group field
+	EnchantGroup int64 // enchant_group field
 	Index int16 // index field
 }

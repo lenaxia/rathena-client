@@ -5,7 +5,7 @@ package events
 // ZcGuildAgitInfo is the event emitted when a zc_guild_agit_info packet is received.
 // ZC_GUILD_AGIT_INFO packet (PACKET_ZC_GUILD_AGIT_INFO)
 type ZcGuildAgitInfo struct {
-	Castle_list []byte // castle_list field
+	CastleList []byte // castle_list field
 	PacketLength int16 // packetLength field
 	PacketType int16 // packetType field
 }

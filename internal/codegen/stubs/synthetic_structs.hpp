@@ -157,7 +157,30 @@ struct SYNTH_CZ_ITEM_THROW2 {
     uint16 Amount;      // Amount to drop
 } __attribute__((packed));
 
-// 0x0116 CZ_USE_SKILL_TOGROUND — Use a ground-targeted skill
+// 0x085a CZ_REQUEST_ACT (shuffle variant at PACKETVER >= 20200401)
+// parseable_packet(0x085a, 7, clif_parse_ActionRequest, 2, 6)
+// [pos[0]=2=TargetGID, pos[1]=6=Action]
+// Length: 7, fixed. Same layout as 0x0089 but shuffled packet ID.
+// GCC-verified at PACKETVER=20200401: packetdb_addpacket(0x085a, 7, clif_parse_ActionRequest, 2, 6, 0)
+struct SYNTH_CZ_REQUEST_ACT {
+    int16  PacketType;
+    uint32 TargetGID;   // Target actor GID (pos[0]=2)
+    uint8  Action;      // Action type: 7=normal attack, 0=sit, 2=stand (pos[1]=6)
+} __attribute__((packed));
+
+// 0x0862 CZ_USE_SKILL_TOID (shuffle variant at PACKETVER >= 20200401)
+// parseable_packet(0x0862, 10, clif_parse_UseSkillToId, 2, 4, 6)
+// [pos[0]=2=skillLevel, pos[1]=4=skillID, pos[2]=6=targetID]
+// Length: 10, fixed.
+// GCC-verified at PACKETVER=20200401: packetdb_addpacket(0x0862, 10, clif_parse_UseSkillToId, 2, 4, 6, 0)
+struct SYNTH_CZ_USE_SKILL_TOID {
+    int16  PacketType;
+    uint16 SkillLv;     // Skill level (pos[0]=2)
+    uint16 SkillID;     // Skill ID (pos[1]=4)
+    uint32 TargetID;    // Target actor GID (pos[2]=6)
+} __attribute__((packed));
+
+
 // parseable_packet(0x0116, 10, clif_parse_UseSkillToPos, 2, 4, 6, 8)
 // [pos[0]=2=skillLevel, pos[1]=4=skillID, pos[2]=6=xPos, pos[3]=8=yPos]
 // Length: 10

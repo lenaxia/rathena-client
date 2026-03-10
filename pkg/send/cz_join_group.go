@@ -6,6 +6,6 @@ package send
 // CZ_JOIN_GROUP packet (PACKET_CZ_JOIN_GROUP)
 type CzJoinGroup struct {
 	ID uint32 // Account ID of party inviter
-	Packet_id int16 // Packet identifier
+	PacketId int16 // Packet identifier
 	Flag uint32 // Accept flag (1=accept, 0=reject)
 }

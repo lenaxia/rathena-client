@@ -6,6 +6,6 @@ package send
 // CZ_REQUEST_RANDOM_ENCHANT packet (PACKET_CZ_REQUEST_RANDOM_ENCHANT)
 type CzRequestRandomEnchant struct {
 	PacketType int16 // PacketType field
-	Enchant_group int64 // enchant_group field
+	EnchantGroup int64 // enchant_group field
 	Index int16 // index field
 }

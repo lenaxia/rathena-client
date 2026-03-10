@@ -6,9 +6,9 @@ import (
 	"github.com/lenaxia/ragnarok-go-client/pkg/send"
 )
 
-// EncodeTimeSyncResponse encodes a move request for the appropriate packet version.
+// EncodeTimeSyncResponse encodes a TimeSyncResponse packet for the appropriate packet version.
 func EncodeTimeSyncResponse(req send.TimeSyncResponse, packetver uint32) []byte {
 	switch {
 	}
-	return nil
+	panic("EncodeTimeSyncResponse: no matching packetver implementation — unimplemented")
 }

@@ -9,7 +9,7 @@ type ZcBroadcastingSpecialItemObtainItem struct {
 	ItemID uint32 // ItemID field
 	PacketLength int16 // PacketLength field
 	PacketType int16 // PacketType field
-	BoxItemID_len int8 // boxItemID_len field
+	BoxItemIDLen int8 // boxItemID_len field
 	Len int8 // len field
 	Type uint8 // type field
 }

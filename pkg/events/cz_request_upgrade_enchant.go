@@ -6,7 +6,7 @@ package events
 // CZ_REQUEST_UPGRADE_ENCHANT packet (PACKET_CZ_REQUEST_UPGRADE_ENCHANT)
 type CzRequestUpgradeEnchant struct {
 	PacketType int16 // PacketType field
-	Enchant_group int64 // enchant_group field
+	EnchantGroup int64 // enchant_group field
 	Index int16 // index field
 	Slot int16 // slot field
 }

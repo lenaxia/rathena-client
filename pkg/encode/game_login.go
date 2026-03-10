@@ -6,9 +6,9 @@ import (
 	"github.com/lenaxia/ragnarok-go-client/pkg/send"
 )
 
-// EncodeGameLogin encodes a move request for the appropriate packet version.
+// EncodeGameLogin encodes a GameLogin packet for the appropriate packet version.
 func EncodeGameLogin(req send.GameLogin, packetver uint32) []byte {
 	switch {
 	}
-	return nil
+	panic("EncodeGameLogin: no matching packetver implementation — unimplemented")
 }

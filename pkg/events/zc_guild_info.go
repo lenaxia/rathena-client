@@ -13,7 +13,7 @@ type ZcGuildInfo struct {
 	Level int32 // Guild level
 	Castle string // Guild castle/agit name
 	Master int32 // Guild master character ID
-	Next_exp int32 // Experience needed for next guild level
+	NextExp int32 // Experience needed for next guild level
 	MaxMember int32 // Maximum guild member capacity
 	Points int32 // Guild skill points available
 	Average int32 // Average level of guild members

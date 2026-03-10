@@ -180,6 +180,10 @@ func generateEncodeFunc(
 }
 
 // generateEncodeDispatcher generates a multi-version encode dispatcher.
+//
+// If all resolvable implementations have the same fixed packet size, the
+// function returns [N]byte (stack-allocated, zero allocs). Otherwise it
+// falls back to []byte.
 func generateEncodeDispatcher(
 	structName string,
 	a *semantics.Action,
@@ -194,8 +198,43 @@ func generateEncodeDispatcher(
 		return impls[i].PacketverMin < impls[j].PacketverMin
 	})
 
-	sb.WriteString(fmt.Sprintf("// Encode%s encodes a move request for the appropriate packet version.\n", structName))
-	sb.WriteString(fmt.Sprintf("func Encode%s(req send.%s, packetver uint32) []byte {\n", structName, structName))
+	// Filter to only C→S implementations; S→C structs should never appear in encode.
+	sendImpls := make([]semantics.Implementation, 0, len(impls))
+	for _, impl := range impls {
+		if isSendStruct(impl.StructName) {
+			sendImpls = append(sendImpls, impl)
+		}
+	}
+	impls = sendImpls
+
+	// Determine the common fixed size across all resolvable implementations.
+	commonSize := -1
+	for i := range impls {
+		layout := resolveLayout(impls[i].StructName, impls[i].PacketverMin, vt)
+		if layout == nil {
+			continue
+		}
+		if layout.TotalSize <= 0 {
+			commonSize = 0 // variable-length case
+			break
+		}
+		if commonSize == -1 {
+			commonSize = layout.TotalSize
+		} else if commonSize != layout.TotalSize {
+			commonSize = 0 // mixed sizes — must use []byte
+			break
+		}
+	}
+
+	var returnType string
+	if commonSize > 0 {
+		returnType = fmt.Sprintf("[%d]byte", commonSize)
+	} else {
+		returnType = "[]byte"
+	}
+
+	sb.WriteString(fmt.Sprintf("// Encode%s encodes a %s packet for the appropriate packet version.\n", structName, structName))
+	sb.WriteString(fmt.Sprintf("func Encode%s(req send.%s, packetver uint32) %s {\n", structName, structName, returnType))
 	sb.WriteString("\tswitch {\n")
 
 	for i := len(impls) - 1; i >= 0; i-- {
@@ -205,9 +244,11 @@ func generateEncodeDispatcher(
 			continue
 		}
 		sb.WriteString(fmt.Sprintf("\tcase packetver >= %d: // %s\n", impl.PacketverMin, impl.PacketID))
-		// Inline the byte-writing.
 		totalSize := layout.TotalSize
-		if totalSize > 0 {
+		if commonSize > 0 {
+			// Fixed common size — stack-allocate.
+			sb.WriteString(fmt.Sprintf("\t\tvar p [%d]byte\n", commonSize))
+		} else if totalSize > 0 {
 			sb.WriteString(fmt.Sprintf("\t\tp := make([]byte, %d)\n", totalSize))
 		} else {
 			sb.WriteString("\t\tp := make([]byte, 4)\n")
@@ -218,8 +259,8 @@ func generateEncodeDispatcher(
 			strings.ToLower(packetID[2:4])))
 
 		fieldByName := make(map[string]*preprocess.Field, len(layout.Fields))
-		for i := range layout.Fields {
-			fieldByName[layout.Fields[i].Name] = &layout.Fields[i]
+		for idx := range layout.Fields {
+			fieldByName[layout.Fields[idx].Name] = &layout.Fields[idx]
 		}
 		for _, p := range a.CanonicalParams {
 			fieldExpr, ok := impl.FieldMapping[p.Name]
@@ -241,7 +282,7 @@ func generateEncodeDispatcher(
 		sb.WriteString("\t\treturn p\n")
 	}
 	sb.WriteString("\t}\n")
-	sb.WriteString("\treturn nil\n}\n")
+	sb.WriteString("\tpanic(\"Encode" + structName + ": no matching packetver implementation — unimplemented\")\n}\n")
 	return sb.String()
 }
 
@@ -304,12 +345,10 @@ func GenerateEncodeDirFiles(db *semantics.DB, vt preprocess.VersionTable) (map[s
 			continue
 		}
 
-		// Only encode C→S packets (struct names starting with PACKET_CZ_ or PACKET_CH_).
+		// Only encode C→S packets.
 		isSend := false
 		for _, impl := range action.Implementations {
-			if strings.HasPrefix(impl.StructName, "PACKET_CZ_") ||
-				strings.HasPrefix(impl.StructName, "PACKET_CH_") ||
-				strings.HasPrefix(impl.StructName, "PACKET_CA_") {
+			if isSendStruct(impl.StructName) {
 				isSend = true
 				break
 			}

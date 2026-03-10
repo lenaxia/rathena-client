@@ -259,6 +259,12 @@ func generateFieldReads(
 		// "uint32(packet.FieldName)", or plain "FieldName".
 		rathenaField := extractFieldName(expr)
 		if rathenaField == "" {
+			// Check for direct data-slice expressions like "data[N:]" or "data[N:M]"
+			// These are used for raw byte payloads that the struct layout doesn't encode.
+			if goType == "[]byte" && (strings.HasPrefix(expr, "data[") && strings.HasSuffix(expr, "]")) {
+				sb.WriteString(fmt.Sprintf("%se.%s = %s\n", indent, goFieldName, expr))
+				continue
+			}
 			// Complex expression (e.g. serialization helper, multi-field) — emit a comment.
 			sb.WriteString(fmt.Sprintf("%s// e.%s = %s  (complex expression — implement manually)\n",
 				indent, goFieldName, expr))

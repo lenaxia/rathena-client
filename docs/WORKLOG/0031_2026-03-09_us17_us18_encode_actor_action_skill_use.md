@@ -27,7 +27,7 @@ Wire: byte[0-1]=0x0862 LE, byte[2-3]=Lv uint16 LE (pos[0]=2), byte[4-5]=SkillID 
 
 - Return type `[7]byte` / `[10]byte` (not `[]byte`) — matches README-LLM.md §8 and the existing `EncodeMoveTo` precedent (`[5]byte`). Prevents heap allocation on encode path.
 - `packetver` parameter accepted but ignored — single packet ID is used for all versions at PACKETVER >= 20200401. Parameter kept for API consistency with all other encode functions.
-- Used existing `leU32Put` / `leU16Put` helpers from `pkg/encode/helpers.go`.
+- Used `encoding/binary` (`binary.LittleEndian.PutUint32` / `PutUint16`) for field encoding — no custom helpers needed.
 
 ## Files Changed
 
@@ -35,6 +35,7 @@ Wire: byte[0-1]=0x0862 LE, byte[2-3]=Lv uint16 LE (pos[0]=2), byte[4-5]=SkillID 
 - `pkg/encode/skill_use.go` — replaced generated stub (broken duplicate-condition switch, wrong 33-byte payload) with `EncodeSkillUse` returning `[10]byte`
 - `pkg/encode/actor_action_test.go` — new; 7 tests + benchmark
 - `pkg/encode/skill_use_test.go` — new; 7 tests + benchmark
+- `pkg/decode/phase1_golden_test.go` — fixed stale `Castle_list` references to `CastleList` (PascalCase rename from prior codegen run)
 
 ## Test Results
 

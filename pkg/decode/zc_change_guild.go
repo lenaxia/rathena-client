@@ -9,13 +9,13 @@ func ZcChangeGuild_0x01B4(data []byte, packetver uint32) events.ZcChangeGuild {
 	var e events.ZcChangeGuild
 	if packetver >= 20190703 {
 		e.AID = leU32(data, 10)  // rAthena: AID (offset 10, size 4)
-		e.Emblem_id = leU16(data, 6)  // rAthena: emblem_id (offset 6, size 4)
-		e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+		e.EmblemId = leU16(data, 6)  // rAthena: emblem_id (offset 6, size 4)
+		e.GuildId = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
 		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	} else {
 		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-		e.Emblem_id = leU16(data, 10)  // rAthena: emblem_id (offset 10, size 2)
-		e.Guild_id = leI32(data, 6)  // rAthena: guild_id (offset 6, size 4)
+		e.EmblemId = leU16(data, 10)  // rAthena: emblem_id (offset 10, size 2)
+		e.GuildId = leI32(data, 6)  // rAthena: guild_id (offset 6, size 4)
 		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	}
 	return e

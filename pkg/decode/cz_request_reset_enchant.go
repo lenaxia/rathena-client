@@ -9,7 +9,7 @@ func CzRequestResetEnchant_0x0B9E(data []byte, packetver uint32) events.CzReques
 	var e events.CzRequestResetEnchant
 	_ = packetver
 	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.Enchant_group = leI64(data, 2)  // rAthena: enchant_group (offset 2, size 8)
+	e.EnchantGroup = leI64(data, 2)  // rAthena: enchant_group (offset 2, size 8)
 	e.Index = leI16(data, 10)  // rAthena: index (offset 10, size 2)
 	return e
 }

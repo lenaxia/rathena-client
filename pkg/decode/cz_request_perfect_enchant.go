@@ -10,7 +10,7 @@ func CzRequestPerfectEnchant_0x0B9C(data []byte, packetver uint32) events.CzRequ
 	_ = packetver
 	e.ITID = leU32(data, 12)  // rAthena: ITID (offset 12, size 4)
 	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.Enchant_group = leI64(data, 2)  // rAthena: enchant_group (offset 2, size 8)
+	e.EnchantGroup = leI64(data, 2)  // rAthena: enchant_group (offset 2, size 8)
 	e.Index = leI16(data, 10)  // rAthena: index (offset 10, size 2)
 	return e
 }

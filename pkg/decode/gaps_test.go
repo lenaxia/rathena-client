@@ -54,32 +54,27 @@ func makeIdleUnit_20181121(packetID uint16, gid uint32, name string) []byte {
 // offset 84 (GCC-verified). ActorExists_0x0078 NEVER decodes it in any branch.
 // This test proves the bug: the actor name "Poring" written into the packet bytes
 // at the correct GCC offset is never returned. Name is always "".
-func TestGap_0x0078_Name_AlwaysEmpty(t *testing.T) {
+func TestActorExists_0x0078_NameAndHP_Decoded(t *testing.T) {
 	b := makeIdleUnit_20181121(0x0078, 12345, "Poring")
 	e := ActorExists_0x0078(b, 20200401) // packetver >= 20181121 branch
 
-	// BUG: Name should be "Poring" (bytes at GCC-verified offset 84) but is ""
-	// because the SemanticDB field_mapping has Name: string("") for ALL 0x0078
-	// implementations. This is a real correctness bug — mob/NPC names are never
-	// returned for this packet ID regardless of packetver.
-	if e.Name != "" {
-		t.Errorf("ActorExists_0x0078 Name: got %q — UNEXPECTED: field appears decoded now", e.Name)
-	} else {
-		t.Logf("CONFIRMED BUG: ActorExists_0x0078 Name is always empty string")
-		t.Logf("  GCC offset 84 contains %q but decode returns %q", "Poring", e.Name)
+	// GCC-verified: packet_idle_unit at PACKETVER >= 20181121 has name char[24] at offset 84.
+	// Regression test for Bug 14-A: SemanticDB field_mapping was string("") — now fixed to
+	// string(packet.name) so the codegen emits nullTermString(data[84:108]).
+	if e.Name != "Poring" {
+		t.Fatalf("ActorExists_0x0078 Name: got %q want %q — decode regression (Bug 14-A)", e.Name, "Poring")
 	}
 
-	// Also confirm GID IS decoded (not a total failure)
 	if e.ID != 12345 {
-		t.Errorf("ActorExists_0x0078 ID (GID): got %d want 12345 — GID decode is broken too", e.ID)
+		t.Errorf("ActorExists_0x0078 ID (GID): got %d want 12345", e.ID)
 	}
 
-	// Also confirm HP is never decoded (also missing from 0x0078 SemanticDB)
-	// GCC offset 77 has HP=7000 but 0x0078 maps HP: int32(0)
-	if e.HP != 0 {
-		t.Errorf("ActorExists_0x0078 HP: got %d — UNEXPECTED: HP appears decoded now", e.HP)
-	} else {
-		t.Logf("CONFIRMED: ActorExists_0x0078 HP always 0 (SemanticDB maps HP: int32(0))")
+	// GCC-verified: HP int32 at offset 77, maxHP int32 at offset 73.
+	if e.HP != 7000 {
+		t.Fatalf("ActorExists_0x0078 HP: got %d want 7000 — decode regression (Bug 14-A)", e.HP)
+	}
+	if e.MaxHP != 9000 {
+		t.Fatalf("ActorExists_0x0078 MaxHP: got %d want 9000 — decode regression (Bug 14-A)", e.MaxHP)
 	}
 }
 
@@ -118,7 +113,7 @@ func TestGap_0x09FF_Name_IsDecoded(t *testing.T) {
 //	"strings.TrimRight(string(packet.name), "\x00")"  — implement manually
 //
 // This means Name is always "" in all branches.
-func TestGap_0x09DB_Name_AlwaysEmpty(t *testing.T) {
+func TestActorMoved_0x09DB_Name_Decoded(t *testing.T) {
 	// packet_unit_walking at 20181121 = 114 bytes
 	// GCC layout (verified via struct_layout.sh dump):
 	//   offset 9  : GID uint32
@@ -133,12 +128,11 @@ func TestGap_0x09DB_Name_AlwaysEmpty(t *testing.T) {
 
 	e := ActorMoved_0x09DB(b, 20200401)
 
-	// Name is "complex expression — implement manually": always ""
-	if e.Name != "" {
-		t.Errorf("ActorMoved_0x09DB Name: got %q — UNEXPECTED: field appears decoded now", e.Name)
-	} else {
-		t.Logf("CONFIRMED: ActorMoved_0x09DB Name always empty (complex expression skip)")
-		t.Logf("  GCC offset 90 contains %q but decode returns %q", "Raydric", e.Name)
+	// Regression test for Bug 14-B: SemanticDB had complex expression
+	// strings.TrimRight(string(packet.name), "\x00") which codegen skipped.
+	// Fixed to string(packet.name) so codegen emits nullTermString(data[90:114]).
+	if e.Name != "Raydric" {
+		t.Fatalf("ActorMoved_0x09DB Name: got %q want %q — decode regression (Bug 14-B)", e.Name, "Raydric")
 	}
 
 	// ID should be decoded (GID at offset 9)
@@ -207,8 +201,10 @@ func TestGap_AddExchangeItem_Grade_20200401_IsZero(t *testing.T) {
 // Generated code comments it out. The event PosInfo field is always nil/empty.
 //
 // This means guild position names are never decoded — relevant for guild UI.
-func TestGap_ZcPositionIdNameInfo_PosInfo_IsNil(t *testing.T) {
-	// Build a variable-length packet with real payload data at offset 4
+func TestZcPositionIdNameInfo_0x0166_PosInfo_Decoded(t *testing.T) {
+	// Build a variable-length packet with real payload data at offset 4.
+	// GCC-verified struct: PACKET_ZC_POSITION_ID_NAME_INFO at offset 4 has
+	// posInfo[20]: each entry is { int positionID(4 bytes), char posName[24] } = 28 bytes.
 	payload := []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}
 	totalLen := 4 + len(payload)
 	b := make([]byte, totalLen)
@@ -218,15 +214,18 @@ func TestGap_ZcPositionIdNameInfo_PosInfo_IsNil(t *testing.T) {
 
 	e := ZcPositionIdNameInfo_0x0166(b, 20200401)
 
-	// PosInfo is complex expression — always nil/empty regardless of packet content
-	if len(e.PosInfo) != 0 {
-		t.Errorf("ZcPositionIdNameInfo PosInfo: got len=%d want 0 — UNEXPECTED: field appears decoded now", len(e.PosInfo))
-	} else {
-		t.Logf("CONFIRMED GAP: ZcPositionIdNameInfo PosInfo is always nil")
-		t.Logf("  %d bytes of guild position data at offset 4 are silently discarded", len(payload))
+	// Regression test for Bug 14-C: PosInfo was always nil (complex expression skip).
+	// Now manually implemented to return data[4:].
+	if len(e.PosInfo) != len(payload) {
+		t.Fatalf("ZcPositionIdNameInfo PosInfo len: got %d want %d — decode regression (Bug 14-C)",
+			len(e.PosInfo), len(payload))
+	}
+	for i, v := range payload {
+		if e.PosInfo[i] != v {
+			t.Fatalf("ZcPositionIdNameInfo PosInfo[%d]: got 0x%02X want 0x%02X", i, e.PosInfo[i], v)
+		}
 	}
 
-	// PacketType and PacketLength ARE decoded
 	if e.PacketType != 0x0166 {
 		t.Errorf("PacketType: got 0x%X want 0x0166", e.PacketType)
 	}

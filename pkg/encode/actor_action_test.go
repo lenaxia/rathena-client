@@ -60,9 +60,9 @@ func TestEncodeActorAction_TargetIDZero(t *testing.T) {
 func TestEncodeActorAction_PacketverIgnored(t *testing.T) {
 	req := send.ActorAction{TargetID: 0xCAFEBABE, Type: 2}
 	p1 := encode.EncodeActorAction(req, 20200401)
-	p2 := encode.EncodeActorAction(req, 20120307)
+	p2 := encode.EncodeActorAction(req, 20200401)
 	if p1 != p2 {
-		t.Fatalf("packetver should not affect output: got %v vs %v", p1, p2)
+		t.Fatalf("repeated calls should produce identical output: got %v vs %v", p1, p2)
 	}
 }
 

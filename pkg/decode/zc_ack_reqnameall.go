@@ -9,10 +9,10 @@ func ZcAckReqnameall_0x0195(data []byte, packetver uint32) events.ZcAckReqnameal
 	var e events.ZcAckReqnameall
 	if packetver >= 20150225 {
 		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
-		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
+		e.PacketId = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
 	} else {
 		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
-		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
+		e.PacketId = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
 	}
 	return e
 }

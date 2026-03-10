@@ -8,7 +8,7 @@ import "github.com/lenaxia/ragnarok-go-client/pkg/events"
 func CzReqGuildEmblemImg1_0x0151(data []byte, packetver uint32) events.CzReqGuildEmblemImg1 {
 	var e events.CzReqGuildEmblemImg1
 	_ = packetver
-	e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+	e.GuildId = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
 	e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	return e
 }

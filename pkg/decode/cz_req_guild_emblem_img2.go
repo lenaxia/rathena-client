@@ -8,12 +8,12 @@ import "github.com/lenaxia/ragnarok-go-client/pkg/events"
 func CzReqGuildEmblemImg2_0x0B1E(data []byte, packetver uint32) events.CzReqGuildEmblemImg2 {
 	var e events.CzReqGuildEmblemImg2
 	if packetver >= 20190619 {
-		e.Emblem_id = leI32(data, 6)  // rAthena: emblem_id (offset 6, size 4)
-		e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+		e.EmblemId = leI32(data, 6)  // rAthena: emblem_id (offset 6, size 4)
+		e.GuildId = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
 		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	} else {
-		e.Emblem_id = leI32(data, 6)  // rAthena: emblem_id (offset 6, size 4)
-		e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+		e.EmblemId = leI32(data, 6)  // rAthena: emblem_id (offset 6, size 4)
+		e.GuildId = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
 		e.PacketType = leI16(data, 0)  // rAthena: packetType (offset 0, size 2)
 	}
 	return e

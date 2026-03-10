@@ -9,11 +9,11 @@ func CzGradeEnchantRequest_0x0B5B(data []byte, packetver uint32) events.CzGradeE
 	var e events.CzGradeEnchantRequest
 	_ = packetver
 	e.PacketType = leI16(data, 0)  // rAthena: PacketType (offset 0, size 2)
-	e.Blessing_flag = int8(data[8])  // rAthena: blessing_flag (offset 8, size 1)
+	e.BlessingFlag = int8(data[8])  // rAthena: blessing_flag (offset 8, size 1)
 	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-	e.Protect_flag = int8(data[13])  // rAthena: protect_flag (offset 13, size 1)
-	e.Material_index = leI32(data, 4)  // rAthena: material_index (offset 4, size 4)
-	e.Blessing_amount = leI32(data, 9)  // rAthena: blessing_amount (offset 9, size 4)
+	e.ProtectFlag = int8(data[13])  // rAthena: protect_flag (offset 13, size 1)
+	e.MaterialIndex = leI32(data, 4)  // rAthena: material_index (offset 4, size 4)
+	e.BlessingAmount = leI32(data, 9)  // rAthena: blessing_amount (offset 9, size 4)
 	return e
 }
 

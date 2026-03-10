@@ -334,3 +334,32 @@ func BenchmarkEncodeMoveData(b *testing.B) {
 		packing.EncodeMoveData(155, 142, 156, 142, 8, 8)
 	}
 }
+
+// FuzzEncodeMoveData_Sx0OutOfRange verifies that sx0 values outside 0-15 are
+// correctly masked before encoding, and that the round-trip is stable.
+// This is a regression fuzz test for Bug 14-D (packing.go:88 missing sx0 mask).
+func FuzzEncodeMoveData_Sx0OutOfRange(f *testing.F) {
+	// seed with out-of-range sx0 values to exercise the bug fix
+	f.Add(uint16(100), uint16(200), uint16(101), uint16(201), uint8(0x10), uint8(8))
+	f.Add(uint16(100), uint16(200), uint16(101), uint16(201), uint8(0xFF), uint8(0xFF))
+	f.Add(uint16(100), uint16(200), uint16(101), uint16(201), uint8(16), uint8(16))
+	f.Add(uint16(512), uint16(512), uint16(513), uint16(512), uint8(0x1F), uint8(0x0F))
+	f.Fuzz(func(t *testing.T, fromX, toX uint16, fromY, toY uint16, sx0, sy0 uint8) {
+		// clamp coords to valid 10-bit range
+		fromX &= 0x3FF
+		fromY &= 0x3FF
+		toX &= 0x3FF
+		toY &= 0x3FF
+		encoded := packing.EncodeMoveData(fromX, fromY, toX, toY, sx0, sy0)
+		// decode and verify sx0/sy0 round-trip with masking applied
+		_, _, _, _, decSx0, decSy0 := packing.DecodeMoveData(encoded[:])
+		if decSx0 != sx0&0x0f {
+			t.Errorf("sx0 round-trip: encoded sx0=%d, decoded sx0=%d (want %d)",
+				sx0, decSx0, sx0&0x0f)
+		}
+		if decSy0 != sy0&0x0f {
+			t.Errorf("sy0 round-trip: encoded sy0=%d, decoded sy0=%d (want %d)",
+				sy0, decSy0, sy0&0x0f)
+		}
+	})
+}

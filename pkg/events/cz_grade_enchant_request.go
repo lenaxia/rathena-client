@@ -6,9 +6,9 @@ package events
 // CZ_GRADE_ENCHANT_REQUEST packet (PACKET_CZ_GRADE_ENCHANT_REQUEST)
 type CzGradeEnchantRequest struct {
 	PacketType int16 // PacketType field
-	Blessing_flag int8 // blessing_flag field
+	BlessingFlag int8 // blessing_flag field
 	Index int16 // index field
-	Protect_flag int8 // protect_flag field
-	Material_index int32 // Material item index
-	Blessing_amount int32 // Amount of blessing to use
+	ProtectFlag int8 // protect_flag field
+	MaterialIndex int32 // Material item index
+	BlessingAmount int32 // Amount of blessing to use
 }

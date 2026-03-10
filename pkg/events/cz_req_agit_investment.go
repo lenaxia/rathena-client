@@ -5,6 +5,6 @@ package events
 // CzReqAgitInvestment is the event emitted when a cz_req_agit_investment packet is received.
 // CZ_REQ_AGIT_INVESTMENT packet (PACKET_CZ_REQ_AGIT_INVESTMENT)
 type CzReqAgitInvestment struct {
-	Castle_id int8 // castle_id field
+	CastleId int8 // castle_id field
 	PacketType int16 // packetType field
 }

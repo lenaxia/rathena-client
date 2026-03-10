@@ -7,6 +7,6 @@ package events
 type ZcBroadcastItemrefiningResult struct {
 	ItemId uint32 // itemId field
 	PacketType int16 // packetType field
-	Refine_level int8 // refine_level field
+	RefineLevel int8 // refine_level field
 	Status int8 // status field
 }

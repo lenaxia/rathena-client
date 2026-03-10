@@ -5,9 +5,9 @@ package events
 // CaLogin4 is the event emitted when a ca_login4 packet is received.
 // Login with salted password and MAC address (CA_LOGIN4)
 type CaLogin4 struct {
-	Master_version uint8 // Client type identifier (see CLIENT_TYPES)
+	MasterVersion uint8 // Client type identifier (see CLIENT_TYPES)
 	Mac string // MAC address string (variable length)
 	PacketType int16 // packetType field
-	Password_salted string // Salted password hash (16 bytes)
+	PasswordSalted string // Salted password hash (16 bytes)
 	Version uint32 // Client version number
 }

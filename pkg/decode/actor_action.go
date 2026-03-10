@@ -2,9 +2,27 @@
 
 package decode
 
+import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+
 // SKIP ActorAction_0x008A: struct PACKET_ZC_NOTIFY_ACT not found in VersionTable
 
 // SKIP ActorAction_0x08C8: struct PACKET_ZC_NOTIFY_ACT not found in VersionTable
 
 // SKIP ActorAction_0x0089: struct PACKET_CZ_REQUEST_ACT not found in VersionTable
+
+// ActorAction_0x085A decodes a 0x085A packet (struct SYNTH_CZ_REQUEST_ACT).
+func ActorAction_0x085A(data []byte, packetver uint32) events.ActorAction {
+	var e events.ActorAction
+	_ = packetver
+	// e.SourceID = zero (field absent/defaulted in this version)
+	e.Type = data[6]  // rAthena: Action (offset 6, size 1)
+	// e.AttackerMoveTime = zero (field absent/defaulted in this version)
+	// e.VictimMoveTime = zero (field absent/defaulted in this version)
+	// e.Div = zero (field absent/defaulted in this version)
+	// e.Damage = zero (field absent/defaulted in this version)
+	// e.Damage2 = zero (field absent/defaulted in this version)
+	// e.Time = zero (field absent/defaulted in this version)
+	e.TargetID = leU32(data, 2)  // rAthena: TargetGID (offset 2, size 4)
+	return e
+}
 

@@ -6,13 +6,9 @@ import (
 	"github.com/lenaxia/ragnarok-go-client/pkg/send"
 )
 
-// EncodePublicChat encodes a move request for the appropriate packet version.
+// EncodePublicChat encodes a PublicChat packet for the appropriate packet version.
 func EncodePublicChat(req send.PublicChat, packetver uint32) []byte {
 	switch {
-	case packetver >= 20030000: // 0x008D
-		p := make([]byte, 8)
-		p[0] = 0x8d; p[1] = 0x00
-		return p
 	}
-	return nil
+	panic("EncodePublicChat: no matching packetver implementation — unimplemented")
 }

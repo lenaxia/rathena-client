@@ -13,7 +13,7 @@ func EncodeCzRequestUpgradeEnchant(req send.CzRequestUpgradeEnchant, packetver u
 	p[0] = 0x9d
 	p[1] = 0x0b
 	leU16Put(p[0:], uint16(req.PacketType))  // rAthena: PacketType
-	// req.Enchant_group: unhandled type int64 for rAthena: enchant_group
+	// req.EnchantGroup: unhandled type int64 for rAthena: enchant_group
 	leU16Put(p[10:], uint16(req.Index))  // rAthena: index
 	leU16Put(p[12:], uint16(req.Slot))  // rAthena: slot
 	_ = packetver

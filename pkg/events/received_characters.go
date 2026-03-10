@@ -7,7 +7,7 @@ package events
 type ReceivedCharacters struct {
 	CharInfo []byte // Variable-length character data array
 	Extension string // Extension data (20 bytes)
-	Premium_end uint8 // Premium slot end index
-	Premium_start uint8 // Premium slot start index
-	Total_slots uint8 // Total character slots
+	PremiumEnd uint8 // Premium slot end index
+	PremiumStart uint8 // Premium slot start index
+	TotalSlots uint8 // Total character slots
 }

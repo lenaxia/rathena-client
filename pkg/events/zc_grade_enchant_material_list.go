@@ -7,10 +7,10 @@ package events
 type ZcGradeEnchantMaterialList struct {
 	PacketLength int16 // PacketLength field
 	PacketType int16 // PacketType field
-	Blessing_info []byte // blessing_info field
+	BlessingInfo []byte // blessing_info field
 	Index int16 // index field
-	Material_info []byte // material_info field
-	Protect_amount int32 // protect_amount field
-	Protect_itemid int32 // protect_itemid field
-	Success_chance int32 // success_chance field
+	MaterialInfo []byte // material_info field
+	ProtectAmount int32 // protect_amount field
+	ProtectItemid int32 // protect_itemid field
+	SuccessChance int32 // success_chance field
 }
