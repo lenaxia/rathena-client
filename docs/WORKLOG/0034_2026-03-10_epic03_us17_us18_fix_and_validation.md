@@ -26,7 +26,7 @@ Running `go test ./pkg/encode/` produced:
 ```
 pkg/encode/actor_action_test.go:65: invalid operation: p1 != p2 (slice can only be compared to nil)
 pkg/encode/skill_use_test.go:68: cannot use p1 (variable of type [10]byte) as []byte value in argument to bytes.Equal
-FAIL  github.com/lenaxia/ragnarok-go-client/pkg/encode [build failed]
+FAIL  github.com/lenaxia/rathena-client/pkg/encode [build failed]
 ```
 
 ---

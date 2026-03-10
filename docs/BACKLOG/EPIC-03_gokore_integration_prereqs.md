@@ -285,8 +285,8 @@ are unpacked for caller convenience.
 package encode
 
 import (
-    "github.com/lenaxia/ragnarok-go-client/pkg/packing"
-    "github.com/lenaxia/ragnarok-go-client/pkg/send"
+    "github.com/lenaxia/rathena-client/pkg/packing"
+    "github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeMoveTo encodes a walk request for the map server.
@@ -453,7 +453,7 @@ package encode
 import (
     "encoding/binary"
 
-    "github.com/lenaxia/ragnarok-go-client/pkg/send"
+    "github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeActorAction encodes an attack or action request for the map server.
@@ -629,7 +629,7 @@ package encode
 import (
     "encoding/binary"
 
-    "github.com/lenaxia/ragnarok-go-client/pkg/send"
+    "github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // EncodeSkillUse encodes a skill-to-actor use request for the map server.

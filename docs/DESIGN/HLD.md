@@ -1321,7 +1321,7 @@ Phase 2 adds the remaining ~400+ actions via full codegen from the preprocessor 
 
 ```
 rathena-client/
-    go.mod                              module github.com/lenaxia/ragnarok-go-client
+    go.mod                              module github.com/lenaxia/rathena-client
     semantics/
         mappings.yaml                   human-maintained semantic layer (~42,751 lines; edit via MCP only)
 

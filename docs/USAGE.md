@@ -2,7 +2,7 @@
 
 **Audience**: LLMs and developers integrating this library into a consumer (primarily goKore).
 
-**Module**: `github.com/lenaxia/ragnarok-go-client`
+**Module**: `github.com/lenaxia/rathena-client`
 
 This guide covers how to use every public package. Read it in order — later sections build on earlier ones.
 
@@ -72,7 +72,7 @@ Two packed binary formats appear throughout the rAthena wire protocol. They are 
 Appears in `packet_idle_unit`, `packet_unit_walking`, and others as the `PosDir[3]` field.
 
 ```go
-import "github.com/lenaxia/ragnarok-go-client/pkg/packing"
+import "github.com/lenaxia/rathena-client/pkg/packing"
 
 // Decode
 x, y, dir := packing.DecodePosDir(someEvent.PosDir[:])
@@ -107,7 +107,7 @@ moveData := packing.EncodeMoveData(fromX, fromY, toX, toY, sx0, sy0) // returns 
 One struct per semantic action. All fields are Go primitive types or fixed-size byte arrays — no pointers, no slices, no `interface{}`.
 
 ```go
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // Example: events.ActorExists — fired when a stationary entity enters viewport
 type ActorExists struct {
@@ -137,7 +137,7 @@ type ActorExists struct {
 One struct per outbound action. Built by the caller and passed to an encode function.
 
 ```go
-import "github.com/lenaxia/ragnarok-go-client/pkg/send"
+import "github.com/lenaxia/rathena-client/pkg/send"
 
 // Example: NPC contact request
 type NpcContact struct {
@@ -168,8 +168,8 @@ One decode function per (semantic action, packet ID) pair. Named `ActionName_0xN
 
 ```go
 import (
-    "github.com/lenaxia/ragnarok-go-client/pkg/decode"
-    "github.com/lenaxia/ragnarok-go-client/pkg/events"
+    "github.com/lenaxia/rathena-client/pkg/decode"
+    "github.com/lenaxia/rathena-client/pkg/events"
 )
 
 // Called inside a registered handler:
@@ -228,8 +228,8 @@ One encode function per semantic action. Named `EncodeFooAction(req send.FooActi
 
 ```go
 import (
-    "github.com/lenaxia/ragnarok-go-client/pkg/encode"
-    "github.com/lenaxia/ragnarok-go-client/pkg/send"
+    "github.com/lenaxia/rathena-client/pkg/encode"
+    "github.com/lenaxia/rathena-client/pkg/send"
 )
 
 // Encode an NPC contact request — returns [7]byte (fixed size, no alloc)
@@ -277,7 +277,7 @@ Three session types: `LoginSession`, `CharSession`, `MapSession`. All share the 
 ### Creating a session
 
 ```go
-import "github.com/lenaxia/ragnarok-go-client/pkg/session"
+import "github.com/lenaxia/rathena-client/pkg/session"
 
 packetver := uint32(20180307)
 
@@ -370,8 +370,8 @@ import (
     "context"
     "net"
 
-    "github.com/lenaxia/ragnarok-go-client/pkg/fsm"
-    "github.com/lenaxia/ragnarok-go-client/pkg/session"
+    "github.com/lenaxia/rathena-client/pkg/fsm"
+    "github.com/lenaxia/rathena-client/pkg/session"
 )
 
 f := fsm.New(
@@ -495,13 +495,13 @@ import (
     "errors"
     "net"
 
-    "github.com/lenaxia/ragnarok-go-client/pkg/decode"
-    "github.com/lenaxia/ragnarok-go-client/pkg/encode"
-    "github.com/lenaxia/ragnarok-go-client/pkg/events"
-    "github.com/lenaxia/ragnarok-go-client/pkg/fsm"
-    "github.com/lenaxia/ragnarok-go-client/pkg/packing"
-    "github.com/lenaxia/ragnarok-go-client/pkg/send"
-    "github.com/lenaxia/ragnarok-go-client/pkg/session"
+    "github.com/lenaxia/rathena-client/pkg/decode"
+    "github.com/lenaxia/rathena-client/pkg/encode"
+    "github.com/lenaxia/rathena-client/pkg/events"
+    "github.com/lenaxia/rathena-client/pkg/fsm"
+    "github.com/lenaxia/rathena-client/pkg/packing"
+    "github.com/lenaxia/rathena-client/pkg/send"
+    "github.com/lenaxia/rathena-client/pkg/session"
 )
 
 type Connector struct {

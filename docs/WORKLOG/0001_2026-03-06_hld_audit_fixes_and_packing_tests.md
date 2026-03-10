@@ -114,7 +114,7 @@ go test -v -count=1 ./pkg/packing/
 --- PASS: FuzzDecodePosDir (0.00s) [8 seed corpus tests]
 --- PASS: FuzzDecodeMoveData (0.00s) [5 seed corpus tests]
 PASS
-ok  github.com/lenaxia/ragnarok-go-client/pkg/packing 0.004s
+ok  github.com/lenaxia/rathena-client/pkg/packing 0.004s
 ```
 
 ### Benchmark results

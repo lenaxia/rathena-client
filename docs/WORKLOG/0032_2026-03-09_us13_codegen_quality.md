@@ -153,14 +153,14 @@ staticcheck ./pkg/events/... → no ST1003 warnings
 
 Full test output:
 ```
-ok  github.com/lenaxia/ragnarok-go-client/internal/codegen/gen
-ok  github.com/lenaxia/ragnarok-go-client/internal/codegen/preprocess
-ok  github.com/lenaxia/ragnarok-go-client/internal/codegen/semantics
-ok  github.com/lenaxia/ragnarok-go-client/pkg/decode
-ok  github.com/lenaxia/ragnarok-go-client/pkg/encode
-ok  github.com/lenaxia/ragnarok-go-client/pkg/fsm
-ok  github.com/lenaxia/ragnarok-go-client/pkg/packing
-ok  github.com/lenaxia/ragnarok-go-client/pkg/session
+ok  github.com/lenaxia/rathena-client/internal/codegen/gen
+ok  github.com/lenaxia/rathena-client/internal/codegen/preprocess
+ok  github.com/lenaxia/rathena-client/internal/codegen/semantics
+ok  github.com/lenaxia/rathena-client/pkg/decode
+ok  github.com/lenaxia/rathena-client/pkg/encode
+ok  github.com/lenaxia/rathena-client/pkg/fsm
+ok  github.com/lenaxia/rathena-client/pkg/packing
+ok  github.com/lenaxia/rathena-client/pkg/session
 ```
 
 ---

@@ -56,7 +56,7 @@ total := binary.LittleEndian.Uint32(data[2:6])
 
 ```
 go build ./...          — exit 0, no output
-go test ./pkg/fsm/...   — ok  github.com/lenaxia/ragnarok-go-client/pkg/fsm  0.123s
+go test ./pkg/fsm/...   — ok  github.com/lenaxia/rathena-client/pkg/fsm  0.123s
 grep -n "charDone" pkg/fsm/fsm.go  — empty (PASS)
 grep -n "charTotal" pkg/fsm/fsm.go — empty (PASS)
 ```

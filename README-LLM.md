@@ -8,7 +8,7 @@ All essential information is consolidated here. The HLD is referenced for deep d
 
 ## Project Overview
 
-**rathena-client** is a standalone Go library (`github.com/lenaxia/ragnarok-go-client`, Go 1.24.0) that implements the Ragnarok Online wire protocol as spoken by rAthena login, char, and map servers.
+**rathena-client** is a standalone Go library (`github.com/lenaxia/rathena-client`, Go 1.24.0) that implements the Ragnarok Online wire protocol as spoken by rAthena login, char, and map servers.
 
 It is **not** a game client, bot, or application. It is a **pure protocol library**:
 - Receives raw TCP bytes → invokes typed, version-agnostic callbacks
@@ -122,7 +122,7 @@ If you change a decode function and a benchmark suddenly shows allocs, the event
 **`go.mod` must have zero `require` entries. Keep it that way.**
 
 ```
-module github.com/lenaxia/ragnarok-go-client
+module github.com/lenaxia/rathena-client
 go 1.24.0
 // NO require block — zero external deps
 ```

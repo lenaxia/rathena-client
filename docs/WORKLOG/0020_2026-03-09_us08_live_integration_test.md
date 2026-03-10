@@ -114,7 +114,7 @@ into a `StatUpdate` event within 5 seconds of connecting.
 All non-integration tests also pass:
 
 ```
-ok  github.com/lenaxia/ragnarok-go-client/pkg/fsm   1.079s
+ok  github.com/lenaxia/rathena-client/pkg/fsm   1.079s
 ```
 
 ---

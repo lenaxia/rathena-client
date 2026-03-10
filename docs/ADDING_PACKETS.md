@@ -338,7 +338,7 @@ g++ -E -P -DPACKETVER=20180307 ... packets_struct.hpp 2>/dev/null | grep -A 20 "
 C→S packets use shuffled IDs. The real wire packet ID for a given `baseID` at a given `packetver` is:
 
 ```go
-import "github.com/lenaxia/ragnarok-go-client/pkg/session"
+import "github.com/lenaxia/rathena-client/pkg/session"
 wireID := session.ShuffledCtoSID(packetver, baseID)
 ```
 
@@ -528,7 +528,7 @@ Create `pkg/decode/my_action.go`:
 
 package decode
 
-import "github.com/lenaxia/ragnarok-go-client/pkg/events"
+import "github.com/lenaxia/rathena-client/pkg/events"
 
 // MyAction_0x0NEW decodes a 0x0NEW packet (struct PACKET_ZC_EXAMPLE).
 func MyAction_0x0NEW(data []byte, packetver uint32) events.MyAction {

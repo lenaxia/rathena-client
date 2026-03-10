@@ -96,8 +96,8 @@ The hazard IS demonstrable when `storedAlias` is captured from the first callbac
 ## Test Results
 
 ```
-ok  github.com/lenaxia/ragnarok-go-client/pkg/session  0.007s
-ok  github.com/lenaxia/ragnarok-go-client/pkg/session  1.050s  (race detector)
+ok  github.com/lenaxia/rathena-client/pkg/session  0.007s
+ok  github.com/lenaxia/rathena-client/pkg/session  1.050s  (race detector)
 ```
 
 All 13 tests pass. Full suite clean (`go test ./...` all OK).

@@ -58,7 +58,7 @@ against a real rAthena server, with goKore tests passing and the bot functional.
 - Verify `go test ./...` still passes after adding `require github.com/lenaxia/rathena-client` to goKore
 
 **Acceptance criteria**:
-- `go get github.com/lenaxia/ragnarok-go-client` works from goKore's directory
+- `go get github.com/lenaxia/rathena-client` works from goKore's directory
   OR a `replace` directive in goKore's `go.mod` points to the local checkout
 - `go build ./...` passes in goKore after the dependency is added
 
@@ -69,7 +69,7 @@ against a real rAthena server, with goKore tests passing and the bot functional.
 **Scope**: goKore only
 
 **Deliverables**:
-1. `go.mod` updated with `require github.com/lenaxia/ragnarok-go-client`
+1. `go.mod` updated with `require github.com/lenaxia/rathena-client`
    (or `replace` pointing to local `~/personal/rathena-client`)
 2. `internal/network/connector.go` — new file with:
    - `type Config struct { LoginAddr, Username, Password string; CharSlot uint8; Packetver uint32; DialTimeout time.Duration }`

@@ -1,6 +1,6 @@
 # rathena-client
 
-**Module**: `github.com/lenaxia/ragnarok-go-client`  
+**Module**: `github.com/lenaxia/rathena-client`  
 **Go**: 1.24.0  
 **Status**: All phases complete (Phases 0–6). Ready for goKore integration (Phase 7).
 
@@ -34,7 +34,7 @@ Primary consumer: **goKore** (`github.com/lenaxia/gokore`) — the bot framework
 ## Package overview
 
 ```
-github.com/lenaxia/ragnarok-go-client/
+github.com/lenaxia/rathena-client/
     pkg/packing/    Bit-packing codecs (WBUFPOS 3-byte, WBUFPOS2 6-byte)
     pkg/events/     417 typed event structs (S→C, generated)
     pkg/send/       163 typed send-request structs (C→S, generated)
@@ -57,10 +57,10 @@ import (
     "context"
     "net"
 
-    "github.com/lenaxia/ragnarok-go-client/pkg/decode"
-    "github.com/lenaxia/ragnarok-go-client/pkg/events"
-    "github.com/lenaxia/ragnarok-go-client/pkg/fsm"
-    "github.com/lenaxia/ragnarok-go-client/pkg/session"
+    "github.com/lenaxia/rathena-client/pkg/decode"
+    "github.com/lenaxia/rathena-client/pkg/events"
+    "github.com/lenaxia/rathena-client/pkg/fsm"
+    "github.com/lenaxia/rathena-client/pkg/session"
 )
 
 f := fsm.New(
