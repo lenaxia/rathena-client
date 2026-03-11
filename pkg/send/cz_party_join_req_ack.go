@@ -4,4 +4,6 @@ package send
 
 // CzPartyJoinReqAck is the request struct for the cz_party_join_req_ack action.
 type CzPartyJoinReqAck struct {
+	Party_id uint32
+	Flag uint8
 }

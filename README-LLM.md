@@ -510,11 +510,11 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 |---|---|---|
 | `pkg/packing` | **Complete** | packing.go + packing_test.go; all tests pass (worklog 0001) |
 | `validation/` | **Complete** | preprocess_check.sh, phase1_gate.sh, struct_layout.sh (worklogs 0002-0007) |
-| `internal/codegen` | **Complete** | Full GCC+semantics pipeline; 482 structs in VersionTable (PACKET_AC_ACCEPT_LOGIN injected from common/packets.hpp, worklog 0017) |
-| `pkg/events` | **Complete** | 417 generated event structs; `[3]byte`/`[6]byte` for PosDir/MoveData (worklog 0013) |
-| `pkg/send` | **Complete** | 163 generated send request structs (worklog 0009) |
-| `pkg/decode` | **Complete** | 442 generated decode functions; zero allocs on all benchmarks (worklog 0017: PERF-1 nullTermString unsafe.String, PERF-2 width-mismatch narrowing, AcAcceptLogin decode fixed) |
-| `pkg/encode` | **Complete** | 80 generated encode functions (worklog 0009) |
+| `internal/codegen` | **Complete** | Full GCC+semantics pipeline; 770 structs in VersionTable after PACKET_CZ_ injection from packets.hpp (worklog 0039) |
+| `pkg/events` | **Complete** | 281 generated event structs; `[3]byte`/`[6]byte` for PosDir/MoveData (worklog 0013) |
+| `pkg/send` | **Complete** | 152 generated send request structs (worklog 0039: 13 duplicate aliases removed) |
+| `pkg/decode` | **Complete** | 282 generated decode functions; zero allocs on all benchmarks; zero "complex expression" gaps remaining (worklogs 0036-0037) |
+| `pkg/encode` | **Complete** | 115 generated encode functions including gameplay CZ packets (worklog 0039: PACKET_CZ_ injection fix) |
 | `pkg/session` (generated) | **Complete** | lengths_login.go (13 entries), lengths_char.go (37+ entries), lengths_map.go, shuffle_map.go, obfuscation_keys.go — lengths generated from GCC sizeof via common/packets.hpp (worklog 0014) |
 | `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go; 12 tests pass; 0 allocs/op benchmarks (worklog 0013) |
 | `pkg/fsm` | **Complete** | ConnectionFSM: full login→char→map auth sequence; 21 tests pass; zero goroutines; net.Pipe stubs (worklog 0015) |
@@ -524,11 +524,10 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 **Known open issues** (non-blocking for Phase 7):
 - SemanticDB has validation errors (run `semantics_validate`). Not blockers for Phase 7.
 - lengths_char.go: HC_ACCEPT_MAKECHAR (0x006D/0x0B6F) sizes may still be wrong — nested struct CHARACTER_INFO not fully resolved by codegen.
-- `go build ./...` has unused-import warnings in some generated pkg/decode files (pre-existing).
 - `lengths_map.go` partially populated; FSM uses `SetLength` for auth-phase packets where needed.
-- Some encode functions (e.g. `EncodeSkillUse`) emit stub-only output — the field-filling codegen is incomplete for complex C→S packets. These stubs build and test clean but send zero-filled payloads beyond the packet ID.
-- Cat-C field skips: decode functions with `MoveData[6]` in walking-unit packets emit `// complex expression — implement manually` comments. The `PosDir` fields in these functions must be filled in by hand (see worklog 0024).
-- ~132 total "complex expression — implement manually" decode gaps across `pkg/decode/`. See `docs/ADDING_PACKETS.md §7` for the full inventory and fix approach.
+- 3 encode functions always panic (`EncodeGameLogin`, `EncodeMapLoaded`, `EncodeTimeSyncResponse`) — **eliminated**; these are FSM-owned actions added to the skip list in `GenerateEncodeDirFiles` (worklog 0040); no generated files exist for them.
+- `EncodeDealFinalize` always panics — **fixed**; hand-written in `pkg/encode/deal_finalize.go`; `0x00EB` is a 2-byte header-only packet with no rAthena struct (worklog 0040).
+- `EncodeSkillUse` and `EncodeActorAction` have a trailing panic that is unreachable (`case packetver >= 0` is always true).
 
 **Out of scope — not planned:**
 - **Homunculus packets** (`ZC_PROPERTY_HOMUN`, `ZC_FEED_MER`, `ZC_PROPERTY_HOMUN_*`, `PACKET_CZ_*_HOMUN`, etc.) — homunculus support is not planned for the initial goKore integration. The generated decode stubs exist but the known type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`) in those stubs will not be fixed.
@@ -556,22 +555,20 @@ The HLD audit blockers and majors were fixed. Struct layouts verified against GC
 
 Code generator built. Inputs: `packets_struct.hpp`, `packets.hpp` (with stubs), `common/packets.hpp` (with stubs), `clif_packetdb.hpp`, `clif_shuffle.hpp`, `clif_obfuscation.hpp`, and `semantics/mappings.yaml` via MCP. VersionTable has 481 structs (459 from rAthena + 22 SYNTH_*).
 
-### Phase 4 — Generated packages ✅ COMPLETE (worklogs 0009-0013, 0036-0037)
+### Phase 4 — Generated packages ✅ COMPLETE (worklogs 0009-0013, 0036-0037, 0039)
 
 Codegen output:
 - `pkg/events/` — 281 event structs; PosDir/MoveData use `[3]byte`/`[6]byte` (CONCERN-2 resolved, worklog 0013)
-- `pkg/send/` — 165 send request structs
-- `pkg/decode/` — 281 decode functions (1 skipped intentionally: quest_update_mission_hunt); zero `make([]byte)` calls
-- `pkg/encode/` — 82 encode functions
+- `pkg/send/` — 152 send request structs (13 duplicate aliases removed, worklog 0039)
+- `pkg/decode/` — 282 decode functions (1 skipped intentionally: quest_update_mission_hunt); zero `make([]byte)` calls; zero "complex expression" gaps
+- `pkg/encode/` — 115 encode functions including gameplay CZ packets (PACKET_CZ_ injection fix, worklog 0039)
 - `pkg/session/lengths_login.go` — 13 entries; CA_/AC_/CT_/TC_/SC_ packets; generated from GCC sizeof via common/packets.hpp
 - `pkg/session/lengths_char.go` — 37+ entries; CH_/HC_/SC_/PING packets; nested struct sizes resolved
 - `pkg/session/lengths_map.go` — full map server table (4 codegen passes + post-merge dedup)
 - `pkg/session/shuffle_map.go` — `ShuffledCtoSID(packetver uint32, baseID uint16) uint16`
 - `pkg/session/obfuscation_keys.go` — `ObfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32)`
 
-Codegen audit complete (worklogs 0036-0037): all known gaps closed. 4 remaining SKIP stubs are all legitimate:
-- `PACKET_ZC_NOTIFY_MOVE` — inside a C comment block (unused alpha packet)
-- `PACKET_ZC_QUEST_DIALOG`, `PACKET_ZC_MONOLOG_DIALOG`, `PACKET_ZC_QUEST_DIALOG_MENU_LIST` — Zero-server only
+VersionTable now has 770 structs (up from 482) after PACKET_CZ_ injection from packets.hpp.
 
 ### Phase 5 — pkg/session (hand-written parts) ✅ COMPLETE (worklog 0013)
 

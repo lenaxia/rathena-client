@@ -4,4 +4,6 @@ package send
 
 // CzAdvancedStatusChange is the request struct for the cz_advanced_status_change action.
 type CzAdvancedStatusChange struct {
+	Type int16
+	Amount int16
 }

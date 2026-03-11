@@ -4,4 +4,6 @@ package send
 
 // PartyKick is the request struct for the party_kick action.
 type PartyKick struct {
+	AID uint32
+	Name string
 }

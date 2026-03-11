@@ -4,4 +4,5 @@ package send
 
 // CzReqSeCashTabCode is the request struct for the cz_req_se_cash_tab_code action.
 type CzReqSeCashTabCode struct {
+	Tab int16
 }

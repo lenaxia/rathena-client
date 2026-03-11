@@ -4,4 +4,6 @@ package send
 
 // EquipItem is the request struct for the equip_item action.
 type EquipItem struct {
+	Index uint16
+	Position uint16
 }

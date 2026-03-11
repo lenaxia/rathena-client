@@ -4,4 +4,5 @@ package send
 
 // PartyInvite is the request struct for the party_invite action.
 type PartyInvite struct {
+	AID uint32
 }

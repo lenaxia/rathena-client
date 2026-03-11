@@ -4,4 +4,9 @@ package send
 
 // CzReqApplyBargainSaleItem is the request struct for the cz_req_apply_bargain_sale_item action.
 type CzReqApplyBargainSaleItem struct {
+	AID uint32
+	ItemId uint16
+	Amount uint32
+	StartTime uint32
+	Hours uint8
 }

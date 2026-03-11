@@ -34,6 +34,19 @@ func GenerateEncodeFile(input EncodeInput) (filename string, src string, err err
 		return "", "", fmt.Errorf("action %s: no implementations", a.Name)
 	}
 
+	// Filter to C→S implementations only before deciding single vs. multi path.
+	// This ensures that a mixed-direction action (e.g. one CZ + one ZC impl) is
+	// treated as a single-impl encode rather than generating a broken empty dispatcher.
+	sendImpls := make([]semantics.Implementation, 0, len(a.Implementations))
+	for _, impl := range a.Implementations {
+		if isSendStruct(impl.StructName) {
+			sendImpls = append(sendImpls, impl)
+		}
+	}
+	if len(sendImpls) == 0 {
+		return "", "", fmt.Errorf("action %s: no send-direction implementations", a.Name)
+	}
+
 	structName := actionNameToGoIdent(a.Name)
 	filename = actionNameToFilename(a.Name)
 
@@ -44,8 +57,8 @@ func GenerateEncodeFile(input EncodeInput) (filename string, src string, err err
 	sb.WriteString("\t\"github.com/lenaxia/rathena-client/pkg/send\"\n")
 	sb.WriteString(")\n\n")
 
-	if len(a.Implementations) == 1 {
-		impl := &a.Implementations[0]
+	if len(sendImpls) == 1 {
+		impl := &sendImpls[0]
 		layout := resolveLayout(impl.StructName, impl.PacketverMin, input.VersionTable)
 		if layout == nil {
 			return "", "", fmt.Errorf("action %s: no layout for struct %s", a.Name, impl.StructName)
@@ -54,7 +67,9 @@ func GenerateEncodeFile(input EncodeInput) (filename string, src string, err err
 		funcSrc := generateEncodeFunc(structName, impl, layout)
 		sb.WriteString(funcSrc)
 	} else {
-		dispatchSrc := generateEncodeDispatcher(structName, a, input.VersionTable)
+		// Build a synthetic action containing only the send impls for the dispatcher.
+		sendAction := &semantics.Action{Name: a.Name, Implementations: sendImpls}
+		dispatchSrc := generateEncodeDispatcher(structName, sendAction, input.VersionTable)
 		sb.WriteString(dispatchSrc)
 	}
 
@@ -139,6 +154,7 @@ func generateEncodeFunc(
 }
 
 // generateEncodeDispatcher generates a multi-version encode dispatcher.
+// Returns an error string (non-empty) if no implementations can be resolved.
 func generateEncodeDispatcher(
 	structName string,
 	a *semantics.Action,
@@ -152,7 +168,8 @@ func generateEncodeDispatcher(
 		return impls[i].PacketverMin < impls[j].PacketverMin
 	})
 
-	// Filter to C→S implementations only.
+	// Caller has already filtered to send-direction; the internal filter here is
+	// kept as a safety net in case generateEncodeDispatcher is called directly.
 	sendImpls := make([]semantics.Implementation, 0, len(impls))
 	for _, impl := range impls {
 		if isSendStruct(impl.StructName) {
@@ -265,6 +282,16 @@ func GenerateEncodeDirFiles(db *semantics.DB, vt preprocess.VersionTable) (map[s
 		return nil, nil, fmt.Errorf("nil DB")
 	}
 
+	// fsmOwnedActions are semantic actions whose packets are built directly by
+	// pkg/fsm/packets.go and are never called through the pkg/encode API.
+	// Generating encode stubs for these produces unreachable, always-panicking
+	// functions because the underlying structs are not in the VersionTable.
+	fsmOwnedActions := map[string]bool{
+		"game_login":         true, // 0x0065/0x0275 CH_ENTER — built by buildCharEnterPacket
+		"map_loaded":         true, // 0x007D CZ_NOTIFY_ACTORINIT — built by buildMapLoadedPacket
+		"time_sync_response": true, // 0x007E/0x0360 CZ_REQUEST_TIME — built by buildTickSyncPacket
+	}
+
 	result := make(map[string]string)
 	var skipped []string
 
@@ -277,6 +304,12 @@ func GenerateEncodeDirFiles(db *semantics.DB, vt preprocess.VersionTable) (map[s
 	for _, name := range names {
 		action := db.Actions[name]
 		if len(action.Implementations) == 0 {
+			continue
+		}
+
+		// Skip actions that are owned by pkg/fsm and built there directly.
+		if fsmOwnedActions[name] {
+			skipped = append(skipped, fmt.Sprintf("%s: fsm-owned, skipped", name))
 			continue
 		}
 

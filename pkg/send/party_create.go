@@ -4,4 +4,5 @@ package send
 
 // PartyCreate is the request struct for the party_create action.
 type PartyCreate struct {
+	Name string
 }

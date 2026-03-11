@@ -4,4 +4,8 @@ package send
 
 // CzReqBanGuild is the request struct for the cz_req_ban_guild action.
 type CzReqBanGuild struct {
+	Guild_id uint32
+	AID uint32
+	CID uint32
+	Message string
 }

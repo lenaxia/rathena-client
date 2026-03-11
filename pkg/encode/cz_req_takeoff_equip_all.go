@@ -7,11 +7,12 @@ import (
 )
 
 // EncodeCzReqTakeoffEquipAll encodes a 0x0BAD (PACKET_CZ_REQ_TAKEOFF_EQUIP_ALL) packet for sending to the server.
-func EncodeCzReqTakeoffEquipAll(req send.CzReqTakeoffEquipAll, packetver uint32) [2]byte {
-	var p [2]byte
+func EncodeCzReqTakeoffEquipAll(req send.CzReqTakeoffEquipAll, packetver uint32) [6]byte {
+	var p [6]byte
 	// Packet ID: 0x0BAD (little-endian)
 	p[0] = 0xad
 	p[1] = 0x0b
+	leU32Put(p[2:], req.Location)  // rAthena: location
 	_ = packetver
 	return p
 }

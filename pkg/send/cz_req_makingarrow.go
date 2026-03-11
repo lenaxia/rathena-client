@@ -4,4 +4,5 @@ package send
 
 // CzReqMakingarrow is the request struct for the cz_req_makingarrow action.
 type CzReqMakingarrow struct {
+	ItemId uint16
 }

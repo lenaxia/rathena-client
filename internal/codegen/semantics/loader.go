@@ -77,6 +77,8 @@ func parse(lines []string) (*DB, error) {
 	var curAction *Action
 	var curImpl *Implementation
 	inImpls := false
+	inPacketverRange := false
+	packetverRangeIdx := 0
 
 	for i := start; i < len(lines); i++ {
 		raw := lines[i]
@@ -92,6 +94,35 @@ func parse(lines []string) (*DB, error) {
 		}
 
 		indent := countIndent(raw)
+
+		// Handle packetver_range list items at indent 16 (new MCP format).
+		// Format:
+		//   packetver_range:   (indent 14)
+		//     - null           (indent 16, item 0 = min)
+		//     - null           (indent 16, item 1 = max)
+		if inPacketverRange && indent == 16 && strings.HasPrefix(trimmed, "- ") && curImpl != nil {
+			val := strings.TrimPrefix(trimmed, "- ")
+			val = strings.TrimSpace(val)
+			if val != "null" && val != "" {
+				switch packetverRangeIdx {
+				case 0:
+					parseIntInto(val, &curImpl.PacketverMin)
+				case 1:
+					parseIntInto(val, &curImpl.PacketverMax)
+				}
+			}
+			packetverRangeIdx++
+			continue
+		}
+
+		// Leaving the packetver_range block when indent drops back to 14 or below.
+		if inPacketverRange && indent <= 14 {
+			inPacketverRange = false
+			// Apply default packetver_min if still zero (null in YAML).
+			if curImpl != nil && curImpl.PacketverMin == 0 {
+				curImpl.PacketverMin = 20030000
+			}
+		}
 
 		switch {
 		case indent == 4 && strings.HasSuffix(trimmed, ":"):
@@ -120,8 +151,18 @@ func parse(lines []string) (*DB, error) {
 
 		case indent == 14 && curImpl != nil:
 			k, v := splitKV(trimmed)
-			setImplField(curImpl, k, v)
+			if k == "packetver_range" {
+				inPacketverRange = true
+				packetverRangeIdx = 0
+			} else {
+				setImplField(curImpl, k, v)
+			}
 		}
+	}
+
+	// Apply default packetver_min for any trailing impl that ended in a null range.
+	if inPacketverRange && curImpl != nil && curImpl.PacketverMin == 0 {
+		curImpl.PacketverMin = 20030000
 	}
 
 	return db, nil

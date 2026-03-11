@@ -4,4 +4,6 @@ package send
 
 // NpcTalkNumber is the request struct for the npc_talk_number action.
 type NpcTalkNumber struct {
+	GID uint32
+	Value int32
 }

@@ -4,4 +4,5 @@ package send
 
 // CzRodexReturn is the request struct for the cz_rodex_return action.
 type CzRodexReturn struct {
+	MsgId uint32
 }

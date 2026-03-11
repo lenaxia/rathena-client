@@ -4,4 +4,5 @@ package send
 
 // CzPartyJoinReq is the request struct for the cz_party_join_req action.
 type CzPartyJoinReq struct {
+	Name string
 }

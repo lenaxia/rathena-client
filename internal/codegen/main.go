@@ -324,7 +324,7 @@ func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) e
 	}
 
 	// Collect all struct names matching target prefixes across all snapshots.
-	mapPrefixes := []string{"PACKET_ZC_", "PACKET_SC_"}
+	mapPrefixes := []string{"PACKET_ZC_", "PACKET_SC_", "PACKET_CZ_"}
 	structNames := make(map[string]bool)
 	for _, snap := range snapshots {
 		for name := range snap.db {

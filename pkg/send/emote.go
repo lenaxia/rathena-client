@@ -4,4 +4,5 @@ package send
 
 // Emote is the request struct for the emote action.
 type Emote struct {
+	Emotion_type uint8
 }

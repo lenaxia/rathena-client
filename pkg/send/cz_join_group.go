@@ -4,4 +4,6 @@ package send
 
 // CzJoinGroup is the request struct for the cz_join_group action.
 type CzJoinGroup struct {
+	Party_id uint32
+	Flag int32
 }

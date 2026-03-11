@@ -4,4 +4,5 @@ package send
 
 // NpcTalkClose is the request struct for the npc_talk_close action.
 type NpcTalkClose struct {
+	GID uint32
 }

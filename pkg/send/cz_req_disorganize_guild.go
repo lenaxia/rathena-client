@@ -4,4 +4,5 @@ package send
 
 // CzReqDisorganizeGuild is the request struct for the cz_req_disorganize_guild action.
 type CzReqDisorganizeGuild struct {
+	Key string
 }

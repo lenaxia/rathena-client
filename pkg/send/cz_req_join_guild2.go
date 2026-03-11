@@ -4,4 +4,5 @@ package send
 
 // CzReqJoinGuild2 is the request struct for the cz_req_join_guild2 action.
 type CzReqJoinGuild2 struct {
+	Name string
 }

@@ -4,4 +4,8 @@ package send
 
 // CzReqLeaveGuild is the request struct for the cz_req_leave_guild action.
 type CzReqLeaveGuild struct {
+	Guild_id uint32
+	AID uint32
+	CID uint32
+	Message string
 }
