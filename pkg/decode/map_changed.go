@@ -34,3 +34,15 @@ func MapChanged_0x0AC7(data []byte, packetver uint32) events.MapChanged {
 	return e
 }
 
+// MapChanged_0x0092 decodes a 0x0092 packet (struct PACKET_ZC_NPCACK_SERVERMOVE).
+func MapChanged_0x0092(data []byte, packetver uint32) events.MapChanged {
+	var e events.MapChanged
+	_ = packetver
+	e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
+	e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
+	e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
+	e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
+	e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+	return e
+}
+

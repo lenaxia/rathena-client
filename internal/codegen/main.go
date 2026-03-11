@@ -473,11 +473,14 @@ func genLengths(cfg preprocess.Config, outDir, semanticsPath string, vt preproce
 	}
 
 	// Part 2: S→C lengths from packets.hpp HEADER_* constants (Gap B).
+	// Use fill-only merge: clif_packetdb lengths (Part 1) take priority.
+	// In particular, packets registered as variable-length (-1) in clif_packetdb
+	// must not be overridden with a fixed struct size from packets.hpp.
 	stocPacketsHPP, err := buildMapStocLengthBreakpoints(cfg)
 	if err != nil {
 		return fmt.Errorf("build map s→c packets.hpp breakpoints: %w", err)
 	}
-	mapBreakpoints = mergeBreakpoints(mapBreakpoints, stocPacketsHPP)
+	mapBreakpoints = mergeBreakpointsFillOnly(mapBreakpoints, stocPacketsHPP)
 
 	// Part 3: S→C lengths joined from VersionTable + SemanticDB mappings: section (Gap A + Gap C).
 	packetMappings, err := semantics.LoadMappings(semanticsPath)
@@ -489,7 +492,7 @@ func genLengths(cfg preprocess.Config, outDir, semanticsPath string, vt preproce
 	if err != nil {
 		return fmt.Errorf("build map s→c join pass: %w", err)
 	}
-	mapBreakpoints = mergeBreakpoints(mapBreakpoints, stocJoin)
+	mapBreakpoints = mergeBreakpointsFillOnly(mapBreakpoints, stocJoin)
 
 	// Part 4: enum-assigned packet IDs from packets_struct.hpp (Gap D).
 	// Some packet IDs are assigned via C++ enum values (e.g. inventorylistnormalType,
@@ -939,6 +942,29 @@ func buildMapStocJoinPass(vt preprocess.VersionTable, mappings []semantics.Packe
 			if vr.Layout == nil {
 				continue
 			}
+
+			// Honour the SemanticDB packetver bounds on this mapping.
+			// mapping.PacketverMin and PacketverMax constrain which VersionTable
+			// ranges are valid for this (packet_id, struct) pairing.
+			// A VersionTable range [vr.MinVer, vr.MaxVer) is relevant only if
+			// it overlaps the mapping's [PacketverMin, PacketverMax) window.
+			implMin := mapping.PacketverMin // 0 → 20030000 (default from loader)
+			if implMin == 0 {
+				implMin = 20030000
+			}
+			implMax := mapping.PacketverMax // 0 → no upper bound
+			// vr.MaxVer==0 means "no upper bound" in VersionTable.
+			vrMax := vr.MaxVer
+			vrMin := vr.MinVer
+
+			// Skip if the struct range ends at or before our impl window starts.
+			if vrMax != 0 && vrMax <= uint32(implMin) {
+				continue
+			}
+			// Skip if the struct range starts at or after our impl window ends.
+			if implMax != 0 && vrMin >= uint32(implMax) {
+				continue
+			}
 			size := vr.Layout.TotalSize
 			var length int16
 			if vr.Layout.Fields != nil {
@@ -1032,7 +1058,115 @@ func mergeBreakpoints(base, extra []gen.LengthBreakpoint) []gen.LengthBreakpoint
 	return result
 }
 
-// parseHexID parses a packet ID string like "0x00B0" or "0xB0" into uint64.
+// mergeBreakpointsFillOnly merges extra into base but ONLY sets entries that
+// are currently 0 (unknown) in base. Existing nonzero values (from
+// clif_packetdb.hpp or packets.hpp HEADER_* scans) are never overridden.
+// This is used for the S→C struct-size join pass (Part 3) to ensure that
+// the ground-truth clif_packetdb lengths take priority over struct-derived
+// sizes — particularly important for variable-length packets (length=-1)
+// that happen to have a computable struct TotalSize.
+func mergeBreakpointsFillOnly(base, extra []gen.LengthBreakpoint) []gen.LengthBreakpoint {
+	// Build a base map for easy lookup: at any given (ver, id), what is the
+	// cumulative length from Parts 1–2?
+	type lenTable map[uint16]int16
+	bpMap := make(map[uint32]lenTable)
+	for _, bp := range base {
+		if bpMap[bp.Ver] == nil {
+			bpMap[bp.Ver] = make(lenTable)
+		}
+		for _, e := range bp.Entries {
+			bpMap[bp.Ver][e.ID] = e.Length
+		}
+	}
+
+	// Simulate the generated function's cumulative state to know whether a
+	// packet already has a nonzero value at a given version.
+	// Strategy: for each extra entry at (ver, id, length), check if the
+	// base table has any entry for (id) at version <= ver that is nonzero.
+	// If so, skip — clif_packetdb already owns this packet.
+
+	// Collect all base versions sorted.
+	var baseVers []uint32
+	for v := range bpMap {
+		baseVers = append(baseVers, v)
+	}
+	sort.Slice(baseVers, func(i, j int) bool { return baseVers[i] < baseVers[j] })
+
+	// Build cumulative table: for each version threshold v, what is the last
+	// known value for each packet ID from Parts 1–2?
+	// We simulate: start at v=0, apply each block in order.
+	cumulative := make(lenTable) // current state as of the last processed base ver
+	// ver→snapshot of cumulative after applying that ver's base block
+	snapshots := make(map[uint32]lenTable)
+	// Precompute snapshots at each base version.
+	snapshotKeys := make([]uint32, 0, len(baseVers)+1)
+	snapMap := make(map[uint32]lenTable)
+	cur := make(lenTable)
+	snapMap[0] = make(lenTable)
+	for _, v := range baseVers {
+		for id, length := range bpMap[v] {
+			cur[id] = length
+		}
+		snap := make(lenTable, len(cur))
+		for k, vv := range cur {
+			snap[k] = vv
+		}
+		snapMap[v] = snap
+		snapshotKeys = append(snapshotKeys, v)
+	}
+	sort.Slice(snapshotKeys, func(i, j int) bool { return snapshotKeys[i] < snapshotKeys[j] })
+	_ = cumulative
+	_ = snapshots
+
+	// For an extra entry at (extraVer, id, length): it's a "fill" — only apply
+	// it if the simulated base state at extraVer has value 0 for that id.
+	fillMap := make(map[uint32]lenTable)
+	for _, bp := range extra {
+		// Find the cumulative base state at bp.Ver.
+		// Walk the snapshots up to and including bp.Ver.
+		baseAtVer := make(lenTable)
+		for _, sv := range snapshotKeys {
+			if sv <= bp.Ver {
+				for id, length := range bpMap[sv] {
+					baseAtVer[id] = length
+				}
+			}
+		}
+		for _, e := range bp.Entries {
+			if baseAtVer[e.ID] != 0 {
+				// clif_packetdb or HEADER_* scan already has a nonzero value
+				// at this version — do not override.
+				continue
+			}
+			if fillMap[bp.Ver] == nil {
+				fillMap[bp.Ver] = make(lenTable)
+			}
+			fillMap[bp.Ver][e.ID] = e.Length
+		}
+	}
+
+	// Merge fillMap into bpMap.
+	for ver, tbl := range fillMap {
+		if bpMap[ver] == nil {
+			bpMap[ver] = make(lenTable)
+		}
+		for id, length := range tbl {
+			bpMap[ver][id] = length
+		}
+	}
+
+	// Flatten back.
+	var result []gen.LengthBreakpoint
+	for ver, tbl := range bpMap {
+		var entries []gen.LengthEntry
+		for id, length := range tbl {
+			entries = append(entries, gen.LengthEntry{ID: id, Length: length})
+		}
+		result = append(result, gen.LengthBreakpoint{Ver: ver, Entries: entries})
+	}
+	return result
+}
+
 func parseHexID(s string) (uint64, error) {
 	s = strings.TrimPrefix(strings.ToLower(s), "0x")
 	return strconv.ParseUint(s, 16, 16)

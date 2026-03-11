@@ -2770,6 +2770,12 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_NPCACK_SERVERMOVE
               field_mapping: {}
+            - packet_id: "0x0092"
+              packetver_range:
+                - null
+                - 20170315
+              struct_name: PACKET_ZC_NPCACK_SERVERMOVE
+              field_mapping: {}
     map_loaded:
         name: ""
         description: ""
@@ -3207,25 +3213,13 @@ semantic_actions:
         description: ""
         openkore_name: ""
         canonical_params: []
-        implementations:
-            - packet_id: "0x0071"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_HC_NOTIFY_ZONESVR
-              field_mapping: {}
+        implementations: []
     received_character_id_and_map:
         name: ""
         description: ""
         openkore_name: ""
         canonical_params: []
-        implementations:
-            - packet_id: "0x0071"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_HC_NOTIFY_ZONESVR
-              field_mapping: {}
+        implementations: []
     received_characters:
         name: ""
         description: ""
@@ -3270,7 +3264,7 @@ semantic_actions:
         implementations:
             - packet_id: "0x0AC5"
               packetver_range:
-                - null
+                - 20170315
                 - null
               struct_name: PACKET_HC_NOTIFY_ZONESVR
               field_mapping: {}
@@ -5455,7 +5449,7 @@ semantic_actions:
             - packet_id: "0x0092"
               packetver_range:
                 - null
-                - null
+                - 20170315
               struct_name: PACKET_ZC_NPCACK_SERVERMOVE
               field_mapping: {}
     zc_open_editdlg:

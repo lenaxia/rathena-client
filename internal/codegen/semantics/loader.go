@@ -169,11 +169,14 @@ func parse(lines []string) (*DB, error) {
 }
 
 // PacketMapping holds the minimal data needed for the S→C length join pass:
-// packet ID, direction (derived from struct name), and rAthena struct name.
+// packet ID, direction (derived from struct name), rAthena struct name, and
+// optional packetver bounds constraining which VersionTable ranges to emit.
 type PacketMapping struct {
 	PacketID      string // e.g. "0x00B0" (normalised uppercase hex)
 	Direction     string // "send" or "receive"
 	RathenaStruct string // e.g. "PACKET_ZC_PAR_CHANGE"
+	PacketverMin  int    // 0 = no lower bound (treat as 20030000)
+	PacketverMax  int    // 0 = no upper bound
 }
 
 // LoadMappings derives a flat list of PacketMapping from the semantic_actions
@@ -183,13 +186,24 @@ type PacketMapping struct {
 //
 // SYNTH_ZC_* and SYNTH_HC_* are also treated as receive. packet_* lowercase
 // structs represent receive packets by convention.
+//
+// Unlike the previous behaviour, this no longer deduplicates by packet_id.
+// The same packet ID may appear multiple times if different actions define
+// versioned implementations for it (e.g. 0x0092 pre- and post-20170315).
+// The join pass in main.go is responsible for resolving conflicts.
 func LoadMappings(path string) ([]PacketMapping, error) {
 	db, err := LoadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	seen := make(map[string]bool) // deduplicate packet_id
+	// Deduplicate by (packet_id, struct_name) — the same struct at the same ID
+	// from two different actions is redundant, but different structs at the same
+	// ID across packetver ranges are intentional and must both be emitted.
+	type deduKey struct {
+		id, structName string
+	}
+	seen := make(map[deduKey]bool)
 	var results []PacketMapping
 
 	for _, action := range db.Actions {
@@ -197,7 +211,7 @@ func LoadMappings(path string) ([]PacketMapping, error) {
 			if impl.PacketID == "" || impl.StructName == "" {
 				continue
 			}
-			key := impl.PacketID
+			key := deduKey{impl.PacketID, impl.StructName}
 			if seen[key] {
 				continue
 			}
@@ -206,6 +220,8 @@ func LoadMappings(path string) ([]PacketMapping, error) {
 				PacketID:      normPacketID(impl.PacketID),
 				Direction:     inferDirection(impl.StructName),
 				RathenaStruct: impl.StructName,
+				PacketverMin:  impl.PacketverMin,
+				PacketverMax:  impl.PacketverMax,
 			})
 		}
 	}

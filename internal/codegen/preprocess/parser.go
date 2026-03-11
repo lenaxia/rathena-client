@@ -42,6 +42,11 @@ var specialNote = map[string]string{
 	"moveData": "packing=WBUFPOS2",
 }
 
+// re2DArrayField matches: TYPE NAME[DIM1][DIM2]
+// Used for 2D arrays like char names[10][(23+1)] in rAthena packets.
+// Must be checked BEFORE reArrayField since 2D arrays would otherwise not match.
+var re2DArrayField = regexp.MustCompile(`^(\w+)\s+(\w+)\[([^\]]+)\]\[([^\]]+)\]$`)
+
 // arrayField matches: TYPE NAME[EXPR]
 // EXPR may be a C constant expression like (23 + 1) or a plain integer.
 var reArrayField = regexp.MustCompile(`^(\w+)\s+(\w+)\[([^\]]+)\]$`)
@@ -219,6 +224,31 @@ func ParseStructBody(body string, structName string, packetver uint32, knownStru
 				IsFlexArray: true,
 			})
 			// Flex arrays add no size.
+			continue
+		}
+
+		// 2D array field: TYPE NAME[DIM1][DIM2]
+		// e.g. char names[10][(23+1)] in RANKLIST.
+		// Must be checked before reArrayField.
+		if m := re2DArrayField.FindStringSubmatch(line); m != nil {
+			typ, name, dim1Expr, dim2Expr := m[1], m[2], m[3], m[4]
+			elemSize, known := typeSizes[typ]
+			if known && elemSize > 0 {
+				dim1 := evalExpr(dim1Expr)
+				dim2 := evalExpr(dim2Expr)
+				sz := elemSize * dim1 * dim2
+				layout.Fields = append(layout.Fields, Field{
+					Name:     name,
+					Type:     fmt.Sprintf("%s[%d][%d]", typ, dim1, dim2),
+					BaseType: typ,
+					Offset:   offset,
+					Size:     sz,
+					IsArray:  true,
+					ArrayLen: dim1 * dim2,
+				})
+				offset += sz
+			}
+			// Unknown base type in 2D array — skip.
 			continue
 		}
 

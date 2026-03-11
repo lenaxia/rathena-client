@@ -766,3 +766,98 @@ uint8 data[];
 		t.Error("data field should be IsFlexArray")
 	}
 }
+
+// TestParseStructBody_2DArray verifies parsing of 2D array fields.
+// Golden: RANKLIST in packets.hpp has char names[10][(23+1)] — the ONLY 2D array
+// in all rAthena packets. Correct size = 10 * 24 * 1 = 240 bytes.
+// Combined with uint32 points[10] = 40 bytes → RANKLIST.TotalSize = 280.
+// PACKET_ZC_BLACKSMITH_RANK = int16(2) + RANKLIST(280) = 282 bytes total.
+func TestParseStructBody_2DArray(t *testing.T) {
+	// Test the RANKLIST struct body directly.
+	// GCC produces: char names[10][(23 + 1)]; uint32 points[10];
+	ranklistBody := `
+char names[10][(23 + 1)];
+uint32 points[10];
+`
+	layout, err := preprocess.ParseStructBody(ranklistBody, "RANKLIST", 20180621)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !layout.Available {
+		t.Fatal("layout should be available")
+	}
+	// names[10][24] = 240, points[10] = 40 → total 280
+	if layout.TotalSize != 280 {
+		t.Errorf("RANKLIST TotalSize = %d, want 280 (names[10][24]=240 + points[10]=40)", layout.TotalSize)
+	}
+	if len(layout.Fields) != 2 {
+		t.Fatalf("field count = %d, want 2", len(layout.Fields))
+	}
+
+	namesField := layout.Fields[0]
+	if namesField.Name != "names" {
+		t.Errorf("field[0].Name = %q, want \"names\"", namesField.Name)
+	}
+	if namesField.Size != 240 {
+		t.Errorf("names.Size = %d, want 240 (10*24 chars)", namesField.Size)
+	}
+	if namesField.Offset != 0 {
+		t.Errorf("names.Offset = %d, want 0", namesField.Offset)
+	}
+	if namesField.ArrayLen != 240 { // dim1*dim2 = 10*24
+		t.Errorf("names.ArrayLen = %d, want 240", namesField.ArrayLen)
+	}
+
+	pointsField := layout.Fields[1]
+	if pointsField.Name != "points" {
+		t.Errorf("field[1].Name = %q, want \"points\"", pointsField.Name)
+	}
+	if pointsField.Offset != 240 {
+		t.Errorf("points.Offset = %d, want 240", pointsField.Offset)
+	}
+	if pointsField.Size != 40 {
+		t.Errorf("points.Size = %d, want 40 (10*4)", pointsField.Size)
+	}
+
+	// Now verify PACKET_ZC_BLACKSMITH_RANK layout using RANKLIST as nested struct.
+	ranklistLayout := &preprocess.StructLayout{
+		Name:      "RANKLIST",
+		Available: true,
+		TotalSize: layout.TotalSize,
+	}
+	knownStructs := preprocess.StructDB{"RANKLIST": ranklistLayout}
+
+	// GCC body for PACKET_ZC_BLACKSMITH_RANK: int16 PacketType + RANKLIST list
+	rankPktBody := `
+int16 PacketType;
+struct RANKLIST list;
+`
+	rankLayout, err := preprocess.ParseStructBody(rankPktBody, "PACKET_ZC_BLACKSMITH_RANK", 20180621, knownStructs)
+	if err != nil {
+		t.Fatalf("unexpected error for PACKET_ZC_BLACKSMITH_RANK: %v", err)
+	}
+	if rankLayout.TotalSize != 282 {
+		t.Errorf("PACKET_ZC_BLACKSMITH_RANK TotalSize = %d, want 282 (2+280)", rankLayout.TotalSize)
+	}
+}
+
+// TestParseStructBody_2DArray_UnknownType verifies that 2D arrays with unknown
+// base types are silently skipped (consistent with 1D array behavior).
+func TestParseStructBody_2DArray_UnknownType(t *testing.T) {
+	body := `
+int16 PacketType;
+UnknownType matrix[4][4];
+uint32 value;
+`
+	layout, err := preprocess.ParseStructBody(body, "test_unknown_2d", 20180621)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// UnknownType field should be skipped; only PacketType + value remain.
+	if layout.TotalSize != 6 { // 2+4
+		t.Errorf("TotalSize = %d, want 6 (unknown 2D array skipped)", layout.TotalSize)
+	}
+	if len(layout.Fields) != 2 {
+		t.Errorf("field count = %d, want 2", len(layout.Fields))
+	}
+}
