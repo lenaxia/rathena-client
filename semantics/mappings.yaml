@@ -1,6 +1,615 @@
-mappings: []
+mappings:
+    - packet_id: "0x0103"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_EXPEL_GROUP_MEMBER
+      openkore_name: remove_party_member
+      semantic_category: party
+      description: Kick a member from the party
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: AID
+          rathena_type: uint32
+          openkore_name: AID
+          semantic: Account ID of member to expel
+        - position: 2
+          rathena_name: name
+          rathena_type: char[24]
+          openkore_name: name
+          semantic: Character name of member to expel
+          is_fixed_string: true
+          string_length: 24
+    - packet_id: "0x0127"
+      direction: send
+      rathena_struct: SYNTH_CZ_MOVE_ITEM_FROM_CART_TO_BODY
+      openkore_name: get_item_from_cart
+      semantic_category: inventory
+      description: Move item from cart to body inventory
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index
+          rathena_type: uint16
+          openkore_name: index
+          semantic: Cart inventory index of item to move
+        - position: 2
+          rathena_name: amount
+          rathena_type: int32
+          openkore_name: amount
+          semantic: Number of items to move
+    - packet_id: "0x0178"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_ITEMIDENTIFY
+      openkore_name: item_identify
+      semantic_category: inventory
+      description: Identify an unidentified item using a magnifier
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index
+          rathena_type: uint16
+          openkore_name: index
+          semantic: Inventory index of item to identify
+    - packet_id: "0x017A"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_ITEMCOMPOSITION_LIST
+      openkore_name: use_card
+      semantic_category: inventory
+      description: Request list of equipment eligible for card insertion
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index
+          rathena_type: uint16
+          openkore_name: index
+          semantic: Inventory index of the card to insert
+    - packet_id: "0x017C"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_ITEMCOMPOSITION
+      openkore_name: insert_card
+      semantic_category: inventory
+      description: Insert a card into a piece of equipment
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index_card
+          rathena_type: uint16
+          openkore_name: index_card
+          semantic: Inventory index of the card
+        - position: 2
+          rathena_name: index_equip
+          rathena_type: uint16
+          openkore_name: index_equip
+          semantic: Inventory index of the equipment to insert card into
+    - packet_id: "0x01AE"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_MAKINGARROW
+      openkore_name: select_arrow
+      semantic_category: skills
+      description: Request arrow crafting from a specific item
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: itemId
+          rathena_type: uint16
+          openkore_name: itemId
+          semantic: Item ID of material to craft arrows from
+    - packet_id: "0x01CE"
+      direction: send
+      rathena_struct: SYNTH_CZ_SELECTAUTOSPELL
+      openkore_name: auto_spell
+      semantic_category: skills
+      description: Select the skill to cast via Autospell
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: skill_id
+          rathena_type: uint32
+          openkore_name: skill_id
+          semantic: Skill ID to set as the autospell target
+    - packet_id: "0x01FD"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_ITEMREPAIR1
+      openkore_name: repair_item
+      semantic_category: inventory
+      description: Request weapon repair at a repair NPC
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index
+          rathena_type: int16
+          openkore_name: index
+          semantic: Inventory index of weapon to repair
+        - position: 2
+          rathena_name: itemId
+          rathena_type: uint16
+          openkore_name: itemId
+          semantic: Item ID of weapon to repair
+        - position: 3
+          rathena_name: refine
+          rathena_type: uint8
+          openkore_name: refine
+          semantic: Refine level of weapon
+    - packet_id: "0x00B2"
+      direction: send
+      rathena_struct: SYNTH_CZ_RESTART
+      openkore_name: restart
+      semantic_category: character
+      description: Respawn after death or return to character select
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: type
+          rathena_type: uint8
+          openkore_name: type
+          semantic: 0=respawn at save point, 1=return to character select
+    - packet_id: "0x00BB"
+      direction: send
+      rathena_struct: SYNTH_CZ_STATUS_CHANGE
+      openkore_name: status_up
+      semantic_category: character
+      description: Request to increase a base status point
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: statusType
+          rathena_type: uint16
+          openkore_name: statusType
+          semantic: Status point type (SP_STR=13, SP_AGI=14, SP_VIT=15, SP_INT=16, SP_DEX=17, SP_LUK=18)
+        - position: 2
+          rathena_name: amount
+          rathena_type: uint8
+          openkore_name: amount
+          semantic: Number of points to add (always 1)
+    - packet_id: "0x0102"
+      direction: send
+      rathena_struct: SYNTH_CZ_CHANGE_GROUPEXPOPTION
+      openkore_name: party_change_option
+      semantic_category: party
+      description: Toggle party EXP/item share options
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: option
+          rathena_type: uint32
+          openkore_name: option
+          semantic: Party share option bitmask (EXP share | item share)
+    - packet_id: "0x0112"
+      direction: send
+      rathena_struct: SYNTH_CZ_UPGRADE_SKILLLEVEL
+      openkore_name: skill_up
+      semantic_category: skills
+      description: Request to increase a skill level
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: skill_id
+          rathena_type: uint16
+          openkore_name: skill_id
+          semantic: Skill ID to level up
+    - packet_id: "0x011D"
+      direction: send
+      rathena_struct: SYNTH_CZ_REMEMBER_WARPPOINT
+      openkore_name: request_memo
+      semantic_category: navigation
+      description: Save current position as a warp memo point
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+    - packet_id: "0x012A"
+      direction: send
+      rathena_struct: SYNTH_CZ_REMOVE_AID
+      openkore_name: remove_option
+      semantic_category: character
+      description: Remove riding mount, falcon, or cart
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+    - packet_id: "0x012E"
+      direction: send
+      rathena_struct: SYNTH_CZ_CLOSE_AUCTION
+      openkore_name: close_vending
+      semantic_category: npc
+      description: Close own vending shop
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+    - packet_id: "0x0130"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_CLICK_TO_BUYING_STORE
+      openkore_name: vending_list_req
+      semantic_category: npc
+      description: Request item list from a player vending shop
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: AID
+          rathena_type: uint32
+          openkore_name: AID
+          semantic: Account ID of the vending player
+    - packet_id: "0x018A"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_DISCONNECT
+      openkore_name: quit_game
+      semantic_category: character
+      description: Request to disconnect from the game
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: type
+          rathena_type: uint16
+          openkore_name: type
+          semantic: Quit type (0=quit game)
+    - packet_id: "0x019F"
+      direction: send
+      rathena_struct: SYNTH_CZ_CATCH_MONSTER
+      openkore_name: catch_pet
+      semantic_category: pet
+      description: Throw a Shining Stone to attempt capturing a monster
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: targetId
+          rathena_type: uint32
+          openkore_name: targetId
+          semantic: GID of target monster to catch
+    - packet_id: "0x01A1"
+      direction: send
+      rathena_struct: SYNTH_CZ_PET_ACT
+      openkore_name: pet_menu
+      semantic_category: pet
+      description: Send a pet menu command (feed, performance, return egg, unequip)
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: action
+          rathena_type: uint8
+          openkore_name: action
+          semantic: Pet menu action (0=feed, 1=performance, 2=return egg, 3=unequip accessory)
+    - packet_id: "0x01A7"
+      direction: send
+      rathena_struct: SYNTH_CZ_SELECT_PETEGG
+      openkore_name: select_egg
+      semantic_category: pet
+      description: Hatch a pet egg from inventory
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index
+          rathena_type: uint16
+          openkore_name: index
+          semantic: Inventory index of the pet egg to hatch
+    - packet_id: "0x01A9"
+      direction: send
+      rathena_struct: SYNTH_CZ_SEND_MBMC_CASH
+      openkore_name: send_emotion
+      semantic_category: social
+      description: Send an emotion to a target actor
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: targetId
+          rathena_type: uint32
+          openkore_name: targetId
+          semantic: GID of actor to send emotion to
+    - packet_id: "0x01AF"
+      direction: send
+      rathena_struct: SYNTH_CZ_CHANGE_CART
+      openkore_name: change_cart
+      semantic_category: inventory
+      description: Change cart appearance level
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: num
+          rathena_type: uint16
+          openkore_name: num
+          semantic: Cart number to change to (1-5)
+    - packet_id: "0x0202"
+      direction: send
+      rathena_struct: SYNTH_CZ_ADD_FRIENDS
+      openkore_name: friends_add
+      semantic_category: social
+      description: Add a player to the friends list
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: name
+          rathena_type: char[24]
+          openkore_name: name
+          semantic: Character name to add as friend
+          is_fixed_string: true
+          string_length: 24
+    - packet_id: "0x0203"
+      direction: send
+      rathena_struct: SYNTH_CZ_DELETE_FRIENDS
+      openkore_name: friends_remove
+      semantic_category: social
+      description: Remove a player from the friends list
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: AID
+          rathena_type: uint32
+          openkore_name: AID
+          semantic: Account ID of friend to remove
+        - position: 2
+          rathena_name: CID
+          rathena_type: uint32
+          openkore_name: CID
+          semantic: Character ID of friend to remove
+    - packet_id: "0x0208"
+      direction: send
+      rathena_struct: SYNTH_CZ_ACK_REQ_ADD_FRIENDS
+      openkore_name: friends_reply
+      semantic_category: social
+      description: Reply to a friend request (accept or reject)
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: AID
+          rathena_type: uint32
+          openkore_name: AID
+          semantic: Account ID of the requesting player
+        - position: 2
+          rathena_name: CID
+          rathena_type: uint32
+          openkore_name: CID
+          semantic: Character ID of the requesting player
+        - position: 3
+          rathena_name: reply
+          rathena_type: uint32
+          openkore_name: reply
+          semantic: Reply (0=reject, 1=accept)
+    - packet_id: "0x0222"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQ_WEAPONREFINE
+      openkore_name: weapon_refine
+      semantic_category: npc
+      description: Request weapon refine at a refine NPC
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: index
+          rathena_type: uint32
+          openkore_name: index
+          semantic: Inventory index of weapon to refine
+    - packet_id: "0x022D"
+      direction: send
+      rathena_struct: SYNTH_CZ_COMMAND_MER
+      openkore_name: homunculus_menu
+      semantic_category: homunculus
+      description: Send a menu command to the homunculus
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: homId
+          rathena_type: uint16
+          openkore_name: homId
+          semantic: Homunculus ID
+        - position: 2
+          rathena_name: action
+          rathena_type: uint8
+          openkore_name: action
+          semantic: Menu action type
+    - packet_id: "0x0233"
+      direction: send
+      rathena_struct: SYNTH_CZ_REQUEST_ACTNPC
+      openkore_name: homunculus_attack
+      semantic_category: homunculus
+      description: Command homunculus to attack a target
+      confidence: 90
+      validated_date: "2026-03-11"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: targetId
+          rathena_type: uint32
+          openkore_name: targetId
+          semantic: GID of attack target
+        - position: 2
+          rathena_name: homId
+          rathena_type: uint32
+          openkore_name: homId
+          semantic: Homunculus GID
+        - position: 3
+          rathena_name: action
+          rathena_type: uint8
+          openkore_name: action
+          semantic: Attack action type
 metadata:
-    total_packets: 0
+    total_packets: 28
     last_updated: "2026-03-11"
     maintainer: ""
     source_references:
@@ -277,6 +886,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ATTACK_RANGE
               field_mapping: {}
+    auto_spell:
+        name: auto_spell
+        description: Select the skill to cast via the Autospell buff
+        openkore_name: auto_spell
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01CE"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_SELECTAUTOSPELL
+              field_mapping: {}
     banking_check:
         name: ""
         description: ""
@@ -445,6 +1066,30 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_DISPEL
               field_mapping: {}
+    catch_pet:
+        name: catch_pet
+        description: Throw a Shining Stone to attempt capturing a monster as a pet
+        openkore_name: catch_pet
+        canonical_params: []
+        implementations:
+            - packet_id: "0x019F"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_CATCH_MONSTER
+              field_mapping: {}
+    change_cart:
+        name: change_cart
+        description: Change the cart appearance/level
+        openkore_name: change_cart
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01AF"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_CHANGE_CART
+              field_mapping: {}
     char_create:
         name: ""
         description: ""
@@ -582,6 +1227,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: SYNTH_CZ_CLOSE_STORE
+              field_mapping: {}
+    close_vending:
+        name: close_vending
+        description: Close own vending shop
+        openkore_name: close_vending
+        canonical_params: []
+        implementations:
+            - packet_id: "0x012E"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_CLOSE_AUCTION
               field_mapping: {}
     ct_auth:
         name: ""
@@ -1849,6 +2506,42 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REQ_WEAR_EQUIP
               field_mapping: {}
+    friends_add:
+        name: friends_add
+        description: Add a player to the friends list by name
+        openkore_name: friends_add
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0202"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_ADD_FRIENDS
+              field_mapping: {}
+    friends_remove:
+        name: friends_remove
+        description: Remove a player from the friends list
+        openkore_name: friends_remove
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0203"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_DELETE_FRIENDS
+              field_mapping: {}
+    friends_reply:
+        name: friends_reply
+        description: Reply to a friend request (accept or reject)
+        openkore_name: friends_reply
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0208"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_ACK_REQ_ADD_FRIENDS
+              field_mapping: {}
     game_login:
         name: ""
         description: ""
@@ -1867,6 +2560,30 @@ semantic_actions:
                 - null
               struct_name: PACKET_CH_ENTER
               field_mapping: {}
+    get_item_from_cart:
+        name: get_item_from_cart
+        description: Move an item from the cart back to body inventory
+        openkore_name: get_item_from_cart
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0127"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_MOVE_ITEM_FROM_CART_TO_BODY
+              field_mapping: {}
+    homunculus_attack:
+        name: homunculus_attack
+        description: Command the homunculus to attack a target
+        openkore_name: homunculus_attack
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0233"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQUEST_ACTNPC
+              field_mapping: {}
     homunculus_info:
         name: ""
         description: ""
@@ -1878,6 +2595,30 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_CHANGESTATE_MER
+              field_mapping: {}
+    homunculus_menu:
+        name: homunculus_menu
+        description: Send a menu command to the homunculus
+        openkore_name: homunculus_menu
+        canonical_params: []
+        implementations:
+            - packet_id: "0x022D"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_COMMAND_MER
+              field_mapping: {}
+    insert_card:
+        name: insert_card
+        description: Insert a card into a piece of equipment
+        openkore_name: insert_card
+        canonical_params: []
+        implementations:
+            - packet_id: "0x017C"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_ITEMCOMPOSITION
               field_mapping: {}
     inventory_item_added:
         name: ""
@@ -1932,6 +2673,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_ITEM_ENTRY
+              field_mapping: {}
+    item_identify:
+        name: item_identify
+        description: Identify an unidentified item using a magnifier
+        openkore_name: item_identify
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0178"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_ITEMIDENTIFY
               field_mapping: {}
     item_pickup:
         name: ""
@@ -2209,6 +2962,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_INPUT_EDITDLGSTR
               field_mapping: {}
+    party_change_option:
+        name: party_change_option
+        description: Toggle party EXP/item share options (leader only)
+        openkore_name: party_change_option
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0102"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_CHANGE_GROUPEXPOPTION
+              field_mapping: {}
     party_create:
         name: ""
         description: ""
@@ -2280,6 +3045,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_PROPERTY_PET
+              field_mapping: {}
+    pet_menu:
+        name: pet_menu
+        description: Send a command to the pet (feed, performance, return egg, unequip)
+        openkore_name: pet_menu
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01A1"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_PET_ACT
               field_mapping: {}
     pickup_item:
         name: ""
@@ -2377,6 +3154,18 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations: []
+    quit_game:
+        name: quit_game
+        description: Request to disconnect and exit the game
+        openkore_name: quit_game
+        canonical_params: []
+        implementations:
+            - packet_id: "0x018A"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_DISCONNECT
+              field_mapping: {}
     received_character_ID_and_Map:
         name: ""
         description: ""
@@ -2449,6 +3238,42 @@ semantic_actions:
                 - null
               struct_name: PACKET_HC_NOTIFY_ZONESVR
               field_mapping: {}
+    remove_option:
+        name: remove_option
+        description: Remove riding mount, falcon, or cart from character
+        openkore_name: remove_option
+        canonical_params: []
+        implementations:
+            - packet_id: "0x012A"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REMOVE_AID
+              field_mapping: {}
+    remove_party_member:
+        name: remove_party_member
+        description: Kick a member from the party (leader only)
+        openkore_name: remove_party_member
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0103"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_EXPEL_GROUP_MEMBER
+              field_mapping: {}
+    repair_item:
+        name: repair_item
+        description: Request weapon repair at a repair NPC
+        openkore_name: repair_item
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01FD"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_ITEMREPAIR1
+              field_mapping: {}
     reply_party_invite:
         name: ""
         description: ""
@@ -2497,6 +3322,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_CH_ENTER_0x0065
               field_mapping: {}
+    request_memo:
+        name: request_memo
+        description: Save current map position as a Butterfly Wing memo point
+        openkore_name: request_memo
+        canonical_params: []
+        implementations:
+            - packet_id: "0x011D"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REMEMBER_WARPPOINT
+              field_mapping: {}
     request_time:
         name: ""
         description: ""
@@ -2508,6 +3345,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: SYNTH_CZ_REQUEST_TIME
+              field_mapping: {}
+    restart:
+        name: restart
+        description: Respawn after death or return to character select screen
+        openkore_name: restart
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00B2"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_RESTART
               field_mapping: {}
     sc_notify_ban:
         name: ""
@@ -2533,6 +3382,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_CH_SELECT_ACCESSIBLE_MAPNAME
               field_mapping: {}
+    select_arrow:
+        name: select_arrow
+        description: Request arrow crafting from a specific item
+        openkore_name: select_arrow
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01AE"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_MAKINGARROW
+              field_mapping: {}
     select_character:
         name: ""
         description: ""
@@ -2545,6 +3406,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_CH_SELECT_CHAR
               field_mapping: {}
+    select_egg:
+        name: select_egg
+        description: Hatch a pet egg from the inventory
+        openkore_name: select_egg
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01A7"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_SELECT_PETEGG
+              field_mapping: {}
     self_chat:
         name: ""
         description: ""
@@ -2556,6 +3429,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_NOTIFY_PLAYERCHAT
+              field_mapping: {}
+    send_emotion:
+        name: send_emotion
+        description: Send an emotion/expression to a target actor
+        openkore_name: send_emotion
+        canonical_params: []
+        implementations:
+            - packet_id: "0x01A9"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_SEND_MBMC_CASH
               field_mapping: {}
     shop_buy:
         name: ""
@@ -2628,6 +3513,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_SKILL_POSTDELAY
+              field_mapping: {}
+    skill_up:
+        name: skill_up
+        description: Request to increase a skill level using a skill point
+        openkore_name: skill_up
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0112"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_UPGRADE_SKILLLEVEL
               field_mapping: {}
     skill_update:
         name: ""
@@ -2749,6 +3646,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_LONGLONGPAR_CHANGE
               field_mapping: {}
+    status_up:
+        name: status_up
+        description: Request to increase a base status point (STR/AGI/VIT/INT/DEX/LUK)
+        openkore_name: status_up
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00BB"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_STATUS_CHANGE
+              field_mapping: {}
     sync:
         name: ""
         description: ""
@@ -2815,6 +3724,18 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_REQ_TAKEOFF_EQUIP
               field_mapping: {}
+    use_card:
+        name: use_card
+        description: Request the list of equipment eligible to receive a card
+        openkore_name: use_card
+        canonical_params: []
+        implementations:
+            - packet_id: "0x017A"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_ITEMCOMPOSITION_LIST
+              field_mapping: {}
     vender_found:
         name: ""
         description: ""
@@ -2826,6 +3747,30 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_STORE_ENTRY
+              field_mapping: {}
+    vending_list_req:
+        name: vending_list_req
+        description: Request the item list from a player's vending shop
+        openkore_name: vending_list_req
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0130"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_CLICK_TO_BUYING_STORE
+              field_mapping: {}
+    weapon_refine:
+        name: weapon_refine
+        description: Request weapon refine at a refine NPC
+        openkore_name: weapon_refine
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0222"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_WEAPONREFINE
               field_mapping: {}
     whisper_sent:
         name: ""

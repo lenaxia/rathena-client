@@ -441,3 +441,294 @@ struct SYNTH_ZC_ALL_ACH_LIST {
     uint16 PacketLength; // Total packet length including header
     uint8  data[];       // Variable-length payload (flexible array)
 } __attribute__((packed));
+
+// ============================================================================
+// EPIC-04: Missing CZ encode functions — Bucket 1 (structs from packets.hpp)
+// ============================================================================
+// These structs are defined in rAthena's packets.hpp (not packets_struct.hpp)
+// and were missed by the codegen preprocessor pass. Mirrored here verbatim
+// from GCC output at PACKETVER=20180307.
+// ============================================================================
+
+// 0x0103 CZ_REQ_EXPEL_GROUP_MEMBER — Kick member from party
+// packets.hpp: struct PACKET_CZ_REQ_EXPEL_GROUP_MEMBER
+// GCC verified: int16 packetType + uint32 AID + char name[24] = 31 bytes
+struct SYNTH_CZ_REQ_EXPEL_GROUP_MEMBER {
+    int16  PacketType;
+    uint32 AID;
+    char   name[24];
+} __attribute__((packed));
+
+// 0x0126 CZ_MOVE_ITEM_FROM_BODY_TO_CART — Move item body→cart
+// packets_struct.hpp: struct PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_CART (already exists)
+// Alias provided here for consistency — codegen will use the real struct via semantics DB.
+
+// 0x0127 CZ_MOVE_ITEM_FROM_CART_TO_BODY — Move item cart→body
+// packets.hpp: struct PACKET_CZ_MOVE_ITEM_FROM_CART_TO_BODY
+// GCC verified: int16 packetType + uint16 index + int32 amount = 8 bytes
+struct SYNTH_CZ_MOVE_ITEM_FROM_CART_TO_BODY {
+    int16  PacketType;
+    uint16 index;
+    int32  amount;
+} __attribute__((packed));
+
+// 0x0178 CZ_REQ_ITEMIDENTIFY — Identify an item (magnifier)
+// packets.hpp: struct PACKET_CZ_REQ_ITEMIDENTIFY
+// GCC verified: int16 packetType + uint16 index = 4 bytes
+struct SYNTH_CZ_REQ_ITEMIDENTIFY {
+    int16  PacketType;
+    uint16 index;
+} __attribute__((packed));
+
+// 0x017A CZ_REQ_ITEMCOMPOSITION_LIST — Request card-composition item list
+// packets.hpp: struct PACKET_CZ_REQ_ITEMCOMPOSITION_LIST
+// GCC verified: int16 packetType + uint16 index = 4 bytes
+struct SYNTH_CZ_REQ_ITEMCOMPOSITION_LIST {
+    int16  PacketType;
+    uint16 index;
+} __attribute__((packed));
+
+// 0x017C CZ_REQ_ITEMCOMPOSITION — Insert card into equipment
+// packets.hpp: struct PACKET_CZ_REQ_ITEMCOMPOSITION
+// GCC verified: int16 packetType + uint16 index_card + uint16 index_equip = 6 bytes
+struct SYNTH_CZ_REQ_ITEMCOMPOSITION {
+    int16  PacketType;
+    uint16 index_card;
+    uint16 index_equip;
+} __attribute__((packed));
+
+// 0x01AE CZ_REQ_MAKINGARROW — Request arrow crafting
+// packets.hpp: struct PACKET_CZ_REQ_MAKINGARROW
+// GCC verified: int16 packetType + uint16 itemId = 4 bytes
+struct SYNTH_CZ_REQ_MAKINGARROW {
+    int16  PacketType;
+    uint16 itemId;
+} __attribute__((packed));
+
+// 0x01CE CZ_SELECTAUTOSPELL — Select autospell skill
+// packets.hpp: struct PACKET_CZ_SELECTAUTOSPELL
+// GCC verified: int16 packetType + uint32 skill_id = 6 bytes
+struct SYNTH_CZ_SELECTAUTOSPELL {
+    int16  PacketType;
+    uint32 skill_id;
+} __attribute__((packed));
+
+// 0x01FD CZ_REQ_ITEMREPAIR1 — Request weapon repair
+// packets.hpp: struct PACKET_CZ_REQ_ITEMREPAIR1 { int16 packetType; REPAIRITEM_INFO1 item; }
+// REPAIRITEM_INFO1: int16 index + uint16 itemId + uint8 refine + EQUIPSLOTINFO(uint16[4]=8) = 12 bytes
+// Total: 2 + 12 = 14 bytes
+struct SYNTH_CZ_REQ_ITEMREPAIR1 {
+    int16  PacketType;
+    int16  index;
+    uint16 itemId;
+    uint8  refine;
+    uint16 card[4];
+} __attribute__((packed));
+
+// 0x0232 CZ_REQUEST_MOVENPC — Move homunculus to position
+// packets.hpp: struct PACKET_CZ_REQUEST_MOVENPC
+// GCC verified: int16 packetType + uint32 GID + uint8 PosDir[3] = 9 bytes
+// Note: PosDir[3] requires packing.EncodePosDir — this action stays hand-written
+// (same reason as move_to). Struct provided for reference only.
+struct SYNTH_CZ_REQUEST_MOVENPC {
+    int16  PacketType;
+    uint32 GID;
+    uint8  PosDir[3];
+} __attribute__((packed));
+
+// ============================================================================
+// EPIC-04: Missing CZ encode functions — Bucket 2A (fixed-size, no struct)
+// ============================================================================
+// These packets are registered via raw parseable_packet(0xNNNN, fixedLen, ...)
+// with no struct. Layouts derived from clif.cpp RFIFOW/RFIFOB/RFIFOL calls
+// and parseable_packet pos[] offsets.
+// ============================================================================
+
+// 0x00B2 CZ_RESTART — Respawn or return to char select
+// parseable_packet(0x00b2, 3, clif_parse_Restart, 2)
+// clif.cpp: RFIFOB(fd, pos[0]=2) = type (0=respawn, 1=char select)
+// Layout: int16 PacketType + uint8 type = 3 bytes
+struct SYNTH_CZ_RESTART {
+    int16 PacketType;
+    uint8 type;
+} __attribute__((packed));
+
+// 0x00BB CZ_STATUS_CHANGE — Request to increase a base status
+// parseable_packet(0x00bb, 5, clif_parse_StatusUp, 2, 4)
+// clif.cpp: RFIFOW(pos[0]=2)=statusType, RFIFOB(pos[1]=4)=amount
+// Layout: int16 PacketType + uint16 statusType + uint8 amount = 5 bytes
+struct SYNTH_CZ_STATUS_CHANGE {
+    int16  PacketType;
+    uint16 statusType;
+    uint8  amount;
+} __attribute__((packed));
+
+// 0x0102 CZ_CHANGE_GROUPEXPOPTION — Toggle party share/split options
+// parseable_packet(0x0102, 6, clif_parse_PartyChangeOption, 2)
+// clif.cpp: RFIFOW(pos[0]=2)=option (bit field: exp share | item share)
+// Layout: int16 PacketType + uint16 expOption + uint16 itemOption = 6 bytes
+// Note: only 1 uint32 field at offset 2 per actual RFIFOL usage — verify
+struct SYNTH_CZ_CHANGE_GROUPEXPOPTION {
+    int16  PacketType;
+    uint32 option;
+} __attribute__((packed));
+
+// 0x0112 CZ_UPGRADE_SKILLLEVEL — Request to increase a skill level
+// parseable_packet(0x0112, 4, clif_parse_SkillUp, 2)
+// clif.cpp: RFIFOW(pos[0]=2) = skill_id
+// Layout: int16 PacketType + uint16 skill_id = 4 bytes
+struct SYNTH_CZ_UPGRADE_SKILLLEVEL {
+    int16  PacketType;
+    uint16 skill_id;
+} __attribute__((packed));
+
+// 0x011D CZ_REMEMBER_WARPPOINT — Save current position as memo point
+// parseable_packet(0x011d, 2, clif_parse_RequestMemo, 0)
+// No payload fields — header only.
+// Layout: int16 PacketType = 2 bytes
+struct SYNTH_CZ_REMEMBER_WARPPOINT {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x012A CZ_REMOVE_AID — Remove cart/falcon/peco
+// parseable_packet(0x012a, 2, clif_parse_RemoveOption, 0)
+// No payload fields — header only.
+// Layout: int16 PacketType = 2 bytes
+struct SYNTH_CZ_REMOVE_AID {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x012E CZ_CLOSE_AUCTION — Close own vending shop
+// parseable_packet(0x012e, 2, clif_parse_CloseVending, 0)
+// No payload fields — header only.
+// Layout: int16 PacketType = 2 bytes
+struct SYNTH_CZ_CLOSE_AUCTION {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x0130 CZ_PC_PURCHASE_ITEMLIST_FROMMC2 — Request vending shop item list
+// parseable_packet(0x0130, 6, clif_parse_VendingListReq, 2)
+// clif.cpp: RFIFOL(pos[0]=2) = AID of vending player
+// Layout: int16 PacketType + uint32 AID = 6 bytes
+struct SYNTH_CZ_REQ_CLICK_TO_BUYING_STORE {
+    int16  PacketType;
+    uint32 AID;
+} __attribute__((packed));
+
+// 0x018A CZ_REQ_DISCONNECT — Request to quit/disconnect
+// parseable_packet(0x018a, 4, clif_parse_QuitGame, 2)
+// clif.cpp: RFIFOW(pos[0]=2) = type (0=quit, 1=char select in some versions)
+// Layout: int16 PacketType + uint16 type = 4 bytes
+struct SYNTH_CZ_REQ_DISCONNECT {
+    int16  PacketType;
+    uint16 type;
+} __attribute__((packed));
+
+// 0x019F CZ_CATCH_MONSTER — Throw a Shining Stone to catch a monster
+// parseable_packet(0x019f, 6, clif_parse_CatchPet, 2)
+// clif.cpp: RFIFOL(pos[0]=2) = target monster GID
+// Layout: int16 PacketType + uint32 targetId = 6 bytes
+struct SYNTH_CZ_CATCH_MONSTER {
+    int16  PacketType;
+    uint32 targetId;
+} __attribute__((packed));
+
+// 0x01A1 CZ_PET_ACT — Pet menu action
+// parseable_packet(0x01a1, 3, clif_parse_PetMenu, 2)
+// clif.cpp: RFIFOB(pos[0]=2) = action (0=feed, 1=performance, 2=return egg, 3=unequip)
+// Layout: int16 PacketType + uint8 action = 3 bytes
+struct SYNTH_CZ_PET_ACT {
+    int16 PacketType;
+    uint8 action;
+} __attribute__((packed));
+
+// 0x01A7 CZ_SELECT_PETEGG — Hatch a pet egg
+// parseable_packet(0x01a7, 4, clif_parse_SelectEgg, 2)
+// clif.cpp: RFIFOW(pos[0]=2) = inventory index of the egg
+// Layout: int16 PacketType + uint16 index = 4 bytes
+struct SYNTH_CZ_SELECT_PETEGG {
+    int16  PacketType;
+    uint16 index;
+} __attribute__((packed));
+
+// 0x01A9 CZ_SEND_MBMC_CASH — Send emotion to a target actor
+// parseable_packet(0x01a9, 6, clif_parse_SendEmotion, 2)
+// clif.cpp: RFIFOL(pos[0]=2) = target GID
+// Layout: int16 PacketType + uint32 targetId = 6 bytes
+struct SYNTH_CZ_SEND_MBMC_CASH {
+    int16  PacketType;
+    uint32 targetId;
+} __attribute__((packed));
+
+// 0x01AF CZ_CHANGE_CART — Change cart appearance/level
+// parseable_packet(0x01af, 4, clif_parse_ChangeCart, 2)
+// clif.cpp: RFIFOW(pos[0]=2) = cart number (1–5)
+// Layout: int16 PacketType + uint16 num = 4 bytes
+struct SYNTH_CZ_CHANGE_CART {
+    int16  PacketType;
+    uint16 num;
+} __attribute__((packed));
+
+// 0x0202 CZ_ADD_FRIENDS — Add a player to friends list
+// parseable_packet(0x0202, 26, clif_parse_FriendsListAdd, 2)
+// clif.cpp: RFIFOCP(pos[0]=2) = player name (NAME_LENGTH=24 bytes)
+// Layout: int16 PacketType + char name[24] = 26 bytes
+struct SYNTH_CZ_ADD_FRIENDS {
+    int16 PacketType;
+    char  name[24];
+} __attribute__((packed));
+
+// 0x0203 CZ_DELETE_FRIENDS — Remove a player from friends list
+// parseable_packet(0x0203, 10, clif_parse_FriendsListRemove, 2, 6)
+// clif.cpp: RFIFOL(pos[0]=2)=AID, RFIFOL(pos[1]=6)=CID
+// Layout: int16 PacketType + uint32 AID + uint32 CID = 10 bytes
+struct SYNTH_CZ_DELETE_FRIENDS {
+    int16  PacketType;
+    uint32 AID;
+    uint32 CID;
+} __attribute__((packed));
+
+// 0x0208 CZ_ACK_REQ_ADD_FRIENDS — Reply to a friend request
+// parseable_packet(0x0208, 11, clif_parse_FriendsListReply, 2, 6, 10)  [PACKETVER < 6]
+// parseable_packet(0x0208, 14, clif_parse_FriendsListReply, 2, 6, 10)  [PACKETVER >= 6]
+// clif.cpp: RFIFOL(pos[0]=2)=AID, RFIFOL(pos[1]=6)=CID, RFIFOB/L(pos[2]=10)=reply
+// PACKETVER >= 6: reply is uint32 (4 bytes) → total 14 bytes
+// PACKETVER < 6:  reply is uint8  (1 byte)  → total 11 bytes
+// Using PACKETVER >= 6 layout (20040000+, all supported versions)
+// Layout: int16 PacketType + uint32 AID + uint32 CID + uint32 reply = 14 bytes
+struct SYNTH_CZ_ACK_REQ_ADD_FRIENDS {
+    int16  PacketType;
+    uint32 AID;
+    uint32 CID;
+    uint32 reply;  // 0=reject, 1=accept
+} __attribute__((packed));
+
+// 0x0222 CZ_REQ_WEAPONREFINE — Request weapon refine at NPC
+// parseable_packet(0x0222, 6, clif_parse_WeaponRefine, 2)
+// clif.cpp: RFIFOL(pos[0]=2) = inventory index
+// Layout: int16 PacketType + uint32 index = 6 bytes
+struct SYNTH_CZ_REQ_WEAPONREFINE {
+    int16  PacketType;
+    uint32 index;
+} __attribute__((packed));
+
+// 0x022D CZ_COMMAND_MER — Homunculus menu command
+// parseable_packet(0x022d, 5, clif_parse_HomMenu, 2, 4)
+// clif.cpp: RFIFOW(pos[0]=2)=homId, RFIFOB(pos[1]=4)=action
+// Layout: int16 PacketType + uint16 homId + uint8 action = 5 bytes
+struct SYNTH_CZ_COMMAND_MER {
+    int16  PacketType;
+    uint16 homId;
+    uint8  action;
+} __attribute__((packed));
+
+// 0x0233 CZ_REQUEST_ACTNPC — Homunculus attack target
+// parseable_packet(0x0233, 11, clif_parse_HomAttack, 2, 6, 10)
+// clif.cpp: RFIFOL(pos[0]=2)=targetId, RFIFOL(pos[1]=6)=homId, RFIFOB(pos[2]=10)=action
+// Layout: int16 PacketType + uint32 targetId + uint32 homId + uint8 action = 11 bytes
+struct SYNTH_CZ_REQUEST_ACTNPC {
+    int16  PacketType;
+    uint32 targetId;
+    uint32 homId;
+    uint8  action;
+} __attribute__((packed));
