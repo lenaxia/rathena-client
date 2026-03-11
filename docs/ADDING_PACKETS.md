@@ -1,13 +1,13 @@
 # Adding Packets and PACKETVERs — LLM Implementation Guide
 
-**Audience**: LLMs and developers implementing decode/encode coverage beyond the Phase 1 baseline.
+**Audience**: LLMs and developers adding new packet coverage or fixing individual decode/encode gaps.
 
 **Ground rule**: This guide describes three distinct kinds of work. Read all three sections before starting any task; they share infrastructure but have different scope and risk.
 
 | Kind of work | When to do it | Risk |
 |---|---|---|
 | A. Fix an incomplete decode function | A field in an existing event struct is always zero | Low — surgical change to one function |
-| B. Implement a stub encode function | An encode function returns `nil` or a zero-payload packet | Low — surgical change to one function |
+| B. Add a new encode function | A new C→S action needs an encode function | Low — surgical change to one function |
 | C. Add a new packet entirely | A packet ID has no handler and no event struct yet | High — touches codegen, semantics DB, session lengths, and new files |
 
 ---
@@ -109,7 +109,6 @@ func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
         e.PosDir = [3]byte(data[63:66]) // rAthena: PosDir (offset 63, size 3)
         e.Name = nullTermString(data[84:108]) // rAthena: name (offset 84, size 24)
         // e.Shield = zero (field absent/defaulted in this version)
-        // e.HP: complex expression — implement manually
     } else if packetver >= 20150513 {
         // ... different offsets for older struct layout
     }
@@ -122,7 +121,6 @@ func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 - `leU32(data, off)`, `leI16(data, off)`, etc. are the only allowed read helpers (see §10)
 - Comments `// rAthena: FIELDNAME (offset N, size M)` cite the C field name and GCC-verified offset
 - Comments `// e.Field = zero (field absent/defaulted in this version)` document intentional zero-filling
-- The `// e.Field: complex expression — implement manually` comments are **gaps that need human work** (see §3)
 
 ### Encode function anatomy
 
@@ -178,21 +176,20 @@ If a packet ID is missing from the lengths table and the server sends it, `Feed(
 
 A decode function exists and compiles, but one or more of its fields are always zero because:
 
-1. **"complex expression — implement manually"** comment: the SemanticDB field mapping expression was not a simple struct field reference, so codegen skipped it
-2. **Field absent in SemanticDB**: the field exists in the rAthena struct but was not mapped in `semantics/mappings.yaml`
-3. **Wrong offset in SemanticDB**: the DB field offset or type was wrong and codegen used the wrong read
+1. **Field absent in SemanticDB**: the field exists in the rAthena struct but was not mapped in `semantics/mappings.yaml`
+2. **Wrong offset in SemanticDB**: the DB field offset or type was wrong and codegen used the wrong read
+
+As of v0.2.4 there are no known gaps of this type for main kRO packets. This workflow applies when adding a new PACKETVER breakpoint that shifts field offsets, or when a rAthena update introduces new fields.
 
 ### Identifying the gap
 
 ```bash
-# Find all "implement manually" placeholders
-grep -rn "implement manually" pkg/decode/
+# Find any remaining "implement manually" placeholders (should be 0 for main kRO)
+grep -rn "implement manually" pkg/decode/ | grep -v "_test.go"
 
-# Find specific packet's gap
-grep -n "implement manually\|absent/defaulted" pkg/decode/actor_moved.go
+# Verify a specific field is populated
+# e.g. check that ActorExists_0x09FF populates e.Name correctly
 ```
-
-The `pkg/decode/gaps_test.go` file documents known gaps with tests that assert the current (broken) behavior.
 
 ### Workflow
 
@@ -299,108 +296,53 @@ If `pkg/decode/gaps_test.go` has a test asserting the old broken zero-value beha
 
 ## 4. Kind B — Implementing a stub encode function
 
-### Current stub inventory (as of 2026-03-09)
+As of v0.2.4 there are **no remaining stub encode functions** for gameplay packets. All 126 generated encode functions produce correct payloads.
 
-8 encode functions are stubs. They compile and build cleanly but produce incorrect (or nil) payloads:
+The only encode functions not generated are FSM-owned auth packets — `game_login`, `map_loaded`, `time_sync_response`, `enter_world` — which are built directly in `pkg/fsm/packets.go` because they are 2-byte header-only packets with no rAthena struct definition. These should not be reimplemented as generated encode functions.
 
-**Type A — always returns nil (empty `switch{}`):**
+If you are adding a new C→S packet, follow the workflow below.
 
-| Function | File | Packet intent |
-|---|---|---|
-| `EncodeActorAction` | `pkg/encode/actor_action.go` | Player action (attack, sit, stand) |
-| `EncodeDealFinalize` | `pkg/encode/deal_finalize.go` | Finalize a trade |
-| `EncodeGameLogin` | `pkg/encode/game_login.go` | Game-specific login variant |
-| `EncodeMapLoaded` | `pkg/encode/map_loaded.go` | Map loaded confirmation (`0x007D`) |
-| `EncodeSendChat` | `pkg/encode/send_chat.go` | Public chat message |
-| `EncodeTimeSyncResponse` | `pkg/encode/time_sync_response.go` | Tick sync (`0x007E`/`0x0360`) |
+### Workflow for a new encode function
 
-**Type B — returns zeroed buffer (packet ID set, fields not filled):**
-
-| Function | File | Packet(s) | Issue |
-|---|---|---|---|
-| `EncodeSkillUse` | `pkg/encode/skill_use.go` | `0x0114`, `0x01DE` | Both cases have identical `packetver >= 20030000` guard — second case is dead code |
-| `EncodePublicChat` | `pkg/encode/public_chat.go` | `0x008D` | 8-byte buffer, only packet ID written |
-
-**Note**: `EncodeMapLoaded` and `EncodeTimeSyncResponse` are actually used by the FSM. The FSM builds these packets manually in `pkg/fsm/packets.go` (`buildMapLoadedPacket` and `buildTickSyncPacket`) precisely because the generated encode functions are stubs. When implementing these stubs, validate the FSM's hand-built versions match and then optionally replace the FSM's hand-built code with the generated version.
-
-### Workflow
-
-**Step 1 — Find the rAthena struct**
+**Step 1 — Find the rAthena struct or clif_packetdb entry**
 
 ```bash
-# Example: implementing EncodeSendChat — packet 0x008C / 0x00F3
-grep -rn "CZ_REQUEST_CHAT\|0x008C\|0x00F3" ~/personal/rathena/src/map/packets_struct.hpp | head -10
-g++ -E -P -DPACKETVER=20180307 ... packets_struct.hpp 2>/dev/null | grep -A 20 "struct packet_chat "
+# Check packets_struct.hpp first
+grep -n "PACKET_CZ_MY_ACTION" ~/personal/rathena/src/map/packets_struct.hpp
+
+# If not there, check clif_packetdb.hpp for raw parseable_packet entries
+grep -n "clif_parse_MyAction" ~/personal/rathena/src/map/clif_packetdb.hpp
 ```
+
+If the packet only appears as a `parseable_packet(0xNNNN, LENGTH, clif_parse_X, pos0, pos1, ...)` entry with no struct, add a `SYNTH_CZ_*` struct to `internal/codegen/stubs/synthetic_structs.hpp` (see §5 for the pattern).
 
 **Step 2 — Check the shuffle table**
 
-C→S packets use shuffled IDs. The real wire packet ID for a given `baseID` at a given `packetver` is:
+C→S packets use shuffled IDs at some PACKETVER ranges. The shuffle is already handled by the codegen when the semantics DB implementation has a packetver range — the generated function emits the shuffled wire ID. For manual implementations, use:
 
 ```go
-import "github.com/lenaxia/rathena-client/pkg/session"
 wireID := session.ShuffledCtoSID(packetver, baseID)
 ```
 
-When implementing an encode function, you need to know which `baseID` maps to the semantic action. Check `clif_shuffle.hpp` or the SemanticDB for the base packet ID, then use `ShuffledCtoSID` for the shuffled wire ID in the encode function.
-
-For most PACKETVER ranges, the encode function should use the **shuffled** ID — but this is already handled by the generated code skeleton (the codegen picks the shuffled packet ID for the switch cases). If implementing manually, look at an adjacent complete encode function for the pattern.
-
 **Step 3 — Determine return type**
 
-- Fixed packet size → `[N]byte` — no allocation, preferred for hot-path packets
+- Fixed packet size → `[N]byte` — no heap allocation, preferred
 - Variable packet size (e.g., chat with user-typed text) → `[]byte` — one allocation per call
 
-**Step 4 — Implement**
+**Step 4 — Implement and test**
 
 ```go
-// Example: implementing a hypothetical fixed-length request
-func EncodeMapLoaded(req send.MapLoaded, packetver uint32) []byte {
-    // 0x007D CZ_NOTIFY_ACTORINIT: int16 only = 2 bytes
-    // Source: clif.cpp:10742, common/packets.hpp PACKET_CZ_NOTIFY_ACTORINIT
-    p := make([]byte, 2)
-    p[0] = 0x7D; p[1] = 0x00
-    _ = req; _ = packetver
-    return p
-}
-
-// Example: variable-length chat packet
-func EncodeSendChat(req send.SendChat, packetver uint32) []byte {
-    // 0x008C CZ_REQUEST_CHAT: int16 + int16 len + char message[]
-    // Source: packets_struct.hpp struct packet_chat_message
-    // Header: 4 bytes (PacketType + PacketLength)
+func EncodeMyAction(req send.MyAction, packetver uint32) []byte {
+    // Example: variable-length chat packet
+    // 0x008C CZ_REQUEST_CHAT: int16 PacketType + int16 PacketLength + char msg[] + null
     msgLen := len(req.Message)
-    total := 4 + msgLen + 1  // +1 for null terminator
+    total := 4 + msgLen + 1
     p := make([]byte, total)
     p[0] = 0x8C; p[1] = 0x00
     leU16Put(p[2:], uint16(total))
     copy(p[4:], req.Message)
-    // p[4+msgLen] = 0x00 (null terminator, already zero from make)
     _ = packetver
     return p
-}
-```
-
-**Step 5 — Write a test**
-
-```go
-func TestEncodeSendChat_ContainsMessage(t *testing.T) {
-    pkt := EncodeSendChat(send.SendChat{Message: "hello"}, 20180307)
-    if pkt == nil {
-        t.Fatal("expected non-nil packet")
-    }
-    if len(pkt) < 4 {
-        t.Fatalf("packet too short: %d", len(pkt))
-    }
-    // Verify packet ID
-    if pkt[0] != 0x8C || pkt[1] != 0x00 {
-        t.Errorf("wrong packet ID: %02x %02x", pkt[0], pkt[1])
-    }
-    // Verify message payload
-    got := string(pkt[4 : len(pkt)-1])  // strip null terminator
-    if got != "hello" {
-        t.Errorf("message = %q, want \"hello\"", got)
-    }
 }
 ```
 
@@ -657,72 +599,56 @@ func TestActorExists_0x09FF_Golden_20210101(t *testing.T) {
 
 ## 7. Known incomplete areas — inventory of gaps
 
-### 7.1 Decode function gaps (132 "complex expression" fields)
+As of v0.2.4, the library has **full coverage** for the main kRO client. The gaps below are the only known remaining items.
 
-These are fields that exist in the rAthena struct and in the event struct, but are not decoded because the SemanticDB expression was not a simple struct field reference. The field is silently zero in the decoded event.
+### 7.1 Decode function gaps — Zero-client SKIP stubs (3 files)
 
-**Highest-impact gaps** (confirmed in `pkg/decode/gaps_test.go`):
+Three packets exist only in the Ragnarok Zero client (`PACKETVER_ZERO_NUM >= 20210721`). The codegen does not define `PACKETVER_ZERO_NUM`, so their structs are invisible to the VersionTable and these files are empty SKIP stubs:
 
-| Gap | Packet(s) | Field | C type | Why skipped | Fix approach |
-|---|---|---|---|---|---|
-| Actor names in older packets | `0x0078`, `0x01D8` | `Name` | `char name[24]` | SemanticDB maps `string("")` literal | `nullTermString(data[off : off+24])` |
-| Actor names in walking packets | `0x09DB`, `0x022C` | `Name` | `char name[24]` | SemanticDB maps complex `strings.TrimRight(...)` | `nullTermString(data[off : off+24])` |
-| Guild position data | `0x0166` | `PosInfo` | `char posName[24]` | SemanticDB maps `data[4:]` slice expression | `[24]byte(data[4:28])` or decode individually |
-| PosDir in walking unit packets | `0x02EC`, `0x09DB` | `PosDir` | `uint8 MoveData[6]` | Codegen placeholder | `[6]byte(data[off : off+6])` and expose as `MoveData` |
+| File | Packet | Reason |
+|---|---|---|
+| `pkg/decode/quest_dialog.go` | 0x0BA6 | `PACKET_ZC_QUEST_DIALOG` — Zero-only |
+| `pkg/decode/quest_dialog_list.go` | 0x0BA7 | `PACKET_ZC_QUEST_DIALOG_MENU_LIST` — Zero-only |
+| `pkg/decode/zc_monolog_dialog.go` | 0x0BA9 | `PACKET_ZC_MONOLOG_DIALOG` — Zero-only |
 
-**Finding all gaps:**
+These are irrelevant for main or RE kRO. Resolution plan in `docs/BACKLOG/TECH-DEBT-01_packetver-re-zero-support.md`.
+
+### 7.2 RE-client skill packet variants (3 packets, no decode)
+
+For `PACKETVER_RE_NUM >= 20190807`, the RE client uses different packet IDs and a different `SKILLDATA` layout for three skill packets:
+
+| RE Packet ID | Main Packet ID | Action |
+|---|---|---|
+| `0x0B31` | `0x0111` | `ZC_ADD_SKILL` |
+| `0x0B32` | `0x010F` | `ZC_SKILLINFO_LIST` |
+| `0x0B33` | `0x07E1` | `ZC_SKILLINFO_UPDATE2` |
+
+The library decodes the main-client IDs only. On a RE-flavor server in the affected date range, these three packet IDs would trigger `ErrUnknownPacket`. Resolution plan in `docs/BACKLOG/TECH-DEBT-01_packetver-re-zero-support.md`.
+
+### 7.3 Session length table — one known gap
+
+- `0x07FB`: codegen emits length=0 for `pv >= 20191120` but the live server sends it as 25 bytes. Workaround: `SetLength(0x07FB, 25)` before entering map. Documented in worklog 0023.
+
+### 7.4 Homunculus / mercenary
+
+Generated decode stubs exist for homunculus packets but have field-type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`). Mercenary packets are absent entirely. Both are out of scope for Phase 7.
+
+### 7.5 Character list parsing
+
+`OnCharList` in `pkg/fsm` delivers raw `CHARACTER_INFO` bytes rather than a parsed slice. The struct layout varies significantly by PACKETVER and a fully robust decoder is not yet implemented. Consumers must parse the raw bytes with their own codec for now.
+
+**Finding any remaining gaps:**
+
 ```bash
-grep -rn "implement manually" pkg/decode/ | grep -v "_test.go" | wc -l
-# Current count: ~132
+# Zero-client SKIP stubs
+grep -rn "^// SKIP" pkg/decode/
+
+# Any remaining "implement manually" placeholders (should be 0)
 grep -rn "implement manually" pkg/decode/ | grep -v "_test.go"
-# Full list with line numbers
+
+# Zero-length entries in the map length table (potential missing packets)
+grep "t\[0x" pkg/session/lengths_map.go | grep "= 0$"
 ```
-
-### 7.2 Stub encode functions (8 stubs)
-
-See §4 for the full list. Priority order for implementation:
-
-1. `EncodeMapLoaded` — used in FSM (hand-built workaround exists in `pkg/fsm/packets.go`)
-2. `EncodeTimeSyncResponse` — used in FSM (hand-built workaround exists in `pkg/fsm/packets.go`)
-3. `EncodeSendChat` / `EncodePublicChat` — basic gameplay chat
-4. `EncodeActorAction` — attack, sit, stand
-5. `EncodeDealFinalize` / `EncodeGameLogin` — lower priority
-
-### 7.3 Session length table gaps
-
-The lengths tables are generated from GCC `sizeof` via the VersionTable. Known gaps:
-
-- `0x07FB`: codegen emits length=0 for `pv >= 20191120` but the live server sends it as 25 bytes. Workaround: `SetLength(0x07FB, 25)` in test fixtures (documented in worklog 0023).
-- `lengths_char.go`: `HC_ACCEPT_MAKECHAR` (0x006D / 0x0B6F) nested struct `CHARACTER_INFO` size may be wrong — codegen does not fully resolve nested struct sizes.
-
-**Finding zero-length entries that should have values:**
-```bash
-# Check if a specific ID is zero in the map lengths table
-grep "t\[0x07FB\]" pkg/session/lengths_map.go
-```
-
-### 7.4 PosDir / MoveData in walking-unit packets
-
-Walking-unit packets (`packet_unit_walking`) use a 6-byte `MoveData[6]` field encoding movement (from/to coordinates), not the 3-byte `PosDir[3]` position+direction format. The decode functions for these packets (`ActorExists_0x02EC`, `ActorMoved_0x09DB`, etc.) leave the movement field as zero:
-
-```go
-// Current (incomplete):
-// e.PosDir = [3]byte{}  (complex expression — implement manually)
-
-// Correct fix — the field is MoveData, not PosDir:
-e.MoveData = [6]byte(data[off : off+6])  // rAthena: MoveData (offset off, size 6)
-```
-
-To get the decoded movement coordinates, callers then do:
-```go
-fromX, fromY, toX, toY, _, _ := packing.DecodeMoveData(e.MoveData[:])
-```
-
-Note: the `events.ActorExists` struct has a `PosDir [3]byte` field. Walking-unit packets don't have a 3-byte position — they have a 6-byte movement record. The solution is to either:
-- Use a separate `events.ActorMoved` event type (which has `MoveData [6]byte`) for walking packets, OR
-- Populate the `PosDir` field with the *destination* position decoded from `MoveData`
-
-Check whether the event struct is shared between stationary and walking packets before deciding.
 
 ---
 

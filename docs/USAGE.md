@@ -51,10 +51,10 @@ This guide covers how to use every public package. Read it in order — later se
 ```
 pkg/
     packing/    DecodePosDir, EncodePosDir, DecodeMoveData, EncodeMoveData
-    events/     417 typed event structs (one per semantic action, S→C)
-    send/       163 typed request structs (one per semantic action, C→S)
-    decode/     442 generated decode functions: FooAction_0xNNNN(data, packetver)
-    encode/     80 generated encode functions: EncodeFooAction(req, packetver)
+    events/     281 typed event structs (one per semantic action, S→C)
+    send/       152 typed request structs (one per semantic action, C→S)
+    decode/     282 generated decode functions: FooAction_0xNNNN(data, packetver)
+    encode/     126 generated encode functions: EncodeFooAction(req, packetver)
     session/    LoginSession, CharSession, MapSession + framing engine
     fsm/        ConnectionFSM
 ```
@@ -263,10 +263,6 @@ Apply this to every C→S packet before writing to the socket when obfuscation i
 **Packet ID shuffle (clif_shuffle.hpp):**
 
 For some PACKETVER ranges, the C→S packet IDs are shuffled. The shuffle is already baked into the generated encode functions — they emit the shuffled ID directly. You do not need to call `session.ShuffledCtoSID` explicitly when using the generated encode functions.
-
-**Caveat — stub encode functions:**
-
-Some encode functions (e.g., `EncodeSkillUse`) are stubs that set the correct packet ID but leave the payload zero-filled. These are safe to call and will build/test cleanly, but the server will reject the packet if it validates the payload. Check the encode function source before using it in production.
 
 ---
 
@@ -690,17 +686,17 @@ After returning `ErrUnknownPacket` once, the session is faulted. Subsequent `Fee
 
 `OnCharList` receives raw `CHARACTER_INFO` bytes rather than parsed `[]events.CharacterInfo`. The `CHARACTER_INFO` struct layout varies significantly by PACKETVER and the generated decoder is a stub in the current implementation. The consumer must parse the raw bytes with its own codec.
 
-### Stub encode functions
+### RE-client skill packet variants
 
-Some encode functions set the correct packet ID but do not fill in the payload fields. Examples: `EncodeSkillUse`, `EncodeUseSkill`. These are safe to call but will send a zero-filled payload that the server may reject. Check the source before use.
+For servers running the kRO RE client build in the date windows `20151104–20180704` or `20200902–20211118`, three skill packets arrive on different IDs with a different `SKILLDATA` layout (`0x0B31` / `0x0B32` / `0x0B33` instead of `0x0111` / `0x010F` / `0x07E1`, and the `name[24]` field is replaced by `level2`). The current library targets the main kRO client only; these RE-specific IDs are not decoded. See `docs/BACKLOG/TECH-DEBT-01_packetver-re-zero-support.md`.
 
-### Cat-C field skips in walking-unit decode
+### Ragnarok Zero client
 
-Decode functions for walking-unit packets (e.g., `ActorExists_0x02EC`) emit a comment `// complex expression — implement manually` for the `PosDir` field, which in these packets encodes movement data (`MoveData[6]`), not a simple position+direction. The field is left as zero in the current generated output. Consumers that need movement data from walking-unit packets must fill it in manually by slicing the raw `data` bytes.
+Three Zero-server-only packets (`ZC_QUEST_DIALOG` 0x0BA6, `ZC_QUEST_DIALOG_MENU_LIST` 0x0BA7, `ZC_MONOLOG_DIALOG` 0x0BA9) have empty SKIP stubs. The Zero server is a separate game mode unrelated to main or RE kRO.
 
 ### Homunculus and mercenary packets
 
-Generated decode stubs exist but have known type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`). These are not planned to be fixed in Phase 7.
+Generated decode stubs exist for homunculus packets but have known field-type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`). Mercenary packets are absent entirely. Neither is planned for Phase 7.
 
 ### No `MapSession.Packetver()` accessor
 
