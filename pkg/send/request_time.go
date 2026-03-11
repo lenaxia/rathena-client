@@ -4,4 +4,5 @@ package send
 
 // RequestTime is the request struct for the request_time action.
 type RequestTime struct {
+	ClientTime uint32
 }

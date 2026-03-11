@@ -4,4 +4,5 @@ package send
 
 // UnequipItem is the request struct for the unequip_item action.
 type UnequipItem struct {
+	Index uint16
 }

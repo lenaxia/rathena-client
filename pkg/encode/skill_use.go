@@ -16,6 +16,13 @@ func EncodeSkillUse(req send.SkillUse, packetver uint32) [10]byte {
 	leU16Put(		p[4:], req.SkillID)  // rAthena: SkillID
 	leU32Put(		p[6:], req.TargetID)  // rAthena: TargetID
 		return p
+	case packetver >= 20030000: // 0x0113
+		var p [10]byte
+		p[0] = 0x13; p[1] = 0x01
+	leU16Put(		p[2:], req.SkillLv)  // rAthena: SkillLv
+	leU16Put(		p[4:], req.SkillID)  // rAthena: SkillID
+	leU32Put(		p[6:], req.TargetID)  // rAthena: TargetID
+		return p
 	}
 	panic("EncodeSkillUse: no matching packetver implementation — unimplemented")
 }

@@ -101,7 +101,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_REQUEST_ACT
+              struct_name: SYNTH_CZ_REQUEST_ACT
               field_mapping: {}
             - packet_id: "0x085A"
               packetver_range:
@@ -581,7 +581,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_CLOSE_STORE
+              struct_name: SYNTH_CZ_CLOSE_STORE
               field_mapping: {}
     ct_auth:
         name: ""
@@ -1697,7 +1697,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_CANCEL_EXCHANGE_ITEM
+              struct_name: SYNTH_CZ_CANCEL_EXCHANGE_ITEM
               field_mapping: {}
     deal_finalize:
         name: ""
@@ -1727,7 +1727,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_REQ_EXCHANGE_ITEM
+              struct_name: SYNTH_CZ_REQ_EXCHANGE_ITEM
               field_mapping: {}
     deal_reply:
         name: ""
@@ -1739,7 +1739,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_ACK_EXCHANGE_ITEM
+              struct_name: SYNTH_CZ_ACK_EXCHANGE_ITEM
               field_mapping: {}
     deal_request:
         name: ""
@@ -1775,7 +1775,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_EXEC_EXCHANGE_ITEM
+              struct_name: SYNTH_CZ_EXEC_EXCHANGE_ITEM
               field_mapping: {}
     drop_item:
         name: ""
@@ -1787,7 +1787,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_ITEM_THROW
+              struct_name: SYNTH_CZ_ITEM_THROW2
               field_mapping: {}
     emote:
         name: ""
@@ -1823,7 +1823,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_ZC_NOTIFY_MOVE
+              struct_name: SYNTH_ZC_NOTIFY_MOVE
               field_mapping: {}
     entity_spawn:
         name: ""
@@ -1961,7 +1961,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_USE_ITEM
+              struct_name: SYNTH_CZ_USE_ITEM
               field_mapping: {}
     login_error:
         name: ""
@@ -1985,7 +1985,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_CHANGE_DIRECTION
+              struct_name: SYNTH_CZ_CHANGE_DIRECTION
               field_mapping: {}
     map_changed:
         name: ""
@@ -2093,7 +2093,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_MOVE_ITEM_FROM_STORE_TO_BODY
+              struct_name: SYNTH_CZ_MOVE_ITEM_FROM_STORE_TO_BODY
               field_mapping: {}
     move_to:
         name: ""
@@ -2123,7 +2123,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
+              struct_name: SYNTH_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
               field_mapping: {}
     npc_contact:
         name: ""
@@ -2147,7 +2147,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_CHOOSE_MENU
+              struct_name: SYNTH_CZ_CHOOSE_MENU
               field_mapping: {}
     npc_store_info:
         name: ""
@@ -2183,7 +2183,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_REQ_NEXT_SCRIPT
+              struct_name: SYNTH_CZ_REQ_NEXT_SCRIPT
               field_mapping: {}
     npc_talk_number:
         name: ""
@@ -2291,7 +2291,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_ITEM_PICKUP
+              struct_name: SYNTH_CZ_ITEM_PICKUP
               field_mapping: {}
     pin_code_request:
         name: ""
@@ -2471,7 +2471,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_REQUEST_ACT
+              struct_name: SYNTH_CZ_REQUEST_ACT
               field_mapping: {}
     request_character_page:
         name: ""
@@ -2507,7 +2507,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_REQUEST_TIME
+              struct_name: SYNTH_CZ_REQUEST_TIME
               field_mapping: {}
     sc_notify_ban:
         name: ""
@@ -2681,7 +2681,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_USE_SKILL
+              struct_name: SYNTH_CZ_USE_SKILL_TOID
               field_mapping: {}
             - packet_id: "0x0114"
               packetver_range:
@@ -2717,7 +2717,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_USE_SKILL_TOGROUND
+              struct_name: SYNTH_CZ_USE_SKILL_TOGROUND
               field_mapping: {}
     skill_used_no_damage:
         name: ""
@@ -2837,7 +2837,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_REQ_TAKEOFF_EQUIP
+              struct_name: SYNTH_CZ_REQ_TAKEOFF_EQUIP
               field_mapping: {}
     vender_found:
         name: ""

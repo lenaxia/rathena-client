@@ -4,4 +4,5 @@ package send
 
 // DealInitiate is the request struct for the deal_initiate action.
 type DealInitiate struct {
+	TargetAID uint32
 }

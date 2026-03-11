@@ -4,4 +4,5 @@ package send
 
 // PickupItem is the request struct for the pickup_item action.
 type PickupItem struct {
+	ITID uint32
 }

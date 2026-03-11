@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP EntityMove_0x0086: struct PACKET_ZC_NOTIFY_MOVE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// EntityMove_0x0086 decodes a 0x0086 packet (struct SYNTH_ZC_NOTIFY_MOVE).
+func EntityMove_0x0086(data []byte, packetver uint32) events.EntityMove {
+	var e events.EntityMove
+	_ = packetver
+	e.Gid = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
+	e.MoveData = [6]byte(data[6:12])  // rAthena: moveData (offset 6, size 6)
+	e.MoveStartTime = leU32(data, 12)  // rAthena: moveStartTime (offset 12, size 4)
+	return e
+}
 

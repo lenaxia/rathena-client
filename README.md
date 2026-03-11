@@ -129,6 +129,18 @@ grep -r "^\s*go " pkg/   # must produce no output
 
 ---
 
+## Known limitations
+
+| Item | Detail |
+|---|---|
+| **kRO main client only** | The codegen only processes `PACKETVER_MAIN_NUM`. Clients using the kRO RE build flavor (active for `20151104–20180704` and `20200902–20211118`) receive skill packets on different IDs (`ZC_ADD_SKILL` 0x0B31, `ZC_SKILLINFO_LIST` 0x0B32, `ZC_SKILLINFO_UPDATE2` 0x0B33) with a different `SKILLDATA` layout — the `name[24]` field is absent and a `level2` field is added. These are not decoded. |
+| **Ragnarok Zero not supported** | Three Zero-client-only packets (`ZC_QUEST_DIALOG` 0x0BA6, `ZC_QUEST_DIALOG_MENU_LIST` 0x0BA7, `ZC_MONOLOG_DIALOG` 0x0BA9) generate empty SKIP stubs. |
+| **Homunculus / Mercenary** | Decode stubs exist for homunculus packets but have known field-type truncation bugs. Mercenary packets are absent entirely. |
+
+See [`docs/BACKLOG/TECH-DEBT-01_packetver-re-zero-support.md`](docs/BACKLOG/TECH-DEBT-01_packetver-re-zero-support.md) for the full RE/Zero resolution plan.
+
+---
+
 ## License
 
 See [LICENSE](LICENSE).

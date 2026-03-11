@@ -4,4 +4,6 @@ package send
 
 // MoveToStorage is the request struct for the move_to_storage action.
 type MoveToStorage struct {
+	Index uint16
+	Amount uint32
 }

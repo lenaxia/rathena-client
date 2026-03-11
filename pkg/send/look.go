@@ -4,4 +4,6 @@ package send
 
 // Look is the request struct for the look action.
 type Look struct {
+	HeadDir uint8
+	Dir uint8
 }

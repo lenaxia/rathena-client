@@ -40,6 +40,7 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 	t[0x0083] = 2
 	t[0x0084] = 2
 	t[0x0085] = 5
+	t[0x0086] = 16
 	t[0x0087] = 12
 	t[0x0088] = 10
 	t[0x0089] = 7

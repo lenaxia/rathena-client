@@ -532,6 +532,7 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 **Out of scope — not planned:**
 - **Homunculus packets** (`ZC_PROPERTY_HOMUN`, `ZC_FEED_MER`, `ZC_PROPERTY_HOMUN_*`, `PACKET_CZ_*_HOMUN`, etc.) — homunculus support is not planned for the initial goKore integration. The generated decode stubs exist but the known type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`) in those stubs will not be fixed.
 - **Mercenary packets** (`ZC_MER_*`, `CZ_MER_*`) — mercenary support is not planned for the initial goKore integration.
+- **PACKETVER_RE_NUM and PACKETVER_ZERO_NUM client flavors** — the codegen only defines `-DPACKETVER_MAIN_NUM`. Three packets have RE-only IDs/layouts (`ZC_ADD_SKILL` 0x0B31, `ZC_SKILLINFO_LIST` 0x0B32, `ZC_SKILLINFO_UPDATE2` 0x0B33 at RE >= 20190807) and three packets are Zero-client-only (`ZC_QUEST_DIALOG` 0x0BA6, `ZC_QUEST_DIALOG_MENU_LIST` 0x0BA7, `ZC_MONOLOG_DIALOG` 0x0BA9). goKore targets main kRO only; RE-window and Zero are deferred. See `docs/BACKLOG/TECH-DEBT-01_packetver-re-zero-support.md`.
 
 ### Phase 0 — Validation Infrastructure ✅ COMPLETE (worklogs 0002-0007)
 

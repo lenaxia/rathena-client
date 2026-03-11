@@ -3,4 +3,8 @@
 package events
 
 // EntityMove is the event emitted for the entity_move action.
-type EntityMove struct{}
+type EntityMove struct {
+	Gid uint32
+	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
+	MoveStartTime uint32
+}

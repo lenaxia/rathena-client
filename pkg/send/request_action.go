@@ -4,4 +4,6 @@ package send
 
 // RequestAction is the request struct for the request_action action.
 type RequestAction struct {
+	TargetGID uint32
+	Action uint8
 }

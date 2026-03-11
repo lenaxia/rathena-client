@@ -4,4 +4,5 @@ package send
 
 // DealReply is the request struct for the deal_reply action.
 type DealReply struct {
+	Result uint8
 }

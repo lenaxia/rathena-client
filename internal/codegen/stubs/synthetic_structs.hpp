@@ -205,6 +205,67 @@ struct SYNTH_CZ_ENTER {
     uint8  Sex;         // Character sex
 } __attribute__((packed));
 
+// 0x009B CZ_CHANGE_DIRECTION — Change character head/body direction
+// parseable_packet(0x009b, 5, clif_parse_ChangeDir, 2, 4)
+// [pos[0]=2=headDir (byte), pos[1]=4=dir (byte)]
+// Length: 5
+struct SYNTH_CZ_CHANGE_DIRECTION {
+    int16 PacketType;
+    uint8 headDir;  // Head direction (0–7)
+    uint8 dir;      // Body direction (0–7)
+} __attribute__((packed));
+
+// 0x00AB CZ_REQ_TAKEOFF_EQUIP — Unequip an item
+// parseable_packet(0x00ab, 4, clif_parse_UnequipItem, 2)
+// [pos[0]=2=index (uint16, client-side inventory index)]
+// Length: 4
+struct SYNTH_CZ_REQ_TAKEOFF_EQUIP {
+    int16  PacketType;
+    uint16 index;   // Inventory index (client-side, 2 = first slot)
+} __attribute__((packed));
+
+// 0x00B8 CZ_CHOOSE_MENU — NPC menu selection
+// parseable_packet(0x00b8, 7, clif_parse_NpcSelectMenu, 2, 6)
+// [pos[0]=2=NpcID (uint32), pos[1]=6=select (uint8)]
+// Length: 7
+struct SYNTH_CZ_CHOOSE_MENU {
+    int16  PacketType;
+    uint32 NpcID;   // NPC block ID
+    uint8  select;  // Menu index selected (1-based; 0xFF = cancel)
+} __attribute__((packed));
+
+// 0x00E4 CZ_REQ_EXCHANGE_ITEM — Initiate a trade with another player
+// parseable_packet(0x00e4, 6, clif_parse_TradeRequest, 2)
+// [pos[0]=2=targetAID (uint32)]
+// Length: 6
+struct SYNTH_CZ_REQ_EXCHANGE_ITEM {
+    int16  PacketType;
+    uint32 targetAID;  // Account ID of the player to trade with
+} __attribute__((packed));
+
+// 0x00E6 CZ_ACK_EXCHANGE_ITEM — Accept or reject a trade request
+// parseable_packet(0x00e6, 3, clif_parse_TradeAck, 2)
+// [pos[0]=2=result (uint8): 3=accept, 4=reject]
+// Length: 3
+struct SYNTH_CZ_ACK_EXCHANGE_ITEM {
+    int16 PacketType;
+    uint8 result;   // 3 = accepted, 4 = rejected
+} __attribute__((packed));
+
+// 0x00ED CZ_CANCEL_EXCHANGE_ITEM — Cancel current trade
+// parseable_packet(0x00ed, 2, clif_parse_TradeCancel, 0)
+// Length: 2 (header only)
+struct SYNTH_CZ_CANCEL_EXCHANGE_ITEM {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x00EF CZ_EXEC_EXCHANGE_ITEM — Commit (confirm) current trade
+// parseable_packet(0x00ef, 2, clif_parse_TradeCommit, 0)
+// Length: 2 (header only)
+struct SYNTH_CZ_EXEC_EXCHANGE_ITEM {
+    int16 PacketType;
+} __attribute__((packed));
+
 // ============================================================================
 // CZ Packets — variable-length
 // ============================================================================
@@ -255,6 +316,20 @@ struct SYNTH_CH_ENTER {
 // ============================================================================
 // ZC Packets (Server → Client) — sent with raw WFIFOW macros
 // ============================================================================
+
+// 0x0086 ZC_NOTIFY_MOVE — Other entity moving (alpha/unused in modern rAthena)
+// Defined but commented out in packets.hpp:664 as "Unused packet (alpha?)"
+// Layout derived from the commented-out definition:
+//   packetType(2) + gid(4) + moveData[6] + moveStartTime(4) = 16 bytes
+// NOTE: Modern rAthena never sends 0x0086; walking entities use 0x009D (UNIT_WALKING).
+// This struct exists so entity_move decode generates a working function for legacy
+// packetver compatibility. At modern packetver the packet is never received.
+struct SYNTH_ZC_NOTIFY_MOVE {
+    int16 packetType;
+    uint32 gid;           // Source entity GID
+    uint8 moveData[6];    // Packed move path (from, to, dir)
+    uint32 moveStartTime; // Move start tick
+} __attribute__((packed));
 
 // 0x0283 ZC_ACCEPT_ENTER2 (ZC_AID) — Map entry confirmation + account ID
 // packet(0x0283, 6) — 6 bytes

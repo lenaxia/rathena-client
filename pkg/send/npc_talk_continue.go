@@ -4,4 +4,5 @@ package send
 
 // NpcTalkContinue is the request struct for the npc_talk_continue action.
 type NpcTalkContinue struct {
+	NpcID uint32
 }
