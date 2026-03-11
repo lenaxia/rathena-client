@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP CharacterCreationFailed_0x006E: struct PACKET_HC_REFUSE_MAKECHAR not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// CharacterCreationFailed_0x006E decodes a 0x006E packet (struct PACKET_HC_REFUSE_MAKECHAR).
+func CharacterCreationFailed_0x006E(data []byte, packetver uint32) events.CharacterCreationFailed {
+	var e events.CharacterCreationFailed
+	_ = packetver
+	e.Error = data[2]  // rAthena: error (offset 2, size 1)
+	return e
+}
 

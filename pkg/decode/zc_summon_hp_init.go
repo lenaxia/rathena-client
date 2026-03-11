@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcSummonHpInit_0x0B6B: struct PACKET_ZC_SUMMON_HP_INIT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcSummonHpInit_0x0B6B decodes a 0x0B6B packet (struct PACKET_ZC_SUMMON_HP_INIT).
+func ZcSummonHpInit_0x0B6B(data []byte, packetver uint32) events.ZcSummonHpInit {
+	var e events.ZcSummonHpInit
+	_ = packetver
+	e.SummonAID = leU32(data, 2)  // rAthena: summonAID (offset 2, size 4)
+	e.CurrentHP = leU32(data, 6)  // rAthena: CurrentHP (offset 6, size 4)
+	e.MaxHP = leU32(data, 10)  // rAthena: MaxHP (offset 10, size 4)
+	return e
+}
 

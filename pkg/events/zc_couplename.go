@@ -3,4 +3,6 @@
 package events
 
 // ZcCouplename is the event emitted for the zc_couplename action.
-type ZcCouplename struct{}
+type ZcCouplename struct {
+	Name string
+}

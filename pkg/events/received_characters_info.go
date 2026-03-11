@@ -3,4 +3,12 @@
 package events
 
 // ReceivedCharactersInfo is the event emitted for the received_characters_info action.
-type ReceivedCharactersInfo struct{}
+type ReceivedCharactersInfo struct {
+	PacketLength int16
+	Normal uint8
+	Premium uint8
+	Billing uint8
+	Producible uint8
+	Total uint8
+	Extension string
+}

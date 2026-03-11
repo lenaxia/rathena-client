@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcAckReqnameall_0x0195 decodes a 0x0195 packet (struct PACKET_ZC_ACK_REQNAMEALL).
 func ZcAckReqnameall_0x0195(data []byte, packetver uint32) events.ZcAckReqnameall {
 	var e events.ZcAckReqnameall
-	if packetver >= 20150225 {
+	if packetver >= 20150520 {
 		e.Packet_id = leU16(data, 0)  // rAthena: packet_id (offset 0, size 2)
 		e.Gid = leI32(data, 2)  // rAthena: gid (offset 2, size 4)
 		e.Name = nullTermString(data[6:30])  // rAthena: name (offset 6, size 24)

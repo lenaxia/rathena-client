@@ -2,5 +2,12 @@
 
 package decode
 
-// SKIP ZcCloseStore_0x00F8: struct PACKET_ZC_CLOSE_STORE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcCloseStore_0x00F8 decodes a 0x00F8 packet (struct PACKET_ZC_CLOSE_STORE).
+func ZcCloseStore_0x00F8(data []byte, packetver uint32) events.ZcCloseStore {
+	var e events.ZcCloseStore
+	_ = packetver
+	return e
+}
 

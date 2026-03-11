@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcAckRanking_0x0AF6: struct PACKET_ZC_ACK_RANKING not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckRanking_0x0AF6 decodes a 0x0AF6 packet (struct PACKET_ZC_ACK_RANKING).
+func ZcAckRanking_0x0AF6(data []byte, packetver uint32) events.ZcAckRanking {
+	var e events.ZcAckRanking
+	_ = packetver
+	e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
+	e.Mypoints = leU32(data, 4)  // rAthena: mypoints (offset 4, size 4)
+	return e
+}
 

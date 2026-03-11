@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcCouplename_0x01E6: struct PACKET_ZC_COUPLENAME not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcCouplename_0x01E6 decodes a 0x01E6 packet (struct PACKET_ZC_COUPLENAME).
+func ZcCouplename_0x01E6(data []byte, packetver uint32) events.ZcCouplename {
+	var e events.ZcCouplename
+	_ = packetver
+	e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
+	return e
+}
 

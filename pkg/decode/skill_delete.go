@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP SkillDelete_0x0441: struct PACKET_ZC_SKILLINFO_DELETE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// SkillDelete_0x0441 decodes a 0x0441 packet (struct PACKET_ZC_SKILLINFO_DELETE).
+func SkillDelete_0x0441(data []byte, packetver uint32) events.SkillDelete {
+	var e events.SkillDelete
+	_ = packetver
+	e.SkillID = leU16(data, 2)  // rAthena: skillID (offset 2, size 2)
+	return e
+}
 

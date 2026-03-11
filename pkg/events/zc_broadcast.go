@@ -3,4 +3,7 @@
 package events
 
 // ZcBroadcast is the event emitted for the zc_broadcast action.
-type ZcBroadcast struct{}
+type ZcBroadcast struct {
+	PacketLength int16
+	Message string
+}

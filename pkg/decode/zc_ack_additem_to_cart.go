@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckAdditemToCart_0x012C: struct PACKET_ZC_ACK_ADDITEM_TO_CART not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckAdditemToCart_0x012C decodes a 0x012C packet (struct PACKET_ZC_ACK_ADDITEM_TO_CART).
+func ZcAckAdditemToCart_0x012C(data []byte, packetver uint32) events.ZcAckAdditemToCart {
+	var e events.ZcAckAdditemToCart
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

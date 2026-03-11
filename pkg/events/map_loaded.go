@@ -3,4 +3,11 @@
 package events
 
 // MapLoaded is the event emitted for the map_loaded action.
-type MapLoaded struct{}
+type MapLoaded struct {
+	StartTime uint32
+	PosDir [3]byte
+	XSize uint8
+	YSize uint8
+	Font uint16
+	Sex uint8
+}

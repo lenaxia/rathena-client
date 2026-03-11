@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP CharacterServerRefused_0x006C: struct PACKET_HC_REFUSE_ENTER not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// CharacterServerRefused_0x006C decodes a 0x006C packet (struct PACKET_HC_REFUSE_ENTER).
+func CharacterServerRefused_0x006C(data []byte, packetver uint32) events.CharacterServerRefused {
+	var e events.CharacterServerRefused
+	_ = packetver
+	e.Error = data[2]  // rAthena: error (offset 2, size 1)
+	return e
+}
 

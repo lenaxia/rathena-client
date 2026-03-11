@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckCreateChatroom_0x00D6: struct PACKET_ZC_ACK_CREATE_CHATROOM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckCreateChatroom_0x00D6 decodes a 0x00D6 packet (struct PACKET_ZC_ACK_CREATE_CHATROOM).
+func ZcAckCreateChatroom_0x00D6(data []byte, packetver uint32) events.ZcAckCreateChatroom {
+	var e events.ZcAckCreateChatroom
+	_ = packetver
+	e.Flag = data[2]  // rAthena: flag (offset 2, size 1)
+	return e
+}
 

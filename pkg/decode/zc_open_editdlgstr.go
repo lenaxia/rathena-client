@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcOpenEditdlgstr_0x01D4: struct PACKET_ZC_OPEN_EDITDLGSTR not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcOpenEditdlgstr_0x01D4 decodes a 0x01D4 packet (struct PACKET_ZC_OPEN_EDITDLGSTR).
+func ZcOpenEditdlgstr_0x01D4(data []byte, packetver uint32) events.ZcOpenEditdlgstr {
+	var e events.ZcOpenEditdlgstr
+	_ = packetver
+	e.NpcId = leU32(data, 2)  // rAthena: npcId (offset 2, size 4)
+	return e
+}
 

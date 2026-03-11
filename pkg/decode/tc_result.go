@@ -2,5 +2,16 @@
 
 package decode
 
-// SKIP TcResult_0x0AE3: struct PACKET_TC_RESULT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// TcResult_0x0AE3 decodes a 0x0AE3 packet (struct PACKET_TC_RESULT).
+func TcResult_0x0AE3(data []byte, packetver uint32) events.TcResult {
+	var e events.TcResult
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Type = leU32(data, 4)  // rAthena: type (offset 4, size 4)
+	e.Unknown1 = nullTermString(data[8:28])  // rAthena: unknown1 (offset 8, size 20)
+	e.Unknown2 = nullTermString(data[28:34])  // rAthena: unknown2 (offset 28, size 6)
+	return e
+}
 

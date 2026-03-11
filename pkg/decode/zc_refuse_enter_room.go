@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcRefuseEnterRoom_0x00DA: struct PACKET_ZC_REFUSE_ENTER_ROOM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcRefuseEnterRoom_0x00DA decodes a 0x00DA packet (struct PACKET_ZC_REFUSE_ENTER_ROOM).
+func ZcRefuseEnterRoom_0x00DA(data []byte, packetver uint32) events.ZcRefuseEnterRoom {
+	var e events.ZcRefuseEnterRoom
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

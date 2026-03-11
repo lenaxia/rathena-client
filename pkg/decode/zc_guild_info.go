@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcGuildInfo_0x0A84 decodes a 0x0A84 packet (struct PACKET_ZC_GUILD_INFO).
 func ZcGuildInfo_0x0A84(data []byte, packetver uint32) events.ZcGuildInfo {
 	var e events.ZcGuildInfo
-	if packetver >= 20200902 {
+	if packetver >= 20200916 {
 		e.GDID = data[2:]  // rAthena: GDID (offset 2, size 4)
 		e.Level = data[6:]  // rAthena: level (offset 6, size 4)
 		e.UserNum = data[10:]  // rAthena: userNum (offset 10, size 4)
@@ -24,7 +24,7 @@ func ZcGuildInfo_0x0A84(data []byte, packetver uint32) events.ZcGuildInfo {
 		e.Zeny = data[86:]  // rAthena: zeny (offset 86, size 4)
 		e.MasterGID = data[90:]  // rAthena: masterGID (offset 90, size 4)
 		e.MasterName = nullTermString(data[94:118])  // rAthena: masterName (offset 94, size 24)
-	} else if packetver >= 20160921 {
+	} else if packetver >= 20170315 {
 		e.GDID = data[2:]  // rAthena: GDID (offset 2, size 4)
 		e.Level = data[6:]  // rAthena: level (offset 6, size 4)
 		e.UserNum = data[10:]  // rAthena: userNum (offset 10, size 4)

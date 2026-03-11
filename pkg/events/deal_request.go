@@ -3,4 +3,9 @@
 package events
 
 // DealRequest is the event emitted for the deal_request action.
-type DealRequest struct{}
+type DealRequest struct {
+	Result uint8
+	TargetId uint32
+	TargetLv uint16
+	RequesterName string
+}

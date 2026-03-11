@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcPlayNpcBgm_0x07FE decodes a 0x07FE packet (struct PACKET_ZC_PLAY_NPC_BGM).
 func ZcPlayNpcBgm_0x07FE(data []byte, packetver uint32) events.ZcPlayNpcBgm {
 	var e events.ZcPlayNpcBgm
-	if packetver >= 20220504 {
+	if packetver >= 20250402 {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.PlayType = data[4]  // rAthena: playType (offset 4, size 1)
 		e.Bgm = nullTermString(data[5:])  // rAthena: bgm (offset 5, size 0)

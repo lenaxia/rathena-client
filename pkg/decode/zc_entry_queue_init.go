@@ -2,5 +2,12 @@
 
 package decode
 
-// SKIP ZcEntryQueueInit_0x090E: struct PACKET_ZC_ENTRY_QUEUE_INIT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcEntryQueueInit_0x090E decodes a 0x090E packet (struct PACKET_ZC_ENTRY_QUEUE_INIT).
+func ZcEntryQueueInit_0x090E(data []byte, packetver uint32) events.ZcEntryQueueInit {
+	var e events.ZcEntryQueueInit
+	_ = packetver
+	return e
+}
 

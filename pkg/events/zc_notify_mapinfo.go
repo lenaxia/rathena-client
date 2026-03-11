@@ -3,4 +3,6 @@
 package events
 
 // ZcNotifyMapinfo is the event emitted for the zc_notify_mapinfo action.
-type ZcNotifyMapinfo struct{}
+type ZcNotifyMapinfo struct {
+	Type int16
+}

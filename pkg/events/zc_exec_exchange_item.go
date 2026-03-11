@@ -3,4 +3,6 @@
 package events
 
 // ZcExecExchangeItem is the event emitted for the zc_exec_exchange_item action.
-type ZcExecExchangeItem struct{}
+type ZcExecExchangeItem struct {
+	Result uint8
+}

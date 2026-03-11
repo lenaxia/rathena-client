@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcNotifyMapinfo_0x0189: struct PACKET_ZC_NOTIFY_MAPINFO not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcNotifyMapinfo_0x0189 decodes a 0x0189 packet (struct PACKET_ZC_NOTIFY_MAPINFO).
+func ZcNotifyMapinfo_0x0189(data []byte, packetver uint32) events.ZcNotifyMapinfo {
+	var e events.ZcNotifyMapinfo
+	_ = packetver
+	e.Type = leI16(data, 2)  // rAthena: type (offset 2, size 2)
+	return e
+}
 

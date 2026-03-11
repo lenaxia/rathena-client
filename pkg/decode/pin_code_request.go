@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP PinCodeRequest_0x08B9: struct PACKET_HC_SECOND_PASSWD_LOGIN not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// PinCodeRequest_0x08B9 decodes a 0x08B9 packet (struct PACKET_HC_SECOND_PASSWD_LOGIN).
+func PinCodeRequest_0x08B9(data []byte, packetver uint32) events.PinCodeRequest {
+	var e events.PinCodeRequest
+	_ = packetver
+	e.Seed = leU32(data, 2)  // rAthena: seed (offset 2, size 4)
+	e.AID = leU32(data, 6)  // rAthena: AID (offset 6, size 4)
+	e.Result = leU16(data, 10)  // rAthena: result (offset 10, size 2)
+	return e
+}
 

@@ -2,5 +2,12 @@
 
 package decode
 
-// SKIP ZcCancelExchangeItem_0x00EE: struct PACKET_ZC_CANCEL_EXCHANGE_ITEM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcCancelExchangeItem_0x00EE decodes a 0x00EE packet (struct PACKET_ZC_CANCEL_EXCHANGE_ITEM).
+func ZcCancelExchangeItem_0x00EE(data []byte, packetver uint32) events.ZcCancelExchangeItem {
+	var e events.ZcCancelExchangeItem
+	_ = packetver
+	return e
+}
 

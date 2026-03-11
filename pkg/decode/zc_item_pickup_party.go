@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcItemPickupParty_0x02B8 decodes a 0x02B8 packet (struct PACKET_ZC_ITEM_PICKUP_PARTY).
 func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickupParty {
 	var e events.ZcItemPickupParty
-	if packetver >= 20200902 {
+	if packetver >= 20200916 {
 		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
 		e.ItemId = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
 		e.Identified = data[10]  // rAthena: identified (offset 10, size 1)

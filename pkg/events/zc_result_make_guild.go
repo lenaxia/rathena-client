@@ -3,4 +3,6 @@
 package events
 
 // ZcResultMakeGuild is the event emitted for the zc_result_make_guild action.
-type ZcResultMakeGuild struct{}
+type ZcResultMakeGuild struct {
+	Result uint8
+}

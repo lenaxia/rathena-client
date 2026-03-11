@@ -3,4 +3,7 @@
 package events
 
 // ZcDeleteItemFromStore is the event emitted for the zc_delete_item_from_store action.
-type ZcDeleteItemFromStore struct{}
+type ZcDeleteItemFromStore struct {
+	Index uint16
+	Amount uint32
+}

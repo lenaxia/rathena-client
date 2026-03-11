@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcActionFailure_0x013B: struct PACKET_ZC_ACTION_FAILURE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcActionFailure_0x013B decodes a 0x013B packet (struct PACKET_ZC_ACTION_FAILURE).
+func ZcActionFailure_0x013B(data []byte, packetver uint32) events.ZcActionFailure {
+	var e events.ZcActionFailure
+	_ = packetver
+	e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
+	return e
+}
 

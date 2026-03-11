@@ -3,4 +3,10 @@
 package events
 
 // ReceivedCharacterIdAndMap is the event emitted for the received_character_id_and_map action.
-type ReceivedCharacterIdAndMap struct{}
+type ReceivedCharacterIdAndMap struct {
+	CID uint32
+	Mapname string
+	Ip uint32
+	Port uint16
+	Domain string
+}

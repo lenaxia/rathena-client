@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // PetInfo_0x01A2 decodes a 0x01A2 packet (struct PACKET_ZC_PROPERTY_PET).
 func PetInfo_0x01A2(data []byte, packetver uint32) events.PetInfo {
 	var e events.PetInfo
-	if packetver >= 20081126 {
+	if packetver >= 20110824 {
 		e.SzName = nullTermString(data[2:26])  // rAthena: szName (offset 2, size 24)
 		e.BModified = int8(data[26])  // rAthena: bModified (offset 26, size 1)
 		e.NLevel = leI16(data, 27)  // rAthena: nLevel (offset 27, size 2)

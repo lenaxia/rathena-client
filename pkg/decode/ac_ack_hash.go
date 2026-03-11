@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP AcAckHash_0x01DC: struct PACKET_AC_ACK_HASH not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// AcAckHash_0x01DC decodes a 0x01DC packet (struct PACKET_AC_ACK_HASH).
+func AcAckHash_0x01DC(data []byte, packetver uint32) events.AcAckHash {
+	var e events.AcAckHash
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Salt = nullTermString(data[4:])  // rAthena: salt (offset 4, size 0)
+	return e
+}
 

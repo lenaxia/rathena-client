@@ -3,4 +3,7 @@
 package events
 
 // ZcRecovery is the event emitted for the zc_recovery action.
-type ZcRecovery struct{}
+type ZcRecovery struct {
+	Type uint16
+	Amount int32
+}

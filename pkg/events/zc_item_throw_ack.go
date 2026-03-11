@@ -3,4 +3,7 @@
 package events
 
 // ZcItemThrowAck is the event emitted for the zc_item_throw_ack action.
-type ZcItemThrowAck struct{}
+type ZcItemThrowAck struct {
+	Index uint16
+	Count uint16
+}

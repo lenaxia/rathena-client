@@ -3,4 +3,6 @@
 package events
 
 // ZcAckAdditemToCart is the event emitted for the zc_ack_additem_to_cart action.
-type ZcAckAdditemToCart struct{}
+type ZcAckAdditemToCart struct {
+	Result uint8
+}

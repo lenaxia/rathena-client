@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ScNotifyBan_0x0081: struct PACKET_SC_NOTIFY_BAN not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ScNotifyBan_0x0081 decodes a 0x0081 packet (struct PACKET_SC_NOTIFY_BAN).
+func ScNotifyBan_0x0081(data []byte, packetver uint32) events.ScNotifyBan {
+	var e events.ScNotifyBan
+	_ = packetver
+	e.ErrorCode = data[2]  // rAthena: errorCode (offset 2, size 1)
+	return e
+}
 

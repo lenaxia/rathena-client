@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP BankingCheck_0x09A6: struct PACKET_ZC_BANKING_CHECK not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// BankingCheck_0x09A6 decodes a 0x09A6 packet (struct PACKET_ZC_BANKING_CHECK).
+func BankingCheck_0x09A6(data []byte, packetver uint32) events.BankingCheck {
+	var e events.BankingCheck
+	_ = packetver
+	e.Money = leI64(data, 2)  // rAthena: money (offset 2, size 8)
+	e.Reason = leI16(data, 10)  // rAthena: reason (offset 10, size 2)
+	return e
+}
 

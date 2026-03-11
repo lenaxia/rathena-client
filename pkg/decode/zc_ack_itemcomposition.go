@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcAckItemcomposition_0x017D: struct PACKET_ZC_ACK_ITEMCOMPOSITION not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckItemcomposition_0x017D decodes a 0x017D packet (struct PACKET_ZC_ACK_ITEMCOMPOSITION).
+func ZcAckItemcomposition_0x017D(data []byte, packetver uint32) events.ZcAckItemcomposition {
+	var e events.ZcAckItemcomposition
+	_ = packetver
+	e.EquipIndex = leU16(data, 2)  // rAthena: equipIndex (offset 2, size 2)
+	e.CardIndex = leU16(data, 4)  // rAthena: cardIndex (offset 4, size 2)
+	e.Result = data[6]  // rAthena: result (offset 6, size 1)
+	return e
+}
 

@@ -3,4 +3,8 @@
 package events
 
 // BankingWithdraw is the event emitted for the banking_withdraw action.
-type BankingWithdraw struct{}
+type BankingWithdraw struct {
+	Reason int16
+	Money int64
+	Zeny int32
+}

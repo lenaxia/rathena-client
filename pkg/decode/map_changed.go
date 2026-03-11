@@ -2,7 +2,35 @@
 
 package decode
 
-// SKIP MapChanged_0x0091: struct PACKET_ZC_NPCACK_MAPMOVE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
 
-// SKIP MapChanged_0x0AC7: struct PACKET_ZC_NPCACK_SERVERMOVE not found in VersionTable
+// MapChanged_0x0091 decodes a 0x0091 packet (struct PACKET_ZC_NPCACK_MAPMOVE).
+func MapChanged_0x0091(data []byte, packetver uint32) events.MapChanged {
+	var e events.MapChanged
+	_ = packetver
+	e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
+	e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
+	e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
+	return e
+}
+
+// MapChanged_0x0AC7 decodes a 0x0AC7 packet (struct PACKET_ZC_NPCACK_SERVERMOVE).
+func MapChanged_0x0AC7(data []byte, packetver uint32) events.MapChanged {
+	var e events.MapChanged
+	if packetver >= 20170315 {
+		e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
+		e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
+		e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
+		e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
+		e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+		e.Domain = nullTermString(data[28:156])  // rAthena: domain (offset 28, size 128)
+	} else {
+		e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
+		e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
+		e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
+		e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
+		e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+	}
+	return e
+}
 

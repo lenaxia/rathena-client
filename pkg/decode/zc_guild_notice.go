@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcGuildNotice_0x016F: struct PACKET_ZC_GUILD_NOTICE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcGuildNotice_0x016F decodes a 0x016F packet (struct PACKET_ZC_GUILD_NOTICE).
+func ZcGuildNotice_0x016F(data []byte, packetver uint32) events.ZcGuildNotice {
+	var e events.ZcGuildNotice
+	_ = packetver
+	e.Subject = nullTermString(data[2:62])  // rAthena: subject (offset 2, size 60)
+	e.Notice = nullTermString(data[62:182])  // rAthena: notice (offset 62, size 120)
+	return e
+}
 

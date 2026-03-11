@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcPcSellItemlist_0x00C7: struct PACKET_ZC_PC_SELL_ITEMLIST not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcPcSellItemlist_0x00C7 decodes a 0x00C7 packet (struct PACKET_ZC_PC_SELL_ITEMLIST).
+func ZcPcSellItemlist_0x00C7(data []byte, packetver uint32) events.ZcPcSellItemlist {
+	var e events.ZcPcSellItemlist
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Items = data[4:]  // rAthena: items (offset 4, size 0)
+	return e
+}
 

@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcEquipitemDamaged_0x02BB: struct PACKET_ZC_EQUIPITEM_DAMAGED not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcEquipitemDamaged_0x02BB decodes a 0x02BB packet (struct PACKET_ZC_EQUIPITEM_DAMAGED).
+func ZcEquipitemDamaged_0x02BB(data []byte, packetver uint32) events.ZcEquipitemDamaged {
+	var e events.ZcEquipitemDamaged
+	_ = packetver
+	e.EquipLocation = leU16(data, 2)  // rAthena: equipLocation (offset 2, size 2)
+	e.GID = leU32(data, 4)  // rAthena: GID (offset 4, size 4)
+	return e
+}
 

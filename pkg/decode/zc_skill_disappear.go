@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcSkillDisappear_0x0120: struct PACKET_ZC_SKILL_DISAPPEAR not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcSkillDisappear_0x0120 decodes a 0x0120 packet (struct PACKET_ZC_SKILL_DISAPPEAR).
+func ZcSkillDisappear_0x0120(data []byte, packetver uint32) events.ZcSkillDisappear {
+	var e events.ZcSkillDisappear
+	_ = packetver
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	return e
+}
 

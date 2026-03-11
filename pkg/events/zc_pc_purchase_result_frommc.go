@@ -3,4 +3,8 @@
 package events
 
 // ZcPcPurchaseResultFrommc is the event emitted for the zc_pc_purchase_result_frommc action.
-type ZcPcPurchaseResultFrommc struct{}
+type ZcPcPurchaseResultFrommc struct {
+	Index uint16
+	Amount uint16
+	Result uint8
+}

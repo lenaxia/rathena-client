@@ -3,4 +3,6 @@
 package events
 
 // ZcEquipArrow is the event emitted for the zc_equip_arrow action.
-type ZcEquipArrow struct{}
+type ZcEquipArrow struct {
+	Index uint16
+}

@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP BankingOpen_0x09B7: struct PACKET_ZC_ACK_OPEN_BANKING not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// BankingOpen_0x09B7 decodes a 0x09B7 packet (struct PACKET_ZC_ACK_OPEN_BANKING).
+func BankingOpen_0x09B7(data []byte, packetver uint32) events.BankingOpen {
+	var e events.BankingOpen
+	_ = packetver
+	e.Unknown = leI16(data, 2)  // rAthena: unknown (offset 2, size 2)
+	return e
+}
 

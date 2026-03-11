@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcBroadcast_0x009A: struct PACKET_ZC_BROADCAST not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcBroadcast_0x009A decodes a 0x009A packet (struct PACKET_ZC_BROADCAST).
+func ZcBroadcast_0x009A(data []byte, packetver uint32) events.ZcBroadcast {
+	var e events.ZcBroadcast
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Message = nullTermString(data[4:])  // rAthena: message (offset 4, size 0)
+	return e
+}
 

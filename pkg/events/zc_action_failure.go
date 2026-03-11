@@ -3,4 +3,6 @@
 package events
 
 // ZcActionFailure is the event emitted for the zc_action_failure action.
-type ZcActionFailure struct{}
+type ZcActionFailure struct {
+	Type uint16
+}

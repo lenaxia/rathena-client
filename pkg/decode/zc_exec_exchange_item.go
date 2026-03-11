@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcExecExchangeItem_0x00F0: struct PACKET_ZC_EXEC_EXCHANGE_ITEM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcExecExchangeItem_0x00F0 decodes a 0x00F0 packet (struct PACKET_ZC_EXEC_EXCHANGE_ITEM).
+func ZcExecExchangeItem_0x00F0(data []byte, packetver uint32) events.ZcExecExchangeItem {
+	var e events.ZcExecExchangeItem
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

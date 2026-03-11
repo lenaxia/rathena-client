@@ -3,4 +3,7 @@
 package events
 
 // SystemChat is the event emitted for the system_chat action.
-type SystemChat struct{}
+type SystemChat struct {
+	PacketLength int16
+	Message string
+}

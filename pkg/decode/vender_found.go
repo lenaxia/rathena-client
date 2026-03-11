@@ -9,7 +9,7 @@ func VenderFound_0x0131(data []byte, packetver uint32) events.VenderFound {
 	var e events.VenderFound
 	_ = packetver
 	e.MakerAID = leU32(data, 2)  // rAthena: makerAID (offset 2, size 4)
-	e.StoreName = nullTermString(data[6:6])  // rAthena: storeName (offset 6, size 0)
+	e.StoreName = nullTermString(data[6:86])  // rAthena: storeName (offset 6, size 80)
 	return e
 }
 

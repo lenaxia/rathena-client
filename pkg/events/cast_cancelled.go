@@ -3,4 +3,6 @@
 package events
 
 // CastCancelled is the event emitted for the cast_cancelled action.
-type CastCancelled struct{}
+type CastCancelled struct {
+	Gid uint32
+}

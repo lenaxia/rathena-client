@@ -3,4 +3,7 @@
 package events
 
 // ReceivedCharactersPage is the event emitted for the received_characters_page action.
-type ReceivedCharactersPage struct{}
+type ReceivedCharactersPage struct {
+	PacketLength int16
+	Characters []byte
+}

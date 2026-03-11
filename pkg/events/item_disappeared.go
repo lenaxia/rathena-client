@@ -3,4 +3,6 @@
 package events
 
 // ItemDisappeared is the event emitted for the item_disappeared action.
-type ItemDisappeared struct{}
+type ItemDisappeared struct {
+	ItemAid uint32
+}

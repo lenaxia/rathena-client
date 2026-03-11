@@ -3,4 +3,8 @@
 package events
 
 // BankingDeposit is the event emitted for the banking_deposit action.
-type BankingDeposit struct{}
+type BankingDeposit struct {
+	Reason int16
+	Money int64
+	Zeny int32
+}

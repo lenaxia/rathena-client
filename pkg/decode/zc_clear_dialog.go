@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcClearDialog_0x08D6: struct PACKET_ZC_CLEAR_DIALOG not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcClearDialog_0x08D6 decodes a 0x08D6 packet (struct PACKET_ZC_CLEAR_DIALOG).
+func ZcClearDialog_0x08D6(data []byte, packetver uint32) events.ZcClearDialog {
+	var e events.ZcClearDialog
+	_ = packetver
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	return e
+}
 

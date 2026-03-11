@@ -2,5 +2,12 @@
 
 package decode
 
-// SKIP ZcCartoff_0x012B: struct PACKET_ZC_CARTOFF not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcCartoff_0x012B decodes a 0x012B packet (struct PACKET_ZC_CARTOFF).
+func ZcCartoff_0x012B(data []byte, packetver uint32) events.ZcCartoff {
+	var e events.ZcCartoff
+	_ = packetver
+	return e
+}
 

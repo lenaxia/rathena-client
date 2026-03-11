@@ -3,4 +3,6 @@
 package events
 
 // ZcOpenstore is the event emitted for the zc_openstore action.
-type ZcOpenstore struct{}
+type ZcOpenstore struct {
+	Num uint16
+}

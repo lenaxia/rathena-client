@@ -2,5 +2,19 @@
 
 package decode
 
-// SKIP ZcBroadcast2_0x01C3: struct PACKET_ZC_BROADCAST2 not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcBroadcast2_0x01C3 decodes a 0x01C3 packet (struct PACKET_ZC_BROADCAST2).
+func ZcBroadcast2_0x01C3(data []byte, packetver uint32) events.ZcBroadcast2 {
+	var e events.ZcBroadcast2
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.FontColor = leU32(data, 4)  // rAthena: fontColor (offset 4, size 4)
+	e.FontType = leI16(data, 8)  // rAthena: fontType (offset 8, size 2)
+	e.FontSize = leI16(data, 10)  // rAthena: fontSize (offset 10, size 2)
+	e.FontAlign = leI16(data, 12)  // rAthena: fontAlign (offset 12, size 2)
+	e.FontY = leI16(data, 14)  // rAthena: fontY (offset 14, size 2)
+	e.Message = nullTermString(data[16:])  // rAthena: message (offset 16, size 0)
+	return e
+}
 

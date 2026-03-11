@@ -3,4 +3,9 @@
 package events
 
 // ZcNpcShowefstUpdate is the event emitted for the zc_npc_showefst_update action.
-type ZcNpcShowefstUpdate struct{}
+type ZcNpcShowefstUpdate struct {
+	Gid uint32
+	EffectState uint32
+	Level int32
+	ShowEFST uint32
+}

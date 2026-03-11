@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcNotifyStoreitemCountinfo_0x00F2: struct PACKET_ZC_NOTIFY_STOREITEM_COUNTINFO not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcNotifyStoreitemCountinfo_0x00F2 decodes a 0x00F2 packet (struct PACKET_ZC_NOTIFY_STOREITEM_COUNTINFO).
+func ZcNotifyStoreitemCountinfo_0x00F2(data []byte, packetver uint32) events.ZcNotifyStoreitemCountinfo {
+	var e events.ZcNotifyStoreitemCountinfo
+	_ = packetver
+	e.Amount = leU16(data, 2)  // rAthena: amount (offset 2, size 2)
+	e.Max_amount = leU16(data, 4)  // rAthena: max_amount (offset 4, size 2)
+	return e
+}
 

@@ -3,4 +3,6 @@
 package events
 
 // ZcOpenEditdlg is the event emitted for the zc_open_editdlg action.
-type ZcOpenEditdlg struct{}
+type ZcOpenEditdlg struct {
+	NpcId uint32
+}

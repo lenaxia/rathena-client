@@ -3,4 +3,7 @@
 package events
 
 // ZcPcSellItemlist is the event emitted for the zc_pc_sell_itemlist action.
-type ZcPcSellItemlist struct{}
+type ZcPcSellItemlist struct {
+	PacketLength int16
+	Items []byte
+}

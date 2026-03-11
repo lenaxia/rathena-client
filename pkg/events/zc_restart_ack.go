@@ -3,4 +3,6 @@
 package events
 
 // ZcRestartAck is the event emitted for the zc_restart_ack action.
-type ZcRestartAck struct{}
+type ZcRestartAck struct {
+	Type uint8
+}

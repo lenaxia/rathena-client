@@ -3,4 +3,6 @@
 package events
 
 // ZcSkillDisappear is the event emitted for the zc_skill_disappear action.
-type ZcSkillDisappear struct{}
+type ZcSkillDisappear struct {
+	GID uint32
+}

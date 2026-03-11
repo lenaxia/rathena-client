@@ -7,12 +7,12 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcReqWearEquipAck_0x00AA decodes a 0x00AA packet (struct PACKET_ZC_REQ_WEAR_EQUIP_ACK).
 func ZcReqWearEquipAck_0x00AA(data []byte, packetver uint32) events.ZcReqWearEquipAck {
 	var e events.ZcReqWearEquipAck
-	if packetver >= 20121205 {
+	if packetver >= 20130000 {
 		e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.WearLocation = leU32(data, 4)  // rAthena: wearLocation (offset 4, size 4)
 		e.WItemSpriteNumber = leU16(data, 8)  // rAthena: wItemSpriteNumber (offset 8, size 2)
 		e.Result = data[10]  // rAthena: result (offset 10, size 1)
-	} else if packetver >= 20101123 {
+	} else if packetver >= 20110824 {
 		e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.WearLocation = uint32(leU16(data, 4))  // rAthena: wearLocation (offset 4, size 2)
 		e.WItemSpriteNumber = leU16(data, 6)  // rAthena: wItemSpriteNumber (offset 6, size 2)

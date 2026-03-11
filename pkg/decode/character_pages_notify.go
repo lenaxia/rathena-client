@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP CharacterPagesNotify_0x09A0: struct PACKET_HC_CHARLIST_NOTIFY not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// CharacterPagesNotify_0x09A0 decodes a 0x09A0 packet (struct PACKET_HC_CHARLIST_NOTIFY).
+func CharacterPagesNotify_0x09A0(data []byte, packetver uint32) events.CharacterPagesNotify {
+	var e events.CharacterPagesNotify
+	_ = packetver
+	e.Total = leU32(data, 2)  // rAthena: total (offset 2, size 4)
+	return e
+}
 

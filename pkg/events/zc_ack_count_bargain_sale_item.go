@@ -3,4 +3,7 @@
 package events
 
 // ZcAckCountBargainSaleItem is the event emitted for the zc_ack_count_bargain_sale_item action.
-type ZcAckCountBargainSaleItem struct{}
+type ZcAckCountBargainSaleItem struct {
+	ItemId uint32
+	Amount uint32
+}

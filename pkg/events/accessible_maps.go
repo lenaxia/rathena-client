@@ -3,4 +3,7 @@
 package events
 
 // AccessibleMaps is the event emitted for the accessible_maps action.
-type AccessibleMaps struct{}
+type AccessibleMaps struct {
+	PacketLength int16
+	Maps []byte
+}

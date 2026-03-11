@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcResultMakeGuild_0x0167: struct PACKET_ZC_RESULT_MAKE_GUILD not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcResultMakeGuild_0x0167 decodes a 0x0167 packet (struct PACKET_ZC_RESULT_MAKE_GUILD).
+func ZcResultMakeGuild_0x0167(data []byte, packetver uint32) events.ZcResultMakeGuild {
+	var e events.ZcResultMakeGuild
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

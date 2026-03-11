@@ -3,4 +3,6 @@
 package events
 
 // ZcNotifyBindOnEquip is the event emitted for the zc_notify_bind_on_equip action.
-type ZcNotifyBindOnEquip struct{}
+type ZcNotifyBindOnEquip struct {
+	Index int16
+}

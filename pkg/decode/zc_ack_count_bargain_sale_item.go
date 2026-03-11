@@ -2,5 +2,18 @@
 
 package decode
 
-// SKIP ZcAckCountBargainSaleItem_0x09C4: struct PACKET_ZC_ACK_COUNT_BARGAIN_SALE_ITEM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckCountBargainSaleItem_0x09C4 decodes a 0x09C4 packet (struct PACKET_ZC_ACK_COUNT_BARGAIN_SALE_ITEM).
+func ZcAckCountBargainSaleItem_0x09C4(data []byte, packetver uint32) events.ZcAckCountBargainSaleItem {
+	var e events.ZcAckCountBargainSaleItem
+	if packetver >= 20181121 {
+		e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
+		e.Amount = leU32(data, 6)  // rAthena: amount (offset 6, size 4)
+	} else {
+		e.ItemId = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
+		e.Amount = leU32(data, 4)  // rAthena: amount (offset 4, size 4)
+	}
+	return e
+}
 

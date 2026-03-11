@@ -3,4 +3,7 @@
 package events
 
 // LoginError is the event emitted for the login_error action.
-type LoginError struct{}
+type LoginError struct {
+	Error uint32
+	Unblock_time string
+}

@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcInventoryTab_0x0908: struct PACKET_ZC_INVENTORY_TAB not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcInventoryTab_0x0908 decodes a 0x0908 packet (struct PACKET_ZC_INVENTORY_TAB).
+func ZcInventoryTab_0x0908(data []byte, packetver uint32) events.ZcInventoryTab {
+	var e events.ZcInventoryTab
+	_ = packetver
+	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Favorite = data[4:]  // rAthena: favorite (offset 4, size 1)
+	return e
+}
 

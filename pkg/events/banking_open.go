@@ -3,4 +3,6 @@
 package events
 
 // BankingOpen is the event emitted for the banking_open action.
-type BankingOpen struct{}
+type BankingOpen struct {
+	Unknown int16
+}

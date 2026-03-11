@@ -3,4 +3,11 @@
 package events
 
 // ZcNpcackServermove is the event emitted for the zc_npcack_servermove action.
-type ZcNpcackServermove struct{}
+type ZcNpcackServermove struct {
+	MapName string
+	XPos uint16
+	YPos uint16
+	Ip uint32
+	Port uint16
+	Domain string
+}

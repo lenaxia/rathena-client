@@ -3,4 +3,11 @@
 package events
 
 // ReceivedCharacters is the event emitted for the received_characters action.
-type ReceivedCharacters struct{}
+type ReceivedCharacters struct {
+	PacketLength int16
+	Extension string
+	Characters []byte
+	Total uint8
+	Premium_start uint8
+	Premium_end uint8
+}

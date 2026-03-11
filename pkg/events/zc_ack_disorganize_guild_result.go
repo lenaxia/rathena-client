@@ -3,4 +3,6 @@
 package events
 
 // ZcAckDisorganizeGuildResult is the event emitted for the zc_ack_disorganize_guild_result action.
-type ZcAckDisorganizeGuildResult struct{}
+type ZcAckDisorganizeGuildResult struct {
+	Result int32
+}

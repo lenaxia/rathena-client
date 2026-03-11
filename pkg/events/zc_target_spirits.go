@@ -3,4 +3,8 @@
 package events
 
 // ZcTargetSpirits is the event emitted for the zc_target_spirits action.
-type ZcTargetSpirits struct{}
+type ZcTargetSpirits struct {
+	GID uint32
+	Unknown_val uint32
+	Amount uint16
+}

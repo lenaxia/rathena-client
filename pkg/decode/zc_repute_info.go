@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcReputeInfo_0x0B8D: struct PACKET_ZC_REPUTE_INFO not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcReputeInfo_0x0B8D decodes a 0x0B8D packet (struct PACKET_ZC_REPUTE_INFO).
+func ZcReputeInfo_0x0B8D(data []byte, packetver uint32) events.ZcReputeInfo {
+	var e events.ZcReputeInfo
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Success = data[4]  // rAthena: success (offset 4, size 1)
+	e.List = data[5:]  // rAthena: list (offset 5, size 0)
+	return e
+}
 

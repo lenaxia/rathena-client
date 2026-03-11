@@ -3,4 +3,6 @@
 package events
 
 // ZcAckCloseBanking is the event emitted for the zc_ack_close_banking action.
-type ZcAckCloseBanking struct{}
+type ZcAckCloseBanking struct {
+	Unknown int16
+}

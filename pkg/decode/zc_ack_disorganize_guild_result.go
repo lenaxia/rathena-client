@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckDisorganizeGuildResult_0x015E: struct PACKET_ZC_ACK_DISORGANIZE_GUILD_RESULT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckDisorganizeGuildResult_0x015E decodes a 0x015E packet (struct PACKET_ZC_ACK_DISORGANIZE_GUILD_RESULT).
+func ZcAckDisorganizeGuildResult_0x015E(data []byte, packetver uint32) events.ZcAckDisorganizeGuildResult {
+	var e events.ZcAckDisorganizeGuildResult
+	_ = packetver
+	e.Result = leI32(data, 2)  // rAthena: result (offset 2, size 4)
+	return e
+}
 

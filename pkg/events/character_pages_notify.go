@@ -3,4 +3,6 @@
 package events
 
 // CharacterPagesNotify is the event emitted for the character_pages_notify action.
-type CharacterPagesNotify struct{}
+type CharacterPagesNotify struct {
+	Total uint32
+}

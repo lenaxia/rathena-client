@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcCloseDialog_0x00B6: struct PACKET_ZC_CLOSE_DIALOG not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcCloseDialog_0x00B6 decodes a 0x00B6 packet (struct PACKET_ZC_CLOSE_DIALOG).
+func ZcCloseDialog_0x00B6(data []byte, packetver uint32) events.ZcCloseDialog {
+	var e events.ZcCloseDialog
+	_ = packetver
+	e.NpcId = leU32(data, 2)  // rAthena: npcId (offset 2, size 4)
+	return e
+}
 

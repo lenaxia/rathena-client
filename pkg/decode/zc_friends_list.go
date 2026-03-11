@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcFriendsList_0x0201: struct PACKET_ZC_FRIENDS_LIST not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcFriendsList_0x0201 decodes a 0x0201 packet (struct PACKET_ZC_FRIENDS_LIST).
+func ZcFriendsList_0x0201(data []byte, packetver uint32) events.ZcFriendsList {
+	var e events.ZcFriendsList
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Friends = data[4:]  // rAthena: friends (offset 4, size 0)
+	return e
+}
 

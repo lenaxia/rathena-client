@@ -3,4 +3,6 @@
 package events
 
 // ZcAckOpenstore2 is the event emitted for the zc_ack_openstore2 action.
-type ZcAckOpenstore2 struct{}
+type ZcAckOpenstore2 struct {
+	Result uint8
+}

@@ -3,4 +3,10 @@
 package events
 
 // SkillUpdate is the event emitted for the skill_update action.
-type SkillUpdate struct{}
+type SkillUpdate struct {
+	SkillId uint16
+	Level uint16
+	Sp uint16
+	Range2 uint16
+	UpFlag []byte
+}

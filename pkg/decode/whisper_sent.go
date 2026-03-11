@@ -2,5 +2,17 @@
 
 package decode
 
-// SKIP WhisperSent_0x0098: struct PACKET_ZC_ACK_WHISPER not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// WhisperSent_0x0098 decodes a 0x0098 packet (struct PACKET_ZC_ACK_WHISPER).
+func WhisperSent_0x0098(data []byte, packetver uint32) events.WhisperSent {
+	var e events.WhisperSent
+	if packetver >= 20131223 {
+		e.Result = data[2]  // rAthena: result (offset 2, size 1)
+		e.CID = leU32(data, 3)  // rAthena: CID (offset 3, size 4)
+	} else {
+		e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	}
+	return e
+}
 

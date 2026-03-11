@@ -2,5 +2,18 @@
 
 package decode
 
-// SKIP ZcRecovery_0x013D: struct PACKET_ZC_RECOVERY not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcRecovery_0x013D decodes a 0x013D packet (struct PACKET_ZC_RECOVERY).
+func ZcRecovery_0x013D(data []byte, packetver uint32) events.ZcRecovery {
+	var e events.ZcRecovery
+	if packetver >= 20141022 {
+		e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
+		e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
+	} else {
+		e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
+		e.Amount = int32(leI16(data, 4))  // rAthena: amount (offset 4, size 2)
+	}
+	return e
+}
 

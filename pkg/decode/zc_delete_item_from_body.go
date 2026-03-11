@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcDeleteItemFromBody_0x07FA: struct PACKET_ZC_DELETE_ITEM_FROM_BODY not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcDeleteItemFromBody_0x07FA decodes a 0x07FA packet (struct PACKET_ZC_DELETE_ITEM_FROM_BODY).
+func ZcDeleteItemFromBody_0x07FA(data []byte, packetver uint32) events.ZcDeleteItemFromBody {
+	var e events.ZcDeleteItemFromBody
+	_ = packetver
+	e.DeleteType = leI16(data, 2)  // rAthena: deleteType (offset 2, size 2)
+	e.Index = leU16(data, 4)  // rAthena: index (offset 4, size 2)
+	e.Count = leI16(data, 6)  // rAthena: count (offset 6, size 2)
+	return e
+}
 

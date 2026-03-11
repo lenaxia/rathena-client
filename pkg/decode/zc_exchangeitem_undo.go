@@ -2,5 +2,12 @@
 
 package decode
 
-// SKIP ZcExchangeitemUndo_0x00F1: struct PACKET_ZC_EXCHANGEITEM_UNDO not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcExchangeitemUndo_0x00F1 decodes a 0x00F1 packet (struct PACKET_ZC_EXCHANGEITEM_UNDO).
+func ZcExchangeitemUndo_0x00F1(data []byte, packetver uint32) events.ZcExchangeitemUndo {
+	var e events.ZcExchangeitemUndo
+	_ = packetver
+	return e
+}
 

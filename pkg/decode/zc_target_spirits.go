@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcTargetSpirits_0x0B68: struct PACKET_ZC_TARGET_SPIRITS not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcTargetSpirits_0x0B68 decodes a 0x0B68 packet (struct PACKET_ZC_TARGET_SPIRITS).
+func ZcTargetSpirits_0x0B68(data []byte, packetver uint32) events.ZcTargetSpirits {
+	var e events.ZcTargetSpirits
+	_ = packetver
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	e.Unknown_val = leU32(data, 6)  // rAthena: unknown_val (offset 6, size 4)
+	e.Amount = leU16(data, 10)  // rAthena: amount (offset 10, size 2)
+	return e
+}
 

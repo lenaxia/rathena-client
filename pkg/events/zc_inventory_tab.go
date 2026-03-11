@@ -3,4 +3,7 @@
 package events
 
 // ZcInventoryTab is the event emitted for the zc_inventory_tab action.
-type ZcInventoryTab struct{}
+type ZcInventoryTab struct {
+	Index int16
+	Favorite []byte
+}

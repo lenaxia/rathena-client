@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ReceivedCharactersPage_0x099D: struct PACKET_HC_ACK_CHARINFO_PER_PAGE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ReceivedCharactersPage_0x099D decodes a 0x099D packet (struct PACKET_HC_ACK_CHARINFO_PER_PAGE).
+func ReceivedCharactersPage_0x099D(data []byte, packetver uint32) events.ReceivedCharactersPage {
+	var e events.ReceivedCharactersPage
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Characters = data[4:]  // rAthena: characters (offset 4, size 0)
+	return e
+}
 

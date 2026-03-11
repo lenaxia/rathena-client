@@ -3,4 +3,6 @@
 package events
 
 // ZcAckRememberWarppoint is the event emitted for the zc_ack_remember_warppoint action.
-type ZcAckRememberWarppoint struct{}
+type ZcAckRememberWarppoint struct {
+	Type uint8
+}

@@ -2,5 +2,20 @@
 
 package decode
 
-// SKIP ZcAckCashBargainSaleItemInfo_0x09AD: struct PACKET_ZC_ACK_CASH_BARGAIN_SALE_ITEM_INFO not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckCashBargainSaleItemInfo_0x09AD decodes a 0x09AD packet (struct PACKET_ZC_ACK_CASH_BARGAIN_SALE_ITEM_INFO).
+func ZcAckCashBargainSaleItemInfo_0x09AD(data []byte, packetver uint32) events.ZcAckCashBargainSaleItemInfo {
+	var e events.ZcAckCashBargainSaleItemInfo
+	if packetver >= 20181121 {
+		e.Result = leU16(data, 2)  // rAthena: result (offset 2, size 2)
+		e.ItemId = leU32(data, 4)  // rAthena: itemId (offset 4, size 4)
+		e.Price = leU32(data, 8)  // rAthena: price (offset 8, size 4)
+	} else {
+		e.Result = leU16(data, 2)  // rAthena: result (offset 2, size 2)
+		e.ItemId = uint32(leU16(data, 4))  // rAthena: itemId (offset 4, size 2)
+		e.Price = leU32(data, 6)  // rAthena: price (offset 6, size 4)
+	}
+	return e
+}
 

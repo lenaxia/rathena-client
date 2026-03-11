@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcDeleteItemFromStore_0x00F6: struct PACKET_ZC_DELETE_ITEM_FROM_STORE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcDeleteItemFromStore_0x00F6 decodes a 0x00F6 packet (struct PACKET_ZC_DELETE_ITEM_FROM_STORE).
+func ZcDeleteItemFromStore_0x00F6(data []byte, packetver uint32) events.ZcDeleteItemFromStore {
+	var e events.ZcDeleteItemFromStore
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Amount = leU32(data, 4)  // rAthena: amount (offset 4, size 4)
+	return e
+}
 

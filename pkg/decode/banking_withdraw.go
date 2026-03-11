@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP BankingWithdraw_0x09AA: struct PACKET_ZC_ACK_BANKING_WITHDRAW not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// BankingWithdraw_0x09AA decodes a 0x09AA packet (struct PACKET_ZC_ACK_BANKING_WITHDRAW).
+func BankingWithdraw_0x09AA(data []byte, packetver uint32) events.BankingWithdraw {
+	var e events.BankingWithdraw
+	_ = packetver
+	e.Reason = leI16(data, 2)  // rAthena: reason (offset 2, size 2)
+	e.Money = leI64(data, 4)  // rAthena: money (offset 4, size 8)
+	e.Zeny = leI32(data, 12)  // rAthena: zeny (offset 12, size 4)
+	return e
+}
 

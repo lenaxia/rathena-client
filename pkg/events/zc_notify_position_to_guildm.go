@@ -3,4 +3,8 @@
 package events
 
 // ZcNotifyPositionToGuildm is the event emitted for the zc_notify_position_to_guildm action.
-type ZcNotifyPositionToGuildm struct{}
+type ZcNotifyPositionToGuildm struct {
+	Aid uint32
+	XPos int16
+	YPos int16
+}

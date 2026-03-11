@@ -2,5 +2,16 @@
 
 package decode
 
-// SKIP ZcAckSeCashItemList2_0x08C0: struct PACKET_ZC_ACK_SE_CASH_ITEM_LIST2 not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckSeCashItemList2_0x08C0 decodes a 0x08C0 packet (struct PACKET_ZC_ACK_SE_CASH_ITEM_LIST2).
+func ZcAckSeCashItemList2_0x08C0(data []byte, packetver uint32) events.ZcAckSeCashItemList2 {
+	var e events.ZcAckSeCashItemList2
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Tab = leU32(data, 4)  // rAthena: tab (offset 4, size 4)
+	e.Count = leI16(data, 8)  // rAthena: count (offset 8, size 2)
+	e.Items = data[10:]  // rAthena: items (offset 10, size 0)
+	return e
+}
 

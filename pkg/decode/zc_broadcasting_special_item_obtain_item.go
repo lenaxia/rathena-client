@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcBroadcastingSpecialItemObtainItem_0x07FD decodes a 0x07FD packet (struct PACKET_ZC_BROADCASTING_SPECIAL_ITEM_OBTAIN_item).
 func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) events.ZcBroadcastingSpecialItemObtainItem {
 	var e events.ZcBroadcastingSpecialItemObtainItem
-	if packetver >= 20220518 {
+	if packetver >= 20250402 {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.Type = data[4]  // rAthena: type (offset 4, size 1)
 		e.ItemID = leU32(data, 5)  // rAthena: ItemID (offset 5, size 4)

@@ -2,9 +2,35 @@
 
 package decode
 
-// SKIP DealRequest_0x01F5: struct PACKET_ZC_ACK_EXCHANGE_ITEM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
 
-// SKIP DealRequest_0x00E7: struct PACKET_ZC_ACK_EXCHANGE_ITEM not found in VersionTable
+// DealRequest_0x01F5 decodes a 0x01F5 packet (struct PACKET_ZC_ACK_EXCHANGE_ITEM).
+func DealRequest_0x01F5(data []byte, packetver uint32) events.DealRequest {
+	var e events.DealRequest
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	e.TargetId = leU32(data, 3)  // rAthena: targetId (offset 3, size 4)
+	e.TargetLv = leU16(data, 7)  // rAthena: targetLv (offset 7, size 2)
+	return e
+}
 
-// SKIP DealRequest_0x01F4: struct PACKET_ZC_REQ_EXCHANGE_ITEM not found in VersionTable
+// DealRequest_0x00E7 decodes a 0x00E7 packet (struct PACKET_ZC_ACK_EXCHANGE_ITEM).
+func DealRequest_0x00E7(data []byte, packetver uint32) events.DealRequest {
+	var e events.DealRequest
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	e.TargetId = leU32(data, 3)  // rAthena: targetId (offset 3, size 4)
+	e.TargetLv = leU16(data, 7)  // rAthena: targetLv (offset 7, size 2)
+	return e
+}
+
+// DealRequest_0x01F4 decodes a 0x01F4 packet (struct PACKET_ZC_REQ_EXCHANGE_ITEM).
+func DealRequest_0x01F4(data []byte, packetver uint32) events.DealRequest {
+	var e events.DealRequest
+	_ = packetver
+	e.RequesterName = nullTermString(data[2:26])  // rAthena: requesterName (offset 2, size 24)
+	e.TargetId = leU32(data, 26)  // rAthena: targetId (offset 26, size 4)
+	e.TargetLv = leU16(data, 30)  // rAthena: targetLv (offset 30, size 2)
+	return e
+}
 

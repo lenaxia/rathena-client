@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcPcPurchaseResult_0x00CA: struct PACKET_ZC_PC_PURCHASE_RESULT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcPcPurchaseResult_0x00CA decodes a 0x00CA packet (struct PACKET_ZC_PC_PURCHASE_RESULT).
+func ZcPcPurchaseResult_0x00CA(data []byte, packetver uint32) events.ZcPcPurchaseResult {
+	var e events.ZcPcPurchaseResult
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

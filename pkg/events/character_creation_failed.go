@@ -3,4 +3,6 @@
 package events
 
 // CharacterCreationFailed is the event emitted for the character_creation_failed action.
-type CharacterCreationFailed struct{}
+type CharacterCreationFailed struct {
+	Error uint8
+}

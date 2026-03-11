@@ -7,18 +7,18 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // AddExchangeItem_0x00E9 decodes a 0x00E9 packet (struct PACKET_ZC_ADD_EXCHANGE_ITEM).
 func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
-	if packetver >= 20200902 {
+	if packetver >= 20200916 {
 		e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
 		e.ItemType = data[6]  // rAthena: itemType (offset 6, size 1)
 		e.Amount = leI32(data, 7)  // rAthena: amount (offset 7, size 4)
 		e.Identified = data[11]  // rAthena: identified (offset 11, size 1)
 		e.Damaged = data[12]  // rAthena: damaged (offset 12, size 1)
 		e.Slot = data[13:]  // rAthena: slot (offset 13, size 16)
-		e.Option_data = data[29:]  // rAthena: option_data (offset 29, size 0)
-		e.Location = leU32(data, 29)  // rAthena: location (offset 29, size 4)
-		e.Look = leU16(data, 33)  // rAthena: look (offset 33, size 2)
-		e.Refine = data[35]  // rAthena: refine (offset 35, size 1)
-		e.Grade = data[36]  // rAthena: grade (offset 36, size 1)
+		e.Option_data = data[29:54]  // rAthena: option_data (offset 29, size 25)
+		e.Location = leU32(data, 54)  // rAthena: location (offset 54, size 4)
+		e.Look = leU16(data, 58)  // rAthena: look (offset 58, size 2)
+		e.Refine = data[60]  // rAthena: refine (offset 60, size 1)
+		e.Grade = data[61]  // rAthena: grade (offset 61, size 1)
 	} else if packetver >= 20181121 {
 		e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
 		e.ItemType = data[6]  // rAthena: itemType (offset 6, size 1)
@@ -27,10 +27,10 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 		e.Damaged = data[12]  // rAthena: damaged (offset 12, size 1)
 		e.Refine = data[13]  // rAthena: refine (offset 13, size 1)
 		e.Slot = data[14:]  // rAthena: slot (offset 14, size 16)
-		e.Option_data = data[30:]  // rAthena: option_data (offset 30, size 0)
-		e.Location = leU32(data, 30)  // rAthena: location (offset 30, size 4)
-		e.Look = leU16(data, 34)  // rAthena: look (offset 34, size 2)
-	} else if packetver >= 20161102 {
+		e.Option_data = data[30:55]  // rAthena: option_data (offset 30, size 25)
+		e.Location = leU32(data, 55)  // rAthena: location (offset 55, size 4)
+		e.Look = leU16(data, 59)  // rAthena: look (offset 59, size 2)
+	} else if packetver >= 20170315 {
 		e.ItemId = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]  // rAthena: itemType (offset 4, size 1)
 		e.Amount = leI32(data, 5)  // rAthena: amount (offset 5, size 4)
@@ -38,10 +38,10 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 		e.Damaged = data[10]  // rAthena: damaged (offset 10, size 1)
 		e.Refine = data[11]  // rAthena: refine (offset 11, size 1)
 		e.Slot = data[12:]  // rAthena: slot (offset 12, size 8)
-		e.Option_data = data[20:]  // rAthena: option_data (offset 20, size 0)
-		e.Location = leU32(data, 20)  // rAthena: location (offset 20, size 4)
-		e.Look = leU16(data, 24)  // rAthena: look (offset 24, size 2)
-	} else if packetver >= 20150226 {
+		e.Option_data = data[20:45]  // rAthena: option_data (offset 20, size 25)
+		e.Location = leU32(data, 45)  // rAthena: location (offset 45, size 4)
+		e.Look = leU16(data, 49)  // rAthena: look (offset 49, size 2)
+	} else if packetver >= 20150520 {
 		e.ItemId = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]  // rAthena: itemType (offset 4, size 1)
 		e.Amount = leI32(data, 5)  // rAthena: amount (offset 5, size 4)
@@ -49,8 +49,8 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 		e.Damaged = data[10]  // rAthena: damaged (offset 10, size 1)
 		e.Refine = data[11]  // rAthena: refine (offset 11, size 1)
 		e.Slot = data[12:]  // rAthena: slot (offset 12, size 8)
-		e.Option_data = data[20:]  // rAthena: option_data (offset 20, size 0)
-	} else if packetver >= 20100223 {
+		e.Option_data = data[20:45]  // rAthena: option_data (offset 20, size 25)
+	} else if packetver >= 20110824 {
 		e.ItemId = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]  // rAthena: itemType (offset 4, size 1)
 		e.Amount = leI32(data, 5)  // rAthena: amount (offset 5, size 4)

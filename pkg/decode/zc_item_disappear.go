@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcItemDisappear_0x00A1: struct PACKET_ZC_ITEM_DISAPPEAR not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcItemDisappear_0x00A1 decodes a 0x00A1 packet (struct PACKET_ZC_ITEM_DISAPPEAR).
+func ZcItemDisappear_0x00A1(data []byte, packetver uint32) events.ZcItemDisappear {
+	var e events.ZcItemDisappear
+	_ = packetver
+	e.ItemAid = leU32(data, 2)  // rAthena: itemAid (offset 2, size 4)
+	return e
+}
 

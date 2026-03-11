@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcHoskillinfoList_0x0235: struct PACKET_ZC_HOSKILLINFO_LIST not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcHoskillinfoList_0x0235 decodes a 0x0235 packet (struct PACKET_ZC_HOSKILLINFO_LIST).
+func ZcHoskillinfoList_0x0235(data []byte, packetver uint32) events.ZcHoskillinfoList {
+	var e events.ZcHoskillinfoList
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Skills = data[4:]  // rAthena: skills (offset 4, size 0)
+	return e
+}
 

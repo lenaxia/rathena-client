@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP CharacterBlocked_0x020D: struct PACKET_HC_BLOCK_CHARACTER not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// CharacterBlocked_0x020D decodes a 0x020D packet (struct PACKET_HC_BLOCK_CHARACTER).
+func CharacterBlocked_0x020D(data []byte, packetver uint32) events.CharacterBlocked {
+	var e events.CharacterBlocked
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Characters = data[4:]  // rAthena: characters (offset 4, size 0)
+	return e
+}
 

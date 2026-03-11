@@ -3,4 +3,6 @@
 package events
 
 // ScNotifyBan is the event emitted for the sc_notify_ban action.
-type ScNotifyBan struct{}
+type ScNotifyBan struct {
+	ErrorCode uint8
+}

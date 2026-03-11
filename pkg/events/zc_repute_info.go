@@ -3,4 +3,8 @@
 package events
 
 // ZcReputeInfo is the event emitted for the zc_repute_info action.
-type ZcReputeInfo struct{}
+type ZcReputeInfo struct {
+	PacketLength int16
+	Success uint8
+	List []byte
+}

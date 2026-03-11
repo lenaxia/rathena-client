@@ -3,4 +3,7 @@
 package events
 
 // ZcFriendsList is the event emitted for the zc_friends_list action.
-type ZcFriendsList struct{}
+type ZcFriendsList struct {
+	PacketLength int16
+	Friends []byte
+}

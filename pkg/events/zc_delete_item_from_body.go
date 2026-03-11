@@ -3,4 +3,8 @@
 package events
 
 // ZcDeleteItemFromBody is the event emitted for the zc_delete_item_from_body action.
-type ZcDeleteItemFromBody struct{}
+type ZcDeleteItemFromBody struct {
+	DeleteType int16
+	Index uint16
+	Count int16
+}

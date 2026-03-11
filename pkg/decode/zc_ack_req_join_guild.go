@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckReqJoinGuild_0x0169: struct PACKET_ZC_ACK_REQ_JOIN_GUILD not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckReqJoinGuild_0x0169 decodes a 0x0169 packet (struct PACKET_ZC_ACK_REQ_JOIN_GUILD).
+func ZcAckReqJoinGuild_0x0169(data []byte, packetver uint32) events.ZcAckReqJoinGuild {
+	var e events.ZcAckReqJoinGuild
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

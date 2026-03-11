@@ -3,4 +3,8 @@
 package events
 
 // ZcSummonHpInit is the event emitted for the zc_summon_hp_init action.
-type ZcSummonHpInit struct{}
+type ZcSummonHpInit struct {
+	SummonAID uint32
+	CurrentHP uint32
+	MaxHP uint32
+}

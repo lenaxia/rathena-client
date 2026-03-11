@@ -3,4 +3,6 @@
 package events
 
 // ZcCloseDialog is the event emitted for the zc_close_dialog action.
-type ZcCloseDialog struct{}
+type ZcCloseDialog struct {
+	NpcId uint32
+}

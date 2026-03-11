@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcEquipArrow_0x013C: struct PACKET_ZC_EQUIP_ARROW not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcEquipArrow_0x013C decodes a 0x013C packet (struct PACKET_ZC_EQUIP_ARROW).
+func ZcEquipArrow_0x013C(data []byte, packetver uint32) events.ZcEquipArrow {
+	var e events.ZcEquipArrow
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
+	return e
+}
 

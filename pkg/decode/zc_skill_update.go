@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcSkillUpdate_0x01AC: struct PACKET_ZC_SKILL_UPDATE not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcSkillUpdate_0x01AC decodes a 0x01AC packet (struct PACKET_ZC_SKILL_UPDATE).
+func ZcSkillUpdate_0x01AC(data []byte, packetver uint32) events.ZcSkillUpdate {
+	var e events.ZcSkillUpdate
+	_ = packetver
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	return e
+}
 

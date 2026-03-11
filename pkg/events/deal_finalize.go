@@ -3,4 +3,6 @@
 package events
 
 // DealFinalize is the event emitted for the deal_finalize action.
-type DealFinalize struct{}
+type DealFinalize struct {
+	Who uint8
+}

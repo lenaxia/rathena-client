@@ -3,4 +3,6 @@
 package events
 
 // ZcRefuseEnterRoom is the event emitted for the zc_refuse_enter_room action.
-type ZcRefuseEnterRoom struct{}
+type ZcRefuseEnterRoom struct {
+	Result uint8
+}

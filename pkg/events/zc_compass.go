@@ -3,4 +3,11 @@
 package events
 
 // ZcCompass is the event emitted for the zc_compass action.
-type ZcCompass struct{}
+type ZcCompass struct {
+	NpcId uint32
+	Type uint32
+	XPos uint32
+	YPos uint32
+	Id uint8
+	Color uint32
+}

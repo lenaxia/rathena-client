@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcNotifyHpToGroupm_0x0106 decodes a 0x0106 packet (struct PACKET_ZC_NOTIFY_HP_TO_GROUPM).
 func ZcNotifyHpToGroupm_0x0106(data []byte, packetver uint32) events.ZcNotifyHpToGroupm {
 	var e events.ZcNotifyHpToGroupm
-	if packetver >= 20100119 {
+	if packetver >= 20110824 {
 		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
 		e.Hp = leI16(data, 6)  // rAthena: hp (offset 6, size 4)
 		e.Maxhp = leI16(data, 10)  // rAthena: maxhp (offset 10, size 4)

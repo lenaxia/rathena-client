@@ -2,5 +2,18 @@
 
 package decode
 
-// SKIP LoginError_0x083E: struct PACKET_AC_REFUSE_LOGIN not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// LoginError_0x083E decodes a 0x083E packet (struct PACKET_AC_REFUSE_LOGIN).
+func LoginError_0x083E(data []byte, packetver uint32) events.LoginError {
+	var e events.LoginError
+	if packetver >= 20120000 {
+		e.Error = leU32(data, 2)  // rAthena: error (offset 2, size 4)
+		e.Unblock_time = nullTermString(data[6:26])  // rAthena: unblock_time (offset 6, size 20)
+	} else {
+		e.Error = uint32(data[2])  // rAthena: error (offset 2, size 1)
+		e.Unblock_time = nullTermString(data[3:23])  // rAthena: unblock_time (offset 3, size 20)
+	}
+	return e
+}
 

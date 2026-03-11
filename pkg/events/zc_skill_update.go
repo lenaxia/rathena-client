@@ -3,4 +3,6 @@
 package events
 
 // ZcSkillUpdate is the event emitted for the zc_skill_update action.
-type ZcSkillUpdate struct{}
+type ZcSkillUpdate struct {
+	GID uint32
+}

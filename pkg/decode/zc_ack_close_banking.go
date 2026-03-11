@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckCloseBanking_0x09B9: struct PACKET_ZC_ACK_CLOSE_BANKING not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckCloseBanking_0x09B9 decodes a 0x09B9 packet (struct PACKET_ZC_ACK_CLOSE_BANKING).
+func ZcAckCloseBanking_0x09B9(data []byte, packetver uint32) events.ZcAckCloseBanking {
+	var e events.ZcAckCloseBanking
+	_ = packetver
+	e.Unknown = leI16(data, 2)  // rAthena: unknown (offset 2, size 2)
+	return e
+}
 

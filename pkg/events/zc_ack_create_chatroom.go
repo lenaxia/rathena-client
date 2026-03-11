@@ -3,4 +3,6 @@
 package events
 
 // ZcAckCreateChatroom is the event emitted for the zc_ack_create_chatroom action.
-type ZcAckCreateChatroom struct{}
+type ZcAckCreateChatroom struct {
+	Flag uint8
+}

@@ -3,4 +3,6 @@
 package events
 
 // ZcSelectDealtype is the event emitted for the zc_select_dealtype action.
-type ZcSelectDealtype struct{}
+type ZcSelectDealtype struct {
+	NpcId uint32
+}

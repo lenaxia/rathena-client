@@ -3,4 +3,6 @@
 package events
 
 // ZcClearDialog is the event emitted for the zc_clear_dialog action.
-type ZcClearDialog struct{}
+type ZcClearDialog struct {
+	GID uint32
+}

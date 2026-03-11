@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckOpenstore2_0x0A28: struct PACKET_ZC_ACK_OPENSTORE2 not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckOpenstore2_0x0A28 decodes a 0x0A28 packet (struct PACKET_ZC_ACK_OPENSTORE2).
+func ZcAckOpenstore2_0x0A28(data []byte, packetver uint32) events.ZcAckOpenstore2 {
+	var e events.ZcAckOpenstore2
+	_ = packetver
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	return e
+}
 

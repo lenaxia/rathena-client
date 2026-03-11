@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcPcPurchaseResultFrommc_0x0135: struct PACKET_ZC_PC_PURCHASE_RESULT_FROMMC not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcPcPurchaseResultFrommc_0x0135 decodes a 0x0135 packet (struct PACKET_ZC_PC_PURCHASE_RESULT_FROMMC).
+func ZcPcPurchaseResultFrommc_0x0135(data []byte, packetver uint32) events.ZcPcPurchaseResultFrommc {
+	var e events.ZcPcPurchaseResultFrommc
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Amount = leU16(data, 4)  // rAthena: amount (offset 4, size 2)
+	e.Result = data[6]  // rAthena: result (offset 6, size 1)
+	return e
+}
 

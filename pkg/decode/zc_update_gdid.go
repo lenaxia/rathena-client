@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcUpdateGdid_0x016C decodes a 0x016C packet (struct PACKET_ZC_UPDATE_GDID).
 func ZcUpdateGdid_0x016C(data []byte, packetver uint32) events.ZcUpdateGdid {
 	var e events.ZcUpdateGdid
-	if packetver >= 20220216 {
+	if packetver >= 20250402 {
 		e.GuildId = leU32(data, 2)  // rAthena: guildId (offset 2, size 4)
 		e.EmblemVersion = data[6:]  // rAthena: emblemVersion (offset 6, size 4)
 		e.Mode = leU32(data, 10)  // rAthena: mode (offset 10, size 4)

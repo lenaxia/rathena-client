@@ -9,7 +9,7 @@ func ZcBuyingStoreEntry_0x0814(data []byte, packetver uint32) events.ZcBuyingSto
 	var e events.ZcBuyingStoreEntry
 	_ = packetver
 	e.MakerAID = leU32(data, 2)  // rAthena: makerAID (offset 2, size 4)
-	e.StoreName = nullTermString(data[6:6])  // rAthena: storeName (offset 6, size 0)
+	e.StoreName = nullTermString(data[6:86])  // rAthena: storeName (offset 6, size 80)
 	return e
 }
 

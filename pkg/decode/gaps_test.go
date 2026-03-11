@@ -141,46 +141,55 @@ func TestActorMoved_0x09DB_Name_Decoded(t *testing.T) {
 	}
 }
 
-// ─── Test 4: AddExchangeItem_0x00E9 Grade at PACKETVER 20200401 vs 20200902 ───
+// ─── Test 4: AddExchangeItem_0x00E9 Grade at PACKETVER 20200401 vs 20200916 ───
 //
-// Grade field is added to PACKET_ZC_ADD_EXCHANGE_ITEM at PACKETVER 20200902.
-// At 20200401 the struct is the 20181121 version (no grade field) → Grade=0.
-// At 20200902 the struct has grade at offset 36 → Grade decoded.
+// Grade field is added to PACKET_ZC_ADD_EXCHANGE_ITEM at PACKETVER >= 20200916.
+// At 20200401 the struct is the 20181121 version (no grade field, 61 bytes total) → Grade=0.
+// At 20200916 the struct has grade at offset 61 → Grade decoded.
 //
-// GCC-verified struct layout at 20200902:
+// GCC-verified struct layout at PACKETVER >= 20181121 (61 bytes total):
 //
 //	offset 2  : itemId uint32
 //	offset 6  : itemType uint8
 //	offset 7  : amount int32
 //	offset 11 : identified uint8
 //	offset 12 : damaged uint8
-//	offset 13 : (refine in older; replaced by card slots)
-//	offset 36 : grade uint8    ← NEW at 20200902
+//	offset 13 : refine uint8
+//	offset 14 : slot EQUIPSLOTINFO (16 bytes)
+//	offset 30 : option_data [5]ItemOptions (25 bytes)
+//	offset 55 : location uint32
+//	offset 59 : look uint16
+//
+// GCC-verified struct layout at PACKETVER >= 20200916 (62 bytes total):
+//
+//	offset 61 : grade uint8    ← NEW at 20200916
 func TestGap_AddExchangeItem_Grade_20200401_IsZero(t *testing.T) {
-	// Build a packet that would have grade != 0 at offset 36
-	// but at packetver 20200401 the 20181121 branch is used (no grade field)
-	b := make([]byte, 50)
+	// Build a 62-byte packet (enough for the >= 20200916 branch which reads data[61]).
+	// b[36] = 7 is in the middle of option_data (offset 30..54) — NOT the grade field.
+	// grade is at offset 61 in the 20200916+ branch.
+	b := make([]byte, 62)
 	binary.LittleEndian.PutUint16(b[0:], 0x00E9)
 	gapPutU32(b, 2, 501) // itemId
 	b[6] = 4             // itemType
 	gapPutI32(b, 7, 3)   // amount
 	b[11] = 1            // identified
 	b[12] = 0            // damaged
-	b[36] = 7            // grade=7 (would be decoded at >= 20200902)
+	b[36] = 7            // somewhere in option_data — NOT the grade field in any branch
+	b[61] = 7            // grade=7 at GCC-verified offset 61 (only present at >= 20200916)
 
 	e20200401 := AddExchangeItem_0x00E9(b, 20200401)
 	if e20200401.Grade != 0 {
-		t.Errorf("Grade at 20200401: got %d want 0 (field absent before 20200902)", e20200401.Grade)
+		t.Errorf("Grade at 20200401: got %d want 0 (field absent in >= 20181121 branch)", e20200401.Grade)
 	} else {
 		t.Logf("OK: Grade=0 at PACKETVER 20200401 (correct — field absent in that struct version)")
 	}
 
-	// At 20200902 grade IS present at offset 36
-	e20200902 := AddExchangeItem_0x00E9(b, 20200902)
-	if e20200902.Grade != 7 {
-		t.Errorf("Grade at 20200902: got %d want 7 (field present at offset 36)", e20200902.Grade)
+	// At 20200916 grade IS present at offset 61
+	e20200916 := AddExchangeItem_0x00E9(b, 20200916)
+	if e20200916.Grade != 7 {
+		t.Errorf("Grade at 20200916: got %d want 7 (field present at GCC offset 61)", e20200916.Grade)
 	} else {
-		t.Logf("OK: Grade=%d at PACKETVER 20200902 (correctly decoded from GCC offset 36)", e20200902.Grade)
+		t.Logf("OK: Grade=%d at PACKETVER 20200916 (correctly decoded from GCC offset 61)", e20200916.Grade)
 	}
 
 	// Verify other fields decoded at 20200401

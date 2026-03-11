@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcAckItemidentify_0x0179: struct PACKET_ZC_ACK_ITEMIDENTIFY not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckItemidentify_0x0179 decodes a 0x0179 packet (struct PACKET_ZC_ACK_ITEMIDENTIFY).
+func ZcAckItemidentify_0x0179(data []byte, packetver uint32) events.ZcAckItemidentify {
+	var e events.ZcAckItemidentify
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Result = data[4]  // rAthena: result (offset 4, size 1)
+	return e
+}
 

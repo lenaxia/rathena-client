@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcReqJoinGuild_0x016A: struct PACKET_ZC_REQ_JOIN_GUILD not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcReqJoinGuild_0x016A decodes a 0x016A packet (struct PACKET_ZC_REQ_JOIN_GUILD).
+func ZcReqJoinGuild_0x016A(data []byte, packetver uint32) events.ZcReqJoinGuild {
+	var e events.ZcReqJoinGuild
+	_ = packetver
+	e.Guild_id = leU32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+	e.Guild_name = nullTermString(data[6:30])  // rAthena: guild_name (offset 6, size 24)
+	return e
+}
 

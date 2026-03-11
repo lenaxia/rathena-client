@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcRestartAck_0x00B3: struct PACKET_ZC_RESTART_ACK not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcRestartAck_0x00B3 decodes a 0x00B3 packet (struct PACKET_ZC_RESTART_ACK).
+func ZcRestartAck_0x00B3(data []byte, packetver uint32) events.ZcRestartAck {
+	var e events.ZcRestartAck
+	_ = packetver
+	e.Type = data[2]  // rAthena: type (offset 2, size 1)
+	return e
+}
 

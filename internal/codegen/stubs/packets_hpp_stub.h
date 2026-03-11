@@ -47,6 +47,11 @@
 #define TALKBOX_MESSAGE_SIZE (79 + 1)
 
 #define INVENTORY_BASE_SIZE 100
+// INVENTORY_EXPANSION_SIZE is hardcoded to 0. rAthena sets this to 100 via
+// battle_config.inventory_expansion_size at runtime, but packet struct sizes
+// that embed it (e.g. item list packets) use its compile-time value. Setting
+// it to 0 matches the default disabled state and produces struct sizes that
+// agree with the recvpackets.txt lengths used by the framing engine.
 #define INVENTORY_EXPANSION_SIZE 0
 #define MAX_INVENTORY 100
 #define MAX_CART 100

@@ -3,4 +3,9 @@
 package events
 
 // TcResult is the event emitted for the tc_result action.
-type TcResult struct{}
+type TcResult struct {
+	PacketLength int16
+	Type uint32
+	Unknown1 string
+	Unknown2 string
+}

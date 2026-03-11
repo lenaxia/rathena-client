@@ -3,4 +3,7 @@
 package events
 
 // AcRefuseLogin is the event emitted for the ac_refuse_login action.
-type AcRefuseLogin struct{}
+type AcRefuseLogin struct {
+	Error uint32
+	Unblock_time string
+}

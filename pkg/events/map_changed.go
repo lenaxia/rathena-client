@@ -3,4 +3,11 @@
 package events
 
 // MapChanged is the event emitted for the map_changed action.
-type MapChanged struct{}
+type MapChanged struct {
+	MapName string
+	XPos uint16
+	YPos uint16
+	Ip uint32
+	Port uint16
+	Domain string
+}

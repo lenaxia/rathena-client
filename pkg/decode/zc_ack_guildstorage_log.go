@@ -2,5 +2,16 @@
 
 package decode
 
-// SKIP ZcAckGuildstorageLog_0x09DA: struct PACKET_ZC_ACK_GUILDSTORAGE_LOG not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckGuildstorageLog_0x09DA decodes a 0x09DA packet (struct PACKET_ZC_ACK_GUILDSTORAGE_LOG).
+func ZcAckGuildstorageLog_0x09DA(data []byte, packetver uint32) events.ZcAckGuildstorageLog {
+	var e events.ZcAckGuildstorageLog
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Result = leU16(data, 4)  // rAthena: result (offset 4, size 2)
+	e.Amount = leU16(data, 6)  // rAthena: amount (offset 6, size 2)
+	e.Items = data[8:]  // rAthena: items (offset 8, size 0)
+	return e
+}
 

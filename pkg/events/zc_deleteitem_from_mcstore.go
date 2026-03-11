@@ -3,4 +3,10 @@
 package events
 
 // ZcDeleteitemFromMcstore is the event emitted for the zc_deleteitem_from_mcstore action.
-type ZcDeleteitemFromMcstore struct{}
+type ZcDeleteitemFromMcstore struct {
+	Index uint16
+	Amount uint16
+	BuyerCID uint32
+	Date uint32
+	Zeny int32
+}

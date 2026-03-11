@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcNotifyEffect_0x019B: struct PACKET_ZC_NOTIFY_EFFECT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcNotifyEffect_0x019B decodes a 0x019B packet (struct PACKET_ZC_NOTIFY_EFFECT).
+func ZcNotifyEffect_0x019B(data []byte, packetver uint32) events.ZcNotifyEffect {
+	var e events.ZcNotifyEffect
+	_ = packetver
+	e.Aid = leU32(data, 2)  // rAthena: aid (offset 2, size 4)
+	e.EffectId = leU32(data, 6)  // rAthena: effectId (offset 6, size 4)
+	return e
+}
 

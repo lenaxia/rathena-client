@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // InventoryItemAdded_0x00A0 decodes a 0x00A0 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
 func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryItemAdded {
 	var e events.InventoryItemAdded
-	if packetver >= 20200902 {
+	if packetver >= 20200916 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)
@@ -19,11 +19,11 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[33]  // rAthena: result (offset 33, size 1)
 		e.HireExpireDate = leI32(data, 34)  // rAthena: HireExpireDate (offset 34, size 4)
 		e.BindOnEquipType = leU16(data, 38)  // rAthena: bindOnEquipType (offset 38, size 2)
-		e.Option_data = data[40:]  // rAthena: option_data (offset 40, size 0)
-		e.Favorite = data[40]  // rAthena: favorite (offset 40, size 1)
-		e.Look = leU16(data, 41)  // rAthena: look (offset 41, size 2)
-		e.RefiningLevel = data[43]  // rAthena: refiningLevel (offset 43, size 1)
-		e.Grade = data[44]  // rAthena: grade (offset 44, size 1)
+		e.Option_data = data[40:65]  // rAthena: option_data (offset 40, size 25)
+		e.Favorite = data[65]  // rAthena: favorite (offset 65, size 1)
+		e.Look = leU16(data, 66)  // rAthena: look (offset 66, size 2)
+		e.RefiningLevel = data[68]  // rAthena: refiningLevel (offset 68, size 1)
+		e.Grade = data[69]  // rAthena: grade (offset 69, size 1)
 	} else if packetver >= 20181121 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
@@ -37,10 +37,10 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[34]  // rAthena: result (offset 34, size 1)
 		e.HireExpireDate = leI32(data, 35)  // rAthena: HireExpireDate (offset 35, size 4)
 		e.BindOnEquipType = leU16(data, 39)  // rAthena: bindOnEquipType (offset 39, size 2)
-		e.Option_data = data[41:]  // rAthena: option_data (offset 41, size 0)
-		e.Favorite = data[41]  // rAthena: favorite (offset 41, size 1)
-		e.Look = leU16(data, 42)  // rAthena: look (offset 42, size 2)
-	} else if packetver >= 20160921 {
+		e.Option_data = data[41:66]  // rAthena: option_data (offset 41, size 25)
+		e.Favorite = data[66]  // rAthena: favorite (offset 66, size 1)
+		e.Look = leU16(data, 67)  // rAthena: look (offset 67, size 2)
+	} else if packetver >= 20170315 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -53,10 +53,10 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[24]  // rAthena: result (offset 24, size 1)
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-		e.Option_data = data[31:]  // rAthena: option_data (offset 31, size 0)
-		e.Favorite = data[31]  // rAthena: favorite (offset 31, size 1)
-		e.Look = leU16(data, 32)  // rAthena: look (offset 32, size 2)
-	} else if packetver >= 20150226 {
+		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
+		e.Favorite = data[56]  // rAthena: favorite (offset 56, size 1)
+		e.Look = leU16(data, 57)  // rAthena: look (offset 57, size 2)
+	} else if packetver >= 20150520 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -69,7 +69,7 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[24]  // rAthena: result (offset 24, size 1)
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-		e.Option_data = data[31:]  // rAthena: option_data (offset 31, size 0)
+		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
 	} else if packetver >= 20120925 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
@@ -83,7 +83,7 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[24]  // rAthena: result (offset 24, size 1)
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-	} else if packetver >= 20071002 {
+	} else if packetver >= 20071113 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -96,18 +96,6 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[22]  // rAthena: result (offset 22, size 1)
 		e.HireExpireDate = leI32(data, 23)  // rAthena: HireExpireDate (offset 23, size 4)
 		e.BindOnEquipType = leU16(data, 27)  // rAthena: bindOnEquipType (offset 27, size 2)
-	} else if packetver >= 20061218 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
-		e.Type = data[21]  // rAthena: type (offset 21, size 1)
-		e.Result = data[22]  // rAthena: result (offset 22, size 1)
-		e.HireExpireDate = leI32(data, 23)  // rAthena: HireExpireDate (offset 23, size 4)
 	} else {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
@@ -126,7 +114,7 @@ func InventoryItemAdded_0x00A0(data []byte, packetver uint32) events.InventoryIt
 // InventoryItemAdded_0x0A37 decodes a 0x0A37 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
 func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryItemAdded {
 	var e events.InventoryItemAdded
-	if packetver >= 20200902 {
+	if packetver >= 20200916 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)
@@ -138,11 +126,11 @@ func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[33]  // rAthena: result (offset 33, size 1)
 		e.HireExpireDate = leI32(data, 34)  // rAthena: HireExpireDate (offset 34, size 4)
 		e.BindOnEquipType = leU16(data, 38)  // rAthena: bindOnEquipType (offset 38, size 2)
-		e.Option_data = data[40:]  // rAthena: option_data (offset 40, size 0)
-		e.Favorite = data[40]  // rAthena: favorite (offset 40, size 1)
-		e.Look = leU16(data, 41)  // rAthena: look (offset 41, size 2)
-		e.RefiningLevel = data[43]  // rAthena: refiningLevel (offset 43, size 1)
-		e.Grade = data[44]  // rAthena: grade (offset 44, size 1)
+		e.Option_data = data[40:65]  // rAthena: option_data (offset 40, size 25)
+		e.Favorite = data[65]  // rAthena: favorite (offset 65, size 1)
+		e.Look = leU16(data, 66)  // rAthena: look (offset 66, size 2)
+		e.RefiningLevel = data[68]  // rAthena: refiningLevel (offset 68, size 1)
+		e.Grade = data[69]  // rAthena: grade (offset 69, size 1)
 	} else if packetver >= 20181121 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
@@ -156,10 +144,10 @@ func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[34]  // rAthena: result (offset 34, size 1)
 		e.HireExpireDate = leI32(data, 35)  // rAthena: HireExpireDate (offset 35, size 4)
 		e.BindOnEquipType = leU16(data, 39)  // rAthena: bindOnEquipType (offset 39, size 2)
-		e.Option_data = data[41:]  // rAthena: option_data (offset 41, size 0)
-		e.Favorite = data[41]  // rAthena: favorite (offset 41, size 1)
-		e.Look = leU16(data, 42)  // rAthena: look (offset 42, size 2)
-	} else if packetver >= 20160921 {
+		e.Option_data = data[41:66]  // rAthena: option_data (offset 41, size 25)
+		e.Favorite = data[66]  // rAthena: favorite (offset 66, size 1)
+		e.Look = leU16(data, 67)  // rAthena: look (offset 67, size 2)
+	} else if packetver >= 20170315 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -172,10 +160,10 @@ func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[24]  // rAthena: result (offset 24, size 1)
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-		e.Option_data = data[31:]  // rAthena: option_data (offset 31, size 0)
-		e.Favorite = data[31]  // rAthena: favorite (offset 31, size 1)
-		e.Look = leU16(data, 32)  // rAthena: look (offset 32, size 2)
-	} else if packetver >= 20150226 {
+		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
+		e.Favorite = data[56]  // rAthena: favorite (offset 56, size 1)
+		e.Look = leU16(data, 57)  // rAthena: look (offset 57, size 2)
+	} else if packetver >= 20150520 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -188,7 +176,7 @@ func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[24]  // rAthena: result (offset 24, size 1)
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-		e.Option_data = data[31:]  // rAthena: option_data (offset 31, size 0)
+		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
 	} else if packetver >= 20120925 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
@@ -202,7 +190,7 @@ func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[24]  // rAthena: result (offset 24, size 1)
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-	} else if packetver >= 20071002 {
+	} else if packetver >= 20071113 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -215,18 +203,6 @@ func InventoryItemAdded_0x0A37(data []byte, packetver uint32) events.InventoryIt
 		e.Result = data[22]  // rAthena: result (offset 22, size 1)
 		e.HireExpireDate = leI32(data, 23)  // rAthena: HireExpireDate (offset 23, size 4)
 		e.BindOnEquipType = leU16(data, 27)  // rAthena: bindOnEquipType (offset 27, size 2)
-	} else if packetver >= 20061218 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
-		e.Type = data[21]  // rAthena: type (offset 21, size 1)
-		e.Result = data[22]  // rAthena: result (offset 22, size 1)
-		e.HireExpireDate = leI32(data, 23)  // rAthena: HireExpireDate (offset 23, size 4)
 	} else {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)

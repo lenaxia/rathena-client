@@ -3,4 +3,8 @@
 package events
 
 // ZcParChangeUser is the event emitted for the zc_par_change_user action.
-type ZcParChangeUser struct{}
+type ZcParChangeUser struct {
+	Gid uint32
+	Type int16
+	Value uint32
+}

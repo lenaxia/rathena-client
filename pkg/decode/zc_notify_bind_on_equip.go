@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcNotifyBindOnEquip_0x02D3: struct PACKET_ZC_NOTIFY_BIND_ON_EQUIP not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcNotifyBindOnEquip_0x02D3 decodes a 0x02D3 packet (struct PACKET_ZC_NOTIFY_BIND_ON_EQUIP).
+func ZcNotifyBindOnEquip_0x02D3(data []byte, packetver uint32) events.ZcNotifyBindOnEquip {
+	var e events.ZcNotifyBindOnEquip
+	_ = packetver
+	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
+	return e
+}
 

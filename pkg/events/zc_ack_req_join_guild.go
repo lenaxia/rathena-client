@@ -3,4 +3,6 @@
 package events
 
 // ZcAckReqJoinGuild is the event emitted for the zc_ack_req_join_guild action.
-type ZcAckReqJoinGuild struct{}
+type ZcAckReqJoinGuild struct {
+	Result uint8
+}

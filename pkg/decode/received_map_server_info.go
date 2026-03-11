@@ -2,5 +2,23 @@
 
 package decode
 
-// SKIP ReceivedMapServerInfo_0x0AC5: struct PACKET_HC_NOTIFY_ZONESVR not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ReceivedMapServerInfo_0x0AC5 decodes a 0x0AC5 packet (struct PACKET_HC_NOTIFY_ZONESVR).
+func ReceivedMapServerInfo_0x0AC5(data []byte, packetver uint32) events.ReceivedMapServerInfo {
+	var e events.ReceivedMapServerInfo
+	if packetver >= 20170315 {
+		e.CID = leU32(data, 2)  // rAthena: CID (offset 2, size 4)
+		e.Mapname = nullTermString(data[6:22])  // rAthena: mapname (offset 6, size 16)
+		e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
+		e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+		e.Domain = nullTermString(data[28:156])  // rAthena: domain (offset 28, size 128)
+	} else {
+		e.CID = leU32(data, 2)  // rAthena: CID (offset 2, size 4)
+		e.Mapname = nullTermString(data[6:22])  // rAthena: mapname (offset 6, size 16)
+		e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
+		e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+	}
+	return e
+}
 

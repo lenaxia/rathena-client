@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcItemThrowAck_0x00AF: struct PACKET_ZC_ITEM_THROW_ACK not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcItemThrowAck_0x00AF decodes a 0x00AF packet (struct PACKET_ZC_ITEM_THROW_ACK).
+func ZcItemThrowAck_0x00AF(data []byte, packetver uint32) events.ZcItemThrowAck {
+	var e events.ZcItemThrowAck
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+	return e
+}
 

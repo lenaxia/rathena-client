@@ -3,4 +3,8 @@
 package events
 
 // ZcAckItemrefining is the event emitted for the zc_ack_itemrefining action.
-type ZcAckItemrefining struct{}
+type ZcAckItemrefining struct {
+	Result uint16
+	Index uint16
+	Value uint16
+}

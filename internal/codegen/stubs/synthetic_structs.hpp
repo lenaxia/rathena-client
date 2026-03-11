@@ -247,6 +247,7 @@ struct SYNTH_CH_ENTER_0x0065 {
 // silently write 35 zero bytes for the unknown fields. Mark fields as unimplemented
 // and exclude this struct from send codegen until the layout is confirmed.
 struct SYNTH_CH_ENTER {
+    UNAVAILABLE_STRUCT
     int16  PacketType;
     uint8  _padding[35]; // Unknown fields — placeholder until layout is confirmed
 } __attribute__((packed));

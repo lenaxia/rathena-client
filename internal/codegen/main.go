@@ -16,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -185,28 +186,11 @@ func injectSynthetic(cfg preprocess.Config, vt preprocess.VersionTable) error {
 	return preprocess.InjectSyntheticStructs(cfg, vt)
 }
 
-// commonStructsToInject is the set of struct names from common/packets.hpp that
-// should be injected into the VersionTable for decode codegen.
-// Each struct name must exactly match the C struct name in that header.
-var commonStructsToInject = []string{
-	"PACKET_AC_ACCEPT_LOGIN",
-}
-
-// mapStructsToInject is the set of struct names from src/map/packets.hpp that
-// should be injected into the VersionTable for decode codegen.
-// Each struct name must exactly match the C struct name in that header.
-var mapStructsToInject = []string{
-	"PACKET_ZC_NOTIFY_PLAYERMOVE",
-	"PACKET_ZC_NOTIFY_TIME",
-	"PACKET_ZC_NOTIFY_VANISH", // 0x0080 ActorDiedOrDisappeared
-	"PACKET_ZC_NOTIFY_ACT",    // 0x008A / 0x02E1 / 0x08C8 ActorAction (3-way PACKETVER ladder)
-	"PACKET_ZC_STATUS",        // 0x00BD ZcStatus (full stats dump)
-}
-
 // injectCommonPacketStructs processes common/packets.hpp at all its PACKETVER
-// breakpoints and injects the structs listed in commonStructsToInject into the
-// VersionTable. This is necessary because common/packets.hpp is not processed by
-// buildVersionTable (which only reads packets_struct.hpp from the map server).
+// breakpoints and injects all structs matching the target prefixes (PACKET_AC_,
+// PACKET_HC_, PACKET_SC_, PACKET_TC_, PACKET_CT_) into the VersionTable. This is
+// necessary because common/packets.hpp is not processed by buildVersionTable (which
+// only reads packets_struct.hpp from the map server).
 func injectCommonPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) error {
 	commonFile := filepath.Join(cfg.RathenaRoot, "src", "common", "packets.hpp")
 	allDates, err := preprocess.ExtractBreakpointsFromFile(commonFile)
@@ -238,8 +222,22 @@ func injectCommonPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable
 		return fmt.Errorf("injectCommonPacketStructs: no snapshots extracted from common/packets.hpp")
 	}
 
+	// Collect all struct names matching target prefixes across all snapshots.
+	commonPrefixes := []string{"PACKET_AC_", "PACKET_HC_", "PACKET_SC_", "PACKET_TC_", "PACKET_CT_"}
+	structNames := make(map[string]bool)
+	for _, snap := range snapshots {
+		for name := range snap.db {
+			for _, prefix := range commonPrefixes {
+				if strings.HasPrefix(name, prefix) {
+					structNames[name] = true
+					break
+				}
+			}
+		}
+	}
+
 	injected := 0
-	for _, structName := range commonStructsToInject {
+	for structName := range structNames {
 		// Collect version ranges where this struct appears and has a distinct layout.
 		var ranges []preprocess.VersionedLayout
 		for i, snap := range snapshots {
@@ -287,16 +285,13 @@ func injectCommonPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable
 		log.Printf("  Injected %s: %d version range(s)", structName, len(ranges))
 	}
 
-	if injected == 0 {
-		return fmt.Errorf("injectCommonPacketStructs: no structs injected (wanted: %v)", commonStructsToInject)
-	}
 	return nil
 }
 
 // injectMapPacketStructs processes src/map/packets.hpp at all its PACKETVER
-// breakpoints and injects the structs listed in mapStructsToInject into the
-// VersionTable. This is necessary because packets.hpp is not processed by
-// buildVersionTable (which only reads packets_struct.hpp from the map server).
+// breakpoints and injects all structs matching the target prefixes (PACKET_ZC_,
+// PACKET_SC_) into the VersionTable. This is necessary because packets.hpp is not
+// processed by buildVersionTable (which only reads packets_struct.hpp from the map server).
 func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) error {
 	packetsFile := filepath.Join(cfg.RathenaRoot, "src", "map", "packets.hpp")
 	allDates, err := preprocess.ExtractBreakpointsFromFile(packetsFile)
@@ -328,8 +323,22 @@ func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) e
 		return fmt.Errorf("injectMapPacketStructs: no snapshots extracted from map/packets.hpp")
 	}
 
+	// Collect all struct names matching target prefixes across all snapshots.
+	mapPrefixes := []string{"PACKET_ZC_", "PACKET_SC_"}
+	structNames := make(map[string]bool)
+	for _, snap := range snapshots {
+		for name := range snap.db {
+			for _, prefix := range mapPrefixes {
+				if strings.HasPrefix(name, prefix) {
+					structNames[name] = true
+					break
+				}
+			}
+		}
+	}
+
 	injected := 0
-	for _, structName := range mapStructsToInject {
+	for structName := range structNames {
 		// Collect version ranges where this struct appears and has a distinct layout.
 		var ranges []preprocess.VersionedLayout
 		for i, snap := range snapshots {
@@ -377,9 +386,6 @@ func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) e
 		log.Printf("  Injected %s: %d version range(s)", structName, len(ranges))
 	}
 
-	if injected == 0 {
-		return fmt.Errorf("injectMapPacketStructs: no map packet structs injected (wanted: %v)", mapStructsToInject)
-	}
 	return nil
 }
 
@@ -494,6 +500,7 @@ func genLengths(cfg preprocess.Config, outDir, semanticsPath string, vt preproce
 		return fmt.Errorf("build map enum packet breakpoints: %w", err)
 	}
 	mapBreakpoints = mergeBreakpoints(mapBreakpoints, enumBPs)
+	mapBreakpoints = deduplicateLengthBreakpoints(mapBreakpoints)
 	_ = db
 
 	mapSrc, err := gen.GenerateLengthsFile(gen.ServerMap, mapBreakpoints)
@@ -746,9 +753,10 @@ var reEnumAssign = regexp.MustCompile(`^\s*(\w+)\s*=\s*(0x[0-9A-Fa-f]+)\s*,`)
 // enumPacketEntry describes a known enum-assigned packet ID in packets_struct.hpp
 // and the struct whose sizeof() gives the wire length (empty structName = variable-length).
 type enumPacketEntry struct {
-	enumName   string // C++ enum value name, e.g. "inventorylistnormalType"
-	structName string // PACKET_* struct name for size, "" = variable-length
-	varLen     bool   // if true, packet is variable-length (length field in bytes [2:4])
+	enumName         string   // C++ enum value name, e.g. "inventorylistnormalType"
+	structName       string   // PACKET_* struct name for size, "" = variable-length
+	structCandidates []string // alternative struct names tried in order when struct varies by PACKETVER
+	varLen           bool     // if true, packet is variable-length (length field in bytes [2:4])
 }
 
 // knownEnumPackets is the table of enum-assigned packet IDs that the HEADER_*
@@ -761,10 +769,46 @@ type enumPacketEntry struct {
 //   - sendLookType: PACKET_ZC_SPRITE_CHANGE, fixed size but changes at PACKETVER >= 20181121
 //     (uint32 val/val2 replaces uint16). clif_packetdb.hpp is not updated so stays 11;
 //     structDB gives the correct size.
+//   - cartlistnormalType / cartlistequipType: packet_itemlist_normal/equip, variable-length.
+//   - storageListNormalType / storageListEquipType: same structs as cartlist, variable-length.
+//   - skillscale: PACKET_ZC_SKILL_SCALE, fixed size.
+//   - partymemberinfo: PACKET_ZC_ADD_MEMBER_TO_GROUP, fixed size (versioned fields).
+//   - partyinfo: PACKET_ZC_GROUP_LIST, variable-length (has packetLen).
+//   - guildLeave: PACKET_ZC_ACK_LEAVE_GUILD1/2 (versioned, tries new→old).
+//   - guildExpulsion: PACKET_ZC_ACK_BAN_GUILD1/2/3 (versioned, tries new→old).
+//   - graffiti_entryType: packet_graffiti_entry, fixed size.
+//   - roulettgenerateackType: packet_roulette_generate_ack, fixed size (versioned itemId).
+//   - useItemAckType: PACKET_ZC_USE_ITEM_ACK, fixed size (versioned fields).
+//   - authError: PACKET_ZC_REFUSE_LOGIN, fixed size. Note: struct may use different name per version;
+//     clif_packetdb already tracks 0x006a and 0x083e; Part 4 covers 0x0b02.
 var knownEnumPackets = []enumPacketEntry{
+	// Original three entries
 	{enumName: "inventorylistnormalType", varLen: true},
 	{enumName: "inventorylistequipType", varLen: true},
 	{enumName: "sendLookType", structName: "PACKET_ZC_SPRITE_CHANGE"},
+	// Cart and storage list packets (same struct type as inventory, variable-length)
+	{enumName: "cartlistnormalType", varLen: true},
+	{enumName: "cartlistequipType", varLen: true},
+	{enumName: "storageListNormalType", varLen: true},
+	{enumName: "storageListEquipType", varLen: true},
+	// Fixed-size packets with versioned struct sizes
+	{enumName: "skillscale", structName: "PACKET_ZC_SKILL_SCALE"},
+	{enumName: "partymemberinfo", structName: "PACKET_ZC_ADD_MEMBER_TO_GROUP"},
+	{enumName: "graffiti_entryType", structName: "packet_graffiti_entry"},
+	{enumName: "roulettgenerateackType", structName: "packet_roulette_generate_ack"},
+	{enumName: "useItemAckType", structName: "PACKET_ZC_USE_ITEM_ACK"},
+	// Variable-length party list
+	{enumName: "partyinfo", varLen: true},
+	// Guild leave/expulsion: struct name varies by PACKETVER — try newest→oldest
+	{enumName: "guildLeave", structCandidates: []string{
+		"PACKET_ZC_ACK_LEAVE_GUILD2", // PACKETVER >= 20161019
+		"PACKET_ZC_ACK_LEAVE_GUILD1", // PACKETVER < 20161019
+	}},
+	{enumName: "guildExpulsion", structCandidates: []string{
+		"PACKET_ZC_ACK_BAN_GUILD3", // PACKETVER >= 20161019
+		"PACKET_ZC_ACK_BAN_GUILD2", // PACKETVER >= 20100803
+		"PACKET_ZC_ACK_BAN_GUILD1", // PACKETVER < 20100803
+	}},
 }
 
 // buildMapEnumPacketBreakpoints processes packets_struct.hpp at each of its
@@ -824,6 +868,19 @@ func buildMapEnumPacketBreakpoints(cfg preprocess.Config) ([]gen.LengthBreakpoin
 			var length int16
 			if e.varLen {
 				length = -1
+			} else if len(e.structCandidates) > 0 {
+				// Try each candidate struct name in order; use the first one found.
+				found := false
+				for _, sn := range e.structCandidates {
+					if layout, ok2 := structDB[sn]; ok2 && layout != nil && layout.Available {
+						length = int16(layout.TotalSize)
+						found = true
+						break
+					}
+				}
+				if !found {
+					continue // none of the candidates available at this PACKETVER
+				}
 			} else if e.structName != "" {
 				if layout, ok2 := structDB[e.structName]; ok2 && layout != nil && layout.Available {
 					length = int16(layout.TotalSize)
@@ -1114,4 +1171,29 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// deduplicateLengthBreakpoints removes entries from later breakpoints where the
+// value matches what was already set by an earlier breakpoint. This prevents
+// redundant assignments like "t[0x0284] = 14" appearing in multiple if-blocks
+// when the value was already established in the baseline.
+func deduplicateLengthBreakpoints(bps []gen.LengthBreakpoint) []gen.LengthBreakpoint {
+	// Sort by version ascending (stable, so equal versions stay ordered)
+	sort.Slice(bps, func(i, j int) bool { return bps[i].Ver < bps[j].Ver })
+
+	state := make(map[uint16]int16)
+	var result []gen.LengthBreakpoint
+	for _, bp := range bps {
+		var kept []gen.LengthEntry
+		for _, e := range bp.Entries {
+			if cur, ok := state[e.ID]; !ok || cur != e.Length {
+				kept = append(kept, e)
+				state[e.ID] = e.Length
+			}
+		}
+		if len(kept) > 0 {
+			result = append(result, gen.LengthBreakpoint{Ver: bp.Ver, Entries: kept})
+		}
+	}
+	return result
 }

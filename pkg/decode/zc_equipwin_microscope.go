@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcEquipwinMicroscope_0x02D7 decodes a 0x02D7 packet (struct PACKET_ZC_EQUIPWIN_MICROSCOPE).
 func ZcEquipwinMicroscope_0x02D7(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
-	if packetver >= 20180801 {
+	if packetver >= 20181121 {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.CharacterName = nullTermString(data[4:28])  // rAthena: characterName (offset 4, size 24)
 		e.Job = leI16(data, 28)  // rAthena: job (offset 28, size 2)
@@ -21,7 +21,7 @@ func ZcEquipwinMicroscope_0x02D7(data []byte, packetver uint32) events.ZcEquipwi
 		e.Body2 = leI16(data, 44)  // rAthena: body2 (offset 44, size 2)
 		e.Sex = data[46]  // rAthena: sex (offset 46, size 1)
 		e.List = data[47:]  // rAthena: list (offset 47, size 0)
-	} else if packetver >= 20101123 {
+	} else if packetver >= 20110824 {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.CharacterName = nullTermString(data[4:28])  // rAthena: characterName (offset 4, size 24)
 		e.Job = leI16(data, 28)  // rAthena: job (offset 28, size 2)

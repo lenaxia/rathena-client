@@ -3,4 +3,9 @@
 package events
 
 // ZcAckSeCashItemList2 is the event emitted for the zc_ack_se_cash_item_list2 action.
-type ZcAckSeCashItemList2 struct{}
+type ZcAckSeCashItemList2 struct {
+	PacketLength int16
+	Tab uint32
+	Count int16
+	Items []byte
+}

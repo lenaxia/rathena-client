@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP ZcAckAddExchangeItem_0x00EA: struct PACKET_ZC_ACK_ADD_EXCHANGE_ITEM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckAddExchangeItem_0x00EA decodes a 0x00EA packet (struct PACKET_ZC_ACK_ADD_EXCHANGE_ITEM).
+func ZcAckAddExchangeItem_0x00EA(data []byte, packetver uint32) events.ZcAckAddExchangeItem {
+	var e events.ZcAckAddExchangeItem
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Result = data[4]  // rAthena: result (offset 4, size 1)
+	return e
+}
 

@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcAckRememberWarppoint_0x011E: struct PACKET_ZC_ACK_REMEMBER_WARPPOINT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcAckRememberWarppoint_0x011E decodes a 0x011E packet (struct PACKET_ZC_ACK_REMEMBER_WARPPOINT).
+func ZcAckRememberWarppoint_0x011E(data []byte, packetver uint32) events.ZcAckRememberWarppoint {
+	var e events.ZcAckRememberWarppoint
+	_ = packetver
+	e.Type = data[2]  // rAthena: type (offset 2, size 1)
+	return e
+}
 

@@ -3,4 +3,6 @@
 package events
 
 // SkillDelete is the event emitted for the skill_delete action.
-type SkillDelete struct{}
+type SkillDelete struct {
+	SkillID uint16
+}

@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP ZcNotifyPositionToGuildm_0x01EB: struct PACKET_ZC_NOTIFY_POSITION_TO_GUILDM not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcNotifyPositionToGuildm_0x01EB decodes a 0x01EB packet (struct PACKET_ZC_NOTIFY_POSITION_TO_GUILDM).
+func ZcNotifyPositionToGuildm_0x01EB(data []byte, packetver uint32) events.ZcNotifyPositionToGuildm {
+	var e events.ZcNotifyPositionToGuildm
+	_ = packetver
+	e.Aid = leU32(data, 2)  // rAthena: aid (offset 2, size 4)
+	e.XPos = leI16(data, 6)  // rAthena: xPos (offset 6, size 2)
+	e.YPos = leI16(data, 8)  // rAthena: yPos (offset 8, size 2)
+	return e
+}
 

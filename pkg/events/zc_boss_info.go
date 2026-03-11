@@ -3,4 +3,13 @@
 package events
 
 // ZcBossInfo is the event emitted for the zc_boss_info action.
-type ZcBossInfo struct{}
+type ZcBossInfo struct {
+	Type uint8
+	X uint32
+	Y uint32
+	MinHours uint16
+	MinMinutes uint16
+	MaxHours uint16
+	MaxMinutes uint16
+	Name string
+}

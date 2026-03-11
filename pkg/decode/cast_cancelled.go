@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP CastCancelled_0x01B9: struct PACKET_ZC_DISPEL not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// CastCancelled_0x01B9 decodes a 0x01B9 packet (struct PACKET_ZC_DISPEL).
+func CastCancelled_0x01B9(data []byte, packetver uint32) events.CastCancelled {
+	var e events.CastCancelled
+	_ = packetver
+	e.Gid = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
+	return e
+}
 

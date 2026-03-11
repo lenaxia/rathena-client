@@ -2,5 +2,14 @@
 
 package decode
 
-// SKIP AccessibleMaps_0x0840: struct PACKET_HC_NOTIFY_ACCESSIBLE_MAPNAME not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// AccessibleMaps_0x0840 decodes a 0x0840 packet (struct PACKET_HC_NOTIFY_ACCESSIBLE_MAPNAME).
+func AccessibleMaps_0x0840(data []byte, packetver uint32) events.AccessibleMaps {
+	var e events.AccessibleMaps
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Maps = data[4:]  // rAthena: maps (offset 4, size 0)
+	return e
+}
 

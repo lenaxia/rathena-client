@@ -3,4 +3,8 @@
 package events
 
 // ZcSpiritsAttribute is the event emitted for the zc_spirits_attribute action.
-type ZcSpiritsAttribute struct{}
+type ZcSpiritsAttribute struct {
+	Aid uint32
+	SpiritsType int16
+	Num int16
+}

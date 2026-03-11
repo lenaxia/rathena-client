@@ -556,18 +556,22 @@ The HLD audit blockers and majors were fixed. Struct layouts verified against GC
 
 Code generator built. Inputs: `packets_struct.hpp`, `packets.hpp` (with stubs), `common/packets.hpp` (with stubs), `clif_packetdb.hpp`, `clif_shuffle.hpp`, `clif_obfuscation.hpp`, and `semantics/mappings.yaml` via MCP. VersionTable has 481 structs (459 from rAthena + 22 SYNTH_*).
 
-### Phase 4 — Generated packages ✅ COMPLETE (worklogs 0009-0013)
+### Phase 4 — Generated packages ✅ COMPLETE (worklogs 0009-0013, 0036-0037)
 
 Codegen output:
-- `pkg/events/` — 417 event structs; PosDir/MoveData use `[3]byte`/`[6]byte` (CONCERN-2 resolved, worklog 0013)
-- `pkg/send/` — 163 send request structs
-- `pkg/decode/` — 442 decode functions (1 skipped intentionally: quest_update_mission_hunt); zero `make([]byte)` calls
-- `pkg/encode/` — 80 encode functions
+- `pkg/events/` — 281 event structs; PosDir/MoveData use `[3]byte`/`[6]byte` (CONCERN-2 resolved, worklog 0013)
+- `pkg/send/` — 165 send request structs
+- `pkg/decode/` — 281 decode functions (1 skipped intentionally: quest_update_mission_hunt); zero `make([]byte)` calls
+- `pkg/encode/` — 82 encode functions
 - `pkg/session/lengths_login.go` — 13 entries; CA_/AC_/CT_/TC_/SC_ packets; generated from GCC sizeof via common/packets.hpp
 - `pkg/session/lengths_char.go` — 37+ entries; CH_/HC_/SC_/PING packets; nested struct sizes resolved
-- `pkg/session/lengths_map.go` — full map server table
+- `pkg/session/lengths_map.go` — full map server table (4 codegen passes + post-merge dedup)
 - `pkg/session/shuffle_map.go` — `ShuffledCtoSID(packetver uint32, baseID uint16) uint16`
 - `pkg/session/obfuscation_keys.go` — `ObfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32)`
+
+Codegen audit complete (worklogs 0036-0037): all known gaps closed. 4 remaining SKIP stubs are all legitimate:
+- `PACKET_ZC_NOTIFY_MOVE` — inside a C comment block (unused alpha packet)
+- `PACKET_ZC_QUEST_DIALOG`, `PACKET_ZC_MONOLOG_DIALOG`, `PACKET_ZC_QUEST_DIALOG_MENU_LIST` — Zero-server only
 
 ### Phase 5 — pkg/session (hand-written parts) ✅ COMPLETE (worklog 0013)
 
@@ -642,6 +646,16 @@ g++ -E -P -DPACKETVER=YYYYMMDD -DPACKET_OBFUSCATION \
 Three passes per struct breakpoint (MAIN, RE, ZERO build flavors) to handle `PACKETVER_RE_NUM` and `PACKETVER_ZERO_NUM` variants.
 
 **Diffing adjacent outputs** produces a `VersionTable`: a map of struct name → list of (packetver_range, StructLayout) entries.
+
+`lengths_map.go` is generated from **four passes** merged via `mergeBreakpoints` (with post-merge deduplication):
+- **Part 1**: C→S lengths from `clif_packetdb.hpp`
+- **Part 2**: S→C fixed-size from `packets.hpp` `HEADER_*` constants
+- **Part 3**: S→C from SemanticDB + VersionTable join
+- **Part 4**: S→C from `enum packet_headers` in `packets_struct.hpp` (covers IDs invisible to HEADER_* parser)
+
+Part 4 uses `knownEnumPackets` table in `internal/codegen/main.go` which maps enum names
+(e.g. `skillscale`, `guildLeave`, `partymemberinfo`) to their struct names/variability.
+The table covers all 15 active enum-assigned packet IDs as of v0.2.2.
 
 ### Combination
 

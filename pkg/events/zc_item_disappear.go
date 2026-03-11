@@ -3,4 +3,6 @@
 package events
 
 // ZcItemDisappear is the event emitted for the zc_item_disappear action.
-type ZcItemDisappear struct{}
+type ZcItemDisappear struct {
+	ItemAid uint32
+}

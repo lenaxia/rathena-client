@@ -2,5 +2,15 @@
 
 package decode
 
-// SKIP BankingDeposit_0x09A8: struct PACKET_ZC_ACK_BANKING_DEPOSIT not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// BankingDeposit_0x09A8 decodes a 0x09A8 packet (struct PACKET_ZC_ACK_BANKING_DEPOSIT).
+func BankingDeposit_0x09A8(data []byte, packetver uint32) events.BankingDeposit {
+	var e events.BankingDeposit
+	_ = packetver
+	e.Reason = leI16(data, 2)  // rAthena: reason (offset 2, size 2)
+	e.Money = leI64(data, 4)  // rAthena: money (offset 4, size 8)
+	e.Zeny = leI32(data, 12)  // rAthena: zeny (offset 12, size 4)
+	return e
+}
 

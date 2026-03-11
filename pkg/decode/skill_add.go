@@ -7,9 +7,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // SkillAdd_0x0111 decodes a 0x0111 packet (struct PACKET_ZC_ADD_SKILL).
 func SkillAdd_0x0111(data []byte, packetver uint32) events.SkillAdd {
 	var e events.SkillAdd
-	if packetver >= 20220216 {
+	if packetver >= 20250402 {
 		e.Skill = data[2:]  // rAthena: skill (offset 2, size 37)
-	} else if packetver >= 20200902 {
+	} else if packetver >= 20200916 {
 		e.Skill = data[2:]  // rAthena: skill (offset 2, size 15)
 	} else {
 		e.Skill = data[2:]  // rAthena: skill (offset 2, size 37)

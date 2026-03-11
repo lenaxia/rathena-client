@@ -2,5 +2,13 @@
 
 package decode
 
-// SKIP ZcNotifyMapproperty2_0x01D6: struct PACKET_ZC_NOTIFY_MAPPROPERTY2 not found in VersionTable
+import "github.com/lenaxia/rathena-client/pkg/events"
+
+// ZcNotifyMapproperty2_0x01D6 decodes a 0x01D6 packet (struct PACKET_ZC_NOTIFY_MAPPROPERTY2).
+func ZcNotifyMapproperty2_0x01D6(data []byte, packetver uint32) events.ZcNotifyMapproperty2 {
+	var e events.ZcNotifyMapproperty2
+	_ = packetver
+	e.Type = leI16(data, 2)  // rAthena: type (offset 2, size 2)
+	return e
+}
 

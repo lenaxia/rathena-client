@@ -836,7 +836,7 @@ semantic_actions:
               packetver_min: 20030000
               packetver_max: 20181120
             - packet_id: "0x0A37"
-              struct_name: PACKET_ZC_ITEM_PICKUP_ACK_V7
+              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
               packetver_min: 20150226
     item_take:
         implementations:
