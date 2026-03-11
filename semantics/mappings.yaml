@@ -2608,6 +2608,18 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_COMMAND_MER
               field_mapping: {}
+    ignore_list_req:
+        name: ignore_list_req
+        description: Request own block/ignore list from the server
+        openkore_name: ignore_list_req
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00D3"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_REQ_IGNORE_LIST
+              field_mapping: {}
     insert_card:
         name: insert_card
         description: Insert a card into a piece of equipment
@@ -2890,6 +2902,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_CONTACTNPC
               field_mapping: {}
+    npc_market_close:
+        name: npc_market_close
+        description: Notify server that the NPC market window was closed
+        openkore_name: npc_market_close
+        canonical_params: []
+        implementations:
+            - packet_id: "0x09D8"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_NPC_MARKET_CLOSE
+              field_mapping: {}
     npc_menu_response:
         name: ""
         description: ""
@@ -2961,6 +2985,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CZ_INPUT_EDITDLGSTR
+              field_mapping: {}
+    npc_trade_quit:
+        name: npc_trade_quit
+        description: Notify server that the NPC buy-shop window was closed
+        openkore_name: npc_trade_quit
+        canonical_params: []
+        implementations:
+            - packet_id: "0x09D4"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_NPC_TRADE_QUIT
               field_mapping: {}
     party_change_option:
         name: party_change_option

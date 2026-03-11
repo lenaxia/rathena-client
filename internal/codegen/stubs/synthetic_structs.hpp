@@ -732,3 +732,31 @@ struct SYNTH_CZ_REQUEST_ACTNPC {
     uint32 homId;
     uint8  action;
 } __attribute__((packed));
+
+// ============================================================================
+// EPIC-04 follow-up: remaining uncovered CZ packets (v0.2.6)
+// ============================================================================
+
+// 0x00D3 CZ_REQ_IGNORE_LIST — Request own block/ignore list from server
+// parseable_packet(0x00d3, 2, clif_parse_PMIgnoreList, 0)
+// No payload — header only.
+// Layout: int16 PacketType = 2 bytes
+struct SYNTH_CZ_REQ_IGNORE_LIST {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x09D4 CZ_NPC_TRADE_QUIT — Notify server that NPC buy-shop was closed
+// parseable_packet(0x09D4, 2, clif_parse_NPCShopClosed, 0)
+// No payload — header only.
+// Layout: int16 PacketType = 2 bytes
+struct SYNTH_CZ_NPC_TRADE_QUIT {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x09D8 CZ_NPC_MARKET_CLOSE — Notify server that NPC market window was closed
+// parseable_packet(0x09D8, 2, clif_parse_NPCMarketClosed, 0)
+// No payload — header only.
+// Layout: int16 PacketType = 2 bytes
+struct SYNTH_CZ_NPC_MARKET_CLOSE {
+    int16 PacketType;
+} __attribute__((packed));
