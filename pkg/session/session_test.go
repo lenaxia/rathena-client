@@ -106,33 +106,73 @@ func TestMapSession_Feed_MultipleFramesInOneBurst(t *testing.T) {
 	}
 }
 
-// TestMapSession_Feed_UnknownPacket verifies that an unknown packet ID causes
-// ErrUnknownPacket and subsequent Feed calls are no-ops.
+// TestMapSession_Feed_UnknownPacket verifies that an unknown packet ID fires the
+// callback with full context, clears the buffer, and does not fault the session —
+// a known packet arriving in the next TCP read is still dispatched normally.
 func TestMapSession_Feed_UnknownPacket(t *testing.T) {
 	s := session.NewMapSession(20181002)
 
-	frame := makeFrame(0xFFFF, 4) // 0xFFFF is guaranteed not in lengths table
-	err := s.Feed(frame)
-	if err == nil {
-		t.Fatal("Feed returned nil, want ErrUnknownPacket")
-	}
-	var e session.ErrUnknownPacket
-	if !errors.As(err, &e) {
-		t.Fatalf("error is %T, want ErrUnknownPacket", err)
-	}
-	if e.ID != 0xFFFF {
-		t.Errorf("ErrUnknownPacket.ID = %#04x, want 0xFFFF", e.ID)
-	}
+	var events []session.UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(ev session.UnknownPacketEvent) {
+		events = append(events, ev)
+	})
 
-	// After fault, subsequent Feed calls must be no-ops (return nil, no dispatch).
+	// First Feed: known packet followed by unknown ID 0xFFFF followed by more bytes.
+	// The known packet should dispatch; the unknown should fire the callback and
+	// clear everything after it.
+	known := makeVarFrame(0x0069, 8)
+	unknown := makeFrame(0xFFFF, 2)
+	trailing := makeVarFrame(0x0069, 6) // these bytes get nuked with the buffer
+	burst := append(append(known, unknown...), trailing...)
+
 	called := 0
 	s.RegisterHandler(0x0069, func(data []byte, pv uint32) { called++ })
-	frame2 := makeVarFrame(0x0069, 8)
-	if err := s.Feed(frame2); err != nil {
-		t.Errorf("post-fault Feed returned %v, want nil", err)
+
+	if err := s.Feed(burst); err != nil {
+		t.Fatalf("Feed returned error %v, want nil", err)
 	}
-	if called != 0 {
-		t.Errorf("post-fault handler called %d times, want 0", called)
+	if called != 1 {
+		t.Errorf("known handler called %d times before unknown, want 1", called)
+	}
+	if len(events) != 1 {
+		t.Fatalf("callback fired %d times, want 1", len(events))
+	}
+
+	ev := events[0]
+	if ev.ID != 0xFFFF {
+		t.Errorf("event.ID = %#04x, want 0xFFFF", ev.ID)
+	}
+	if ev.Packetver != 20181002 {
+		t.Errorf("event.Packetver = %d, want 20181002", ev.Packetver)
+	}
+	if ev.Time.IsZero() {
+		t.Error("event.Time is zero")
+	}
+	// RecentPackets must contain the one known packet dispatched before the unknown.
+	if len(ev.RecentPackets) != 1 {
+		t.Fatalf("event.RecentPackets len %d, want 1", len(ev.RecentPackets))
+	}
+	if ev.RecentPackets[0].ID != 0x0069 {
+		t.Errorf("RecentPackets[0].ID = %#04x, want 0x0069", ev.RecentPackets[0].ID)
+	}
+	if len(ev.RecentPackets[0].Frame) != 8 {
+		t.Errorf("RecentPackets[0].Frame len = %d, want 8", len(ev.RecentPackets[0].Frame))
+	}
+	// RawBuffer must start with the unknown packet ID bytes and include the trailing bytes.
+	if len(ev.RawBuffer) < 2 {
+		t.Fatalf("event.RawBuffer len %d, want >= 2", len(ev.RawBuffer))
+	}
+	if ev.RawBuffer[0] != 0xFF || ev.RawBuffer[1] != 0xFF {
+		t.Errorf("event.RawBuffer[0:2] = %02x %02x, want ff ff", ev.RawBuffer[0], ev.RawBuffer[1])
+	}
+
+	// Second Feed: session is not faulted — known packet dispatches normally.
+	called = 0
+	if err := s.Feed(makeVarFrame(0x0069, 8)); err != nil {
+		t.Fatalf("post-unknown Feed returned error: %v", err)
+	}
+	if called != 1 {
+		t.Errorf("post-unknown known handler called %d times, want 1", called)
 	}
 }
 
@@ -473,5 +513,209 @@ func TestMapSession_Feed_ZeroAlloc(t *testing.T) {
 	})
 	if allocs != 0 {
 		t.Errorf("Feed allocates %.0f heap objects per call in steady state, want 0", allocs)
+	}
+}
+
+// TestMapSession_Feed_UnknownPacket_NoCallback verifies that unknown packet IDs
+// are silently cleared when no callback is registered — no panic, no fault.
+func TestMapSession_Feed_UnknownPacket_NoCallback(t *testing.T) {
+	s := session.NewMapSession(20181002)
+
+	called := 0
+	s.RegisterHandler(0x0069, func(data []byte, pv uint32) { called++ })
+
+	// Unknown packet with no callback registered — must not panic or fault.
+	if err := s.Feed(makeFrame(0xFFFF, 2)); err != nil {
+		t.Fatalf("Feed returned error %v, want nil", err)
+	}
+
+	// Session still alive — next TCP read dispatches normally.
+	if err := s.Feed(makeVarFrame(0x0069, 8)); err != nil {
+		t.Fatalf("post-unknown Feed returned error: %v", err)
+	}
+	if called != 1 {
+		t.Errorf("known handler called %d times, want 1", called)
+	}
+}
+
+// TestMapSession_Feed_UnknownPacket_RecentPackets_Empty verifies that
+// RecentPackets is nil/empty when no packet has been dispatched before the
+// unknown ID.
+func TestMapSession_Feed_UnknownPacket_RecentPackets_Empty(t *testing.T) {
+	s := session.NewMapSession(20181002)
+
+	var ev session.UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+
+	if err := s.Feed(makeFrame(0xFFFF, 2)); err != nil {
+		t.Fatalf("Feed error: %v", err)
+	}
+	if len(ev.RecentPackets) != 0 {
+		t.Errorf("RecentPackets len = %d, want 0 (no prior dispatch)", len(ev.RecentPackets))
+	}
+}
+
+// TestMapSession_Feed_UnknownPacket_RawBuffer_IsCopy verifies that RawBuffer in
+// the event is a heap copy independent of the session buffer — retaining it after
+// the callback returns is safe.
+func TestMapSession_Feed_UnknownPacket_RawBuffer_IsCopy(t *testing.T) {
+	s := session.NewMapSession(20181002)
+
+	var retained []byte
+	s.SetUnknownPacketHandler(func(ev session.UnknownPacketEvent) {
+		retained = ev.RawBuffer // retain beyond callback
+	})
+
+	unknown := makeFrame(0xFFFF, 2)
+	unknown = append(unknown, 0xAA, 0xBB, 0xCC) // trailing bytes
+	if err := s.Feed(unknown); err != nil {
+		t.Fatalf("Feed error: %v", err)
+	}
+
+	// Feed again with different bytes — if RawBuffer were an alias into the
+	// session buffer, this would overwrite it.
+	_ = s.Feed(makeVarFrame(0x0069, 8))
+
+	if len(retained) < 2 || retained[0] != 0xFF || retained[1] != 0xFF {
+		t.Errorf("retained RawBuffer corrupted after subsequent Feed: %x", retained)
+	}
+}
+
+// TestRecentRing_ChronologicalOrder verifies that RecentPackets are returned
+// oldest-first when fewer than depth packets have been dispatched.
+func TestRecentRing_ChronologicalOrder(t *testing.T) {
+	s := session.NewMapSession(20181002)
+
+	// Register handlers for three known packet IDs.
+	for _, id := range []uint16{0x0069, 0x006B, 0x006D} {
+		id := id
+		s.RegisterHandler(id, func(data []byte, pv uint32) {})
+		s.SetLength(id, -1)
+	}
+
+	var ev session.UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+
+	// Dispatch three packets then trigger unknown.
+	burst := append(makeVarFrame(0x0069, 8), makeVarFrame(0x006B, 10)...)
+	burst = append(burst, makeVarFrame(0x006D, 12)...)
+	burst = append(burst, makeFrame(0xFFFF, 2)...)
+	if err := s.Feed(burst); err != nil {
+		t.Fatalf("Feed error: %v", err)
+	}
+
+	want := []uint16{0x0069, 0x006B, 0x006D}
+	if len(ev.RecentPackets) != len(want) {
+		t.Fatalf("RecentPackets len = %d, want %d", len(ev.RecentPackets), len(want))
+	}
+	for i, wantID := range want {
+		if ev.RecentPackets[i].ID != wantID {
+			t.Errorf("RecentPackets[%d].ID = %#04x, want %#04x", i, ev.RecentPackets[i].ID, wantID)
+		}
+	}
+}
+
+// TestRecentRing_WrapEvictsOldest verifies that once more than depth packets
+// have been dispatched, the ring wraps and only the most recent depth packets
+// appear in the event, still in chronological order.
+func TestRecentRing_WrapEvictsOldest(t *testing.T) {
+	s := session.NewMapSession(20181002)
+
+	for _, id := range []uint16{0x0069, 0x006B, 0x006D, 0x0071} {
+		id := id
+		s.RegisterHandler(id, func(data []byte, pv uint32) {})
+		s.SetLength(id, -1)
+	}
+
+	var ev session.UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+
+	// Dispatch 4 packets (> depth of 3), then unknown.
+	// Expected recent: 0x006B, 0x006D, 0x0071 (0x0069 evicted).
+	burst := makeVarFrame(0x0069, 8)
+	burst = append(burst, makeVarFrame(0x006B, 8)...)
+	burst = append(burst, makeVarFrame(0x006D, 8)...)
+	burst = append(burst, makeVarFrame(0x0071, 8)...)
+	burst = append(burst, makeFrame(0xFFFF, 2)...)
+	if err := s.Feed(burst); err != nil {
+		t.Fatalf("Feed error: %v", err)
+	}
+
+	want := []uint16{0x006B, 0x006D, 0x0071}
+	if len(ev.RecentPackets) != len(want) {
+		t.Fatalf("RecentPackets len = %d, want %d", len(ev.RecentPackets), len(want))
+	}
+	for i, wantID := range want {
+		if ev.RecentPackets[i].ID != wantID {
+			t.Errorf("RecentPackets[%d].ID = %#04x, want %#04x", i, ev.RecentPackets[i].ID, wantID)
+		}
+	}
+}
+
+// TestRecentRing_FrameBytes verifies that RecentPackets[i].Frame contains
+// the correct frame bytes and FrameTotal reflects the true length.
+func TestRecentRing_FrameBytes(t *testing.T) {
+	s := session.NewMapSession(20181002)
+	s.SetLength(0x0069, -1)
+	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {})
+
+	var ev session.UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+
+	frame := makeVarFrame(0x0069, 16)
+	// Put a recognisable pattern in the payload.
+	for i := 4; i < 16; i++ {
+		frame[i] = byte(i)
+	}
+	burst := append(frame, makeFrame(0xFFFF, 2)...)
+	if err := s.Feed(burst); err != nil {
+		t.Fatalf("Feed error: %v", err)
+	}
+
+	if len(ev.RecentPackets) != 1 {
+		t.Fatalf("RecentPackets len = %d, want 1", len(ev.RecentPackets))
+	}
+	p := ev.RecentPackets[0]
+	if p.FrameTotal != 16 {
+		t.Errorf("FrameTotal = %d, want 16", p.FrameTotal)
+	}
+	if p.Truncated {
+		t.Error("Truncated = true, want false for a 16-byte frame")
+	}
+	if len(p.Frame) != 16 {
+		t.Errorf("Frame len = %d, want 16", len(p.Frame))
+	}
+	for i := 4; i < 16; i++ {
+		if p.Frame[i] != byte(i) {
+			t.Errorf("Frame[%d] = %#02x, want %#02x", i, p.Frame[i], byte(i))
+		}
+	}
+}
+
+// TestRecentRing_FrameIsCopy verifies that mutating the session buffer after
+// the callback does not corrupt the frame bytes stored in RecentPackets.
+func TestRecentRing_FrameIsCopy(t *testing.T) {
+	s := session.NewMapSession(20181002)
+	s.SetLength(0x0069, -1)
+	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {})
+
+	var retained session.UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { retained = e })
+
+	frame := makeVarFrame(0x0069, 8)
+	frame[4] = 0xAB
+	burst := append(frame, makeFrame(0xFFFF, 2)...)
+	if err := s.Feed(burst); err != nil {
+		t.Fatalf("Feed error: %v", err)
+	}
+
+	// Feed new data — session buffer is overwritten.
+	_ = s.Feed(makeVarFrame(0x0069, 8))
+
+	if len(retained.RecentPackets) == 0 {
+		t.Fatal("RecentPackets empty")
+	}
+	if retained.RecentPackets[0].Frame[4] != 0xAB {
+		t.Errorf("Frame[4] = %#02x after buffer overwrite, want 0xAB — frame bytes were not copied", retained.RecentPackets[0].Frame[4])
 	}
 }

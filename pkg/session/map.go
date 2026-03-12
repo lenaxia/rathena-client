@@ -43,6 +43,13 @@ func (s *MapSession) SetLength(id uint16, length int16) {
 	s.core.lengths[id] = length
 }
 
+// SetUnknownPacketHandler registers fn as the callback invoked when Feed()
+// encounters a packet ID not in the length table. The entire receive buffer is
+// cleared after the callback returns. Pass nil to clear.
+func (s *MapSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
+	s.core.setUnknownPacketHandler(fn)
+}
+
 // EnableObfuscation activates C→S packet ID obfuscation for this session.
 // Must be called before the first Encode call.
 // key0, key1, key2 are clif_cryptKey[0], clif_cryptKey[1], clif_cryptKey[2] from

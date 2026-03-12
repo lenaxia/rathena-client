@@ -15,6 +15,7 @@ package session
 import (
 	"encoding/binary"
 	"fmt"
+	"time"
 )
 
 // HandlerFunc is a callback invoked synchronously by Feed() for each decoded frame.
@@ -28,31 +29,138 @@ import (
 //	name = decode.CopyString(event.Name)
 type HandlerFunc func(data []byte, packetver uint32)
 
-// ErrUnknownPacket is returned by Feed() when an unrecognised packet ID is
-// encountered. The TCP stream is now irrecoverably desynced; the caller must
-// close the connection.
+// recentPacketDepth is the number of preceding dispatched packets captured in
+// the ring buffer and included in UnknownPacketEvent.RecentPackets.
+const recentPacketDepth = 3
+
+// DispatchedPacket is a record of a single successfully dispatched packet,
+// stored in the session's recent-packet ring buffer for diagnostic purposes.
 //
-// After ErrUnknownPacket is returned once, the session is marked faulted and
-// all subsequent Feed() calls are silent no-ops returning nil. This is
-// intentional: the caller should close the connection immediately on the first
-// ErrUnknownPacket and not call Feed() again. Subsequent nil returns prevent
-// error spam during connection teardown.
+// If the frame exceeded recentMaxFrameBytes, Frame contains a truncated prefix
+// and Truncated is true; FrameTotal gives the actual frame length.
+type DispatchedPacket struct {
+	ID         uint16 // packet ID
+	Frame      []byte // heap-allocated copy of the frame bytes (may be truncated)
+	FrameTotal int    // actual frame length in bytes
+	Truncated  bool   // true if Frame is a truncated prefix of the full frame
+}
+
+// UnknownPacketEvent carries full diagnostic context for an unknown packet ID.
+// It is passed to the UnknownPacketFunc callback. The library performs no I/O —
+// the caller (goKore bot manager) is responsible for all observability.
+//
+// RecentPackets contains the last up to 3 successfully dispatched packets before
+// the unknown ID was encountered, in chronological order (oldest first). Each
+// entry holds a heap-allocated copy of the complete frame bytes so the bot
+// manager can fully decode them offline.
+//
+// RawBuffer is a heap-allocated snapshot of the full receive buffer starting at
+// the unknown packet ID — the 2-byte unknown ID followed by all bytes that
+// trailed it in the current TCP read. The session's receive buffer is cleared
+// after the callback returns, so RawBuffer is the only record of those bytes.
+type UnknownPacketEvent struct {
+	ID            uint16             // the unrecognised packet ID
+	Packetver     uint32             // PACKETVER this session was constructed with
+	Time          time.Time          // wall time at the moment of detection
+	RecentPackets []DispatchedPacket // last ≤3 dispatched packets, oldest first
+	RawBuffer     []byte             // snapshot copy of recvBuf from the unknown ID onward
+}
+
+// UnknownPacketFunc is a callback invoked synchronously by Feed() when a packet
+// ID is not found in the length table.
+//
+// Since the frame length is unknown, the entire receive buffer is cleared after
+// the callback returns — all bytes following the unknown ID in the current TCP
+// read are discarded. The next call to Feed() starts with a clean buffer and may
+// resume normal framing if the server sends a known packet ID.
+//
+// The event is fully self-contained and heap-allocated — the caller may retain
+// it for as long as needed. The library performs no I/O of any kind.
+//
+// If nil, unknown packets are silently cleared.
+type UnknownPacketFunc func(event UnknownPacketEvent)
+
+// ErrUnknownPacket is returned by Feed() when a variable-length packet carries an
+// embedded length value less than 4 (the minimum valid frame size). This indicates
+// genuine stream corruption; the caller must close the connection.
+//
+// After ErrUnknownPacket is returned once, the session is marked faulted and all
+// subsequent Feed() calls are silent no-ops returning nil.
 type ErrUnknownPacket struct {
 	ID uint16
 }
 
 func (e ErrUnknownPacket) Error() string {
-	return fmt.Sprintf("session: unknown packet ID %#04x — stream desynced", e.ID)
+	return fmt.Sprintf("session: packet ID %#04x has corrupt embedded length — stream desynced", e.ID)
+}
+
+// recentMaxFrameBytes is the maximum number of frame bytes stored per ring slot.
+// Frames larger than this are stored truncated (the ID is always preserved).
+// 4096 bytes covers all common game packets; at 3 slots per session this is
+// 12 KB of fixed overhead per MapSession.
+const recentMaxFrameBytes = 4096
+
+// recentRing is a fixed-depth ring buffer of the last recentPacketDepth
+// dispatched packets. All storage is inline — push() never allocates.
+// snapshot() allocates only when an UnknownPacketEvent is being built, which
+// is the exceptional path and therefore allocation is acceptable.
+type recentRing struct {
+	slots [recentPacketDepth]recentSlot
+	head  int // index of the next slot to write
+	count int // number of valid entries (saturates at recentPacketDepth)
+}
+
+// recentSlot is a single pre-allocated ring slot.
+type recentSlot struct {
+	id         uint16
+	buf        [recentMaxFrameBytes]byte
+	frameN     int // number of valid bytes in buf (may be < actual frame length if truncated)
+	frameTotal int // actual frame length (may be > recentMaxFrameBytes)
+}
+
+// push records a dispatched packet. Copies up to recentMaxFrameBytes of the
+// frame. Never allocates.
+func (r *recentRing) push(id uint16, frame []byte) {
+	s := &r.slots[r.head]
+	s.id = id
+	s.frameTotal = len(frame)
+	s.frameN = copy(s.buf[:], frame) // copy returns min(len(frame), recentMaxFrameBytes)
+	r.head = (r.head + 1) % recentPacketDepth
+	if r.count < recentPacketDepth {
+		r.count++
+	}
+}
+
+// snapshot returns heap-allocated copies of the ring contents in chronological
+// order (oldest first). Called only on the exceptional unknown-packet path.
+func (r *recentRing) snapshot() []DispatchedPacket {
+	if r.count == 0 {
+		return nil
+	}
+	out := make([]DispatchedPacket, r.count)
+	start := (r.head - r.count + recentPacketDepth) % recentPacketDepth
+	for i := 0; i < r.count; i++ {
+		s := &r.slots[(start+i)%recentPacketDepth]
+		out[i] = DispatchedPacket{
+			ID:         s.id,
+			Frame:      append([]byte(nil), s.buf[:s.frameN]...),
+			FrameTotal: s.frameTotal,
+			Truncated:  s.frameN < s.frameTotal,
+		}
+	}
+	return out
 }
 
 // sessionCore is the internal framing engine shared by all three session types.
 type sessionCore struct {
-	packetver uint32
-	buf       []byte       // full backing array; owned exclusively by sessionCore
-	recvBuf   []byte       // active sub-slice of buf; advances as frames are consumed
-	lengths   [65536]int16 // packet length table: 0 = unknown, -1 = variable (bytes[2:4])
-	handlers  [65536]HandlerFunc
-	faulted   bool
+	packetver       uint32
+	buf             []byte       // full backing array; owned exclusively by sessionCore
+	recvBuf         []byte       // active sub-slice of buf; advances as frames are consumed
+	lengths         [65536]int16 // packet length table: 0 = unknown, -1 = variable (bytes[2:4])
+	handlers        [65536]HandlerFunc
+	onUnknownPacket UnknownPacketFunc
+	recent          recentRing // ring buffer of last recentPacketDepth dispatched packets
+	faulted         bool
 }
 
 // feed implements the core framing and dispatch loop.
@@ -63,10 +171,11 @@ type sessionCore struct {
 //     a. Read packetID = leU16(recvBuf[0:2]).
 //     b. Look up frameLen in lengths[packetID].
 //     If -1: read frameLen from recvBuf[2:4] (variable-length packet).
-//     If 0:  unknown packet; set faulted = true; return ErrUnknownPacket.
+//     If -1 and embedded length < 4: stream corrupt; fault and return ErrUnknownPacket.
+//     If 0:  unknown packet ID; emit UnknownPacketEvent, clear buffer, stop.
 //     c. If len(recvBuf) < frameLen: incomplete frame; break.
 //     d. Dispatch: call handlers[packetID](recvBuf[:frameLen], packetver).
-//     e. Advance: recvBuf = recvBuf[frameLen:].
+//     e. Advance: recvBuf = recvBuf[frameLen:]; push frame into recent ring.
 //  3. Copy unconsumed bytes to front of buf to prevent unbounded backing-array growth.
 func (c *sessionCore) feed(data []byte) error {
 	if c.faulted {
@@ -94,9 +203,23 @@ func (c *sessionCore) feed(data []byte) error {
 				return ErrUnknownPacket{ID: packetID}
 			}
 		case frameLen == 0:
-			// Unknown packet: stream is desynced.
-			c.faulted = true
-			return ErrUnknownPacket{ID: packetID}
+			// Packet ID not in length table. Since the frame length is unknown we
+			// cannot safely advance past it — any following byte could be payload.
+			// Emit a fully-populated event with the recent-packet history and a
+			// raw buffer snapshot, then clear the buffer. The next TCP read starts
+			// clean and may recover if the server sends a known packet ID.
+			// Matches OpenKore MessageTokenizer behavior.
+			if c.onUnknownPacket != nil {
+				c.onUnknownPacket(UnknownPacketEvent{
+					ID:            packetID,
+					Packetver:     c.packetver,
+					Time:          time.Now(),
+					RecentPackets: c.recent.snapshot(),
+					RawBuffer:     append([]byte(nil), c.recvBuf...),
+				})
+			}
+			c.recvBuf = c.recvBuf[:0]
+			goto done
 		}
 
 		// Step 2c: wait for a complete frame.
@@ -109,7 +232,8 @@ func (c *sessionCore) feed(data []byte) error {
 			fn(c.recvBuf[:frameLen], c.packetver)
 		}
 
-		// Step 2e: advance.
+		// Step 2e: advance and push the frame into the recent-packet ring.
+		c.recent.push(packetID, c.recvBuf[:frameLen])
 		c.recvBuf = c.recvBuf[frameLen:]
 	}
 
@@ -124,4 +248,10 @@ done:
 // A second call with the same ID overwrites the previous registration.
 func (c *sessionCore) registerHandler(id uint16, fn HandlerFunc) {
 	c.handlers[id] = fn
+}
+
+// setUnknownPacketHandler registers fn as the callback for packet IDs not found
+// in the length table. Pass nil to clear a previously registered callback.
+func (c *sessionCore) setUnknownPacketHandler(fn UnknownPacketFunc) {
+	c.onUnknownPacket = fn
 }

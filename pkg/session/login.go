@@ -33,6 +33,13 @@ func (s *LoginSession) SetLength(id uint16, length int16) {
 	s.core.lengths[id] = length
 }
 
+// SetUnknownPacketHandler registers fn as the callback invoked when Feed()
+// encounters a packet ID not in the length table. The entire receive buffer is
+// cleared after the callback returns. Pass nil to clear.
+func (s *LoginSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
+	s.core.setUnknownPacketHandler(fn)
+}
+
 // RegisterHandler registers fn as the callback for the given packet ID.
 // Overwrites any existing handler for that ID.
 func (s *LoginSession) RegisterHandler(id uint16, fn HandlerFunc) {

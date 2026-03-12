@@ -1428,10 +1428,11 @@ func TestCharPhase_EchoFix_Regression(t *testing.T) {
 
 // TestMapPhase_UnknownPacketBeforeReady_Regression proves that if the map
 // server sends a packet with an unregistered length before ZC_ACCEPT_ENTER,
-// runMapPhase() returns an ErrUnknownPacket error and OnReady is never called.
-// This validates that the SetLength calls in runMapPhase() are load-bearing:
-// any packet arriving in the map burst that is missing from the SetLength block
-// will permanently fault the session and block OnReady.
+// Connect() returns an error and OnReady is never called.
+//
+// Under the clear-buffer model, the 0xDEAD packet causes the entire buffer to be
+// cleared. ZC_ACCEPT_ENTER was sent in the same TCP write so it is lost with the
+// buffer. The map phase never receives ZC_ACCEPT_ENTER and times out.
 func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
 	const pv = uint32(20180307)
 	const aid = uint32(2000001)
@@ -1458,24 +1459,17 @@ func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
 		mustDrain(t, conn, 3) // 0x0066
 		mustWrite(t, conn, buildHCNotifyZonesvrPost(charID, mapIP, mapPort))
 	}
-	// mapScript sends ZC_AID (registered), then a packet with ID 0xDEAD which is
-	// deliberately not registered in runMapPhase's SetLength block, then
-	// ZC_ACCEPT_ENTER. The unregistered 0xDEAD must cause Connect() to return
-	// ErrUnknownPacket before OnReady fires.
-	// After the FSM disconnects, writes may fail — those errors are expected and ignored.
+	// mapScript sends ZC_AID (registered), then 0xDEAD (not registered) and
+	// ZC_ACCEPT_ENTER in the same write. The buffer is cleared on 0xDEAD so
+	// ZC_ACCEPT_ENTER is lost; the map phase times out waiting for it.
 	mapScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 19) // CZ_ENTER
 		_ = conn.SetDeadline(time.Now().Add(2 * time.Second))
-		// ZC_AID (0x0283) — registered in runMapPhase
 		_, _ = conn.Write(buildZCAID(aid))
-		// Inject a fixed-length packet with ID 0xDEAD (definitely not registered).
-		// 6-byte packet: 2-byte ID + 4 bytes payload.
 		unknown := make([]byte, 6)
 		unknown[0] = 0xAD
-		unknown[1] = 0xDE // 0xDEAD in little-endian
-		_, _ = conn.Write(unknown)
-		// ZC_ACCEPT_ENTER arrives after — but session is already faulted.
-		_, _ = conn.Write(buildZCAcceptEnter(pv))
+		unknown[1] = 0xDE // 0xDEAD little-endian
+		_, _ = conn.Write(append(unknown, buildZCAcceptEnter(pv)...))
 	}
 
 	server := ServerConfig{
@@ -1497,9 +1491,6 @@ func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
 		t.Fatal("expected error when map server sends unregistered packet ID before ZC_ACCEPT_ENTER, got nil")
 	}
 	if readyCalled {
-		t.Fatal("OnReady must not fire when session faults before ZC_ACCEPT_ENTER")
-	}
-	if !strings.Contains(err.Error(), "unknown packet") {
-		t.Errorf("expected 'unknown packet' in error, got: %v", err)
+		t.Fatal("OnReady must not fire when map phase cannot complete")
 	}
 }
