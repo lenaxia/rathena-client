@@ -4,4 +4,5 @@ package send
 
 // CaConnectInfoChanged is the request struct for the ca_connect_info_changed action.
 type CaConnectInfoChanged struct {
+	Name string
 }

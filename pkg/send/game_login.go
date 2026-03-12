@@ -4,4 +4,9 @@ package send
 
 // GameLogin is the request struct for the game_login action.
 type GameLogin struct {
+	AID uint32
+	AuthCode uint32
+	Login_id2 uint32
+	Clienttype uint16
+	Sex uint8
 }

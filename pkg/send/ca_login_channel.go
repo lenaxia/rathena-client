@@ -4,4 +4,11 @@ package send
 
 // CaLoginChannel is the request struct for the ca_login_channel action.
 type CaLoginChannel struct {
+	Version uint32
+	Username string
+	Password string
+	Clienttype uint8
+	Ip string
+	Mac string
+	Is_gravity uint8
 }

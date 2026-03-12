@@ -4,4 +4,6 @@ package send
 
 // PinCodeResponse is the request struct for the pin_code_response action.
 type PinCodeResponse struct {
+	AID uint32
+	Pin string
 }

@@ -19,7 +19,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lenaxia/rathena-client/pkg/encode"
 	"github.com/lenaxia/rathena-client/pkg/packing"
+	"github.com/lenaxia/rathena-client/pkg/send"
 	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
@@ -251,8 +253,13 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 	}
 	defer conn.Close()
 
-	pkt := buildLoginPacket(f.server.Packetver, f.creds.Username, f.creds.Password)
-	if err := writeDeadline(conn, pkt, f.stepTimeout()); err != nil {
+	pkt := encode.EncodeMasterLogin(send.MasterLogin{
+		Version:    f.server.Packetver,
+		Username:   f.creds.Username,
+		Password:   f.creds.Password,
+		Clienttype: 0x00,
+	}, f.server.Packetver)
+	if err := writeDeadline(conn, pkt[:], f.stepTimeout()); err != nil {
 		return nil, 0, fmt.Errorf("fsm: send login: %w", err)
 	}
 
@@ -359,8 +366,14 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	defer conn.Close()
 
 	// Send 0x0065 CH_ENTER: accountID + sessionID1 + sessionID2 + clienttype + sex
-	enterPkt := buildCharEnterPacket(f.accountID, f.sessionID1, f.sessionID2, f.sex)
-	if err := writeDeadline(conn, enterPkt, f.stepTimeout()); err != nil {
+	enterPkt := encode.EncodeGameLogin(send.GameLogin{
+		AID:        f.accountID,
+		AuthCode:   f.sessionID1,
+		Login_id2:  f.sessionID2,
+		Clienttype: 0,
+		Sex:        f.sex,
+	}, f.server.Packetver)
+	if err := writeDeadline(conn, enterPkt[:], f.stepTimeout()); err != nil {
 		return "", fmt.Errorf("fsm: send char enter: %w", err)
 	}
 
@@ -514,8 +527,8 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		// struct: int16 packetType only (size=2)
 		// Source: common/packets.hpp PACKET_CH_CHARLIST_REQ, size=2
 		for i := uint32(0); i < total; i++ {
-			pkt := buildCharlistReq()
-			if err := writeDeadline(conn, pkt, f.stepTimeout()); err != nil {
+			pkt := encode.EncodeRequestCharacterPage(send.RequestCharacterPage{}, f.server.Packetver)
+			if err := writeDeadline(conn, pkt[:], f.stepTimeout()); err != nil {
 				writeErr = err
 				return
 			}
@@ -546,8 +559,8 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		}
 		if res.gotCharList && !slotSent {
 			// Send 0x0066 CH_SELECT_CHAR
-			selPkt := buildSelectCharPacket(res.selectedSlot)
-			if err := writeDeadline(conn, selPkt, f.stepTimeout()); err != nil {
+			selPkt := encode.EncodeCharLogin(send.CharLogin{Slot: res.selectedSlot}, f.server.Packetver)
+			if err := writeDeadline(conn, selPkt[:], f.stepTimeout()); err != nil {
 				return "", fmt.Errorf("fsm: send select char: %w", err)
 			}
 			slotSent = true
@@ -619,7 +632,14 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	// Send 0x0436 CZ_ENTER
 	// struct: int16 + uint32 AID + uint32 CID + uint32 login_id1 + uint32 clientTick + uint8 sex
 	// Source: clif.cpp:10641 CZ_ENTER2
-	enterPkt := buildMapEnterPacket(f.accountID, f.charID, f.sessionID1, f.sex)
+	enterArr := encode.EncodeMapLogin(send.MapLogin{
+		AID:        f.accountID,
+		GID:        f.charID,
+		AuthCode:   int32(f.sessionID1),
+		ClientTime: 0,
+		Sex:        f.sex,
+	}, f.server.Packetver)
+	enterPkt := enterArr[:]
 	encodePacketID(mapSess, enterPkt)
 	if err := writeDeadline(conn, enterPkt, f.stepTimeout()); err != nil {
 		return fmt.Errorf("fsm: send map enter: %w", err)
@@ -678,7 +698,8 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		}
 		// Send 0x007D CZ_NOTIFY_ACTORINIT (map loaded confirmation)
 		// struct: int16 only = 2 bytes; Source: clif.cpp:10742
-		loadedPkt := buildMapLoadedPacket()
+		loadedArr := encode.EncodeMapLoaded(send.MapLoaded{}, f.server.Packetver)
+		loadedPkt := loadedArr[:]
 		encodePacketID(mapSess, loadedPkt)
 		if err := writeDeadline(conn, loadedPkt, f.stepTimeout()); err != nil {
 			res.err = fmt.Errorf("fsm: send map loaded: %w", err)
@@ -688,7 +709,8 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 
 		// Send 0x007E or 0x0360 CZ_REQUEST_TIME (tick sync)
 		// struct: int16 + uint32 clientTick = 6 bytes; Source: clif.cpp:11196-11197
-		_, tickPkt := buildTickSyncPacket(f.server.Packetver)
+		tickArr := encode.EncodeTimeSyncResponse(send.TimeSyncResponse{ClientTime: 0}, f.server.Packetver)
+		tickPkt := tickArr[:]
 		encodePacketID(mapSess, tickPkt)
 		if err := writeDeadline(conn, tickPkt, f.stepTimeout()); err != nil {
 			res.err = fmt.Errorf("fsm: send tick sync: %w", err)

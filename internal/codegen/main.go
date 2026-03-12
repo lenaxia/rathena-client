@@ -223,7 +223,13 @@ func injectCommonPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable
 	}
 
 	// Collect all struct names matching target prefixes across all snapshots.
-	commonPrefixes := []string{"PACKET_AC_", "PACKET_HC_", "PACKET_SC_", "PACKET_TC_", "PACKET_CT_"}
+	// PACKET_CA_ = Client→Auth (login server C→S, e.g. CA_LOGIN, CA_LOGIN2)
+	// PACKET_AC_ = Auth→Client (login server S→C)
+	// PACKET_CH_ = Client→Char (char server C→S, e.g. CH_SELECT_CHAR, CH_CHARLIST_REQ)
+	// PACKET_HC_ = Char→Client (char server S→C)
+	// PACKET_SC_ = shared disconnect notification (login + char + map servers)
+	// PACKET_TC_ / PACKET_CT_ = OTP/token auth packets
+	commonPrefixes := []string{"PACKET_CA_", "PACKET_AC_", "PACKET_CH_", "PACKET_HC_", "PACKET_SC_", "PACKET_TC_", "PACKET_CT_"}
 	structNames := make(map[string]bool)
 	for _, snap := range snapshots {
 		for name := range snap.db {

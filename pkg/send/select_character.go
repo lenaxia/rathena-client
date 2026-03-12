@@ -4,4 +4,5 @@ package send
 
 // SelectCharacter is the request struct for the select_character action.
 type SelectCharacter struct {
+	Slot uint8
 }

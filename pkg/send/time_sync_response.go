@@ -4,4 +4,5 @@ package send
 
 // TimeSyncResponse is the request struct for the time_sync_response action.
 type TimeSyncResponse struct {
+	ClientTime uint32
 }

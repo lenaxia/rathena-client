@@ -166,25 +166,25 @@ func TestLiveServer_FullAuthSequence(t *testing.T) {
 
 	r.mapSess.RegisterHandler(0x09FF, func(data []byte, pv uint32) {
 		e := decode.ActorExists_0x09FF(data, pv)
-		if e.ID != 0 {
+		if e.GID != 0 {
 			gotActorExists = true
 		}
 	})
 	r.mapSess.RegisterHandler(0x0078, func(data []byte, pv uint32) {
 		e := decode.ActorExists_0x0078(data, pv)
-		if e.ID != 0 {
+		if e.GID != 0 {
 			gotActorExists = true
 		}
 	})
 	r.mapSess.RegisterHandler(0x00B0, func(data []byte, pv uint32) {
 		e := decode.StatUpdate_0x00B0(data, pv)
-		if e.StatType != 0 || e.Value != 0 {
+		if e.VarID != 0 || e.Count != 0 {
 			gotStatUpdate = true
 		}
 	})
 	r.mapSess.RegisterHandler(0x00B1, func(data []byte, pv uint32) {
 		e := decode.StatUpdate_0x00B1(data, pv)
-		if e.StatType != 0 || e.Value != 0 {
+		if e.VarID != 0 || e.Count != 0 {
 			gotStatUpdate = true
 		}
 	})

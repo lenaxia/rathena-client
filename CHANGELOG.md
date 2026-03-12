@@ -5,6 +5,68 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.3.0] — 2026-03-12
+
+### Added
+
+- **`pkg/encode`** — 22 new generated encode functions covering all FSM C→S
+  packets and additional auth variants: `EncodeMasterLogin`, `EncodeGameLogin`,
+  `EncodeCharLogin`, `EncodeRequestCharacterPage`, `EncodeMapLogin`,
+  `EncodeMapLoaded`, `EncodeTimeSyncResponse` (packetver-dispatched
+  `0x007E`/`0x0360`), plus `EncodeCA*`, `EncodeCharCreate`, `EncodeCharDelete`,
+  `EncodePinCodeResponse`, `EncodeSelectAccessibleMap`, `EncodeSelectCharacter`.
+
+- **`pkg/send`** — corresponding request structs populated with all fields for
+  the 22 new encode functions.
+
+### Fixed
+
+- **`internal/codegen/gen/encode.go`** — `map_loaded`, `time_sync_response`, and
+  `game_login` were incorrectly listed in `fsmOwnedActions` and suppressed from
+  codegen; all three removed.
+
+- **`internal/codegen/main.go`** — `injectCommonPacketStructs` excluded
+  `PACKET_CH_` and `PACKET_CA_` prefixes; both added so char/auth structs are
+  injected into the VersionTable correctly.
+
+- **`semantics/mappings.yaml`** — five action entries had wrong `rathena_struct`
+  values (`PACKET_CZ_*` / `PACKET_CH_ENTER_0x0065` instead of the correct
+  `SYNTH_*` names); all fixed. Stale duplicate `request_time` action deleted.
+
+### Changed
+
+- **`pkg/fsm/fsm.go`** — all seven `build*` handwritten packet builders replaced
+  with generated `encode.Encode*` calls. The FSM no longer contains any
+  hand-encoded packet bytes.
+
+### Removed
+
+- **`pkg/fsm/packets.go`** — all `build*` functions deleted (dead code after FSM
+  migration). Only `copyStr` helper retained.
+
+- **`pkg/fsm/fsm_test.go`** — `TestBuild*` unit tests for the now-deleted
+  `build*` functions removed; equivalent coverage exists in `packets_test.go`
+  via the generated encode functions.
+
+- **`pkg/encode/request_time.go`** / **`pkg/send/request_time.go`** — stale
+  files generated from the duplicate `request_time` action deleted.
+
+### Tests
+
+- **`internal/codegen/preprocess/vt_check_test.go`** — extended to verify all
+  8 FSM structs are present in the VersionTable.
+
+- **`pkg/fsm/packets_test.go`** — rewritten as external `package fsm_test`
+  golden tests for all 7 generated encode functions (field layout, null padding,
+  packetver dispatch boundaries).
+
+- **`pkg/fsm/live_integration_test.go`** — field references updated to match
+  current `events.ActorExists` (`GID`) and `events.StatUpdate` (`VarID`,
+  `Count`) struct names. Integration test passes against live rAthena server
+  (packetver 20200401).
+
+---
+
 ## [v0.2.9] — 2026-03-11
 
 ### Fixed

@@ -4,4 +4,6 @@ package send
 
 // CharDelete is the request struct for the char_delete action.
 type CharDelete struct {
+	CID uint32
+	Key string
 }

@@ -4,4 +4,8 @@ package send
 
 // MasterLogin is the request struct for the master_login action.
 type MasterLogin struct {
+	Version uint32
+	Username string
+	Password string
+	Clienttype uint8
 }

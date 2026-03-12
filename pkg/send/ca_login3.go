@@ -4,4 +4,9 @@ package send
 
 // CaLogin3 is the request struct for the ca_login3 action.
 type CaLogin3 struct {
+	Version uint32
+	Username string
+	PasswordMD5 [16]byte
+	Clienttype uint8
+	Clientinfo uint8
 }

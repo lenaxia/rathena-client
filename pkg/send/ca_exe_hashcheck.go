@@ -4,4 +4,5 @@ package send
 
 // CaExeHashcheck is the request struct for the ca_exe_hashcheck action.
 type CaExeHashcheck struct {
+	Hash string
 }

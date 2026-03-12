@@ -4,4 +4,5 @@ package send
 
 // CharLogin is the request struct for the char_login action.
 type CharLogin struct {
+	Slot uint8
 }

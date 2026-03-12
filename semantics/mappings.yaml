@@ -610,7 +610,7 @@ mappings:
           semantic: Attack action type
 metadata:
     total_packets: 28
-    last_updated: "2026-03-11"
+    last_updated: "2026-03-12"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -2552,7 +2552,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CH_ENTER_0x0065
+              struct_name: SYNTH_CH_ENTER_0x0065
               field_mapping: {}
             - packet_id: "0x0275"
               packetver_range:
@@ -2792,7 +2792,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_NOTIFY_ACTORINIT
+              struct_name: SYNTH_CZ_NOTIFY_ACTORINIT
               field_mapping: {}
     map_login:
         name: ""
@@ -2804,7 +2804,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_CZ_ENTER
+              struct_name: SYNTH_CZ_ENTER
               field_mapping: {}
     market_purchase:
         name: ""
@@ -3364,18 +3364,6 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_REMEMBER_WARPPOINT
               field_mapping: {}
-    request_time:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x007E"
-              packetver_range:
-                - null
-                - null
-              struct_name: SYNTH_CZ_REQUEST_TIME
-              field_mapping: {}
     restart:
         name: restart
         description: Respawn after death or return to character select screen
@@ -3734,13 +3722,13 @@ semantic_actions:
               packetver_range:
                 - 20030000
                 - 20101123
-              struct_name: PACKET_CZ_REQUEST_TIME
+              struct_name: SYNTH_CZ_REQUEST_TIME
               field_mapping: {}
             - packet_id: "0x0360"
               packetver_range:
                 - 20101124
                 - null
-              struct_name: PACKET_CZ_REQUEST_TIME2
+              struct_name: SYNTH_CZ_REQUEST_TIME2
               field_mapping: {}
     unequip_item:
         name: ""
