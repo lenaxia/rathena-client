@@ -64,6 +64,16 @@ type CharacterInfo struct {
 	Slot uint8
 }
 
+// IdentityInfo contains the player's identity after char selection completes.
+// Passed to OnIdentity callback after the zone server response (0x0081/0x0AC5)
+// is parsed, before the map phase begins.
+type IdentityInfo struct {
+	AccountID    uint32
+	CharID       uint32
+	SelectedSlot uint8
+	Sex          uint8
+}
+
 // ConnectionFSM drives the full login → char → map auth sequence.
 type ConnectionFSM struct {
 	server ServerConfig
@@ -75,6 +85,7 @@ type ConnectionFSM struct {
 	onReady          func(*session.MapSession, net.Conn)
 	onFailed         func(error)
 	onServerNotify   func(uint8)
+	onIdentity       func(IdentityInfo)
 
 	// auth state — populated during Connect, cleared when Connect returns
 	accountID  uint32
@@ -142,6 +153,15 @@ func (f *ConnectionFSM) OnFailed(fn func(error)) *ConnectionFSM {
 // received during auth. The argument is the result/error code byte.
 func (f *ConnectionFSM) OnServerNotify(fn func(uint8)) *ConnectionFSM {
 	f.onServerNotify = fn
+	return f
+}
+
+// OnIdentity registers a callback invoked after char selection completes and
+// the zone server response (0x0081/0x0AC5) is received. The callback receives
+// AccountID, CharID, SelectedSlot, and Sex — all the identity info needed to
+// initialize self-actor state before the map phase begins.
+func (f *ConnectionFSM) OnIdentity(fn func(IdentityInfo)) *ConnectionFSM {
+	f.onIdentity = fn
 	return f
 }
 
@@ -517,8 +537,18 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	}
 
 	mapAddr := fmt.Sprintf("%d.%d.%d.%d:%d",
-		res.mapIP>>24, (res.mapIP>>16)&0xFF, (res.mapIP>>8)&0xFF, res.mapIP&0xFF,
+		res.mapIP>>24, (res.mapIP>>16)&0xFF, res.mapIP>>8&0xFF, res.mapIP&0xFF,
 		res.mapPort)
+
+	if f.onIdentity != nil {
+		f.onIdentity(IdentityInfo{
+			AccountID:    f.accountID,
+			CharID:       f.charID,
+			SelectedSlot: res.selectedSlot,
+			Sex:          f.sex,
+		})
+	}
+
 	return mapAddr, nil
 }
 

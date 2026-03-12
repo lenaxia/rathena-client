@@ -308,12 +308,11 @@ for {
         if feedErr := mapSess.Feed(buf[:n]); feedErr != nil {
             var unk session.ErrUnknownPacket
             if errors.As(feedErr, &unk) {
-                // Stream desynced — unknown packet ID 0xNNNN
-                // Close the connection immediately.
+                // Variable-length packet had a corrupt embedded length field —
+                // stream is definitively desynced. Close and reconnect.
                 conn.Close()
                 return
             }
-            // Other feed error
         }
     }
     if err != nil { break }
@@ -324,7 +323,35 @@ for {
 - Synchronous — callbacks fire in the `Feed` call, in the caller's goroutine
 - Reentrant-safe within a single goroutine, but NOT goroutine-safe across goroutines
 - Frame accumulation: partial frames are buffered internally; `Feed` may be called with any chunk size
-- Unknown packet ID returns `ErrUnknownPacket` once and then silences subsequent calls (stream is irrecoverable; close the connection)
+- Unknown packet ID: the receive buffer is cleared (OpenKore behavior — no silent corruption), the `UnknownPacketFunc` callback fires with full diagnostic context, and `Feed` returns nil. The session is not faulted — the next call to `Feed` starts clean and may recover if the server sends a known packet ID
+- `ErrUnknownPacket` is only returned for genuine stream corruption: a variable-length packet whose embedded length field is less than 4. After that the session is permanently faulted and all subsequent `Feed` calls return nil silently
+
+### Handling unknown packets
+
+Register a callback to receive diagnostic context whenever an unknown packet ID is encountered. goKore's bot manager should handle all logging and observability — the library performs no I/O.
+
+```go
+ms.SetUnknownPacketHandler(func(ev session.UnknownPacketEvent) {
+    // ev.ID          — the unrecognised packet ID
+    // ev.Packetver   — PACKETVER this session was built with
+    // ev.Time        — wall time at moment of detection
+    // ev.RecentPackets — last ≤3 dispatched packets before the unknown ID,
+    //                    oldest first. Each entry has:
+    //                      .ID         uint16   — packet ID
+    //                      .Frame      []byte   — full frame bytes (heap copy)
+    //                      .FrameTotal int      — actual frame length
+    //                      .Truncated  bool     — true if frame > 4096 bytes
+    // ev.RawBuffer   — snapshot of the full receive buffer from the unknown ID
+    //                  onward (the only record of those bytes after the clear)
+
+    // Example: pass to bot manager for structured logging / metrics
+    botManager.HandleUnknownPacket(botID, ev)
+})
+```
+
+`ev` is fully self-contained and heap-allocated — safe to retain, pass to channels, or store. The library clears the receive buffer after the callback returns; `ev.RawBuffer` and `ev.RecentPackets[i].Frame` are the only copies of those bytes.
+
+`SetUnknownPacketHandler` is available on all three session types: `MapSession`, `LoginSession`, and `CharSession`.
 
 ### C→S obfuscation on MapSession
 
@@ -439,6 +466,14 @@ f.OnFailed(func(err error) {
 f.OnServerNotify(func(code uint8) {
     log.Printf("server ban code: %d", code)
 })
+
+// Called after char selection completes, before map phase begins.
+// Receives account ID, character ID, selected slot, and sex.
+// Use this to initialize self-actor state before map entry events fire.
+f.OnIdentity(func(id fsm.IdentityInfo) {
+    log.Printf("identity: aid=%d cid=%d slot=%d sex=%d",
+        id.AccountID, id.CharID, id.SelectedSlot, id.Sex)
+})
 ```
 
 ### Running the FSM
@@ -468,6 +503,7 @@ Connect(ctx)
   → call OnCharList → choose slot
   → send 0x0066 CH_SELECT_CHAR
   → read until 0x0081/0x0AC5 (zone server address)
+  → call OnIdentity(accountID, charID, slot, sex)
   → dial MapServer
   → send 0x0436 CZ_ENTER (with C→S obfuscation if keys exist)
   → read until 0x0073/0x02EB/0x0A18 ZC_ACCEPT_ENTER
@@ -544,23 +580,25 @@ func (c *Connector) Connect(ctx context.Context) error {
 }
 
 func (c *Connector) readLoop() {
-    buf := make([]byte, 65536)
-    for {
-        n, err := c.conn.Read(buf)
-        if n > 0 {
-            if ferr := c.ms.Feed(buf[:n]); ferr != nil {
-                var unk session.ErrUnknownPacket
-                if errors.As(ferr, &unk) {
-                    // Unknown packet ID — stream desynced
-                    c.conn.Close()
-                    return
-                }
-            }
-        }
-        if err != nil {
-            return
-        }
-    }
+	buf := make([]byte, 65536)
+	for {
+		n, err := c.conn.Read(buf)
+		if n > 0 {
+			if ferr := c.ms.Feed(buf[:n]); ferr != nil {
+				var unk session.ErrUnknownPacket
+				if errors.As(ferr, &unk) {
+					// Corrupt embedded length — stream definitively desynced.
+					// (Unknown packet IDs fire UnknownPacketFunc and clear the
+					// buffer without returning an error — see SetUnknownPacketHandler.)
+					c.conn.Close()
+					return
+				}
+			}
+		}
+		if err != nil {
+			return
+		}
+	}
 }
 
 // SendNpcContact talks to an NPC by actor ID.
@@ -665,14 +703,18 @@ Error types to expect:
 
 ### Session Feed errors
 
-`Feed` returns `ErrUnknownPacket{ID: 0xNNNN}` when an unrecognised packet ID is encountered. The stream is irrecoverably desynced; close the connection immediately.
+`Feed` returns `nil` for unknown packet IDs. The buffer is cleared and the `UnknownPacketFunc` callback fires instead (see Section 8).
+
+`Feed` returns `ErrUnknownPacket{ID: 0xNNNN}` only when a variable-length packet carries an embedded length value less than 4. This indicates genuine stream corruption; the caller must close the connection immediately.
 
 ```go
-var unk session.ErrUnknownPacket
-if errors.As(err, &unk) {
-    log.Printf("unknown packet 0x%04x — reconnecting", unk.ID)
-    conn.Close()
-    // schedule reconnect
+if err := ms.Feed(buf[:n]); err != nil {
+    var unk session.ErrUnknownPacket
+    if errors.As(err, &unk) {
+        log.Printf("corrupt embedded length in packet 0x%04x — reconnecting", unk.ID)
+        conn.Close()
+        // schedule reconnect
+    }
 }
 ```
 

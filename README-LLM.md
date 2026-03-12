@@ -476,6 +476,7 @@ goKore calls fsm.Connect(ctx)
   → receives char list (0x006B / 0x099D), calls OnCharList callback
   → sends 0x0066 with chosen slot
   → receives 0x0081 / 0x0AC5 with map addr, closes conn
+  → calls OnIdentity(accountID, charID, slot, sex)  [consumer initializes self-actor]
   → FSM calls dialer(ctx, mapAddr) → net.Conn
   → FSM creates MapSession, sends 0x0436
   → receives 0x0073/0x0A18/0x02EB, sends 0x007D + shuffled(0x007E/0x0360)
@@ -516,7 +517,7 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 | `pkg/decode` | **Complete** | 282 generated decode functions; zero allocs on all benchmarks; zero "complex expression" gaps remaining (worklogs 0036-0037) |
 | `pkg/encode` | **Complete** | 115 generated encode functions including gameplay CZ packets (worklog 0039: PACKET_CZ_ injection fix) |
 | `pkg/session` (generated) | **Complete** | lengths_login.go (13 entries), lengths_char.go (37+ entries), lengths_map.go, shuffle_map.go, obfuscation_keys.go — lengths generated from GCC sizeof via common/packets.hpp (worklog 0014) |
-| `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go; 12 tests pass; 0 allocs/op benchmarks (worklog 0013) |
+| `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go; `UnknownPacketEvent`/`recentRing` (worklog 0043); 20+ tests pass; 0 allocs/op benchmarks |
 | `pkg/fsm` | **Complete** | ConnectionFSM: full login→char→map auth sequence; 21 tests pass; zero goroutines; net.Pipe stubs (worklog 0015) |
 
 **Gate status**: 76 PASS / 1 FAIL (expected; CH_MAKE_CHAR 0x0065 shuffle — documented). `go build ./...` and `go test ./...` are clean.
@@ -571,15 +572,17 @@ Codegen output:
 
 VersionTable now has 770 structs (up from 482) after PACKET_CZ_ injection from packets.hpp.
 
-### Phase 5 — pkg/session (hand-written parts) ✅ COMPLETE (worklog 0013)
+### Phase 5 — pkg/session (hand-written parts) ✅ COMPLETE (worklogs 0013, 0043)
 
 Implemented:
-- `pkg/session/session.go` — `sessionCore`, `Feed()`, `ErrUnknownPacket`
-- `pkg/session/login.go` — `LoginSession`
-- `pkg/session/char.go` — `CharSession`
-- `pkg/session/map.go` — `MapSession`
+- `pkg/session/session.go` — `sessionCore`, `Feed()`, `ErrUnknownPacket`, `UnknownPacketEvent`, `DispatchedPacket`, `UnknownPacketFunc`, `recentRing` (inline fixed backing store, zero allocs)
+- `pkg/session/login.go` — `LoginSession` + `SetUnknownPacketHandler`
+- `pkg/session/char.go` — `CharSession` + `SetUnknownPacketHandler`
+- `pkg/session/map.go` — `MapSession` + `SetUnknownPacketHandler`
 - `pkg/session/obfuscation.go` — LCG key state + XOR logic (clif.cpp:25702)
-- 12 tests pass; benchmarks: 1.79 ns/op fixed, 10.78 ns/op variable, 0 allocs/op
+- Unknown packet ID behavior: clears entire receive buffer (OpenKore semantics), fires `UnknownPacketFunc` with full diagnostic event, returns nil (not an error)
+- `ErrUnknownPacket` is returned only for genuine stream corruption: variable-length packet with embedded length < 4
+- Tests: all pass (20+ tests including 8 new ring buffer / event tests); benchmarks: 0 allocs/op confirmed
 
 ### Phase 6 — pkg/fsm ✅ COMPLETE (worklog 0015)
 
@@ -785,7 +788,9 @@ Each session type uses a `[65536]HandlerFunc` array indexed by packet ID. Length
 
 - Benchmark tests in `session_bench_test.go`
 - Feed a pre-captured packet stream; verify all callbacks fire in correct order
-- Verify `Feed()` returns `ErrUnknownPacket` on unknown packet ID
+- Verify `Feed()` returns `ErrUnknownPacket` only for corrupt embedded length (variable-length packet with embedded length < 4), not for unknown packet IDs
+- Verify unknown packet ID fires `UnknownPacketFunc` callback, clears buffer, and returns nil
+- Verify `UnknownPacketEvent` fields: correct ID, packetver, ring buffer contents (chronological order), RawBuffer snapshot
 - Verify 0 allocs/op after initial recvBuf warmup
 
 ### pkg/decode, pkg/encode (generated)
