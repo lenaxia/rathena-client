@@ -362,7 +362,7 @@ func TestConnect_FullFlow_Pre20170315(t *testing.T) {
 
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(s *session.MapSession, c net.Conn) {
+		OnReady(func(s *session.MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -421,7 +421,7 @@ func TestConnect_FullFlow_Post20170315(t *testing.T) {
 
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(s *session.MapSession, c net.Conn) {
+		OnReady(func(s *session.MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -628,7 +628,7 @@ func TestConnect_OnCharServerList(t *testing.T) {
 			receivedServers = servers
 			return 0 // choose Alpha (index 0)
 		}).
-		OnReady(func(_ *session.MapSession, c net.Conn) {
+		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -700,7 +700,7 @@ func TestConnect_OnCharList(t *testing.T) {
 			gotRawChars = append([]byte(nil), raw...)
 			return 0
 		}).
-		OnReady(func(_ *session.MapSession, c net.Conn) {
+		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
 			c.Close()
 		})
 
@@ -772,7 +772,7 @@ func TestConnect_Reconnect(t *testing.T) {
 			mkLogin(), mkChar(), mkMap(),
 			mkLogin(), mkChar(), mkMap(),
 		)).
-		OnReady(func(_ *session.MapSession, c net.Conn) {
+		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
 			readyCount++
 			c.Close()
 		})
@@ -1481,7 +1481,7 @@ func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
 
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(_ *session.MapSession, c net.Conn) {
+		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -1492,5 +1492,235 @@ func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
 	}
 	if readyCalled {
 		t.Fatal("OnReady must not fire when map phase cannot complete")
+	}
+}
+
+// buildZCAcceptEnterWithPos builds a ZC_ACCEPT_ENTER packet with known position data for testing.
+// Uses 0x02EB (PACKETVER >= 20080102, 13 bytes) with startTime, posDir (x,y,dir), and font set.
+func buildZCAcceptEnterWithPos(startTime uint32, x, y uint16, dir uint8, font uint16) []byte {
+	pkt := make([]byte, 13)
+	binary.LittleEndian.PutUint16(pkt[0:2], 0x02EB)
+	binary.LittleEndian.PutUint32(pkt[2:6], startTime)
+	coords := encodePosDir(x, y, dir)
+	pkt[6] = coords[0]
+	pkt[7] = coords[1]
+	pkt[8] = coords[2]
+	// xSize at [9], ySize at [10] — zero
+	binary.LittleEndian.PutUint16(pkt[11:13], font)
+	return pkt
+}
+
+// encodePosDir packs x (10 bits), y (10 bits), dir (4 bits) into 3 bytes.
+// Mirrors packing.EncodePosDir logic for use in test helpers.
+func encodePosDir(x, y uint16, dir uint8) [3]byte {
+	var b [3]byte
+	b[0] = byte(x >> 2)
+	b[1] = byte((x&0x03)<<6) | byte(y>>4)
+	b[2] = byte((y&0x0F)<<4) | (dir & 0x0F)
+	return b
+}
+
+// buildHCNotifyZonesvrPreWithMap builds a 0x0081 HC_NOTIFY_ZONESVR with an explicit map name.
+func buildHCNotifyZonesvrPreWithMap(cid, ip uint32, port uint16, mapName string) []byte {
+	pkt := make([]byte, 28)
+	binary.LittleEndian.PutUint16(pkt[0:2], 0x0081)
+	binary.LittleEndian.PutUint32(pkt[2:6], cid)
+	copyStr(pkt[6:22], mapName)
+	binary.BigEndian.PutUint32(pkt[22:26], ip)
+	binary.LittleEndian.PutUint16(pkt[26:28], port)
+	return pkt
+}
+
+// buildHCNotifyZonesvrPostWithMap builds a 0x0AC5 HC_NOTIFY_ZONESVR with an explicit map name.
+func buildHCNotifyZonesvrPostWithMap(cid, ip uint32, port uint16, mapName string) []byte {
+	pkt := make([]byte, 156)
+	binary.LittleEndian.PutUint16(pkt[0:2], 0x0AC5)
+	binary.LittleEndian.PutUint32(pkt[2:6], cid)
+	copyStr(pkt[6:22], mapName)
+	binary.BigEndian.PutUint32(pkt[22:26], ip)
+	binary.LittleEndian.PutUint16(pkt[26:28], port)
+	return pkt
+}
+
+// TestConnect_OnReady_ReceivesEntryPosition verifies that the ReadyInfo passed to
+// OnReady contains the non-zero (x, y, dir) and startTime decoded from ZC_ACCEPT_ENTER.
+func TestConnect_OnReady_ReceivesEntryPosition(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0xDEADBEEF)
+	const sid2 = uint32(0xCAFEBABE)
+	const charID = uint32(150001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+	const wantX = uint16(150)
+	const wantY = uint16(200)
+	const wantDir = uint8(3)
+	const wantStartTime = uint32(0x12345678)
+	const wantFont = uint16(7)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "TestChar"}
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 1, []CharServerInfo{charServer}))
+	}
+	charScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
+		mustWrite(t, conn, buildHC082D())
+		mustWrite(t, conn, buildCharEnterAccept(nil))
+		mustWrite(t, conn, buildHCCharlistNotify(1))
+		mustDrain(t, conn, 2)
+		mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+		mustDrain(t, conn, 3)
+		mustWrite(t, conn, buildHCNotifyZonesvrPost(charID, mapIP, mapPort))
+	}
+	mapScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 19)
+		mustWrite(t, conn, buildZCAID(aid))
+		mustWrite(t, conn, buildZCAcceptEnterWithPos(wantStartTime, wantX, wantY, wantDir, wantFont))
+		mustDrain(t, conn, 2)
+		mustDrain(t, conn, 6)
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   pv,
+		StepTimeout: 5 * time.Second,
+	}
+	creds := Credentials{Username: "test", Password: "pass", CharSlot: 0}
+
+	var gotReady ReadyInfo
+	readyCalled := false
+	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+		OnReady(func(_ *session.MapSession, c net.Conn, info ReadyInfo) {
+			gotReady = info
+			readyCalled = true
+			c.Close()
+		})
+
+	if err := loginFSM.Connect(context.Background()); err != nil {
+		t.Fatalf("Connect: %v", err)
+	}
+	if !readyCalled {
+		t.Fatal("OnReady was not called")
+	}
+	if gotReady.X != wantX {
+		t.Errorf("ReadyInfo.X = %d, want %d", gotReady.X, wantX)
+	}
+	if gotReady.Y != wantY {
+		t.Errorf("ReadyInfo.Y = %d, want %d", gotReady.Y, wantY)
+	}
+	if gotReady.Dir != wantDir {
+		t.Errorf("ReadyInfo.Dir = %d, want %d", gotReady.Dir, wantDir)
+	}
+	if gotReady.StartTime != wantStartTime {
+		t.Errorf("ReadyInfo.StartTime = %d, want %d", gotReady.StartTime, wantStartTime)
+	}
+	if gotReady.Font != wantFont {
+		t.Errorf("ReadyInfo.Font = %d, want %d", gotReady.Font, wantFont)
+	}
+}
+
+// TestConnect_OnIdentity_ReceivesMapName verifies that IdentityInfo.MapName is
+// populated from HC_NOTIFY_ZONESVR and forwarded to the OnIdentity callback.
+// Tests both pre-20170315 (0x0081) and post-20170315 (0x0AC5) packet variants.
+func TestConnect_OnIdentity_ReceivesMapName(t *testing.T) {
+	const mapName = "prontera"
+	const mapNameWithGat = "prontera.gat"
+
+	tests := []struct {
+		name       string
+		pv         uint32
+		charNotify func(*testing.T, net.Conn, uint32, uint32, uint16)
+	}{
+		{
+			name: "pre20170315_0x0081",
+			pv:   20120000,
+			charNotify: func(t *testing.T, conn net.Conn, cid, ip uint32, port uint16) {
+				mustWrite(t, conn, buildHCNotifyZonesvrPreWithMap(cid, ip, port, mapNameWithGat))
+			},
+		},
+		{
+			name: "post20170315_0x0AC5",
+			pv:   20180307,
+			charNotify: func(t *testing.T, conn net.Conn, cid, ip uint32, port uint16) {
+				mustWrite(t, conn, buildHCNotifyZonesvrPostWithMap(cid, ip, port, mapNameWithGat))
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			const aid = uint32(2000001)
+			const sid1 = uint32(0x11111111)
+			const sid2 = uint32(0x22222222)
+			const charID = uint32(100001)
+			const mapIP = uint32(0x7F000001)
+			const mapPort = uint16(5121)
+
+			charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+			loginScript := func(t *testing.T, conn net.Conn) {
+				mustDrain(t, conn, 55)
+				if tc.pv >= 20170315 {
+					mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+				} else {
+					mustWrite(t, conn, buildLoginAcceptPre(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+				}
+			}
+			charScript := func(t *testing.T, conn net.Conn) {
+				mustDrain(t, conn, 17)
+				writeAccountIDEcho(t, conn, aid)
+				if tc.pv >= 20130000 {
+					mustWrite(t, conn, buildHC082D())
+					mustWrite(t, conn, buildCharEnterAccept(nil))
+					mustWrite(t, conn, buildHCCharlistNotify(1))
+					mustDrain(t, conn, 2)
+					mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+					mustDrain(t, conn, 3)
+				} else {
+					mustWrite(t, conn, buildCharEnterAccept(nil))
+					mustDrain(t, conn, 3)
+				}
+				tc.charNotify(t, conn, charID, mapIP, mapPort)
+			}
+			mapScript := func(t *testing.T, conn net.Conn) {
+				mustDrain(t, conn, 19)
+				mustWrite(t, conn, buildZCAID(aid))
+				mustWrite(t, conn, buildZCAcceptEnter(tc.pv))
+				mustDrain(t, conn, 2)
+				mustDrain(t, conn, 6)
+			}
+
+			server := ServerConfig{
+				LoginAddr:   "127.0.0.1:6900",
+				Packetver:   tc.pv,
+				StepTimeout: 5 * time.Second,
+			}
+			creds := Credentials{CharSlot: 0}
+
+			var gotMapName string
+			identityCalled := false
+			loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+				OnIdentity(func(info IdentityInfo) {
+					gotMapName = info.MapName
+					identityCalled = true
+				}).
+				OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
+					c.Close()
+				})
+
+			if err := loginFSM.Connect(context.Background()); err != nil {
+				t.Fatalf("Connect: %v", err)
+			}
+			if !identityCalled {
+				t.Fatal("OnIdentity was not called")
+			}
+			if gotMapName != mapName {
+				t.Errorf("IdentityInfo.MapName = %q, want %q", gotMapName, mapName)
+			}
+		})
 	}
 }

@@ -140,7 +140,7 @@ func TestLiveServer_FullAuthSequence(t *testing.T) {
 	f := fsm.New(server, creds, dialer).
 		OnCharServerList(func(_ []fsm.CharServerInfo) int { return 0 }).
 		OnCharList(func(_ []byte) uint8 { return slot }).
-		OnReady(func(s *session.MapSession, c net.Conn) {
+		OnReady(func(s *session.MapSession, c net.Conn, _ fsm.ReadyInfo) {
 			readyCh <- readyResult{s, c}
 		}).
 		OnFailed(func(err error) {

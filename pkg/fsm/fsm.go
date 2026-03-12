@@ -9,14 +9,17 @@
 package fsm
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
 	"net"
+	"strings"
 	"time"
 
+	"github.com/lenaxia/rathena-client/pkg/packing"
 	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
@@ -72,6 +75,19 @@ type IdentityInfo struct {
 	CharID       uint32
 	SelectedSlot uint8
 	Sex          uint8
+	MapName      string // map name without .gat suffix, from HC_NOTIFY_ZONESVR
+}
+
+// ReadyInfo carries the decoded ZC_ACCEPT_ENTER fields to the OnReady callback.
+// The FSM consumes the entry packet before handing off to goKore; these fields
+// let the caller read the initial position without re-parsing a consumed frame.
+type ReadyInfo struct {
+	X         uint16 // initial tile X coordinate
+	Y         uint16 // initial tile Y coordinate
+	Dir       uint8  // facing direction (0–7)
+	StartTime uint32 // server tick from entry packet
+	Font      uint16 // overhead font ID
+	Sex       uint8  // character sex byte
 }
 
 // ConnectionFSM drives the full login → char → map auth sequence.
@@ -82,7 +98,7 @@ type ConnectionFSM struct {
 
 	onCharServerList func([]CharServerInfo) int
 	onCharList       func([]byte) uint8
-	onReady          func(*session.MapSession, net.Conn)
+	onReady          func(*session.MapSession, net.Conn, ReadyInfo)
 	onFailed         func(error)
 	onServerNotify   func(uint8)
 	onIdentity       func(IdentityInfo)
@@ -136,9 +152,10 @@ func (f *ConnectionFSM) OnCharList(fn func([]byte) uint8) *ConnectionFSM {
 
 // OnReady registers a callback invoked when the map server accepts entry
 // (0x0073 / 0x0A18 / 0x02EB) and the map-loaded sequence has been sent.
-// The FSM passes the ready MapSession and live net.Conn to goKore.
+// The FSM passes the ready MapSession, live net.Conn, and ReadyInfo (initial
+// position decoded from ZC_ACCEPT_ENTER) to goKore.
 // After this call returns the FSM is idle and holds no reference to conn.
-func (f *ConnectionFSM) OnReady(fn func(*session.MapSession, net.Conn)) *ConnectionFSM {
+func (f *ConnectionFSM) OnReady(fn func(*session.MapSession, net.Conn, ReadyInfo)) *ConnectionFSM {
 	f.onReady = fn
 	return f
 }
@@ -321,6 +338,7 @@ type charPhaseResult struct {
 	charID  uint32
 	done    bool
 	err     error
+	mapName string
 
 	// char list accumulation
 	rawChars      []byte // accumulated CHARACTER_INFO bytes
@@ -399,6 +417,12 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			res.mapIP = ip
 			res.mapPort = port
 			f.charID = cid
+			rawName := data[6:22]
+			n := bytes.IndexByte(rawName, 0)
+			if n < 0 {
+				n = len(rawName)
+			}
+			res.mapName = strings.TrimSuffix(string(rawName[:n]), ".gat")
 			res.done = true
 			return
 		}
@@ -432,6 +456,12 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		res.mapIP = ip
 		res.mapPort = port
 		f.charID = cid
+		rawName := data[6:22]
+		n := bytes.IndexByte(rawName, 0)
+		if n < 0 {
+			n = len(rawName)
+		}
+		res.mapName = strings.TrimSuffix(string(rawName[:n]), ".gat")
 		res.done = true
 	})
 
@@ -546,6 +576,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			CharID:       f.charID,
 			SelectedSlot: res.selectedSlot,
 			Sex:          f.sex,
+			MapName:      res.mapName,
 		})
 	}
 
@@ -595,8 +626,14 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	}
 
 	type mapResult struct {
-		done bool
-		err  error
+		done      bool
+		err       error
+		x         uint16
+		y         uint16
+		dir       uint8
+		startTime uint32
+		font      uint16
+		sex       uint8
 	}
 	res := &mapResult{}
 
@@ -659,6 +696,21 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 			return
 		}
 
+		if len(data) >= 6 {
+			res.startTime = binary.LittleEndian.Uint32(data[2:6])
+		}
+		if len(data) >= 9 {
+			x, y, dir := packing.DecodePosDir(data[6:9])
+			res.x = x
+			res.y = y
+			res.dir = dir
+		}
+		if len(data) >= 13 {
+			res.font = binary.LittleEndian.Uint16(data[11:13])
+		}
+		if len(data) >= 14 {
+			res.sex = data[13]
+		}
 		res.done = true
 	}
 
@@ -688,7 +740,14 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	// recovering from its own callback panics and closing the connection.
 	if f.onReady != nil {
 		connTransferred = true
-		f.onReady(mapSess, conn)
+		f.onReady(mapSess, conn, ReadyInfo{
+			X:         res.x,
+			Y:         res.y,
+			Dir:       res.dir,
+			StartTime: res.startTime,
+			Font:      res.font,
+			Sex:       res.sex,
+		})
 	}
 	return nil
 }

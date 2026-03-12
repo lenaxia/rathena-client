@@ -74,7 +74,7 @@ func runReplayTest(
 	f := New(server, creds, ss.Dialer()).
 		OnCharServerList(func(_ []CharServerInfo) int { return 0 }).
 		OnCharList(func(_ []byte) uint8 { return 0 }).
-		OnReady(func(s *session.MapSession, c net.Conn) {
+		OnReady(func(s *session.MapSession, c net.Conn, _ ReadyInfo) {
 			setupHandlers(s)
 			readyCh <- readyResult{s, c}
 		}).
