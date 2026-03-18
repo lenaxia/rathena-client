@@ -21,6 +21,7 @@ func NewMapSession(packetver uint32) *MapSession {
 	s.core.buf = make([]byte, mapRecvBufInitial)
 	s.core.recvBuf = s.core.buf[:0]
 	populateMapLengths(packetver, &s.core.lengths)
+	applyMapLengthOverrides(packetver, &s.core.lengths)
 	return s
 }
 

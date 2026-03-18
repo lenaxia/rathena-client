@@ -15,6 +15,7 @@ import "testing"
 func mapTableAt(pv uint32) [65536]int16 {
 	var t [65536]int16
 	populateMapLengths(pv, &t)
+	applyMapLengthOverrides(pv, &t)
 	return t
 }
 
@@ -112,6 +113,38 @@ func TestLengthRegression_VariableLengthNotOverridden(t *testing.T) {
 		if got := table[c.id]; got != -1 {
 			t.Errorf("pv=%d %s: got %d, want -1 (variable-length override bug)",
 				pv, c.name, got)
+		}
+	}
+}
+
+// TestLengthRegression_PacketID0ADD verifies that 0x0ADD (ZC_ITEM_FALL_ENTRY5 /
+// packet_dropflooritem) uses 22 bytes before PACKETVER_MAIN_NUM >= 20181121 and
+// 24 bytes from that version onward.
+//
+// GCC verified:
+//
+//	PACKETVER=20180418: ITID is uint16 → 2+4+2+2+1+2+2+1+1+2+1+2 = 22 bytes
+//	PACKETVER=20181121: ITID grows to uint32 → 2+4+4+2+1+2+2+1+1+2+1+2 = 24 bytes
+//
+// Live confirmation: goKore bot on pay_dun00 PACKETVER=20200401 — item drop frame
+// is 24 bytes with zero remainder; old length of 22 left 0x0000 as the next apparent
+// packet ID, triggering the unknown-packet handler on every kill.
+func TestLengthRegression_PacketID0ADD(t *testing.T) {
+	cases := []struct {
+		pv   uint32
+		want int16
+	}{
+		{20180418, 22}, // first version with 0x0ADD; ITID = uint16
+		{20181120, 22}, // one day before the ITID breakpoint
+		{20181121, 24}, // PACKETVER_MAIN_NUM >= 20181121 → ITID = uint32
+		{20200401, 24}, // live-confirmed
+		{20200916, 24}, // later version; must stay 24
+	}
+	for _, c := range cases {
+		table := mapTableAt(c.pv)
+		if got := table[0x0ADD]; got != c.want {
+			t.Errorf("pv=%d: t[0x0ADD]=%d, want %d (packet_dropflooritem ITID uint16→uint32 at 20181121)",
+				c.pv, got, c.want)
 		}
 	}
 }

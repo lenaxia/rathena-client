@@ -526,6 +526,7 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 - SemanticDB has validation errors (run `semantics_validate`). Not blockers for Phase 7.
 - lengths_char.go: HC_ACCEPT_MAKECHAR (0x006D/0x0B6F) sizes may still be wrong — nested struct CHARACTER_INFO not fully resolved by codegen.
 - `lengths_map.go` partially populated; FSM uses `SetLength` for auth-phase packets where needed.
+- **Codegen blind spot — `clif_packetdb.hpp` hardcodes sizes as integer literals, not `sizeof()`.** When a packet struct gains a PACKETVER-conditional field that changes its wire size (e.g. `packet_dropflooritem` ITID `uint16→uint32` at `PACKETVER_MAIN_NUM >= 20181121`), `clif_packetdb.hpp` is never updated, so the codegen's Part 1 diff pass never detects the change. Parts 2–4 use `mergeBreakpointsFillOnly` and cannot override a value already claimed by Part 1. **Workaround**: `pkg/session/lengths_map_overrides.go` is a hand-maintained file applied after `populateMapLengths` in `NewMapSession`. Add corrections there with full rAthena citations. **Long-term fix**: add a Part 5 cross-check pass to the codegen that compares Part 1 lengths against VersionTable `TotalSize` at each breakpoint and emits corrections where they diverge (tracked as a known codegen gap).
 - 3 encode functions always panic (`EncodeGameLogin`, `EncodeMapLoaded`, `EncodeTimeSyncResponse`) — **eliminated**; these are FSM-owned actions added to the skip list in `GenerateEncodeDirFiles` (worklog 0040); no generated files exist for them.
 - `EncodeDealFinalize` always panics — **fixed**; hand-written in `pkg/encode/deal_finalize.go`; `0x00EB` is a 2-byte header-only packet with no rAthena struct (worklog 0040).
 - `EncodeSkillUse` and `EncodeActorAction` have a trailing panic that is unreachable (`case packetver >= 0` is always true).
@@ -653,6 +654,8 @@ Three passes per struct breakpoint (MAIN, RE, ZERO build flavors) to handle `PAC
 - **Part 2**: S→C fixed-size from `packets.hpp` `HEADER_*` constants
 - **Part 3**: S→C from SemanticDB + VersionTable join
 - **Part 4**: S→C from `enum packet_headers` in `packets_struct.hpp` (covers IDs invisible to HEADER_* parser)
+
+**Known codegen limitation**: Parts 2–4 use `mergeBreakpointsFillOnly` — they cannot override a nonzero value already emitted by Part 1. `clif_packetdb.hpp` hardcodes packet sizes as integer literals (not `sizeof()`), so when a struct gains a PACKETVER-conditional field, Part 1 never detects the size change. Example: `packet(0x0ADD, 22)` stays `22` forever in `clif_packetdb.hpp` even though `packet_dropflooritem.ITID` grows from `uint16` to `uint32` at `PACKETVER_MAIN_NUM >= 20181121`, making the true wire size 24. Corrections go in `pkg/session/lengths_map_overrides.go`. A future Part 5 cross-check pass should compare Part 1 output against VersionTable `TotalSize` at each breakpoint and emit corrections automatically.
 
 Part 4 uses `knownEnumPackets` table in `internal/codegen/main.go` which maps enum names
 (e.g. `skillscale`, `guildLeave`, `partymemberinfo`) to their struct names/variability.
