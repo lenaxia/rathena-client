@@ -6,12 +6,6 @@ package session
 // for the given PACKETVER. Called once from New*Session constructors.
 // Packet lengths: -1 = variable (read bytes [2:4]), 0 = unknown (stream fault).
 func populateMapLengths(pv uint32, t *[65536]int16) {
-	// 0x0000: Observed in production after ZC_ITEM_FALL_ENTRY5 (0x0ADD) in the
-	// kill packet burst for PACKETVER >= 20200401. Not in clif_packetdb.hpp;
-	// rAthena does not define this ID, but the docker server sends 2 null bytes here.
-	// Register as 2 bytes so Feed() skips it cleanly.
-	// TODO: trace in rAthena source what sends 0x0000 after item drop.
-	t[0x0000] = 2
 	t[0x0064] = 55
 	t[0x0065] = 17
 	t[0x0066] = 6
