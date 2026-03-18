@@ -10,10 +10,32 @@ import (
 	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
+// TestEncodeActorAction_PacketID verifies the wire packet ID for each
+// PACKETVER range. Source: src/map/clif_shuffle.hpp and clif_packetdb.hpp.
 func TestEncodeActorAction_PacketID(t *testing.T) {
-	p := encode.EncodeActorAction(send.ActorAction{TargetGID: 1, Action: 7}, 20200401)
-	if p[0] != 0x5A || p[1] != 0x08 {
-		t.Fatalf("packet ID: got %02X %02X, want 5A 08", p[0], p[1])
+	cases := []struct {
+		name   string
+		pv     uint32
+		wantHi byte // p[1]
+		wantLo byte // p[0]
+		wantID string
+	}{
+		// PACKETVER > 20180307: stable wire ID 0x0437
+		// Source: clif_shuffle.hpp parseable_packet(0x0437,7,clif_parse_ActionRequest,2,6)
+		{"post-shuffle 20200401", 20200401, 0x04, 0x37, "0x0437"},
+		{"post-shuffle 20180308", 20180308, 0x04, 0x37, "0x0437"},
+		// PACKETVER == 20180307: shuffled to 0x0969
+		// Source: clif_shuffle.hpp #elif PACKETVER == 20180307
+		{"shuffle era 20180307", 20180307, 0x09, 0x69, "0x0969"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			p := encode.EncodeActorAction(send.ActorAction{TargetGID: 1, Action: 7}, tc.pv)
+			if p[0] != tc.wantLo || p[1] != tc.wantHi {
+				t.Fatalf("packetver=%d: packet ID got %02X %02X, want %02X %02X (%s)",
+					tc.pv, p[0], p[1], tc.wantLo, tc.wantHi, tc.wantID)
+			}
+		})
 	}
 }
 
@@ -51,18 +73,6 @@ func TestEncodeActorAction_TargetGIDZero(t *testing.T) {
 	got := binary.LittleEndian.Uint32(p[2:6])
 	if got != 0 {
 		t.Fatalf("TargetGID=0: got %08X, want 00000000", got)
-	}
-	if p[0] != 0x5A || p[1] != 0x08 {
-		t.Fatalf("packet ID corrupted: got %02X %02X", p[0], p[1])
-	}
-}
-
-func TestEncodeActorAction_PacketverIgnored(t *testing.T) {
-	req := send.ActorAction{TargetGID: 0xCAFEBABE, Action: 2}
-	p1 := encode.EncodeActorAction(req, 20200401)
-	p2 := encode.EncodeActorAction(req, 20200401)
-	if p1 != p2 {
-		t.Fatalf("repeated calls should produce identical output: got %v vs %v", p1, p2)
 	}
 }
 

@@ -62,6 +62,58 @@ func TestGenerateLengthsFile_ServerTypes(t *testing.T) {
 	}
 }
 
+func TestGenerateShuffleFile_RangeAbove(t *testing.T) {
+	// The > 20180307 block must be emitted as an if guard before the switch,
+	// not as a case inside the switch.
+	breakpoints := []gen.ShuffleBreakpoint{
+		{
+			Ver: 20180307,
+			Entries: []gen.ShuffleEntry{
+				{BaseID: 0x0085, ShuffleID: 0x0877},
+				{BaseID: 0x0089, ShuffleID: 0x0969},
+			},
+		},
+		{
+			Ver:        20180307,
+			RangeAbove: true,
+			Entries: []gen.ShuffleEntry{
+				{BaseID: 0x0085, ShuffleID: 0x035F},
+				{BaseID: 0x0089, ShuffleID: 0x0437},
+			},
+		},
+	}
+
+	src, err := gen.GenerateShuffleFile(breakpoints)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	checks := []string{
+		"if packetver > 20180307 {",
+		"return 0x035F",
+		"return 0x0437",
+		"case 20180307:",
+		"return 0x0877",
+		"return 0x0969",
+		"return baseID",
+	}
+	for _, want := range checks {
+		if !strings.Contains(src, want) {
+			t.Errorf("generated source missing %q", want)
+		}
+	}
+
+	// Range guard must appear before the switch.
+	ifPos := strings.Index(src, "if packetver > 20180307")
+	switchPos := strings.Index(src, "switch packetver")
+	if ifPos == -1 {
+		t.Fatal("range guard not found in generated source")
+	}
+	if switchPos != -1 && ifPos > switchPos {
+		t.Errorf("range guard appears after switch: want guard first")
+	}
+}
+
 func TestGenerateShuffleFile_Basic(t *testing.T) {
 	breakpoints := []gen.ShuffleBreakpoint{
 		{

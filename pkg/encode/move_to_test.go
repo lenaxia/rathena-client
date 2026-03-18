@@ -11,9 +11,29 @@ import (
 )
 
 func TestEncodeMoveTo_PacketID(t *testing.T) {
-	p := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, 20200401)
-	if p[0] != 0x5F || p[1] != 0x03 {
-		t.Fatalf("packet ID: got %02X %02X, want 5F 03", p[0], p[1])
+	// PACKETVER > 20180307: wire ID is 0x035F (stable post-shuffle assignment).
+	// Source: clif_shuffle.hpp parseable_packet(0x035F,5,clif_parse_WalkToXY,2)
+	cases := []struct {
+		name   string
+		pv     uint32
+		wantLo byte
+		wantHi byte
+		wantID string
+	}{
+		{"post-shuffle 20200401", 20200401, 0x5F, 0x03, "0x035F"},
+		{"post-shuffle 20180308", 20180308, 0x5F, 0x03, "0x035F"},
+		// PACKETVER == 20180307: shuffled to 0x0877
+		// Source: clif_shuffle.hpp #elif PACKETVER == 20180307
+		{"shuffle era 20180307", 20180307, 0x77, 0x08, "0x0877"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			p := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, tc.pv)
+			if p[0] != tc.wantLo || p[1] != tc.wantHi {
+				t.Fatalf("packetver=%d: packet ID got %02X %02X, want %02X %02X (%s)",
+					tc.pv, p[0], p[1], tc.wantLo, tc.wantHi, tc.wantID)
+			}
+		})
 	}
 }
 
@@ -119,12 +139,12 @@ func TestEncodeMoveTo_GoldenBytes(t *testing.T) {
 	}
 }
 
-func TestEncodeMoveTo_PacketverIgnored(t *testing.T) {
-	// 0x035F is the only packet ID for move_to; packetver is ignored.
-	p1 := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, 20120307)
-	p2 := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, 20200401)
-	if p1 != p2 {
-		t.Fatalf("packetver should not affect output: got %v vs %v", p1, p2)
+func TestEncodeMoveTo_PacketverVaries(t *testing.T) {
+	// Post-shuffle and shuffle-era packetvers must produce different wire IDs.
+	pPost := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, 20200401)
+	pShuffle := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, 20180307)
+	if pPost == pShuffle {
+		t.Fatalf("expected different output for different packetvers, got identical: %v", pPost)
 	}
 }
 

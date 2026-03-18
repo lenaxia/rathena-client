@@ -9,6 +9,42 @@ package session
 //
 // Source: src/map/clif_shuffle.hpp
 func ShuffledCtoSID(packetver uint32, baseID uint16) uint16 {
+	if packetver > 20180307 {
+		switch baseID {
+		case 0x0064:
+			return 0x0281
+		case 0x0072:
+			return 0x0436
+		case 0x007E:
+			return 0x0360
+		case 0x0085:
+			return 0x035F
+		case 0x0089:
+			return 0x0437
+		case 0x0094:
+			return 0x0368
+		case 0x009B:
+			return 0x0361
+		case 0x009F:
+			return 0x0362
+		case 0x00A2:
+			return 0x0363
+		case 0x00F3:
+			return 0x0364
+		case 0x00F5:
+			return 0x0365
+		case 0x0113:
+			return 0x0438
+		case 0x0116:
+			return 0x0366
+		case 0x0190:
+			return 0x0367
+		case 0x0193:
+			return 0x0369
+		case 0x088D:
+			return 0x02C4
+		}
+	}
 	switch packetver {
 	case 20130515:
 		switch baseID {

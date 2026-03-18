@@ -78,47 +78,83 @@ func HandlerBaseIDs(entries []PacketEntry) map[string]PacketEntry {
 	return m
 }
 
-// ShuffleSection is one PACKETVER == N block from clif_shuffle.hpp.
-// It maps handler names to their shuffled packet IDs for that exact version.
+// ShuffleSection is one PACKETVER block from clif_shuffle.hpp.
+// It maps handler names to their shuffled packet IDs for that version.
+// Exact-match sections (PACKETVER == N) have RangeAbove == false.
+// The final open-ended section (PACKETVER > N) has RangeAbove == true and
+// PacketVer set to N (the lower bound, exclusive). Only one such section
+// may exist in clif_shuffle.hpp and it is always last.
 type ShuffleSection struct {
-	PacketVer uint32
+	PacketVer  uint32
+	RangeAbove bool // true when the condition is PACKETVER > PacketVer
 	// Entries maps handler name → shuffled packet entry for this version.
 	// Multiple entries may share a handler (some handlers handle multiple sizes).
 	Entries []PacketEntry
 }
 
-// reShuffleIf matches the #if PACKETVER == YYYYMMDD and #elif lines.
+// reShuffleIf matches the #if PACKETVER == YYYYMMDD and #elif PACKETVER == YYYYMMDD lines.
 var reShuffleIf = regexp.MustCompile(`#(?:if|elif)\s+PACKETVER\s*==\s*(\d{8})`)
 
+// reShuffleGt matches the #elif PACKETVER > YYYYMMDD line (open-ended range).
+var reShuffleGt = regexp.MustCompile(`#elif\s+PACKETVER\s*>\s*(\d{8})`)
+
+// reIfAny matches any preprocessor conditional line that opens a new nesting level.
+var reIfAny = regexp.MustCompile(`^\s*#if\b`)
+
+// reEndif matches a bare #endif line.
+var reEndif = regexp.MustCompile(`^\s*#endif\b`)
+
 // ParseShuffle parses clif_shuffle.hpp (raw text) into a slice of ShuffleSections,
-// one per PACKETVER == block. Sections are sorted by PacketVer ascending.
+// one per PACKETVER block plus at most one PACKETVER > N range block.
+// Sections are sorted by PacketVer ascending.
 func ParseShuffle(content string) ([]ShuffleSection, error) {
 	lines := strings.Split(content, "\n")
 	var sections []ShuffleSection
 	var cur *ShuffleSection
+	depth := 0 // nesting depth of #if blocks inside the current section
 
 	for _, line := range lines {
-		// New section start
+		// Range-above section (PACKETVER > N) — open-ended, must come after all == sections.
+		if m := reShuffleGt.FindStringSubmatch(line); m != nil {
+			if cur != nil {
+				sections = append(sections, *cur)
+			}
+			pv64, _ := strconv.ParseUint(m[1], 10, 32)
+			cur = &ShuffleSection{PacketVer: uint32(pv64), RangeAbove: true}
+			depth = 0
+			continue
+		}
+		// Exact-match section start (PACKETVER == N).
 		if m := reShuffleIf.FindStringSubmatch(line); m != nil {
 			if cur != nil {
 				sections = append(sections, *cur)
 			}
 			pv64, _ := strconv.ParseUint(m[1], 10, 32)
 			cur = &ShuffleSection{PacketVer: uint32(pv64)}
+			depth = 0
 			continue
 		}
-		// End of sections
-		if strings.TrimSpace(line) == "#endif" {
-			if cur != nil {
+		// Track nested #if/#endif inside the current section.
+		if cur != nil {
+			if reIfAny.MatchString(line) {
+				depth++
+				continue
+			}
+			if reEndif.MatchString(line) {
+				if depth > 0 {
+					depth--
+					continue
+				}
+				// depth == 0: this #endif closes the current top-level section.
 				sections = append(sections, *cur)
 				cur = nil
+				continue
 			}
-			continue
 		}
 		if cur == nil {
 			continue
 		}
-		// Parse parseable_packet lines within a section
+		// Parse parseable_packet lines within a section (including inside nested #if blocks).
 		if m := rePacketEntry.FindStringSubmatch(line); m != nil {
 			idStr, lenStr, handler := m[1], m[2], m[3]
 			id64, err := strconv.ParseUint(strings.TrimPrefix(strings.ToLower(idStr), "0x"), 16, 16)

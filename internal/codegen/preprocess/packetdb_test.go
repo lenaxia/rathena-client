@@ -39,6 +39,63 @@ func TestParsePacketDB_Basic(t *testing.T) {
 	}
 }
 
+func TestParseShuffle_RangeAbove(t *testing.T) {
+	// The > 20180307 block contains nested #if/#endif pairs.
+	// ParseShuffle must track nesting depth so those inner #endif lines
+	// do not terminate the section prematurely, and must capture all entries
+	// including those after the nested block (e.g. 0x0437 ActionRequest).
+	content := `
+#if PACKETVER == 20180307
+	parseable_packet(0x0969,7,clif_parse_ActionRequest,2,6);
+	parseable_packet(0x0877,5,clif_parse_WalkToXY,2);
+#elif PACKETVER > 20180307
+	parseable_packet(0x035F,5,clif_parse_WalkToXY,2);
+#if PACKETVER_MAIN_NUM >= 20190904
+	parseable_packet(0x0367,31,clif_parse_UseSkillToPosMoreInfo,2,4,6,8,10);
+#else
+	parseable_packet(0x0367,90,clif_parse_UseSkillToPosMoreInfo,2,4,6,8,10);
+#endif
+	parseable_packet(0x0437,7,clif_parse_ActionRequest,2,6);
+#endif
+`
+	sections, err := preprocess.ParseShuffle(content)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(sections) != 2 {
+		t.Fatalf("section count = %d, want 2", len(sections))
+	}
+
+	s0 := sections[0]
+	if s0.PacketVer != 20180307 {
+		t.Errorf("sections[0].PacketVer = %d, want 20180307", s0.PacketVer)
+	}
+	if s0.RangeAbove {
+		t.Errorf("sections[0].RangeAbove = true, want false")
+	}
+
+	s1 := sections[1]
+	if s1.PacketVer != 20180307 {
+		t.Errorf("sections[1].PacketVer = %d, want 20180307", s1.PacketVer)
+	}
+	if !s1.RangeAbove {
+		t.Errorf("sections[1].RangeAbove = false, want true (PACKETVER > 20180307 block)")
+	}
+	// Expect WalkToXY, both UseSkillToPosMoreInfo variants, and ActionRequest.
+	if len(s1.Entries) != 4 {
+		t.Fatalf("sections[1] entry count = %d, want 4 (035F, 0367×2, 0437)", len(s1.Entries))
+	}
+	found := map[uint16]bool{}
+	for _, e := range s1.Entries {
+		found[e.ID] = true
+	}
+	for _, wantID := range []uint16{0x035F, 0x0367, 0x0437} {
+		if !found[wantID] {
+			t.Errorf("entry 0x%04X missing from RangeAbove section", wantID)
+		}
+	}
+}
+
 func TestParseShuffle_TwoSections(t *testing.T) {
 	content := `
 #if PACKETVER == 20130515

@@ -14,10 +14,13 @@ type ShuffleEntry struct {
 	ShuffleID uint16 // the wire packet ID at this exact PACKETVER
 }
 
-// ShuffleBreakpoint is a PACKETVER == N block from clif_shuffle.hpp.
+// ShuffleBreakpoint is one PACKETVER block from clif_shuffle.hpp.
+// Exact-match blocks (PACKETVER == N) have RangeAbove == false.
+// The open-ended block (PACKETVER > N) has RangeAbove == true and Ver == N.
 type ShuffleBreakpoint struct {
-	Ver     uint32
-	Entries []ShuffleEntry
+	Ver        uint32
+	RangeAbove bool
+	Entries    []ShuffleEntry
 }
 
 // BuildShuffleBreakpoints converts parsed ShuffleSections and the base ID map
@@ -50,8 +53,9 @@ func BuildShuffleBreakpoints(sections []preprocess.ShuffleSection, baseIDs map[s
 		}
 		if len(entries) > 0 {
 			bps = append(bps, ShuffleBreakpoint{
-				Ver:     sec.PacketVer,
-				Entries: entries,
+				Ver:        sec.PacketVer,
+				RangeAbove: sec.RangeAbove,
+				Entries:    entries,
 			})
 		}
 	}
@@ -84,24 +88,55 @@ func GenerateShuffleFile(breakpoints []ShuffleBreakpoint) (string, error) {
 		return sb.String(), nil
 	}
 
-	sb.WriteString("\tswitch packetver {\n")
-	for _, bp := range sorted {
-		if len(bp.Entries) == 0 {
-			continue
+	// Separate range-above breakpoint (PACKETVER > N) from exact-match breakpoints.
+	var rangeAbove *ShuffleBreakpoint
+	var exact []ShuffleBreakpoint
+	for i := range sorted {
+		if sorted[i].RangeAbove {
+			bp := sorted[i]
+			rangeAbove = &bp
+		} else {
+			exact = append(exact, sorted[i])
 		}
-		// Sort entries by BaseID for deterministic output.
-		sortedEntries := make([]ShuffleEntry, len(bp.Entries))
-		copy(sortedEntries, bp.Entries)
+	}
+
+	// Emit the open-ended range guard first so it short-circuits before the switch.
+	// Source: clif_shuffle.hpp comment "Clients after 2018-03-07bRagexeRE do not have
+	// shuffled packets anymore" — this block assigns stable post-shuffle wire IDs.
+	if rangeAbove != nil && len(rangeAbove.Entries) > 0 {
+		sortedEntries := make([]ShuffleEntry, len(rangeAbove.Entries))
+		copy(sortedEntries, rangeAbove.Entries)
 		sort.Slice(sortedEntries, func(i, j int) bool { return sortedEntries[i].BaseID < sortedEntries[j].BaseID })
 
-		sb.WriteString(fmt.Sprintf("\tcase %d:\n", bp.Ver))
+		sb.WriteString(fmt.Sprintf("\tif packetver > %d {\n", rangeAbove.Ver))
 		sb.WriteString("\t\tswitch baseID {\n")
 		for _, e := range sortedEntries {
 			sb.WriteString(fmt.Sprintf("\t\tcase 0x%04X:\n\t\t\treturn 0x%04X\n", e.BaseID, e.ShuffleID))
 		}
 		sb.WriteString("\t\t}\n")
+		sb.WriteString("\t}\n")
 	}
-	sb.WriteString("\t}\n")
+
+	if len(exact) > 0 {
+		sb.WriteString("\tswitch packetver {\n")
+		for _, bp := range exact {
+			if len(bp.Entries) == 0 {
+				continue
+			}
+			sortedEntries := make([]ShuffleEntry, len(bp.Entries))
+			copy(sortedEntries, bp.Entries)
+			sort.Slice(sortedEntries, func(i, j int) bool { return sortedEntries[i].BaseID < sortedEntries[j].BaseID })
+
+			sb.WriteString(fmt.Sprintf("\tcase %d:\n", bp.Ver))
+			sb.WriteString("\t\tswitch baseID {\n")
+			for _, e := range sortedEntries {
+				sb.WriteString(fmt.Sprintf("\t\tcase 0x%04X:\n\t\t\treturn 0x%04X\n", e.BaseID, e.ShuffleID))
+			}
+			sb.WriteString("\t\t}\n")
+		}
+		sb.WriteString("\t}\n")
+	}
+
 	sb.WriteString("\treturn baseID\n}\n")
 	return sb.String(), nil
 }

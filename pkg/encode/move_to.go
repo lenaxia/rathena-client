@@ -5,20 +5,23 @@ package encode
 import (
 	"github.com/lenaxia/rathena-client/pkg/packing"
 	"github.com/lenaxia/rathena-client/pkg/send"
+	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
-// EncodeMoveTo encodes a walk request for the map server.
-// 0x035F CZ_REQUEST_MOVE2: 5 bytes, fixed, all PACKETVER >= 20120307.
-// Wire layout: [0-1] 0x5F 0x03 (packet ID LE), [2-4] packed pos from packing.EncodePosDir.
-// Returns [5]byte to allow stack allocation — no heap allocation on the encode path.
+// EncodeMoveTo encodes a walk request (CZ_REQUEST_MOVE / CZ_REQUEST_MOVE2).
+// The wire packet ID is resolved via ShuffledCtoSID so that the correct ID is
+// emitted for every PACKETVER, including shuffle-era clients.
+//
+// Base ID: 0x0085 (clif_packetdb.hpp line 37, first/canonical assignment).
+// Post-shuffle stable wire ID: 0x035F (clif_shuffle.hpp PACKETVER > 20180307 block).
 func EncodeMoveTo(req send.MoveTo, packetver uint32) [5]byte {
-	var p [5]byte
-	p[0] = 0x5F
-	p[1] = 0x03
+	id := session.ShuffledCtoSID(packetver, 0x0085)
 	coords := packing.EncodePosDir(req.X, req.Y, 0)
+	var p [5]byte
+	p[0] = byte(id)
+	p[1] = byte(id >> 8)
 	p[2] = coords[0]
 	p[3] = coords[1]
 	p[4] = coords[2]
-	_ = packetver
 	return p
 }

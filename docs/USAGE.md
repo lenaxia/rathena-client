@@ -51,10 +51,10 @@ This guide covers how to use every public package. Read it in order — later se
 ```
 pkg/
     packing/    DecodePosDir, EncodePosDir, DecodeMoveData, EncodeMoveData
-    events/     281 typed event structs (one per semantic action, S→C)
-    send/       152 typed request structs (one per semantic action, C→S)
-    decode/     282 generated decode functions: FooAction_0xNNNN(data, packetver)
-    encode/     126 generated encode functions: EncodeFooAction(req, packetver)
+    events/     280 typed event structs (one per semantic action, S→C)
+    send/       186 typed request structs (one per semantic action, C→S)
+    decode/     183 generated decode files, 309 decode functions: FooAction_0xNNNN(data, packetver)
+    encode/     183 generated encode functions: EncodeFooAction(req, packetver)
     session/    LoginSession, CharSession, MapSession + framing engine
     fsm/        ConnectionFSM
 ```
@@ -214,6 +214,64 @@ for _, id := range []uint16{0x0078, 0x01D8, 0x09FF} {
         handleActor(e)
     })
 }
+```
+
+### Same-server warp (0x0091 ZC_NPCACK_MAPMOVE)
+
+When a warp portal keeps the player on the **same** map server, the server sends 0x0091. The FSM does **not** handle this — goKore is responsible for the full flow:
+
+1. Register a handler for 0x0091 on the `MapSession` returned by `OnReady`.
+2. Decode with `decode.MapChanged_0x0091`.
+3. Send `encode.EncodeMapLoaded` (0x007D) as the map-loaded ack.
+4. Send `encode.EncodeTimeSyncResponse` (0x007E/0x0360) as the tick-sync ack.
+5. Update goKore's position state from `e.MapName`, `e.XPos`, `e.YPos`.
+
+```go
+ms.RegisterHandler(0x0091, func(data []byte, pv uint32) {
+    e := decode.MapChanged_0x0091(data, pv)
+    // e.MapName — destination map name (null-terminated, no .gat suffix needed)
+    // e.XPos, e.YPos — destination coordinates
+
+    // Ack the warp — same sequence as initial map entry
+    loadedArr := encode.EncodeMapLoaded(send.MapLoaded{}, packetver)
+    id := binary.LittleEndian.Uint16(loadedArr[0:2])
+    ms.Encode(&id)
+    binary.LittleEndian.PutUint16(loadedArr[0:2], id)
+    conn.Write(loadedArr[:])
+
+    tickArr := encode.EncodeTimeSyncResponse(send.TimeSyncResponse{ClientTime: 0}, packetver)
+    id = binary.LittleEndian.Uint16(tickArr[0:2])
+    ms.Encode(&id)
+    binary.LittleEndian.PutUint16(tickArr[0:2], id)
+    conn.Write(tickArr[:])
+
+    // Update position state
+    currentMap = e.MapName
+    posX, posY = e.XPos, e.YPos
+})
+```
+
+**Note on `e.MapName`**: `decode.MapChanged_0x0091` calls `nullTermString` internally, which trims the null terminator and any `.gat` suffix. The returned string is ready to use as-is.
+
+### Server-change warp (0x0092 / 0x0AC7 ZC_NPCACK_SERVERMOVE)
+
+When a warp moves the player to a **different** map server, the server sends 0x0092 (older PACKETVER) or 0x0AC7 (PACKETVER ≥ 20170315). These packets include `Ip` and `Port` for the destination map server.
+
+```go
+// PACKETVER < 20170315
+ms.RegisterHandler(0x0092, func(data []byte, pv uint32) {
+    e := decode.MapChanged_0x0092(data, pv)
+    // e.MapName, e.XPos, e.YPos — destination
+    // e.Ip   — destination map server IP (big-endian uint32, same convention as CharServerInfo.IP)
+    // e.Port — destination map server port
+    // goKore must close the current conn and dial e.Ip:e.Port
+})
+
+// PACKETVER >= 20170315
+ms.RegisterHandler(0x0AC7, func(data []byte, pv uint32) {
+    e := decode.MapChanged_0x0AC7(data, pv)
+    // Same fields as 0x0092 plus e.Domain (string, for hostname-based routing)
+})
 ```
 
 **PACKETVER handling inside decode functions:**
@@ -439,9 +497,16 @@ f.OnCharList(func(rawChars []byte) uint8 {
 })
 
 // Called when the map server accepts entry and the map-loaded sequence completes.
-// The FSM passes the ready MapSession and live net.Conn. After this call,
-// the FSM releases conn — you own it.
-f.OnReady(func(ms *session.MapSession, conn net.Conn) {
+// The FSM passes the ready MapSession, live net.Conn, and ReadyInfo (initial
+// position decoded from ZC_ACCEPT_ENTER). After this call the FSM releases
+// conn — you own it.
+f.OnReady(func(ms *session.MapSession, conn net.Conn, info fsm.ReadyInfo) {
+    // info.X, info.Y — initial tile coordinates
+    // info.Dir       — facing direction (0–7)
+    // info.StartTime — server tick from entry packet
+    // info.Font      — overhead font ID
+    // info.Sex       — character sex byte
+
     // Register your game handlers on ms
     ms.RegisterHandler(0x09FF, func(data []byte, pv uint32) { ... })
 
@@ -508,7 +573,7 @@ Connect(ctx)
   → send 0x0436 CZ_ENTER (with C→S obfuscation if keys exist)
   → read until 0x0073/0x02EB/0x0A18 ZC_ACCEPT_ENTER
   → send 0x007D CZ_NOTIFY_ACTORINIT + 0x007E/0x0360 CZ_REQUEST_TIME
-  → call OnReady(mapSess, conn)
+  → call OnReady(mapSess, conn, ReadyInfo{X, Y, Dir, StartTime, Font, Sex})
   → return nil
 ```
 
@@ -554,9 +619,11 @@ func NewConnector(loginAddr string, pv uint32, user, pass string) *Connector {
         },
     )
 
-    c.fsm.OnReady(func(ms *session.MapSession, conn net.Conn) {
+    c.fsm.OnReady(func(ms *session.MapSession, conn net.Conn, info fsm.ReadyInfo) {
         c.ms = ms
         c.conn = conn
+        // info.X, info.Y — initial tile coordinates
+        // info.Dir       — facing direction (0–7)
 
         // Register game-state handlers
         ms.RegisterHandler(0x09FF, func(data []byte, pv uint32) {
