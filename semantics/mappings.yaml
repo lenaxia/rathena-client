@@ -608,9 +608,59 @@ mappings:
           rathena_type: uint8
           openkore_name: action
           semantic: Attack action type
+    - packet_id: "0x00CB"
+      direction: receive
+      rathena_struct: SYNTH_ZC_PC_SELL_RESULT
+      openkore_name: sell_result
+      semantic_category: shop
+      description: NPC shop sell result notification
+      confidence: 100
+      validated_date: "2026-03-19"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: uint16
+          openkore_name: packetType
+          semantic: Packet ID 0x00CB
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: Result
+          rathena_type: uint8
+          openkore_name: fail
+          semantic: 0=success 1=fail
+      constants:
+        Result:
+            FAIL: 1
+            SUCCESS: 0
+    - packet_id: "0x017F"
+      direction: receive
+      rathena_struct: PACKET_ZC_GUILD_CHAT
+      openkore_name: guild_chat
+      semantic_category: chat
+      description: Guild chat message from server
+      confidence: 100
+      validated_date: "2026-03-19"
+      fields:
+        - position: 0
+          rathena_name: packetType
+          rathena_type: int16
+          openkore_name: packetType
+          semantic: Packet ID 0x017F
+          omit_from_openkore: true
+        - position: 1
+          rathena_name: packetLength
+          rathena_type: int16
+          openkore_name: len
+          semantic: Total packet length including header
+          omit_from_openkore: true
+        - position: 2
+          rathena_name: message
+          rathena_type: char[]
+          openkore_name: message
+          semantic: 'Null-terminated guild chat message, format: name : text'
 metadata:
-    total_packets: 28
-    last_updated: "2026-03-12"
+    total_packets: 30
+    last_updated: "2026-03-19"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -2572,6 +2622,18 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_MOVE_ITEM_FROM_CART_TO_BODY
               field_mapping: {}
+    guild_chat:
+        name: guild_chat
+        description: Guild chat message
+        openkore_name: guild_chat
+        canonical_params: []
+        implementations:
+            - packet_id: "0x017F"
+              packetver_range:
+                - null
+                - null
+              struct_name: PACKET_ZC_GUILD_CHAT
+              field_mapping: {}
     homunculus_attack:
         name: homunculus_attack
         description: Command the homunculus to attack a target
@@ -3447,6 +3509,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_NOTIFY_PLAYERCHAT
+              field_mapping: {}
+    sell_result:
+        name: sell_result
+        description: NPC shop sell result
+        openkore_name: sell_result
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00CB"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_ZC_PC_SELL_RESULT
               field_mapping: {}
     send_emotion:
         name: send_emotion

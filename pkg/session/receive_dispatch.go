@@ -309,6 +309,9 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionEntitySpawn: {
 		{id: 0x007C, fn: func(d []byte, pv uint32) interface{} { return decode.EntitySpawn_0x007C(d, pv) }},
 	},
+	ActionGuildChat: {
+		{id: 0x017F, fn: func(d []byte, pv uint32) interface{} { return decode.GuildChat_0x017F(d, pv) }},
+	},
 	ActionHomunculusInfo: {
 		{id: 0x0230, fn: func(d []byte, pv uint32) interface{} { return decode.HomunculusInfo_0x0230(d, pv) }},
 	},
@@ -381,6 +384,9 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionSelfChat: {
 		{id: 0x008E, fn: func(d []byte, pv uint32) interface{} { return decode.SelfChat_0x008E(d, pv) }},
+	},
+	ActionSellResult: {
+		{id: 0x00CB, fn: func(d []byte, pv uint32) interface{} { return decode.SellResult_0x00CB(d, pv) }},
 	},
 	ActionSkillAdd: {
 		{id: 0x0111, fn: func(d []byte, pv uint32) interface{} { return decode.SkillAdd_0x0111(d, pv) }},

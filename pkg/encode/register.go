@@ -41,6 +41,7 @@ import (
 //   enter_world
 //   entity_move
 //   entity_spawn
+//   guild_chat
 //   homunculus_info
 //   inventory_item_added
 //   item_appeared
@@ -69,6 +70,7 @@ import (
 //   request_charlist
 //   sc_notify_ban
 //   self_chat
+//   sell_result
 //   skill_add
 //   skill_cast
 //   skill_delete
