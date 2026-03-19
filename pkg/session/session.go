@@ -18,6 +18,60 @@ import (
 	"time"
 )
 
+// TraceEvent is the interface implemented by all observable session events.
+// The concrete types are WireInbound, WireOutbound, SemanticIn, SemanticOut,
+// and UnknownPacketEvent.
+type TraceEvent interface{ traceEvent() }
+
+// WireInbound is emitted by feed() for every complete inbound frame whose packet
+// ID is found in the length table (known packet ID). Frame is a heap-allocated
+// copy safe to retain beyond the TraceFunc call. Fired before dispatch.
+type WireInbound struct {
+	ID        uint16
+	Frame     []byte
+	Packetver uint32
+	Time      time.Time
+}
+
+func (WireInbound) traceEvent() {}
+
+// WireOutbound is emitted by Send() after a successful write. Frame is a
+// heap-allocated copy of the post-obfuscation wire bytes, safe to retain.
+type WireOutbound struct {
+	Action    SemanticAction
+	Frame     []byte
+	Packetver uint32
+	Time      time.Time
+}
+
+func (WireOutbound) traceEvent() {}
+
+// SemanticIn is emitted inside the RegisterSemanticHandler closure after the
+// decode function runs and before the user handler is called. Frame is the same
+// heap-allocated copy as the paired WireInbound (an independent copy).
+type SemanticIn struct {
+	Action SemanticAction
+	ID     uint16
+	Event  interface{}
+	Frame  []byte
+}
+
+func (SemanticIn) traceEvent() {}
+
+// SemanticOut is emitted by Send() after a successful write. Frame is the same
+// heap-allocated slice as the paired WireOutbound.Frame.
+type SemanticOut struct {
+	Action  SemanticAction
+	Request interface{}
+	Frame   []byte
+}
+
+func (SemanticOut) traceEvent() {}
+
+// TraceFunc is the unified trace hook. Set via SetTraceFunc on any session type.
+// Called synchronously in the caller's goroutine. Must not block.
+type TraceFunc func(TraceEvent)
+
 // handlerFunc is a callback invoked synchronously by Feed() for each decoded frame.
 // data is the complete frame bytes including the 2-byte packet ID header.
 // packetver is the PACKETVER the session was constructed with.
@@ -28,6 +82,8 @@ import (
 //
 //	name = decode.CopyString(event.Name)
 type handlerFunc func(data []byte, packetver uint32)
+
+func (UnknownPacketEvent) traceEvent() {}
 
 // recentPacketDepth is the number of preceding dispatched packets captured in
 // the ring buffer and included in UnknownPacketEvent.RecentPackets.
@@ -153,14 +209,16 @@ func (r *recentRing) snapshot() []DispatchedPacket {
 
 // sessionCore is the internal framing engine shared by all three session types.
 type sessionCore struct {
-	packetver       uint32
-	buf             []byte       // full backing array; owned exclusively by sessionCore
-	recvBuf         []byte       // active sub-slice of buf; advances as frames are consumed
-	lengths         [65536]int16 // packet length table: 0 = unknown, -1 = variable (bytes[2:4])
-	handlers        [65536]handlerFunc
-	onUnknownPacket UnknownPacketFunc
-	recent          recentRing // ring buffer of last recentPacketDepth dispatched packets
-	faulted         bool
+	packetver        uint32
+	buf              []byte       // full backing array; owned exclusively by sessionCore
+	recvBuf          []byte       // active sub-slice of buf; advances as frames are consumed
+	lengths          [65536]int16 // packet length table: 0 = unknown, -1 = variable (bytes[2:4])
+	handlers         [65536]handlerFunc
+	onUnknownPacket  UnknownPacketFunc
+	recent           recentRing // ring buffer of last recentPacketDepth dispatched packets
+	faulted          bool
+	trace            TraceFunc
+	unhandledPackets uint64
 }
 
 // feed implements the core framing and dispatch loop.
@@ -209,14 +267,18 @@ func (c *sessionCore) feed(data []byte) error {
 			// raw buffer snapshot, then clear the buffer. The next TCP read starts
 			// clean and may recover if the server sends a known packet ID.
 			// Matches OpenKore MessageTokenizer behavior.
+			ev := UnknownPacketEvent{
+				ID:            packetID,
+				Packetver:     c.packetver,
+				Time:          time.Now(),
+				RecentPackets: c.recent.snapshot(),
+				RawBuffer:     append([]byte(nil), c.recvBuf...),
+			}
 			if c.onUnknownPacket != nil {
-				c.onUnknownPacket(UnknownPacketEvent{
-					ID:            packetID,
-					Packetver:     c.packetver,
-					Time:          time.Now(),
-					RecentPackets: c.recent.snapshot(),
-					RawBuffer:     append([]byte(nil), c.recvBuf...),
-				})
+				c.onUnknownPacket(ev)
+			}
+			if c.trace != nil {
+				c.trace(ev)
 			}
 			c.recvBuf = c.recvBuf[:0]
 			goto done
@@ -227,9 +289,21 @@ func (c *sessionCore) feed(data []byte) error {
 			break
 		}
 
-		// Step 2d: dispatch.
+		// Step 2d: emit WireInbound trace (before dispatch), then dispatch.
+		if c.trace != nil {
+			frameCopy := append([]byte(nil), c.recvBuf[:frameLen]...)
+			c.trace(WireInbound{
+				ID:        packetID,
+				Frame:     frameCopy,
+				Packetver: c.packetver,
+				Time:      time.Now(),
+			})
+		}
+
 		if fn := c.handlers[packetID]; fn != nil {
 			fn(c.recvBuf[:frameLen], c.packetver)
+		} else {
+			c.unhandledPackets++
 		}
 
 		// Step 2e: advance and push the frame into the recent-packet ring.
@@ -254,4 +328,20 @@ func (c *sessionCore) registerHandler(id uint16, fn handlerFunc) {
 // in the length table. Pass nil to clear a previously registered callback.
 func (c *sessionCore) setUnknownPacketHandler(fn UnknownPacketFunc) {
 	c.onUnknownPacket = fn
+}
+
+// setTraceFunc sets the unified trace hook. Pass nil to disable.
+func (c *sessionCore) setTraceFunc(fn TraceFunc) {
+	c.trace = fn
+}
+
+// isFaulted returns true after a corrupt embedded-length error.
+func (c *sessionCore) isFaulted() bool {
+	return c.faulted
+}
+
+// unhandledCount returns the cumulative count of frames that arrived with a known
+// packet ID but no registered handler.
+func (c *sessionCore) unhandledCount() uint64 {
+	return c.unhandledPackets
 }

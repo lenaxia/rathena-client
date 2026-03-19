@@ -1,21 +1,33 @@
 package session
 
 import (
-	"errors"
 	"fmt"
 	"io"
+	"time"
 )
 
 // ErrWrongSendType is returned by Send when req is not the expected send.* type
 // for the given action. Exported so callers can use errors.Is for precise handling.
-var ErrWrongSendType = errors.New("session: Send called with wrong request type for action")
+// errors.Is(err, ErrWrongSendType{}) matches any ErrWrongSendType regardless of Action.
+type ErrWrongSendType struct {
+	Action SemanticAction
+}
+
+func (e ErrWrongSendType) Error() string {
+	return fmt.Sprintf("session: Send called with wrong request type for action %v", e.Action)
+}
+
+func (e ErrWrongSendType) Is(target error) bool {
+	_, ok := target.(ErrWrongSendType)
+	return ok
+}
 
 // SendEncoderFunc is the type stored in the send dispatch registry.
 // It accepts the request as interface{} (the concrete send.* struct) and the
 // current packetver, and returns the fully-encoded byte slice ready to send.
 // The encode function has already written the correct wire packet ID (including
 // any packetver-dependent shuffle) into bytes 0–1; Send applies only XOR
-// obfuscation on top. Returns ErrWrongSendType if req is not the expected type.
+// obfuscation on top. Returns ErrWrongSendType{} if req is not the expected type.
 type SendEncoderFunc func(req interface{}, pv uint32) ([]byte, error)
 
 // sendRegistry holds the registered encoder for each send-direction SemanticAction.
@@ -79,6 +91,15 @@ func RegisterSemanticHandler[E any](s *MapSession, action SemanticAction, fn fun
 				panic(fmt.Sprintf("session: handler type mismatch for action %v packet 0x%04X: "+
 					"got %T, handler expects %T", action, e.id, raw, *new(E)))
 			}
+			if s.core.trace != nil {
+				frameCopy := append([]byte(nil), data...)
+				s.core.trace(SemanticIn{
+					Action: action,
+					ID:     e.id,
+					Event:  raw,
+					Frame:  frameCopy,
+				})
+			}
 			fn(typed)
 		})
 	}
@@ -88,7 +109,8 @@ func RegisterSemanticHandler[E any](s *MapSession, action SemanticAction, fn fun
 // packet ID obfuscation if enabled, and writes the result to w.
 //
 // req must be the send.* struct value corresponding to action. If the concrete
-// type does not match what was registered, Send returns ErrWrongSendType.
+// type does not match what was registered, Send returns ErrWrongSendType with the
+// action name populated.
 // Send accepts req as interface{} because the type check is performed inside
 // the registered SendEncoderFunc closure at runtime — Go generics cannot provide
 // compile-time safety here since the registry maps SemanticAction to interface{}.
@@ -110,6 +132,12 @@ func Send(s *MapSession, w io.Writer, action SemanticAction, req interface{}) er
 	fn := sendRegistry[action]
 	data, err := fn(req, s.core.packetver)
 	if err != nil {
+		var wrongType ErrWrongSendType
+		if e, ok := err.(ErrWrongSendType); ok {
+			_ = e
+			return ErrWrongSendType{Action: action}
+		}
+		_ = wrongType
 		return err
 	}
 	if len(data) >= 2 {
@@ -119,5 +147,23 @@ func Send(s *MapSession, w io.Writer, action SemanticAction, req interface{}) er
 		data[1] = byte(id >> 8)
 	}
 	_, err = w.Write(data)
-	return err
+	if err != nil {
+		return err
+	}
+	if s.core.trace != nil {
+		frameCopy := append([]byte(nil), data...)
+		now := time.Now()
+		s.core.trace(WireOutbound{
+			Action:    action,
+			Frame:     frameCopy,
+			Packetver: s.core.packetver,
+			Time:      now,
+		})
+		s.core.trace(SemanticOut{
+			Action:  action,
+			Request: req,
+			Frame:   frameCopy,
+		})
+	}
+	return nil
 }

@@ -44,3 +44,9 @@ func (s *CharSession) setLength(id uint16, length int16) {
 func (s *CharSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
 	s.core.setUnknownPacketHandler(fn)
 }
+
+// SetTraceFunc sets the unified trace hook that receives WireInbound and
+// UnknownPacketEvent events. Pass nil to disable tracing.
+func (s *CharSession) SetTraceFunc(fn TraceFunc) {
+	s.core.setTraceFunc(fn)
+}

@@ -325,7 +325,7 @@ func TestSend_WrongType(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
-	if !errors.Is(err, ErrWrongSendType) {
+	if !errors.Is(err, ErrWrongSendType{}) {
 		t.Errorf("expected ErrWrongSendType, got %v", err)
 	}
 }

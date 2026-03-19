@@ -51,6 +51,26 @@ func (s *MapSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
 	s.core.setUnknownPacketHandler(fn)
 }
 
+// SetTraceFunc sets the unified trace hook that receives all observable events:
+// WireInbound, WireOutbound, SemanticIn, SemanticOut, and UnknownPacketEvent.
+// Pass nil to disable tracing. Zero overhead when nil — single nil check on hot path.
+func (s *MapSession) SetTraceFunc(fn TraceFunc) {
+	s.core.setTraceFunc(fn)
+}
+
+// IsFaulted returns true after Feed() has returned ErrUnknownPacket (corrupt
+// embedded length). A faulted session silently drops all further Feed calls.
+// Caller must close connection and create a new session.
+func (s *MapSession) IsFaulted() bool {
+	return s.core.isFaulted()
+}
+
+// UnhandledPackets returns the cumulative count of frames that arrived with a
+// known packet ID (in the length table) but no registered handler.
+func (s *MapSession) UnhandledPackets() uint64 {
+	return s.core.unhandledCount()
+}
+
 // enableObfuscation activates C→S packet ID obfuscation for this session.
 // Must be called before the first encodePacketID call.
 // key0, key1, key2 are clif_cryptKey[0], clif_cryptKey[1], clif_cryptKey[2] from

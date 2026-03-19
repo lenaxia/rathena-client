@@ -40,6 +40,12 @@ func (s *LoginSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
 	s.core.setUnknownPacketHandler(fn)
 }
 
+// SetTraceFunc sets the unified trace hook that receives WireInbound and
+// UnknownPacketEvent events. Pass nil to disable tracing.
+func (s *LoginSession) SetTraceFunc(fn TraceFunc) {
+	s.core.setTraceFunc(fn)
+}
+
 // registerHandler registers fn as the callback for the given packet ID.
 // Overwrites any existing handler for that ID.
 func (s *LoginSession) registerHandler(id uint16, fn handlerFunc) {

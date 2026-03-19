@@ -300,7 +300,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.ActorAction)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeActorAction(r, pv)
 			return b[:], nil
@@ -310,7 +310,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.AutoSpell)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeAutoSpell(r, pv)
 			return b[:], nil
@@ -320,7 +320,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaConnectInfoChanged)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaConnectInfoChanged(r, pv)
 			return b[:], nil
@@ -330,7 +330,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaExeHashcheck)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaExeHashcheck(r, pv)
 			return b[:], nil
@@ -340,7 +340,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaLogin2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaLogin2(r, pv)
 			return b[:], nil
@@ -350,7 +350,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaLogin3)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaLogin3(r, pv)
 			return b[:], nil
@@ -360,7 +360,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaLogin4)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaLogin4(r, pv)
 			return b[:], nil
@@ -370,7 +370,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaLoginChannel)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaLoginChannel(r, pv)
 			return b[:], nil
@@ -380,7 +380,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaLoginPcbang)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaLoginPcbang(r, pv)
 			return b[:], nil
@@ -390,7 +390,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaReqHash)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaReqHash(r, pv)
 			return b[:], nil
@@ -400,7 +400,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaSsoLoginReq)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCaSsoLoginReq(r, pv)
 			return b[:], nil
@@ -410,7 +410,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CatchPet)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCatchPet(r, pv)
 			return b[:], nil
@@ -420,7 +420,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.ChangeCart)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeChangeCart(r, pv)
 			return b[:], nil
@@ -430,7 +430,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CharCreate)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCharCreate(r, pv)
 			return b[:], nil
@@ -440,7 +440,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CharDelete)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCharDelete(r, pv)
 			return b[:], nil
@@ -450,7 +450,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CharLogin)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCharLogin(r, pv)
 			return b[:], nil
@@ -460,7 +460,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CharacterMove)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCharacterMove(r, pv)
 			return b[:], nil
@@ -470,7 +470,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CloseStorage)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCloseStorage(r, pv)
 			return b[:], nil
@@ -480,7 +480,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CloseVending)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCloseVending(r, pv)
 			return b[:], nil
@@ -490,7 +490,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzAckAnswerMacroDetector)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzAckAnswerMacroDetector(r, pv)
 			return b[:], nil
@@ -500,7 +500,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzAdvancedStatusChange)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzAdvancedStatusChange(r, pv)
 			return b[:], nil
@@ -510,7 +510,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzAdventurerAgencyJoinReq)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzAdventurerAgencyJoinReq(r, pv)
 			return b[:], nil
@@ -520,7 +520,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzAdventurerAgencyJoinResult)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzAdventurerAgencyJoinResult(r, pv)
 			return b[:], nil
@@ -530,7 +530,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzApproximateActor)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzApproximateActor(r, pv)
 			return b[:], nil
@@ -540,7 +540,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCheckname1)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCheckname1(r, pv)
 			return b[:], nil
@@ -550,7 +550,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCheckname2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCheckname2(r, pv)
 			return b[:], nil
@@ -560,7 +560,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzChooseMenuZero)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzChooseMenuZero(r, pv)
 			return b[:], nil
@@ -570,7 +570,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzClientVersion)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzClientVersion(r, pv)
 			return b[:], nil
@@ -580,7 +580,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCloseMsgboxExtendBodyitemSize)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCloseMsgboxExtendBodyitemSize(r, pv)
 			return b[:], nil
@@ -590,7 +590,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCloseRefiningUi)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCloseRefiningUi(r, pv)
 			return b[:], nil
@@ -600,7 +600,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCloseReformUi)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCloseReformUi(r, pv)
 			return b[:], nil
@@ -610,7 +610,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCloseUiEnchant)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCloseUiEnchant(r, pv)
 			return b[:], nil
@@ -620,7 +620,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCloseUiStylingshop)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCloseUiStylingshop(r, pv)
 			return b[:], nil
@@ -630,7 +630,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCmdResetcooltime)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCmdResetcooltime(r, pv)
 			return b[:], nil
@@ -640,7 +640,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzCompleteApplyMacroDetectorCaptcha)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzCompleteApplyMacroDetectorCaptcha(r, pv)
 			return b[:], nil
@@ -650,7 +650,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzContactnpc)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzContactnpc(r, pv)
 			return b[:], nil
@@ -660,7 +660,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzDynamicnpcCreateRequest)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzDynamicnpcCreateRequest(r, pv)
 			return b[:], nil
@@ -670,7 +670,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzGetAccountLimtiedSaleList)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzGetAccountLimtiedSaleList(r, pv)
 			return b[:], nil
@@ -680,7 +680,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzGradeEnchantCloseUi)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzGradeEnchantCloseUi(r, pv)
 			return b[:], nil
@@ -690,7 +690,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzGradeEnchantRequest)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzGradeEnchantRequest(r, pv)
 			return b[:], nil
@@ -700,7 +700,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzGradeEnchantSelectEquipment)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzGradeEnchantSelectEquipment(r, pv)
 			return b[:], nil
@@ -710,7 +710,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzInventoryTab)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzInventoryTab(r, pv)
 			return b[:], nil
@@ -720,7 +720,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzItemReform)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzItemReform(r, pv)
 			return b[:], nil
@@ -730,7 +730,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzJoinGroup)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzJoinGroup(r, pv)
 			return b[:], nil
@@ -740,7 +740,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzJoinGuild)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzJoinGuild(r, pv)
 			return b[:], nil
@@ -750,7 +750,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzMoveItemFromBodyToCart)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzMoveItemFromBodyToCart(r, pv)
 			return b[:], nil
@@ -760,7 +760,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzNpcBarterMarketClose)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzNpcBarterMarketClose(r, pv)
 			return b[:], nil
@@ -770,7 +770,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzNpcBarterMarketPurchase)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzNpcBarterMarketPurchase(r, pv)
 			return b[:], nil
@@ -780,7 +780,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzNpcExpandedBarterMarketClose)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzNpcExpandedBarterMarketClose(r, pv)
 			return b[:], nil
@@ -790,7 +790,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzNpcExpandedBarterMarketPurchase)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzNpcExpandedBarterMarketPurchase(r, pv)
 			return b[:], nil
@@ -800,7 +800,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzNpcMarketPurchase)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzNpcMarketPurchase(r, pv)
 			return b[:], nil
@@ -810,7 +810,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzPartyConfig)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzPartyConfig(r, pv)
 			return b[:], nil
@@ -820,7 +820,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzPartyJoinReq)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzPartyJoinReq(r, pv)
 			return b[:], nil
@@ -830,7 +830,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzPartyJoinReqAck)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzPartyJoinReqAck(r, pv)
 			return b[:], nil
@@ -840,7 +840,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzPcPurchaseItemlistFrommc)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzPcPurchaseItemlistFrommc(r, pv)
 			return b[:], nil
@@ -850,7 +850,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzPcPurchaseItemlistFrommc2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzPcPurchaseItemlistFrommc2(r, pv)
 			return b[:], nil
@@ -860,7 +860,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzPingLive)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzPingLive(r, pv)
 			return b[:], nil
@@ -870,7 +870,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRandomCombineItemUiClose)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRandomCombineItemUiClose(r, pv)
 			return b[:], nil
@@ -880,7 +880,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRandomUpgradeItemUiClose)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRandomUpgradeItemUiClose(r, pv)
 			return b[:], nil
@@ -890,7 +890,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRefiningSelectItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRefiningSelectItem(r, pv)
 			return b[:], nil
@@ -900,7 +900,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqAgitInvestment)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqAgitInvestment(r, pv)
 			return b[:], nil
@@ -910,7 +910,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqApplyBargainSaleItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqApplyBargainSaleItem(r, pv)
 			return b[:], nil
@@ -920,7 +920,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqApplyMacroDetector)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqApplyMacroDetector(r, pv)
 			return b[:], nil
@@ -930,7 +930,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqBanGuild)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqBanGuild(r, pv)
 			return b[:], nil
@@ -940,7 +940,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqCashBargainSaleItemInfo)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqCashBargainSaleItemInfo(r, pv)
 			return b[:], nil
@@ -950,7 +950,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqChangeMemberpos)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqChangeMemberpos(r, pv)
 			return b[:], nil
@@ -960,7 +960,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqDisorganizeGuild)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqDisorganizeGuild(r, pv)
 			return b[:], nil
@@ -970,7 +970,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqExtendBodyitemSize)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqExtendBodyitemSize(r, pv)
 			return b[:], nil
@@ -980,7 +980,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqGuildEmblemImg1)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqGuildEmblemImg1(r, pv)
 			return b[:], nil
@@ -990,7 +990,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqGuildEmblemImg2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqGuildEmblemImg2(r, pv)
 			return b[:], nil
@@ -1000,7 +1000,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqGuildEmblemImg3)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqGuildEmblemImg3(r, pv)
 			return b[:], nil
@@ -1010,7 +1010,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqItemrepair1)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqItemrepair1(r, pv)
 			return b[:], nil
@@ -1020,7 +1020,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqItemrepair2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqItemrepair2(r, pv)
 			return b[:], nil
@@ -1030,7 +1030,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqJoinGuild)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqJoinGuild(r, pv)
 			return b[:], nil
@@ -1040,7 +1040,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqJoinGuild2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqJoinGuild2(r, pv)
 			return b[:], nil
@@ -1050,7 +1050,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqLeaveGuild)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqLeaveGuild(r, pv)
 			return b[:], nil
@@ -1060,7 +1060,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqMakingarrow)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqMakingarrow(r, pv)
 			return b[:], nil
@@ -1070,7 +1070,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqMergeItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqMergeItem(r, pv)
 			return b[:], nil
@@ -1080,7 +1080,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqMoveGuildAgit)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqMoveGuildAgit(r, pv)
 			return b[:], nil
@@ -1090,7 +1090,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqOpenMsgboxExtendBodyitemSize)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqOpenMsgboxExtendBodyitemSize(r, pv)
 			return b[:], nil
@@ -1100,7 +1100,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqPlayerAidInRange)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqPlayerAidInRange(r, pv)
 			return b[:], nil
@@ -1110,7 +1110,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqPreviewMacroDetector)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqPreviewMacroDetector(r, pv)
 			return b[:], nil
@@ -1120,7 +1120,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqRandomCombineItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqRandomCombineItem(r, pv)
 			return b[:], nil
@@ -1130,7 +1130,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqRandomUpgradeItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqRandomUpgradeItem(r, pv)
 			return b[:], nil
@@ -1140,7 +1140,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqRefining)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqRefining(r, pv)
 			return b[:], nil
@@ -1150,7 +1150,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqRemaintime)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqRemaintime(r, pv)
 			return b[:], nil
@@ -1160,7 +1160,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqRemoveBargainSaleItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqRemoveBargainSaleItem(r, pv)
 			return b[:], nil
@@ -1170,7 +1170,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqSeCashTabCode)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqSeCashTabCode(r, pv)
 			return b[:], nil
@@ -1180,7 +1180,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqTakeoffEquipAll)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqTakeoffEquipAll(r, pv)
 			return b[:], nil
@@ -1190,7 +1190,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzReqUploadMacroDetector)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqUploadMacroDetector(r, pv)
 			return b[:], nil
@@ -1200,7 +1200,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRequestPerfectEnchant)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRequestPerfectEnchant(r, pv)
 			return b[:], nil
@@ -1210,7 +1210,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRequestRandomEnchant)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRequestRandomEnchant(r, pv)
 			return b[:], nil
@@ -1220,7 +1220,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRequestResetEnchant)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRequestResetEnchant(r, pv)
 			return b[:], nil
@@ -1230,7 +1230,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRequestUpgradeEnchant)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRequestUpgradeEnchant(r, pv)
 			return b[:], nil
@@ -1240,7 +1240,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzResetSkill)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzResetSkill(r, pv)
 			return b[:], nil
@@ -1250,7 +1250,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzRodexReturn)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzRodexReturn(r, pv)
 			return b[:], nil
@@ -1260,7 +1260,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzSeCashshopOpen1)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzSeCashshopOpen1(r, pv)
 			return b[:], nil
@@ -1270,7 +1270,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzSeCashshopOpen2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzSeCashshopOpen2(r, pv)
 			return b[:], nil
@@ -1280,7 +1280,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzSePcBuyCashitemList)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzSePcBuyCashitemList(r, pv)
 			return b[:], nil
@@ -1290,7 +1290,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzShortcutKeyChange1)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzShortcutKeyChange1(r, pv)
 			return b[:], nil
@@ -1300,7 +1300,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzShortcutKeyChange2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzShortcutKeyChange2(r, pv)
 			return b[:], nil
@@ -1310,7 +1310,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzShortcutkeybarRotate1)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzShortcutkeybarRotate1(r, pv)
 			return b[:], nil
@@ -1320,7 +1320,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzShortcutkeybarRotate2)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzShortcutkeybarRotate2(r, pv)
 			return b[:], nil
@@ -1330,7 +1330,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzUninstallation)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzUninstallation(r, pv)
 			return b[:], nil
@@ -1340,7 +1340,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzUploadMacroDetectorCaptcha)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzUploadMacroDetectorCaptcha(r, pv)
 			return b[:], nil
@@ -1350,7 +1350,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzUsePackageitem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzUsePackageitem(r, pv)
 			return b[:], nil
@@ -1360,7 +1360,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzUseSkillEnd)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzUseSkillEnd(r, pv)
 			return b[:], nil
@@ -1370,7 +1370,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzUseSkillStart)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzUseSkillStart(r, pv)
 			return b[:], nil
@@ -1380,7 +1380,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzViewCamerainfo)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzViewCamerainfo(r, pv)
 			return b[:], nil
@@ -1390,7 +1390,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DealAddOther)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDealAddOther(r, pv)
 			return b[:], nil
@@ -1400,7 +1400,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DealCancel)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDealCancel(r, pv)
 			return b[:], nil
@@ -1410,7 +1410,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DealFinalize)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDealFinalize(r, pv)
 			return b[:], nil
@@ -1420,7 +1420,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DealInitiate)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDealInitiate(r, pv)
 			return b[:], nil
@@ -1430,7 +1430,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DealReply)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDealReply(r, pv)
 			return b[:], nil
@@ -1440,7 +1440,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DealTrade)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDealTrade(r, pv)
 			return b[:], nil
@@ -1450,7 +1450,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.DropItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeDropItem(r, pv)
 			return b[:], nil
@@ -1460,7 +1460,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.Emote)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeEmote(r, pv)
 			return b[:], nil
@@ -1470,7 +1470,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.EquipItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeEquipItem(r, pv)
 			return b[:], nil
@@ -1480,7 +1480,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.FriendsAdd)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeFriendsAdd(r, pv)
 			return b[:], nil
@@ -1490,7 +1490,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.FriendsRemove)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeFriendsRemove(r, pv)
 			return b[:], nil
@@ -1500,7 +1500,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.FriendsReply)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeFriendsReply(r, pv)
 			return b[:], nil
@@ -1510,7 +1510,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.GameLogin)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeGameLogin(r, pv)
 			return b[:], nil
@@ -1520,7 +1520,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.GetItemFromCart)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeGetItemFromCart(r, pv)
 			return b[:], nil
@@ -1530,7 +1530,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.HomunculusAttack)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeHomunculusAttack(r, pv)
 			return b[:], nil
@@ -1540,7 +1540,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.HomunculusMenu)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeHomunculusMenu(r, pv)
 			return b[:], nil
@@ -1550,7 +1550,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.IgnoreListReq)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeIgnoreListReq(r, pv)
 			return b[:], nil
@@ -1560,7 +1560,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.InsertCard)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeInsertCard(r, pv)
 			return b[:], nil
@@ -1570,7 +1570,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.ItemIdentify)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeItemIdentify(r, pv)
 			return b[:], nil
@@ -1580,7 +1580,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.ItemUse)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeItemUse(r, pv)
 			return b[:], nil
@@ -1590,7 +1590,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.Look)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeLook(r, pv)
 			return b[:], nil
@@ -1600,7 +1600,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MapLoaded)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMapLoaded(r, pv)
 			return b[:], nil
@@ -1610,7 +1610,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MapLogin)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMapLogin(r, pv)
 			return b[:], nil
@@ -1620,7 +1620,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MarketPurchase)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMarketPurchase(r, pv)
 			return b[:], nil
@@ -1630,7 +1630,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MasterLogin)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMasterLogin(r, pv)
 			return b[:], nil
@@ -1640,7 +1640,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MoveFromStorage)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMoveFromStorage(r, pv)
 			return b[:], nil
@@ -1650,7 +1650,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MoveTo)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMoveTo(r, pv)
 			return b[:], nil
@@ -1660,7 +1660,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MoveToStorage)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeMoveToStorage(r, pv)
 			return b[:], nil
@@ -1670,7 +1670,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcContact)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcContact(r, pv)
 			return b[:], nil
@@ -1680,7 +1680,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcMarketClose)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcMarketClose(r, pv)
 			return b[:], nil
@@ -1690,7 +1690,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcMenuResponse)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcMenuResponse(r, pv)
 			return b[:], nil
@@ -1700,7 +1700,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcTalkClose)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcTalkClose(r, pv)
 			return b[:], nil
@@ -1710,7 +1710,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcTalkContinue)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcTalkContinue(r, pv)
 			return b[:], nil
@@ -1720,7 +1720,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcTalkNumber)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcTalkNumber(r, pv)
 			return b[:], nil
@@ -1730,7 +1730,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcTalkText)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcTalkText(r, pv)
 			return b[:], nil
@@ -1740,7 +1740,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.NpcTradeQuit)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeNpcTradeQuit(r, pv)
 			return b[:], nil
@@ -1750,7 +1750,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PartyChangeOption)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePartyChangeOption(r, pv)
 			return b[:], nil
@@ -1760,7 +1760,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PartyCreate)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePartyCreate(r, pv)
 			return b[:], nil
@@ -1770,7 +1770,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PartyInvite)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePartyInvite(r, pv)
 			return b[:], nil
@@ -1780,7 +1780,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PartyKick)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePartyKick(r, pv)
 			return b[:], nil
@@ -1790,7 +1790,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PartyLeave)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePartyLeave(r, pv)
 			return b[:], nil
@@ -1800,7 +1800,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PetMenu)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePetMenu(r, pv)
 			return b[:], nil
@@ -1810,7 +1810,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PickupItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePickupItem(r, pv)
 			return b[:], nil
@@ -1820,7 +1820,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PinCodeResponse)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodePinCodeResponse(r, pv)
 			return b[:], nil
@@ -1830,7 +1830,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PublicChat)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			return EncodePublicChat(r, pv), nil
 		},
@@ -1839,7 +1839,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.QuitGame)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeQuitGame(r, pv)
 			return b[:], nil
@@ -1849,7 +1849,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RemoveOption)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRemoveOption(r, pv)
 			return b[:], nil
@@ -1859,7 +1859,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RemovePartyMember)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRemovePartyMember(r, pv)
 			return b[:], nil
@@ -1869,7 +1869,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RepairItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRepairItem(r, pv)
 			return b[:], nil
@@ -1879,7 +1879,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RequestAction)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRequestAction(r, pv)
 			return b[:], nil
@@ -1889,7 +1889,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RequestCharacterPage)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRequestCharacterPage(r, pv)
 			return b[:], nil
@@ -1899,7 +1899,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RequestMemo)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRequestMemo(r, pv)
 			return b[:], nil
@@ -1909,7 +1909,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.Restart)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRestart(r, pv)
 			return b[:], nil
@@ -1919,7 +1919,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SelectAccessibleMap)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSelectAccessibleMap(r, pv)
 			return b[:], nil
@@ -1929,7 +1929,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SelectArrow)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSelectArrow(r, pv)
 			return b[:], nil
@@ -1939,7 +1939,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SelectCharacter)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSelectCharacter(r, pv)
 			return b[:], nil
@@ -1949,7 +1949,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SelectEgg)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSelectEgg(r, pv)
 			return b[:], nil
@@ -1959,7 +1959,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SendEmotion)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSendEmotion(r, pv)
 			return b[:], nil
@@ -1969,7 +1969,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.ShopBuy)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeShopBuy(r, pv)
 			return b[:], nil
@@ -1979,7 +1979,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.ShopSell)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeShopSell(r, pv)
 			return b[:], nil
@@ -1989,7 +1989,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SkillUp)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSkillUp(r, pv)
 			return b[:], nil
@@ -1999,7 +1999,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SkillUse)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSkillUse(r, pv)
 			return b[:], nil
@@ -2009,7 +2009,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.SkillUseLocation)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSkillUseLocation(r, pv)
 			return b[:], nil
@@ -2019,7 +2019,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.StatusUp)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeStatusUp(r, pv)
 			return b[:], nil
@@ -2029,7 +2029,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.TimeSyncResponse)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeTimeSyncResponse(r, pv)
 			return b[:], nil
@@ -2039,7 +2039,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.UnequipItem)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeUnequipItem(r, pv)
 			return b[:], nil
@@ -2049,7 +2049,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.UseCard)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeUseCard(r, pv)
 			return b[:], nil
@@ -2059,7 +2059,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.VendingListReq)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeVendingListReq(r, pv)
 			return b[:], nil
@@ -2069,7 +2069,7 @@ func init() {
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.WeaponRefine)
 			if !ok {
-				return nil, session.ErrWrongSendType
+				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeWeaponRefine(r, pv)
 			return b[:], nil
