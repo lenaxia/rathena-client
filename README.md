@@ -3,7 +3,7 @@
 **Module**: `github.com/lenaxia/rathena-client`
 **Go**: 1.24.0
 **Status**: All phases complete (Phases 0–7). Packet coverage complete for main kRO client. Ready for goKore integration.
-**Version**: v0.3.3
+**Version**: v0.4.2
 
 ---
 
@@ -133,6 +133,7 @@ grep -r "^\s*go " pkg/   # must produce no output
 | 5 | `pkg/session` (hand-written framer) | Complete — 0 allocs/op |
 | 6 | `ConnectionFSM` (merged into `pkg/session`) | Complete — 21 tests, net.Pipe stubs, zero goroutines |
 | 7 | Semantic action API (`pkg/session`) | Complete — packet-ID-agnostic API, 277 receive actions, 178 send encoders |
+| 7.1 | Debuggability (`pkg/session`) | Complete — `SetTraceFunc`, `IsFaulted`, `UnhandledPackets`, `ErrWrongSendType` with action name |
 
 **Gate**: 76 PASS / 1 FAIL (expected — CH_MAKE_CHAR shuffle, documented).
 

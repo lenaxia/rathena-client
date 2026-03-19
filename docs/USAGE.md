@@ -306,7 +306,7 @@ err = session.Send(ms, conn, session.ActionPublicChat, send.PublicChat{
 })
 ```
 
-`Send` returns `ErrWrongSendType` if `req` is not the correct `send.*` struct for the action. It returns an error (not a panic) for an unknown or receive-only action.
+`Send` returns `ErrWrongSendType{Action: action}` if `req` is not the correct `send.*` struct for the action — the error message includes the action name. It returns an error (not a panic) for an unknown or receive-only action.
 
 ### SemanticAction enum
 
@@ -340,6 +340,88 @@ ms.SetUnknownPacketHandler(func(ev session.UnknownPacketEvent) {
 ```
 
 `ev` is fully self-contained and heap-allocated — safe to retain or pass to channels.
+
+`UnknownPacketEvent` is also delivered to `SetTraceFunc` (see below) — both fire independently for the same event.
+
+### Debuggability — `SetTraceFunc`, `IsFaulted`, `UnhandledPackets`
+
+#### SetTraceFunc — unified wire and semantic trace hook
+
+A single callback that receives every observable event on the session. Zero overhead when nil.
+
+```go
+ms.SetTraceFunc(func(ev session.TraceEvent) {
+    switch e := ev.(type) {
+
+    case session.WireInbound:
+        // Every complete inbound frame, after framing, before dispatch.
+        // e.ID        — packet ID
+        // e.Frame     — heap-allocated full frame bytes (safe to retain)
+        // e.Packetver — PACKETVER this session was built with
+        // e.Time      — wall time at receipt
+        log.Printf("← 0x%04X (%d bytes)", e.ID, len(e.Frame))
+
+    case session.WireOutbound:
+        // Every outbound frame written by session.Send, after obfuscation.
+        // e.Action    — semantic action that produced this frame
+        // e.Frame     — heap-allocated full frame bytes as written to wire
+        // e.Packetver — PACKETVER
+        // e.Time      — wall time at send
+        log.Printf("→ %v (%d bytes)", e.Action, len(e.Frame))
+
+    case session.SemanticIn:
+        // Decoded event struct, correlated with the preceding WireInbound.
+        // e.Action — semantic action
+        // e.ID     — wire packet ID that was decoded
+        // e.Event  — concrete events.* struct value (type-switch on it)
+        // e.Frame  — independent heap-allocated copy of the same frame
+        if actor, ok := e.Event.(events.ActorMoved); ok {
+            log.Printf("← %v AID=%d", e.Action, actor.AID)
+        }
+
+    case session.SemanticOut:
+        // send.* request struct, correlated with the preceding WireOutbound.
+        // e.Action  — semantic action
+        // e.Request — original send.* struct passed to Send
+        // e.Frame   — same heap-allocated bytes as paired WireOutbound
+        if req, ok := e.Request.(send.MoveTo); ok {
+            log.Printf("→ %v X=%d Y=%d", e.Action, req.X, req.Y)
+        }
+
+    case session.UnknownPacketEvent:
+        // Unknown packet ID — raw buffer included.
+        // Also fires via SetUnknownPacketHandler (both are independent).
+        log.Printf("? unknown 0x%04X raw=%d bytes", e.ID, len(e.RawBuffer))
+    }
+})
+```
+
+`SetTraceFunc` is available on `MapSession`, `LoginSession`, and `CharSession`. On `LoginSession` and `CharSession` only `WireInbound` and `UnknownPacketEvent` fire (there is no `Send` on those session types).
+
+**Performance**: when `TraceFunc` is nil, there are zero allocations and a single nil-check branch on the hot path. `BenchmarkFeed_SmallFixedPacket` remains 0 allocs/op with nil trace.
+
+#### IsFaulted — stream corruption detection
+
+```go
+if ms.IsFaulted() {
+    // Feed() returned ErrUnknownPacket (corrupt embedded length field).
+    // All subsequent Feed() calls are silent no-ops.
+    // Close the connection and create a new session.
+    conn.Close()
+}
+```
+
+#### UnhandledPackets — handler registration gap detection
+
+```go
+// Count of frames that arrived with a known packet ID (in the length table)
+// but no registered handler. Non-zero means RegisterSemanticHandler was
+// not called for some action the server is sending.
+gaps := ms.UnhandledPackets()
+if gaps > 0 {
+    log.Printf("WARNING: %d packets silently dropped (no handler registered)", gaps)
+}
+```
 
 ### ConnectionFSM — auth sequencer
 
@@ -580,8 +662,10 @@ These are hard constraints verified by benchmarks, not aspirational targets.
 | Path | Target |
 |---|---|
 | `session.Feed()` steady state | 0 allocs/op, < 200 ns/op (fixed packet) |
+| `session.Feed()` with `SetTraceFunc` enabled | 2 allocs/op (frame copy per packet) — expected overhead |
 | `RegisterSemanticHandler` dispatch | 1 alloc/op (interface{} boxing — unavoidable by design), < 200 ns/op |
-| `session.Send` | 0 allocs/op for fixed-size packets |
+| `session.Send` (nil trace) | 0 allocs/op for fixed-size packets |
+| `session.Send` with `SetTraceFunc` enabled | 2-4 allocs/op (frame copy + trace events) — expected overhead |
 
 **Why 0 allocs matters at scale**: at 1000 concurrent bots, any allocation in the decode path multiplies by 1000 per packet received.
 
@@ -635,13 +719,14 @@ Error strings to expect:
 
 ### session.Send errors
 
-- `session.ErrWrongSendType` — `req` is not the correct `send.*` type for the action
+- `session.ErrWrongSendType{Action: action}` — `req` is not the correct `send.*` type; error message includes the action name
 - Generic error — action is unknown or has no registered encoder (receive-only action)
 
 ```go
 if err := session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y: 200}); err != nil {
-    if errors.Is(err, session.ErrWrongSendType) {
+    if errors.Is(err, session.ErrWrongSendType{}) {
         // programming error — wrong struct passed for the action
+        // err.Error() = "session: Send called with wrong request type for action ActionMoveTo"
     }
 }
 ```
