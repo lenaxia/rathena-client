@@ -1,4 +1,4 @@
-package fsm
+package session
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // ── Test helpers ──────────────────────────────────────────────────────────────
@@ -96,7 +95,7 @@ func buildLoginAcceptPre(sid1, aid, sid2 uint32, sex uint8, servers []CharServer
 	for _, s := range servers {
 		binary.BigEndian.PutUint32(pkt[off:], s.IP) // htonl — network byte order
 		binary.LittleEndian.PutUint16(pkt[off+4:], s.Port)
-		copyStr(pkt[off+6:off+26], s.Name)
+		fsmCopyStr(pkt[off+6:off+26], s.Name)
 		// users(2)+type(2)+new_(2) at off+26:off+32 — zero
 		off += subSize
 	}
@@ -122,7 +121,7 @@ func buildLoginAcceptPost(sid1, aid, sid2 uint32, sex uint8, servers []CharServe
 	for _, s := range servers {
 		binary.BigEndian.PutUint32(pkt[off:], s.IP) // htonl — network byte order
 		binary.LittleEndian.PutUint16(pkt[off+4:], s.Port)
-		copyStr(pkt[off+6:off+26], s.Name)
+		fsmCopyStr(pkt[off+6:off+26], s.Name)
 		// unknown[128] — zero
 		off += subSize
 	}
@@ -362,7 +361,7 @@ func TestConnect_FullFlow_Pre20170315(t *testing.T) {
 
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(s *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(s *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -421,7 +420,7 @@ func TestConnect_FullFlow_Post20170315(t *testing.T) {
 
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(s *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(s *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -628,7 +627,7 @@ func TestConnect_OnCharServerList(t *testing.T) {
 			receivedServers = servers
 			return 0 // choose Alpha (index 0)
 		}).
-		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -700,7 +699,7 @@ func TestConnect_OnCharList(t *testing.T) {
 			gotRawChars = append([]byte(nil), raw...)
 			return 0
 		}).
-		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) {
 			c.Close()
 		})
 
@@ -772,7 +771,7 @@ func TestConnect_Reconnect(t *testing.T) {
 			mkLogin(), mkChar(), mkMap(),
 			mkLogin(), mkChar(), mkMap(),
 		)).
-		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCount++
 			c.Close()
 		})
@@ -1267,9 +1266,9 @@ func TestCStr(t *testing.T) {
 		{[]byte("ab\x00"), "ab"},
 	}
 	for _, tc := range tests {
-		got := cStr(tc.input)
+		got := fsmCStr(tc.input)
 		if got != tc.want {
-			t.Errorf("cStr(%v) = %q, want %q", tc.input, got, tc.want)
+			t.Errorf("fsmCStr(%v) = %q, want %q", tc.input, got, tc.want)
 		}
 	}
 }
@@ -1385,7 +1384,7 @@ func TestMapPhase_UnknownPacketBeforeReady_Regression(t *testing.T) {
 
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCalled = true
 			c.Close()
 		})
@@ -1429,7 +1428,7 @@ func buildHCNotifyZonesvrPreWithMap(cid, ip uint32, port uint16, mapName string)
 	pkt := make([]byte, 28)
 	binary.LittleEndian.PutUint16(pkt[0:2], 0x0081)
 	binary.LittleEndian.PutUint32(pkt[2:6], cid)
-	copyStr(pkt[6:22], mapName)
+	fsmCopyStr(pkt[6:22], mapName)
 	binary.BigEndian.PutUint32(pkt[22:26], ip)
 	binary.LittleEndian.PutUint16(pkt[26:28], port)
 	return pkt
@@ -1440,7 +1439,7 @@ func buildHCNotifyZonesvrPostWithMap(cid, ip uint32, port uint16, mapName string
 	pkt := make([]byte, 156)
 	binary.LittleEndian.PutUint16(pkt[0:2], 0x0AC5)
 	binary.LittleEndian.PutUint32(pkt[2:6], cid)
-	copyStr(pkt[6:22], mapName)
+	fsmCopyStr(pkt[6:22], mapName)
 	binary.BigEndian.PutUint32(pkt[22:26], ip)
 	binary.LittleEndian.PutUint16(pkt[26:28], port)
 	return pkt
@@ -1497,7 +1496,7 @@ func TestConnect_OnReady_ReceivesEntryPosition(t *testing.T) {
 	var gotReady ReadyInfo
 	readyCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnReady(func(_ *session.MapSession, c net.Conn, info ReadyInfo) {
+		OnReady(func(_ *MapSession, c net.Conn, info ReadyInfo) {
 			gotReady = info
 			readyCalled = true
 			c.Close()
@@ -1612,7 +1611,7 @@ func TestConnect_OnIdentity_ReceivesMapName(t *testing.T) {
 					gotMapName = info.MapName
 					identityCalled = true
 				}).
-				OnReady(func(_ *session.MapSession, c net.Conn, _ ReadyInfo) {
+				OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) {
 					c.Close()
 				})
 

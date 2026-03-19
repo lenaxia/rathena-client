@@ -425,17 +425,19 @@ rathena-client/
 
     pkg/
         packing/               COMPLETE — packing.go + packing_test.go
-        fsm/                   NOT STARTED — Phase 6 ← CURRENT
-        events/                COMPLETE — 417 generated event structs
-        send/                  COMPLETE — 163 generated send request structs
-        decode/                COMPLETE — 442 generated decode functions
-        encode/                COMPLETE — 80 generated encode functions
+        events/                COMPLETE — 281 generated event structs
+        send/                  COMPLETE — 152 generated send request structs
+        decode/                COMPLETE — 282 generated decode functions
+        encode/                COMPLETE — 178 generated encode functions + shuffle_map.go
         session/               COMPLETE — hand-written (session.go, login.go, char.go, map.go,
-                                          obfuscation.go) + generated (lengths_*.go, shuffle_map.go,
-                                          obfuscation_keys.go)
+                                          obfuscation.go, fsm.go, fsm_parse.go, fsm_packets.go,
+                                          semantic.go, actions.go, receive_dispatch.go) +
+                                          generated (lengths_*.go, obfuscation_keys.go)
+                                          NOTE: pkg/fsm merged here (worklog 0054)
+                                          NOTE: shuffle_map.go moved to pkg/encode (worklog 0055)
 
     internal/
-        codegen/               COMPLETE — GCC+semantics pipeline, 481 structs in VersionTable
+        codegen/               COMPLETE — GCC+semantics pipeline, 770 structs in VersionTable
 ```
 
 ### Data Flow Diagram
@@ -444,13 +446,15 @@ rathena-client/
 ┌──────────────────────────────────────────────────────────────────┐
 │                        rathena-client                            │
 │                                                                  │
-│  pkg/fsm/          ConnectionFSM — login + reconnect sequencer   │
-│  pkg/packing/      WBUFPOS / WBUFPOS2 encode+decode    PARTIAL   │
+│  pkg/packing/      WBUFPOS / WBUFPOS2 encode+decode    COMPLETE  │
 │  pkg/events/       Canonical event structs (S→C)    GENERATED    │
 │  pkg/send/         Canonical send request types (C→S) GENERATED  │
 │  pkg/decode/       Raw bytes → events               GENERATED    │
 │  pkg/encode/       Send requests → raw bytes        GENERATED    │
-│  pkg/session/      PACKETVER-aware tokenizer + dispatcher        │
+│  pkg/session/      PACKETVER-aware tokenizer + dispatcher +      │
+│                    SemanticAction API (RegisterSemanticHandler,  │
+│                    Send, SemanticAction enum) +                  │
+│                    ConnectionFSM (login + reconnect sequencer)   │
 │                    (LoginSession, CharSession, MapSession)        │
 │                                                                  │
 │  internal/codegen/ Code generator (reads rAthena + mappings.yaml)│
@@ -458,29 +462,29 @@ rathena-client/
          ↑ imported by
 ┌──────────────────────────────────────────────────────────────────┐
 │                          goKore                                  │
-│  internal/network/rathena/connector.go  thin glue layer          │
-│  internal/network/connection/           owns net.Conn, Dialer    │
-│  internal/network/handlers/             game-state handlers      │
+│  uses session.RegisterSemanticHandler + session.Send             │
+│  uses session.New + session.ConnectionFSM for auth               │
+│  owns net.Conn, read loop, game state                            │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
 ### Login / Reconnect Flow
 
 ```
-goKore calls fsm.Connect(ctx)
+goKore calls session.New(...).OnReady(...).Connect(ctx)
   → FSM calls dialer(ctx, loginAddr) → net.Conn    [goKore-provided]
-  → FSM creates LoginSession, feeds it until 0x0AC4/0x0069 received
+  → FSM creates LoginSession, feeds it until AC_ACCEPT_LOGIN/AC_REFUSE_LOGIN received
   → extracts tokens, calls OnCharServerList (default: index 0), closes conn
   → FSM calls dialer(ctx, charAddr) → net.Conn
-  → FSM creates CharSession, sends 0x0065, feeds it
-  → receives char list (0x006B / 0x099D), calls OnCharList callback
-  → sends 0x0066 with chosen slot
-  → receives 0x0081 / 0x0AC5 with map addr, closes conn
-  → calls OnIdentity(accountID, charID, slot, sex)  [consumer initializes self-actor]
+  → FSM creates CharSession, sends CH_ENTER, feeds it
+  → receives char list (HC_ACCEPT_ENTER / paged HC_NOTIFY_ZONESVR), calls OnCharList
+  → sends CH_SELECT_CHAR with chosen slot
+  → receives HC_NOTIFY_ZONESVR with map addr, closes conn
+  → calls OnIdentity(accountID, charID, slot, sex)
   → FSM calls dialer(ctx, mapAddr) → net.Conn
-  → FSM creates MapSession, sends 0x0436
-  → receives 0x0073/0x0A18/0x02EB, sends 0x007D + shuffled(0x007E/0x0360)
-  → calls OnReady(mapSession, conn)   [goKore takes over the conn]
+  → FSM creates MapSession, sends CZ_ENTER
+  → receives ZC_ACCEPT_ENTER (0x0073/0x0A18/0x02EB), sends CZ_NOTIFY_ACTORINIT + CZ_REQUEST_TIME
+  → calls OnReady(mapSession, conn, ReadyInfo)   [goKore takes over the conn]
 ```
 
 ### Steady-State Gameplay Flow (goKore owns the loop)
@@ -489,16 +493,16 @@ goKore calls fsm.Connect(ctx)
 TCP bytes arrive on net.Conn  (goKore read loop)
   → mapSession.Feed(buf[:n])                         [rathena-client]
   → frame boundary detection via lengths[65536]int16 [GENERATED]
-  → handlers[packetID](data, packetver)               [GENERATED decode fn]
+  → receiveDispatch[packetID](data, packetver)        [GENERATED dispatch]
   → decode fn: direct byte reads, stack-allocated event struct
-  → registered callback(events.ActorExists{...})      [goKore, inline]
+  → registered callback(events.ActorExists{...})      [goKore, typed, inline]
   → Feed() returns to goKore read loop
 
-goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
-  → encode.EncodeMove(req, packetver)   [GENERATED, returns [N]byte]
-  → look up shuffled C→S packet ID for this packetver
-  → optionally XOR packet ID (obfuscation, PACKETVER ≤ 20180307 only)
-  → goKore calls conn.Write(bytes[:])  [goKore owns the socket]
+goKore calls session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y: 200})
+  → looks up registered SendEncoderFunc for ActionMoveTo
+  → encoder calls shuffledCtoSID internally for this packetver
+  → Send applies XOR obfuscation via encodePacketID
+  → writes bytes to conn
 ```
 
 ---
@@ -511,24 +515,23 @@ goKore calls mapSession.Encode(send.RequestMove{X: 100, Y: 200})
 |---|---|---|
 | `pkg/packing` | **Complete** | packing.go + packing_test.go; all tests pass (worklog 0001) |
 | `validation/` | **Complete** | preprocess_check.sh, phase1_gate.sh, struct_layout.sh (worklogs 0002-0007) |
-| `internal/codegen` | **Complete** | Full GCC+semantics pipeline; 770 structs in VersionTable after PACKET_CZ_ injection from packets.hpp (worklog 0039) |
-| `pkg/events` | **Complete** | 281 generated event structs; `[3]byte`/`[6]byte` for PosDir/MoveData (worklog 0013) |
-| `pkg/send` | **Complete** | 152 generated send request structs (worklog 0039: 13 duplicate aliases removed) |
-| `pkg/decode` | **Complete** | 282 generated decode functions; zero allocs on all benchmarks; zero "complex expression" gaps remaining (worklogs 0036-0037) |
-| `pkg/encode` | **Complete** | 115 generated encode functions including gameplay CZ packets (worklog 0039: PACKET_CZ_ injection fix) |
-| `pkg/session` (generated) | **Complete** | lengths_login.go (13 entries), lengths_char.go (37+ entries), lengths_map.go, shuffle_map.go, obfuscation_keys.go — lengths generated from GCC sizeof via common/packets.hpp (worklog 0014) |
-| `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go; `UnknownPacketEvent`/`recentRing` (worklog 0043); 20+ tests pass; 0 allocs/op benchmarks |
-| `pkg/fsm` | **Complete** | ConnectionFSM: full login→char→map auth sequence; 21 tests pass; zero goroutines; net.Pipe stubs (worklog 0015) |
+| `internal/codegen` | **Complete** | Full GCC+semantics pipeline; 770 structs in VersionTable (worklog 0039) |
+| `pkg/events` | **Complete** | 281 generated event structs (worklog 0013) |
+| `pkg/send` | **Complete** | 152 generated send request structs (worklog 0039) |
+| `pkg/decode` | **Complete** | 282 generated decode functions; zero allocs; zero "complex expression" gaps (worklogs 0036-0037) |
+| `pkg/encode` | **Complete** | 178 generated encode functions + `shuffle_map.go` (`shuffledCtoSID`, unexported) (worklog 0055) |
+| `pkg/session` (generated) | **Complete** | lengths_login.go, lengths_char.go, lengths_map.go, obfuscation_keys.go (`obfuscationKeysFor`, unexported); `shuffle_map.go` moved to pkg/encode (worklog 0055) |
+| `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go, fsm.go, fsm_parse.go, fsm_packets.go, semantic.go, actions.go, receive_dispatch.go; all tests pass; 0 allocs/op benchmarks |
+| `pkg/fsm` | **Deleted** | Merged into pkg/session (worklog 0054). ConnectionFSM, ServerConfig, Credentials, CharServerInfo, IdentityInfo, ReadyInfo, Dialer now live in pkg/session. |
+| Semantic action API | **Complete** | RegisterSemanticHandler, Send, SemanticAction enum (460 constants), receive dispatch (277 actions), send encoders (178); all old low-level API unexported (worklogs 0050-0055) |
 
 **Gate status**: 76 PASS / 1 FAIL (expected; CH_MAKE_CHAR 0x0065 shuffle — documented). `go build ./...` and `go test ./...` are clean.
 
-**Known open issues** (non-blocking for Phase 7):
-- SemanticDB has validation errors (run `semantics_validate`). Not blockers for Phase 7.
+**Known open issues** (non-blocking):
+- SemanticDB has validation errors (run `semantics_validate`). Not blockers.
 - lengths_char.go: HC_ACCEPT_MAKECHAR (0x006D/0x0B6F) sizes may still be wrong — nested struct CHARACTER_INFO not fully resolved by codegen.
-- `lengths_map.go` partially populated; FSM uses `SetLength` for auth-phase packets where needed.
-- **Codegen blind spot — `clif_packetdb.hpp` hardcodes sizes as integer literals, not `sizeof()`.** When a packet struct gains a PACKETVER-conditional field that changes its wire size (e.g. `packet_dropflooritem` ITID `uint16→uint32` at `PACKETVER_MAIN_NUM >= 20181121`), `clif_packetdb.hpp` is never updated, so the codegen's Part 1 diff pass never detects the change. Parts 2–4 use `mergeBreakpointsFillOnly` and cannot override a value already claimed by Part 1. **Workaround**: `pkg/session/lengths_map_overrides.go` is a hand-maintained file applied after `populateMapLengths` in `NewMapSession`. Add corrections there with full rAthena citations. **Long-term fix**: add a Part 5 cross-check pass to the codegen that compares Part 1 lengths against VersionTable `TotalSize` at each breakpoint and emits corrections where they diverge (tracked as a known codegen gap).
-- 3 encode functions always panic (`EncodeGameLogin`, `EncodeMapLoaded`, `EncodeTimeSyncResponse`) — **eliminated**; these are FSM-owned actions added to the skip list in `GenerateEncodeDirFiles` (worklog 0040); no generated files exist for them.
-- `EncodeDealFinalize` always panics — **fixed**; hand-written in `pkg/encode/deal_finalize.go`; `0x00EB` is a 2-byte header-only packet with no rAthena struct (worklog 0040).
+- `lengths_map.go` partially populated; FSM uses `setLength` for auth-phase packets where needed.
+- **Codegen blind spot — `clif_packetdb.hpp` hardcodes sizes as integer literals, not `sizeof()`.** When a packet struct gains a PACKETVER-conditional field that changes its wire size (e.g. `packet_dropflooritem` ITID `uint16→uint32` at `PACKETVER_MAIN_NUM >= 20181121`), `clif_packetdb.hpp` is never updated, so the codegen's Part 1 diff pass never detects the change. **Workaround**: `pkg/session/lengths_map_overrides.go` is a hand-maintained file applied after `populateMapLengths` in `NewMapSession`. **Long-term fix**: add a Part 5 cross-check pass to the codegen.
 - `EncodeSkillUse` and `EncodeActorAction` have a trailing panic that is unreachable (`case packetver >= 0` is always true).
 
 **Out of scope — not planned:**
@@ -558,20 +561,21 @@ The HLD audit blockers and majors were fixed. Struct layouts verified against GC
 
 Code generator built. Inputs: `packets_struct.hpp`, `packets.hpp` (with stubs), `common/packets.hpp` (with stubs), `clif_packetdb.hpp`, `clif_shuffle.hpp`, `clif_obfuscation.hpp`, and `semantics/mappings.yaml` via MCP. VersionTable has 481 structs (459 from rAthena + 22 SYNTH_*).
 
-### Phase 4 — Generated packages ✅ COMPLETE (worklogs 0009-0013, 0036-0037, 0039)
+### Phase 4 — Generated packages ✅ COMPLETE (worklogs 0009-0013, 0036-0037, 0039, 0050-0053)
 
 Codegen output:
-- `pkg/events/` — 281 event structs; PosDir/MoveData use `[3]byte`/`[6]byte` (CONCERN-2 resolved, worklog 0013)
-- `pkg/send/` — 152 send request structs (13 duplicate aliases removed, worklog 0039)
-- `pkg/decode/` — 282 decode functions (1 skipped intentionally: quest_update_mission_hunt); zero `make([]byte)` calls; zero "complex expression" gaps
-- `pkg/encode/` — 115 encode functions including gameplay CZ packets (PACKET_CZ_ injection fix, worklog 0039)
-- `pkg/session/lengths_login.go` — 13 entries; CA_/AC_/CT_/TC_/SC_ packets; generated from GCC sizeof via common/packets.hpp
-- `pkg/session/lengths_char.go` — 37+ entries; CH_/HC_/SC_/PING packets; nested struct sizes resolved
+- `pkg/events/` — 281 event structs; PosDir/MoveData use `[3]byte`/`[6]byte`
+- `pkg/send/` — 152 send request structs
+- `pkg/decode/` — 282 decode functions; zero `make([]byte)` calls; zero "complex expression" gaps
+- `pkg/encode/` — 178 encode functions (worklog 0039: PACKET_CZ_ injection fix)
+- `pkg/encode/shuffle_map.go` — `shuffledCtoSID(packetver, baseID)` (unexported, package encode; moved from pkg/session, worklog 0055)
+- `pkg/encode/register.go` — `init()` with 178 `RegisterSendEncoder` calls (worklog 0053)
+- `pkg/session/lengths_login.go` — 13 entries; CA_/AC_/CT_/TC_/SC_ packets
+- `pkg/session/lengths_char.go` — 37+ entries; CH_/HC_/SC_/PING packets
 - `pkg/session/lengths_map.go` — full map server table (4 codegen passes + post-merge dedup)
-- `pkg/session/shuffle_map.go` — `ShuffledCtoSID(packetver uint32, baseID uint16) uint16`
-- `pkg/session/obfuscation_keys.go` — `ObfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32)`
-
-VersionTable now has 770 structs (up from 482) after PACKET_CZ_ injection from packets.hpp.
+- `pkg/session/obfuscation_keys.go` — `obfuscationKeysFor(packetver)` (unexported, package session)
+- `pkg/session/actions.go` — `SemanticAction` enum, 460 constants, `String()` method (worklog 0050)
+- `pkg/session/receive_dispatch.go` — `receiveDispatch` table, 277 receive-direction actions (worklog 0051)
 
 ### Phase 5 — pkg/session (hand-written parts) ✅ COMPLETE (worklogs 0013, 0043)
 
@@ -585,21 +589,42 @@ Implemented:
 - `ErrUnknownPacket` is returned only for genuine stream corruption: variable-length packet with embedded length < 4
 - Tests: all pass (20+ tests including 8 new ring buffer / event tests); benchmarks: 0 allocs/op confirmed
 
-### Phase 6 — pkg/fsm ✅ COMPLETE (worklog 0015)
+### Phase 6 — pkg/fsm ✅ COMPLETE → MERGED into pkg/session (worklog 0054)
 
-Implemented `ConnectionFSM`. Full state machine, public API, all protocol steps.
-- Zero goroutines; `Connect()` is fully synchronous in caller's goroutine
-- Dialer-based: FSM never calls `net.Dial` directly
-- Pre-20170315 path: 0x0069 login accept, 0x0081 zone server (28-byte disambiguation)
-- Post-20170315 path: 0x0AC4 login accept, 0x0AC5 zone server
-- Paged char list (pv >= 20130000): 0x09A0 → 0x09A1 × N → 0x099D pages
-- Map auth: 0x0283 ZC_AID, 0x007D + 0x007E/0x0360 sequence, then `OnReady`
-- C→S obfuscation applied to 0x0436, 0x007D, 0x007E/0x0360 via `encodePacketID`
-- 21 tests pass using `net.Pipe` stubs
+ConnectionFSM was implemented in `pkg/fsm` (worklog 0015) and subsequently merged into `pkg/session` (worklog 0054) to eliminate the low-level API surface visible to external callers.
 
-### Phase 7 — Integration with goKore
+After the merge:
+- `ConnectionFSM`, `ServerConfig`, `Credentials`, `CharServerInfo`, `IdentityInfo`, `ReadyInfo`, `Dialer` are now in `pkg/session`
+- goKore imports `pkg/session` (not `pkg/fsm`) to use `session.New(...)`, `session.ServerConfig`, etc.
+- `pkg/fsm` directory deleted
+- All 21 FSM tests moved to `pkg/session/fsm_*_test.go`
+- Testdata moved to `pkg/session/testdata/`
+- Auth-phase packet encoding inlined in `pkg/session/fsm.go` (no import cycle with pkg/encode)
 
-Replace goKore's `internal/network/` layer. See HLD §7.
+### Phase 7 — Semantic Action API ✅ COMPLETE (worklogs 0050-0055)
+
+The public-facing API is now completely packet-ID agnostic. goKore never sees raw packet IDs or packetver-conditional dispatch logic.
+
+**Delivered:**
+- `pkg/session/actions.go` (generated) — `SemanticAction uint16` enum, 460 constants, `String()` method, `maxSemanticAction`
+- `pkg/session/receive_dispatch.go` (generated) — `receiveDispatch map[SemanticAction][]receiveEntry` covering 277 receive-direction actions
+- `pkg/encode/register.go` (generated) — `init()` with 178 `RegisterSendEncoder` calls
+- `pkg/session/semantic.go` (hand-written) — `RegisterSemanticHandler[E any]`, `Send`, `RegisterSendEncoder`, `ErrWrongSendType`
+- All old low-level symbols unexported: `registerHandler`, `setLength`, `encodePacketID`, `enableObfuscation`, `shuffledCtoSID` (in pkg/encode), `obfuscationKeysFor`, `handlerFunc`
+- `pkg/session/shuffle_map.go` deleted; `pkg/encode/shuffle_map.go` added with unexported `shuffledCtoSID`
+
+**goKore's only API:**
+```go
+// Receive — all packetver variants handled automatically
+session.RegisterSemanticHandler(ms, session.ActionActorMoved, func(e events.ActorMoved) { ... })
+
+// Send — shuffle, obfuscation, packetver all handled internally
+session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y: 200})
+```
+
+### Phase 8 — goKore Integration
+
+Replace goKore's `internal/network/` layer with `pkg/session` semantic API. See HLD §7.
 
 ---
 
@@ -677,8 +702,11 @@ codegen joins StructDB + ActionDB
     → pkg/session/lengths_login.go
     → pkg/session/lengths_char.go
     → pkg/session/lengths_map.go
-    → pkg/session/shuffle_map.go        ShuffledCtoSID(packetver, baseID)
-    → pkg/session/obfuscation_keys.go   ObfuscationKeysFor(packetver) (k0,k1,k2)
+    → pkg/encode/shuffle_map.go         shuffledCtoSID(packetver, baseID) — unexported, pkg/encode
+    → pkg/session/obfuscation_keys.go   obfuscationKeysFor(packetver) (k0,k1,k2) — unexported, pkg/session
+    → pkg/session/actions.go            SemanticAction enum (460 constants)
+    → pkg/session/receive_dispatch.go   receiveDispatch table (277 actions)
+    → pkg/encode/register.go            init() with 178 RegisterSendEncoder calls
 ```
 
 ### Running the codegen
@@ -754,16 +782,14 @@ go build -gcflags="-m" 2>&1 | grep "does not escape"
 
 ### Handler Lookup: O(1) Array Index
 
-Each session type uses a `[65536]HandlerFunc` array indexed by packet ID. Length table is a `[65536]int16` array. Both are per-session-instance. Memory at 1000 bots:
+Each session type uses a `[65536]handlerFunc` array (unexported type) indexed by packet ID. Length table is a `[65536]int16` array. Both are per-session-instance. Memory at 1000 bots:
 - Handler arrays: 1000 × 65536 × 8 bytes = ~500 MB
 - Length arrays: 1000 × 65536 × 2 bytes = ~128 MB
 - Total: ~628 MB — accepted for a dedicated bot machine
 
-`type HandlerFunc func(data []byte, packetver uint32)` (defined in `pkg/session`).
-
 `Feed()` returns `error`. Signature: `func (s *MapSession) Feed(data []byte) error`.
 
-`Encode()` does NOT wrap the generated functions in a heap-allocating `[]byte` return. Callers call generated encode functions directly: `encode.EncodeMove(req, packetver)` returns `[5]byte`. Session types may expose typed helpers but must not add allocations.
+Encode functions return `[N]byte` (fixed-size) or `[]byte` (variable-length). `session.Send` wraps them internally — callers never call encode functions directly.
 
 ---
 
@@ -779,14 +805,6 @@ Each session type uses a `[65536]HandlerFunc` array indexed by packet ID. Length
   go test -fuzz=FuzzDecodeMoveData ./pkg/packing/
   ```
 
-### pkg/fsm
-
-- Unit tests using `net.Pipe` stubs — no real rAthena server needed
-- Test every state transition (see HLD §4 state machine)
-- Test PACKETVER-conditional paths (< 20130000 vs ≥ 20130000 char list flow)
-- Test `OnFailed` paths (login refused, dial error, timeout)
-- Integration test against real rAthena Docker (127.0.0.1:6900)
-
 ### pkg/session
 
 - Benchmark tests in `session_bench_test.go`
@@ -795,6 +813,21 @@ Each session type uses a `[65536]HandlerFunc` array indexed by packet ID. Length
 - Verify unknown packet ID fires `UnknownPacketFunc` callback, clears buffer, and returns nil
 - Verify `UnknownPacketEvent` fields: correct ID, packetver, ring buffer contents (chronological order), RawBuffer snapshot
 - Verify 0 allocs/op after initial recvBuf warmup
+
+### pkg/session (ConnectionFSM)
+
+- Unit tests using `net.Pipe` stubs — no real rAthena server needed
+- Test every state transition (see HLD §4 state machine)
+- Test PACKETVER-conditional paths (< 20130000 vs ≥ 20130000 char list flow)
+- Test `OnFailed` paths (login refused, dial error, timeout)
+- Integration test against real rAthena Docker (127.0.0.1:6900)
+
+### pkg/session (Semantic API)
+
+- `TestRegisterSemanticHandler_AllVariants` — all 5 packetver variants of ActionActorMoved dispatch correctly
+- `TestSend_MoveTo` — correct wire bytes at two different packetvers (shuffled and unshuffled)
+- `TestSend_ObfuscationApplied` — XOR obfuscation applied to packet ID
+- `BenchmarkRegisterAndFeed_SemanticHandler` — 1 alloc/op (interface{} boxing — expected by design)
 
 ### pkg/decode, pkg/encode (generated)
 
@@ -1091,7 +1124,7 @@ Every HLD correction must include `rAthena src/file:line` as the authority. No H
 
 Every packet implementation must be preceded by a GCC preprocess run. No exceptions. Document the output in the work log.
 
-### 9. Calling `net.Dial` from inside `pkg/fsm`
+### 9. Calling `net.Dial` from inside `pkg/session` FSM
 
 ```go
 // WRONG
@@ -1170,7 +1203,7 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 | Zero goroutines in library | Library is a pure transformation; concurrency belongs in the caller |
 | `[N]byte` returns from encode fns | Prevents heap escape on encode path |
 | Three typed sessions (Login/Char/Map) | Type safety, memory efficiency, no reconfigure race |
-| `[65536]HandlerFunc` array | O(1) lookup, no hash overhead |
+| `[65536]handlerFunc` array | O(1) lookup, no hash overhead (unexported type — not part of public API) |
 | Callbacks not channels | Channel adds goroutine + allocation per event; inline callbacks cost nothing |
 | No `context.Context` in library | Context is application-layer; threading through 1000-bot decode calls is pure overhead |
 | FSM takes Dialer not net.Conn | goKore owns all sockets; FSM needs to dial three separate servers sequentially |
@@ -1180,7 +1213,7 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 
 ---
 
-**Last Updated**: 2026-03-09 (session 0024 — Phases 0–6 complete; 25 work logs; US06/US07/US08/US09/US10 complete)
+**Last Updated**: 2026-03-19 (Phases 0–7 complete; 55 work logs; semantic action API complete; old low-level API fully unexported; pkg/fsm merged into pkg/session)
 **Design Authority**: `docs/DESIGN/HLD.md` (Draft v9)
 **Ground Truth**: GCC preprocessor output against `~/personal/rathena/src/`
 **Packet Cross-Reference**: `semantics/mappings.yaml` via `gokore-semantics` MCP (306 known errors — verify against GCC before trusting)

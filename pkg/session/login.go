@@ -1,5 +1,5 @@
 // Code generated in part by internal/codegen. DO NOT EDIT generated tables.
-// Hand-written: NewLoginSession, Feed, RegisterHandler.
+// Hand-written: NewLoginSession, Feed, registerHandler.
 package session
 
 const loginRecvBufInitial = 4096
@@ -27,9 +27,9 @@ func (s *LoginSession) Feed(data []byte) error {
 	return s.core.feed(data)
 }
 
-// SetLength sets the frame length for a packet ID in the login lengths table.
+// setLength sets the frame length for a packet ID in the login lengths table.
 // This is intended for testing only. A length of -1 means variable-length.
-func (s *LoginSession) SetLength(id uint16, length int16) {
+func (s *LoginSession) setLength(id uint16, length int16) {
 	s.core.lengths[id] = length
 }
 
@@ -40,8 +40,8 @@ func (s *LoginSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
 	s.core.setUnknownPacketHandler(fn)
 }
 
-// RegisterHandler registers fn as the callback for the given packet ID.
+// registerHandler registers fn as the callback for the given packet ID.
 // Overwrites any existing handler for that ID.
-func (s *LoginSession) RegisterHandler(id uint16, fn HandlerFunc) {
+func (s *LoginSession) registerHandler(id uint16, fn handlerFunc) {
 	s.core.registerHandler(id, fn)
 }

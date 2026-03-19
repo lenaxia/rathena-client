@@ -2,13 +2,13 @@
 
 package session
 
-// ObfuscationKeysFor returns the three C→S packet-ID obfuscation keys for
+// obfuscationKeysFor returns the three C→S packet-ID obfuscation keys for
 // the given packetver. Returns (0, 0, 0) for packetver > 20180307
 // (obfuscation discontinued) or any packetver not in the key table.
-// Callers: if k0|k1|k2 != 0 { session.EnableObfuscation(k0, k1, k2) }
+// Callers: if k0|k1|k2 != 0 { mapSess.enableObfuscation(k0, k1, k2) }
 //
 // Source: src/map/clif_obfuscation.hpp (preprocessed with -DPACKET_OBFUSCATION)
-func ObfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32) {
+func obfuscationKeysFor(packetver uint32) (k0, k1, k2 uint32) {
 	switch packetver {
 	case 20110817:
 		return 0x053D5CED, 0x3DED6DED, 0x6DED6DED

@@ -1,12 +1,17 @@
-// Package fsm implements the ConnectionFSM that drives the full rAthena
-// login → char → map authentication sequence.
+// ConnectionFSM and supporting types live here after the pkg/fsm merge.
+// See the package-level doc comment in session.go for the full package description.
 //
 // Design invariants (from HLD §4):
 //   - Zero goroutines: Connect() runs synchronously in the caller's goroutine.
 //   - Caller (goKore) provides a Dialer; the FSM never calls net.Dial directly.
 //   - After OnReady fires, the FSM releases all references to net.Conn.
 //   - StepTimeout is applied via conn.SetDeadline before each blocking read.
-package fsm
+//
+// NOTE: This file intentionally does NOT import pkg/encode. pkg/encode imports
+// pkg/session (for RegisterSendEncoder), so any session→encode import would create
+// a cycle. Auth-phase packet encoding is done inline here for the small fixed-size
+// packets that the FSM needs to send (CA_LOGIN, CH_ENTER, etc.).
+package session
 
 import (
 	"bytes"
@@ -19,10 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lenaxia/rathena-client/pkg/encode"
 	"github.com/lenaxia/rathena-client/pkg/packing"
-	"github.com/lenaxia/rathena-client/pkg/send"
-	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // Dialer is provided by goKore. The FSM calls it for each of the three server
@@ -100,7 +102,7 @@ type ConnectionFSM struct {
 
 	onCharServerList func([]CharServerInfo) int
 	onCharList       func([]byte) uint8
-	onReady          func(*session.MapSession, net.Conn, ReadyInfo)
+	onReady          func(*MapSession, net.Conn, ReadyInfo)
 	onFailed         func(error)
 	onServerNotify   func(uint8)
 	onIdentity       func(IdentityInfo)
@@ -157,7 +159,7 @@ func (f *ConnectionFSM) OnCharList(fn func([]byte) uint8) *ConnectionFSM {
 // The FSM passes the ready MapSession, live net.Conn, and ReadyInfo (initial
 // position decoded from ZC_ACCEPT_ENTER) to goKore.
 // After this call returns the FSM is idle and holds no reference to conn.
-func (f *ConnectionFSM) OnReady(fn func(*session.MapSession, net.Conn, ReadyInfo)) *ConnectionFSM {
+func (f *ConnectionFSM) OnReady(fn func(*MapSession, net.Conn, ReadyInfo)) *ConnectionFSM {
 	f.onReady = fn
 	return f
 }
@@ -253,12 +255,7 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 	}
 	defer conn.Close()
 
-	pkt := encode.EncodeMasterLogin(send.MasterLogin{
-		Version:    f.server.Packetver,
-		Username:   f.creds.Username,
-		Password:   f.creds.Password,
-		Clienttype: 0x00,
-	}, f.server.Packetver)
+	pkt := fsmEncodeMasterLogin(f.server.Packetver, f.creds.Username, f.creds.Password)
 	if err := writeDeadline(conn, pkt[:], f.stepTimeout()); err != nil {
 		return nil, 0, fmt.Errorf("fsm: send login: %w", err)
 	}
@@ -269,13 +266,13 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 		acceptID = 0x0AC4
 	}
 
-	loginSess := session.NewLoginSession(f.server.Packetver)
+	loginSess := NewLoginSession(f.server.Packetver)
 
 	var charServers []CharServerInfo
 	done := false
 	var loginErr error
 
-	loginSess.RegisterHandler(acceptID, func(data []byte, _ uint32) {
+	loginSess.core.registerHandler(acceptID, func(data []byte, _ uint32) {
 		cs, aid, sid1, sid2, sx, err := parseLoginAccept(data, f.server.Packetver)
 		if err != nil {
 			loginErr = err
@@ -293,7 +290,7 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 	// Login refused (legacy 0x006A — only active for pv < 20120000; for pv >= 20120000 it's 0x083E)
 	for _, refuseID := range []uint16{0x006A, 0x083E} {
 		refuseID := refuseID
-		loginSess.RegisterHandler(refuseID, func(data []byte, _ uint32) {
+		loginSess.core.registerHandler(refuseID, func(data []byte, _ uint32) {
 			code := byte(0)
 			if len(data) >= 3 {
 				if refuseID == 0x006A {
@@ -310,7 +307,7 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 		})
 	}
 
-	loginSess.RegisterHandler(0x0081, func(data []byte, _ uint32) {
+	loginSess.core.registerHandler(0x0081, func(data []byte, _ uint32) {
 		code := byte(0)
 		if len(data) >= 3 {
 			code = data[2]
@@ -366,13 +363,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	defer conn.Close()
 
 	// Send 0x0065 CH_ENTER: accountID + sessionID1 + sessionID2 + clienttype + sex
-	enterPkt := encode.EncodeGameLogin(send.GameLogin{
-		AID:        f.accountID,
-		AuthCode:   f.sessionID1,
-		Login_id2:  f.sessionID2,
-		Clienttype: 0,
-		Sex:        f.sex,
-	}, f.server.Packetver)
+	enterPkt := fsmEncodeGameLogin(f.accountID, f.sessionID1, f.sessionID2, f.sex)
 	if err := writeDeadline(conn, enterPkt[:], f.stepTimeout()); err != nil {
 		return "", fmt.Errorf("fsm: send char enter: %w", err)
 	}
@@ -389,7 +380,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		return "", fmt.Errorf("fsm: read char account echo: %w", err)
 	}
 
-	charSess := session.NewCharSession(f.server.Packetver)
+	charSess := NewCharSession(f.server.Packetver)
 
 	// For PACKETVER < 20170315, 0x0081 is used as HC_NOTIFY_ZONESVR (28 bytes fixed)
 	// AND as SC_NOTIFY_BAN (3 bytes). The char lengths table defaults to 3 (SC_NOTIFY_BAN).
@@ -399,13 +390,13 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	// which is safe since SC_NOTIFY_BAN is always followed by connection close.
 	// Source: common/packets.hpp PACKET_HC_NOTIFY_ZONESVR = 28 bytes at PACKETVER=20120000.
 	if f.server.Packetver < 20170315 {
-		charSess.SetLength(0x0081, 28)
+		charSess.core.lengths[0x0081] = 28
 	}
 
 	res := &charPhaseResult{}
 
 	// 0x006C HC_REFUSE_ENTER — refused
-	charSess.RegisterHandler(0x006C, func(data []byte, _ uint32) {
+	charSess.core.registerHandler(0x006C, func(data []byte, _ uint32) {
 		code := byte(0)
 		if len(data) >= 3 {
 			code = data[2]
@@ -416,7 +407,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 
 	// 0x0081 on char server — SC_NOTIFY_BAN or (for pv < 20170315) HC_NOTIFY_ZONESVR
 	// Disambiguate by payload size: SC_NOTIFY_BAN = 3 bytes; HC_NOTIFY_ZONESVR = 28 bytes.
-	charSess.RegisterHandler(0x0081, func(data []byte, _ uint32) {
+	charSess.core.registerHandler(0x0081, func(data []byte, _ uint32) {
 		if len(data) >= 28 {
 			// HC_NOTIFY_ZONESVR (PACKETVER < 20170315)
 			// struct: int16 + uint32 CID + char mapname[16] + uint32 ip + uint16 port
@@ -454,7 +445,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	// 0x0AC5 HC_NOTIFY_ZONESVR (PACKETVER >= 20170315)
 	// struct: int16 + uint32 CID + char mapname[16] + uint32 ip + uint16 port + char domain[128]
 	// Source: common/packets.hpp at PACKETVER=20180307, size=156
-	charSess.RegisterHandler(0x0AC5, func(data []byte, _ uint32) {
+	charSess.core.registerHandler(0x0AC5, func(data []byte, _ uint32) {
 		if len(data) < 28 {
 			res.err = fmt.Errorf("fsm: 0x0AC5 too short (%d bytes)", len(data))
 			res.done = true
@@ -482,12 +473,12 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	// struct: int16 + int16 packetLength + uint8 total + uint8 premium_start +
 	//         uint8 premium_end + char extension[20] + CHARACTER_INFO characters[]
 	// We do not parse CHARACTER_INFO here; just note we received it.
-	charSess.RegisterHandler(0x082D, func(data []byte, _ uint32) {
+	charSess.core.registerHandler(0x082D, func(data []byte, _ uint32) {
 		// Stay — char list will arrive later via 0x006B or paged via 0x09A0+0x099D
 	})
 
 	// 0x006B HC_ACCEPT_ENTER (char list)
-	charSess.RegisterHandler(0x006B, func(data []byte, _ uint32) {
+	charSess.core.registerHandler(0x006B, func(data []byte, _ uint32) {
 		if f.server.Packetver < 20130000 {
 			// Pre-20130000: char list arrives directly in this packet; call OnCharList now.
 			// struct: int16 + int16 packetLength + uint8 total + uint8 premium_start +
@@ -512,7 +503,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	// struct: int16 + uint32 total
 	// Source: common/packets.hpp PACKET_HC_CHARLIST_NOTIFY, size=6
 	var writeErr error
-	charSess.RegisterHandler(0x09A0, func(data []byte, pv uint32) {
+	charSess.core.registerHandler(0x09A0, func(data []byte, _ uint32) {
 		if len(data) < 6 {
 			return
 		}
@@ -527,7 +518,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		// struct: int16 packetType only (size=2)
 		// Source: common/packets.hpp PACKET_CH_CHARLIST_REQ, size=2
 		for i := uint32(0); i < total; i++ {
-			pkt := encode.EncodeRequestCharacterPage(send.RequestCharacterPage{}, f.server.Packetver)
+			pkt := fsmEncodeRequestCharacterPage()
 			if err := writeDeadline(conn, pkt[:], f.stepTimeout()); err != nil {
 				writeErr = err
 				return
@@ -538,7 +529,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 	// 0x099D HC_ACK_CHARINFO_PER_PAGE: one page of char data
 	// struct: int16 + int16 packetLength + CHARACTER_INFO characters[]
 	// Header = 4 bytes.
-	charSess.RegisterHandler(0x099D, func(data []byte, _ uint32) {
+	charSess.core.registerHandler(0x099D, func(data []byte, _ uint32) {
 		if len(data) > 4 {
 			res.rawChars = append(res.rawChars, data[4:]...)
 		}
@@ -559,7 +550,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 		}
 		if res.gotCharList && !slotSent {
 			// Send 0x0066 CH_SELECT_CHAR
-			selPkt := encode.EncodeCharLogin(send.CharLogin{Slot: res.selectedSlot}, f.server.Packetver)
+			selPkt := fsmEncodeCharLogin(res.selectedSlot)
 			if err := writeDeadline(conn, selPkt[:], f.stepTimeout()); err != nil {
 				return "", fmt.Errorf("fsm: send select char: %w", err)
 			}
@@ -621,26 +612,20 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		}
 	}()
 
-	mapSess := session.NewMapSession(f.server.Packetver)
+	mapSess := NewMapSession(f.server.Packetver)
 
 	// Enable C→S obfuscation if keys exist for this packetver.
-	k0, k1, k2 := session.ObfuscationKeysFor(f.server.Packetver)
+	k0, k1, k2 := obfuscationKeysFor(f.server.Packetver)
 	if k0|k1|k2 != 0 {
-		mapSess.EnableObfuscation(k0, k1, k2)
+		mapSess.enableObfuscation(k0, k1, k2)
 	}
 
 	// Send 0x0436 CZ_ENTER
 	// struct: int16 + uint32 AID + uint32 CID + uint32 login_id1 + uint32 clientTick + uint8 sex
 	// Source: clif.cpp:10641 CZ_ENTER2
-	enterArr := encode.EncodeMapLogin(send.MapLogin{
-		AID:        f.accountID,
-		GID:        f.charID,
-		AuthCode:   int32(f.sessionID1),
-		ClientTime: 0,
-		Sex:        f.sex,
-	}, f.server.Packetver)
+	enterArr := fsmEncodeMapLogin(f.accountID, f.charID, f.sessionID1, f.sex)
 	enterPkt := enterArr[:]
-	encodePacketID(mapSess, enterPkt)
+	fsmEncodePacketID(mapSess, enterPkt)
 	if err := writeDeadline(conn, enterPkt, f.stepTimeout()); err != nil {
 		return fmt.Errorf("fsm: send map enter: %w", err)
 	}
@@ -660,12 +645,12 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	// 0x0283 ZC_AID: account ID echo (PACKETVER >= 20070521)
 	// struct: int16 + uint32 AID — size=6
 	// Source: clif.cpp:10731 WFIFOW(fd,0)=0x283; WFIFOL(fd,2)=sd->id
-	mapSess.RegisterHandler(0x0283, func(data []byte, _ uint32) {
+	mapSess.core.registerHandler(0x0283, func(data []byte, _ uint32) {
 		// Store if needed; currently we already have accountID from login.
 	})
 
 	// 0x0074 ZC_REFUSE_ENTER
-	mapSess.RegisterHandler(0x0074, func(data []byte, _ uint32) {
+	mapSess.core.registerHandler(0x0074, func(data []byte, _ uint32) {
 		code := byte(0)
 		if len(data) >= 3 {
 			code = data[2]
@@ -675,7 +660,7 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	})
 
 	// 0x0081 SC_NOTIFY_BAN (on map server)
-	mapSess.RegisterHandler(0x0081, func(data []byte, _ uint32) {
+	mapSess.core.registerHandler(0x0081, func(data []byte, _ uint32) {
 		code := byte(0)
 		if len(data) >= 3 {
 			code = data[2]
@@ -698,10 +683,9 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		}
 		// Send 0x007D CZ_NOTIFY_ACTORINIT (map loaded confirmation)
 		// struct: int16 only = 2 bytes; Source: clif.cpp:10742
-		loadedArr := encode.EncodeMapLoaded(send.MapLoaded{}, f.server.Packetver)
-		loadedPkt := loadedArr[:]
-		encodePacketID(mapSess, loadedPkt)
-		if err := writeDeadline(conn, loadedPkt, f.stepTimeout()); err != nil {
+		loadedPkt := fsmEncodeMapLoaded()
+		fsmEncodePacketID(mapSess, loadedPkt[:])
+		if err := writeDeadline(conn, loadedPkt[:], f.stepTimeout()); err != nil {
 			res.err = fmt.Errorf("fsm: send map loaded: %w", err)
 			res.done = true
 			return
@@ -709,9 +693,9 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 
 		// Send 0x007E or 0x0360 CZ_REQUEST_TIME (tick sync)
 		// struct: int16 + uint32 clientTick = 6 bytes; Source: clif.cpp:11196-11197
-		tickArr := encode.EncodeTimeSyncResponse(send.TimeSyncResponse{ClientTime: 0}, f.server.Packetver)
+		tickArr := fsmEncodeTimeSyncResponse(f.server.Packetver)
 		tickPkt := tickArr[:]
-		encodePacketID(mapSess, tickPkt)
+		fsmEncodePacketID(mapSess, tickPkt)
 		if err := writeDeadline(conn, tickPkt, f.stepTimeout()); err != nil {
 			res.err = fmt.Errorf("fsm: send tick sync: %w", err)
 			res.done = true
@@ -739,11 +723,11 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	// Register the appropriate ZC_ACCEPT_ENTER packet ID based on packetver.
 	// Source: packets.hpp #if PACKETVER conditions
 	if f.server.Packetver >= 20141016 && f.server.Packetver < 20160330 {
-		mapSess.RegisterHandler(0x0A18, onMapEnter) // ZC_ACCEPT_ENTER3
+		mapSess.core.registerHandler(0x0A18, onMapEnter) // ZC_ACCEPT_ENTER3
 	} else if f.server.Packetver >= 20080102 {
-		mapSess.RegisterHandler(0x02EB, onMapEnter) // ZC_ACCEPT_ENTER2
+		mapSess.core.registerHandler(0x02EB, onMapEnter) // ZC_ACCEPT_ENTER2
 	} else {
-		mapSess.RegisterHandler(0x0073, onMapEnter) // ZC_ACCEPT_ENTER (original)
+		mapSess.core.registerHandler(0x0073, onMapEnter) // ZC_ACCEPT_ENTER (original)
 	}
 
 	if err := f.feedUntil(conn, mapSess, f.stepTimeout(), &res.done); err != nil {
@@ -776,12 +760,12 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 
 // ── I/O helpers ──────────────────────────────────────────────────────────────
 
-// encodePacketID applies C→S obfuscation to the packet ID field (bytes 0-1) of
+// fsmEncodePacketID applies C→S obfuscation to the packet ID field (bytes 0-1) of
 // pkt in-place. If obfuscation is not enabled on s, this is a no-op.
 // pkt must be at least 2 bytes.
-func encodePacketID(s *session.MapSession, pkt []byte) {
+func fsmEncodePacketID(s *MapSession, pkt []byte) {
 	id := binary.LittleEndian.Uint16(pkt[0:2])
-	s.Encode(&id)
+	s.encodePacketID(&id)
 	binary.LittleEndian.PutUint16(pkt[0:2], id)
 }
 
@@ -813,7 +797,7 @@ func (f *ConnectionFSM) feedStep(conn net.Conn, sess feeder, timeout time.Durati
 	n, err := conn.Read(f.readBuf[:])
 	if n > 0 {
 		if ferr := sess.Feed(f.readBuf[:n]); ferr != nil {
-			var unk session.ErrUnknownPacket
+			var unk ErrUnknownPacket
 			if errors.As(ferr, &unk) {
 				return fmt.Errorf("fsm: unknown packet 0x%04x", unk.ID)
 			}
@@ -829,4 +813,98 @@ func (f *ConnectionFSM) feedStep(conn net.Conn, sess feeder, timeout time.Durati
 // feeder is the minimal interface satisfied by LoginSession, CharSession, MapSession.
 type feeder interface {
 	Feed([]byte) error
+}
+
+// ── Inline auth-phase packet encoders ─────────────────────────────────────────
+//
+// These are local copies of generated encode functions needed by the FSM.
+// They cannot call pkg/encode because pkg/encode imports pkg/session (for
+// RegisterSendEncoder), which would create an import cycle.
+// The implementations are identical to the generated versions in pkg/encode.
+
+// fsmEncodeMasterLogin encodes 0x0064 CA_LOGIN (55 bytes).
+// Source: common/packets.hpp PACKET_CA_LOGIN; GCC-verified = 55 bytes.
+func fsmEncodeMasterLogin(packetver uint32, username, password string) [55]byte {
+	var p [55]byte
+	p[0] = 0x64
+	p[1] = 0x00
+	binary.LittleEndian.PutUint32(p[2:], packetver) // rAthena: version
+	copy(p[6:30], username)                         // rAthena: username
+	copy(p[30:54], password)                        // rAthena: password
+	// p[54] clienttype = 0x00
+	return p
+}
+
+// fsmEncodeGameLogin encodes 0x0065 CH_ENTER (17 bytes).
+// Source: char_clif.cpp:820; GCC-verified = 17 bytes.
+func fsmEncodeGameLogin(aid, authCode, loginID2 uint32, sex uint8) [17]byte {
+	var p [17]byte
+	p[0] = 0x65
+	p[1] = 0x00
+	binary.LittleEndian.PutUint32(p[2:], aid)       // rAthena: AID
+	binary.LittleEndian.PutUint32(p[6:], authCode)  // rAthena: AuthCode
+	binary.LittleEndian.PutUint32(p[10:], loginID2) // rAthena: login_id2
+	// p[14:16] clienttype = 0
+	p[16] = sex // rAthena: sex
+	return p
+}
+
+// fsmEncodeCharLogin encodes 0x0066 CH_SELECT_CHAR (3 bytes).
+// Source: common/packets.hpp PACKET_CH_SELECT_CHAR; GCC-verified = 3 bytes.
+func fsmEncodeCharLogin(slot uint8) [3]byte {
+	var p [3]byte
+	p[0] = 0x66
+	p[1] = 0x00
+	p[2] = slot // rAthena: slot
+	return p
+}
+
+// fsmEncodeRequestCharacterPage encodes 0x09A1 CH_CHARLIST_REQ (2 bytes).
+// Source: common/packets.hpp PACKET_CH_CHARLIST_REQ; GCC-verified = 2 bytes.
+func fsmEncodeRequestCharacterPage() [2]byte {
+	var p [2]byte
+	p[0] = 0xa1
+	p[1] = 0x09
+	return p
+}
+
+// fsmEncodeMapLogin encodes 0x0436 CZ_ENTER2 (19 bytes).
+// Source: clif.cpp:10641; GCC-verified = 19 bytes.
+func fsmEncodeMapLogin(aid, gid, authCode uint32, sex uint8) [19]byte {
+	var p [19]byte
+	p[0] = 0x36
+	p[1] = 0x04
+	binary.LittleEndian.PutUint32(p[2:], aid)       // rAthena: AID
+	binary.LittleEndian.PutUint32(p[6:], gid)       // rAthena: GID
+	binary.LittleEndian.PutUint32(p[10:], authCode) // rAthena: AuthCode (login_id1)
+	// p[14:18] clientTime = 0
+	p[18] = sex // rAthena: sex
+	return p
+}
+
+// fsmEncodeMapLoaded encodes 0x007D CZ_NOTIFY_ACTORINIT (2 bytes).
+// Source: clif.cpp:10742; GCC-verified = 2 bytes.
+func fsmEncodeMapLoaded() [2]byte {
+	var p [2]byte
+	p[0] = 0x7d
+	p[1] = 0x00
+	return p
+}
+
+// fsmEncodeTimeSyncResponse encodes CZ_REQUEST_TIME:
+//   - 0x007E (pv < 20101124): int16 + uint32 = 6 bytes
+//   - 0x0360 (pv >= 20101124): int16 + uint32 = 6 bytes
+//
+// Source: clif.cpp:11196-11197.
+func fsmEncodeTimeSyncResponse(packetver uint32) [6]byte {
+	var p [6]byte
+	if packetver >= 20101124 {
+		p[0] = 0x60
+		p[1] = 0x03
+	} else {
+		p[0] = 0x7e
+		p[1] = 0x00
+	}
+	// clientTick = 0 at bytes [2:6]
+	return p
 }

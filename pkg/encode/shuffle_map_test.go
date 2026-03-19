@@ -1,9 +1,7 @@
-package session_test
+package encode
 
 import (
 	"testing"
-
-	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // TestShuffledCtoSID_PostShuffle verifies that for PACKETVER > 20180307,
@@ -34,7 +32,7 @@ func TestShuffledCtoSID_PostShuffle(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := session.ShuffledCtoSID(tc.pv, tc.baseID)
+			got := shuffledCtoSID(tc.pv, tc.baseID)
 			if got != tc.wantID {
 				t.Errorf("ShuffledCtoSID(%d, 0x%04X) = 0x%04X, want 0x%04X",
 					tc.pv, tc.baseID, got, tc.wantID)
@@ -63,7 +61,7 @@ func TestShuffledCtoSID_ShuffleEra(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := session.ShuffledCtoSID(tc.pv, tc.baseID)
+			got := shuffledCtoSID(tc.pv, tc.baseID)
 			if got != tc.wantID {
 				t.Errorf("ShuffledCtoSID(%d, 0x%04X) = 0x%04X, want 0x%04X",
 					tc.pv, tc.baseID, got, tc.wantID)

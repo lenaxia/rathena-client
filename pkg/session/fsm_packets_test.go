@@ -1,4 +1,4 @@
-package fsm_test
+package session_test
 
 // Phase 1 C→S packet encoder golden tests.
 //

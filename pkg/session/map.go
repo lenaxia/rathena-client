@@ -1,4 +1,4 @@
-// Hand-written: NewMapSession, Feed, RegisterHandler, EnableObfuscation, Encode.
+// Hand-written: NewMapSession, Feed, registerHandler, enableObfuscation, encodePacketID.
 package session
 
 const mapRecvBufInitial = 65536
@@ -6,7 +6,7 @@ const mapRecvBufInitial = 65536
 // MapSession handles the rAthena map server connection (CZ_/ZC_ packets).
 // Source: src/map/packets.hpp + src/map/packets_struct.hpp.
 //
-// MapSession additionally supports C→S packet ID obfuscation via EnableObfuscation.
+// MapSession additionally supports C→S packet ID obfuscation via enableObfuscation.
 // S→C packets (received via Feed) are never obfuscated.
 type MapSession struct {
 	core   sessionCore
@@ -31,16 +31,16 @@ func (s *MapSession) Feed(data []byte) error {
 	return s.core.feed(data)
 }
 
-// RegisterHandler registers fn as the callback for the given packet ID.
+// registerHandler registers fn as the callback for the given packet ID.
 // Overwrites any existing handler for that ID.
-func (s *MapSession) RegisterHandler(id uint16, fn HandlerFunc) {
+func (s *MapSession) registerHandler(id uint16, fn handlerFunc) {
 	s.core.registerHandler(id, fn)
 }
 
-// SetLength sets the frame length for a packet ID in the map lengths table.
+// setLength sets the frame length for a packet ID in the map lengths table.
 // This is intended for FSM auth-phase setup and testing only.
 // A length of -1 means variable-length.
-func (s *MapSession) SetLength(id uint16, length int16) {
+func (s *MapSession) setLength(id uint16, length int16) {
 	s.core.lengths[id] = length
 }
 
@@ -51,13 +51,13 @@ func (s *MapSession) SetUnknownPacketHandler(fn UnknownPacketFunc) {
 	s.core.setUnknownPacketHandler(fn)
 }
 
-// EnableObfuscation activates C→S packet ID obfuscation for this session.
-// Must be called before the first Encode call.
+// enableObfuscation activates C→S packet ID obfuscation for this session.
+// Must be called before the first encodePacketID call.
 // key0, key1, key2 are clif_cryptKey[0], clif_cryptKey[1], clif_cryptKey[2] from
-// src/map/clif_obfuscation.hpp (obtained via ObfuscationKeysFor).
+// src/map/clif_obfuscation.hpp (obtained via obfuscationKeysFor).
 //
-// S→C packets received via Feed are never obfuscated.
-func (s *MapSession) EnableObfuscation(key0, key1, key2 uint32) {
+// S→C packets (received via Feed) are never obfuscated.
+func (s *MapSession) enableObfuscation(key0, key1, key2 uint32) {
 	s.oState.enabled = true
 	s.oState.firstSent = false
 	s.oState.key0 = key0
@@ -70,11 +70,11 @@ func (s *MapSession) EnableObfuscation(key0, key1, key2 uint32) {
 	s.oState.rollingKey = uint32(((step1 * uint64(key1)) + uint64(key2)) & 0xFFFFFFFF)
 }
 
-// Encode applies C→S packet ID obfuscation (if enabled) to *pktID in-place.
+// encodePacketID applies C→S packet ID obfuscation (if enabled) to *pktID in-place.
 // The caller builds the raw packet using a generated encode function, then calls
-// Encode on the packet ID field before writing to the socket.
-// Encode does not allocate.
-func (s *MapSession) Encode(pktID *uint16) {
+// encodePacketID on the packet ID field before writing to the socket.
+// encodePacketID does not allocate.
+func (s *MapSession) encodePacketID(pktID *uint16) {
 	if !s.oState.enabled {
 		return
 	}

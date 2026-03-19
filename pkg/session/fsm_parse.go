@@ -1,4 +1,4 @@
-package fsm
+package session
 
 import (
 	"encoding/binary"
@@ -71,7 +71,7 @@ func parseLoginAccept(data []byte, packetver uint32) (
 		// Source: loginclif.cpp:137 "char_server.ip = htonl(...)"
 		ip := binary.BigEndian.Uint32(payload[0:4])
 		port := binary.LittleEndian.Uint16(payload[4:6])
-		name := cStr(payload[6:26])
+		name := fsmCStr(payload[6:26])
 		servers = append(servers, CharServerInfo{
 			IP:   ip,
 			Port: port,
@@ -82,8 +82,8 @@ func parseLoginAccept(data []byte, packetver uint32) (
 	return
 }
 
-// cStr converts a null-terminated C string byte slice to a Go string.
-func cStr(b []byte) string {
+// fsmCStr converts a null-terminated C string byte slice to a Go string.
+func fsmCStr(b []byte) string {
 	for i, c := range b {
 		if c == 0 {
 			return string(b[:i])

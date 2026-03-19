@@ -55,21 +55,14 @@ func main() {
 func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	log.Println("=== rathena-client codegen ===")
 
-	// Step 1: Generate shuffle table (session/shuffle_map.go)
-	log.Println("Generating shuffle table...")
-	if err := genShuffle(cfg, outDir); err != nil {
-		return fmt.Errorf("shuffle: %w", err)
-	}
-	log.Println("  → pkg/session/shuffle_map.go")
-
-	// Step 2: Generate obfuscation keys (session/obfuscation_keys.go)
+	// Step 1: Generate obfuscation keys (session/obfuscation_keys.go)
 	log.Println("Generating obfuscation keys...")
 	if err := genObfuscation(cfg, outDir); err != nil {
 		return fmt.Errorf("obfuscation: %w", err)
 	}
 	log.Println("  → pkg/session/obfuscation_keys.go")
 
-	// Step 3: Load semantic DB.
+	// Step 2: Load semantic DB.
 	log.Printf("Loading semantic DB from %s...", semanticsPath)
 	db, err := semantics.LoadFile(semanticsPath)
 	if err != nil {
@@ -77,7 +70,7 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  Loaded %d semantic actions", len(db.Actions))
 
-	// Step 4: Build VersionTable from packets_struct.hpp.
+	// Step 3: Build VersionTable from packets_struct.hpp.
 	log.Println("Building VersionTable from packets_struct.hpp...")
 	vt, err := buildVersionTable(cfg)
 	if err != nil {
@@ -85,14 +78,14 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  VersionTable has %d structs", len(vt))
 
-	// Step 4b: Inject synthetic structs (SYNTH_*) for structless packets.
+	// Step 3b: Inject synthetic structs (SYNTH_*) for structless packets.
 	log.Println("Injecting synthetic struct layouts...")
 	if err := injectSynthetic(cfg, vt); err != nil {
 		return fmt.Errorf("inject synthetic structs: %w", err)
 	}
 	log.Printf("  VersionTable now has %d structs (after synthetic injection)", len(vt))
 
-	// Step 4c: Inject structs from common/packets.hpp (login/char server packets).
+	// Step 3c: Inject structs from common/packets.hpp (login/char server packets).
 	// These are not in packets_struct.hpp so buildVersionTable never sees them.
 	log.Println("Injecting common/packets.hpp struct layouts...")
 	if err := injectCommonPacketStructs(cfg, vt); err != nil {
@@ -100,7 +93,7 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  VersionTable now has %d structs (after common injection)", len(vt))
 
-	// Step 4d: Inject structs from src/map/packets.hpp.
+	// Step 3d: Inject structs from src/map/packets.hpp.
 	// These are not in packets_struct.hpp so buildVersionTable never sees them.
 	log.Println("Injecting map/packets.hpp struct layouts...")
 	if err := injectMapPacketStructs(cfg, vt); err != nil {
@@ -108,7 +101,7 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Printf("  VersionTable now has %d structs (after map injection)", len(vt))
 
-	// Step 5: Generate length tables (session/lengths_*.go).
+	// Step 4: Generate length tables (session/lengths_*.go).
 	// Must run after VersionTable is built so S→C lengths can be joined from struct sizes.
 	log.Println("Generating length tables...")
 	if err := genLengths(cfg, outDir, semanticsPath, vt, db); err != nil {
@@ -116,29 +109,62 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	}
 	log.Println("  → pkg/session/lengths_login.go, lengths_char.go, lengths_map.go")
 
-	// Step 6: Generate event structs (pkg/events/*.go)
+	// Step 5: Generate event structs (pkg/events/*.go)
 	log.Println("Generating event structs...")
 	if err := genEvents(db, vt, outDir); err != nil {
 		return fmt.Errorf("events: %w", err)
 	}
 
-	// Step 7: Generate send request types (pkg/send/*.go)
+	// Step 6: Generate send request types (pkg/send/*.go)
 	log.Println("Generating send request types...")
 	if err := genSend(db, vt, outDir); err != nil {
 		return fmt.Errorf("send: %w", err)
 	}
 
-	// Step 8: Generate decode functions (pkg/decode/*.go)
+	// Step 7: Generate decode functions (pkg/decode/*.go)
 	log.Println("Generating decode functions...")
 	if err := genDecode(db, vt, outDir); err != nil {
 		return fmt.Errorf("decode: %w", err)
 	}
 
-	// Step 9: Generate encode functions (pkg/encode/*.go)
+	// Step 8: Generate encode functions (pkg/encode/*.go).
+	// cleanGeneratedDir("pkg/encode") runs inside genEncode — it must complete
+	// before genShuffle writes shuffle_map.go, or the clean sweep would delete it.
 	log.Println("Generating encode functions...")
 	if err := genEncode(db, vt, outDir); err != nil {
 		return fmt.Errorf("encode: %w", err)
 	}
+
+	// Step 9: Generate shuffle table (encode/shuffle_map.go).
+	// Must run AFTER genEncode because genEncode calls cleanGeneratedDir("pkg/encode")
+	// which deletes all "// Code generated" files. Writing shuffle_map.go after the
+	// clean sweep ensures it is never deleted.
+	log.Println("Generating shuffle table...")
+	if err := genShuffle(cfg, outDir); err != nil {
+		return fmt.Errorf("shuffle: %w", err)
+	}
+	log.Println("  → pkg/encode/shuffle_map.go")
+
+	// Step 10: Generate SemanticAction enum (pkg/session/actions.go)
+	log.Println("Generating SemanticAction enum...")
+	if err := genActions(db, outDir); err != nil {
+		return fmt.Errorf("actions: %w", err)
+	}
+	log.Println("  → pkg/session/actions.go")
+
+	// Step 11: Generate receive dispatch table (pkg/session/receive_dispatch.go)
+	log.Println("Generating receive dispatch table...")
+	if err := genReceiveDispatch(db, vt, outDir); err != nil {
+		return fmt.Errorf("receive_dispatch: %w", err)
+	}
+	log.Println("  → pkg/session/receive_dispatch.go")
+
+	// Step 12: Generate send encoder registration (pkg/encode/register.go)
+	log.Println("Generating send encoder registration...")
+	if err := genRegister(db, vt, outDir); err != nil {
+		return fmt.Errorf("register: %w", err)
+	}
+	log.Println("  → pkg/encode/register.go")
 
 	log.Println("=== Done ===")
 	return nil
@@ -430,7 +456,7 @@ func genShuffle(cfg preprocess.Config, outDir string) error {
 		return err
 	}
 
-	return writeFile(filepath.Join(outDir, "pkg", "session", "shuffle_map.go"), src)
+	return writeFile(filepath.Join(outDir, "pkg", "encode", "shuffle_map.go"), src)
 }
 
 func genObfuscation(cfg preprocess.Config, outDir string) error {
@@ -1251,6 +1277,31 @@ func genEncode(db *semantics.DB, vt preprocess.VersionTable, outDir string) erro
 	}
 	log.Printf("  → pkg/encode/ (%d files, %d skipped)", len(files), len(skipped))
 	return nil
+}
+
+func genActions(db *semantics.DB, outDir string) error {
+	src, err := gen.GenerateActionsFile(db)
+	if err != nil {
+		return err
+	}
+	return writeFile(filepath.Join(outDir, "pkg", "session", "actions.go"), src)
+}
+
+func genReceiveDispatch(db *semantics.DB, vt preprocess.VersionTable, outDir string) error {
+	src, err := gen.GenerateReceiveDispatchFile(db, vt)
+	if err != nil {
+		return err
+	}
+	return writeFile(filepath.Join(outDir, "pkg", "session", "receive_dispatch.go"), src)
+}
+
+func genRegister(db *semantics.DB, vt preprocess.VersionTable, outDir string) error {
+	encodeDir := filepath.Join(outDir, "pkg", "encode")
+	src, err := gen.GenerateRegisterFileWithDir(db, vt, encodeDir)
+	if err != nil {
+		return err
+	}
+	return writeFile(filepath.Join(outDir, "pkg", "encode", "register.go"), src)
 }
 
 func writeFile(path, content string) error {

@@ -1,4 +1,4 @@
-// Hand-written: NewCharSession, Feed, RegisterHandler.
+// Hand-written: NewCharSession, Feed, registerHandler.
 package session
 
 const charRecvBufInitial = 4096
@@ -26,15 +26,15 @@ func (s *CharSession) Feed(data []byte) error {
 	return s.core.feed(data)
 }
 
-// RegisterHandler registers fn as the callback for the given packet ID.
+// registerHandler registers fn as the callback for the given packet ID.
 // Overwrites any existing handler for that ID.
-func (s *CharSession) RegisterHandler(id uint16, fn HandlerFunc) {
+func (s *CharSession) registerHandler(id uint16, fn handlerFunc) {
 	s.core.registerHandler(id, fn)
 }
 
-// SetLength sets the frame length for a packet ID in the char lengths table.
+// setLength sets the frame length for a packet ID in the char lengths table.
 // This is intended for testing only. A length of -1 means variable-length.
-func (s *CharSession) SetLength(id uint16, length int16) {
+func (s *CharSession) setLength(id uint16, length int16) {
 	s.core.lengths[id] = length
 }
 

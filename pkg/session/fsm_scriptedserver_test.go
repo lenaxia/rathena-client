@@ -4,7 +4,7 @@
 // The server reads a .fixture file and serves three phase connections in order
 // (login, char, map). It tolerates interleaved C→S bytes from the FSM by
 // consuming them asynchronously while writing S→C bytes.
-package fsm
+package session
 
 import (
 	"context"

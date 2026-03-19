@@ -1,5 +1,5 @@
 // gen-fixture parses OpenKore hex-dump files and writes binary .fixture files
-// for use by the replay integration tests in pkg/fsm/replay_test.go.
+// for use by the replay integration tests in pkg/session/fsm_replay_test.go.
 //
 // Usage:
 //

@@ -18,16 +18,16 @@ import (
 	"time"
 )
 
-// HandlerFunc is a callback invoked synchronously by Feed() for each decoded frame.
+// handlerFunc is a callback invoked synchronously by Feed() for each decoded frame.
 // data is the complete frame bytes including the 2-byte packet ID header.
 // packetver is the PACKETVER the session was constructed with.
 //
 // IMPORTANT: string fields in decoded events (e.g. event.Name) are zero-copy aliases
 // into the session receive buffer. They are valid only for the duration of this callback.
-// Do NOT store them past the return of HandlerFunc. To retain a string, copy it first:
+// Do NOT store them past the return of handlerFunc. To retain a string, copy it first:
 //
 //	name = decode.CopyString(event.Name)
-type HandlerFunc func(data []byte, packetver uint32)
+type handlerFunc func(data []byte, packetver uint32)
 
 // recentPacketDepth is the number of preceding dispatched packets captured in
 // the ring buffer and included in UnknownPacketEvent.RecentPackets.
@@ -157,7 +157,7 @@ type sessionCore struct {
 	buf             []byte       // full backing array; owned exclusively by sessionCore
 	recvBuf         []byte       // active sub-slice of buf; advances as frames are consumed
 	lengths         [65536]int16 // packet length table: 0 = unknown, -1 = variable (bytes[2:4])
-	handlers        [65536]HandlerFunc
+	handlers        [65536]handlerFunc
 	onUnknownPacket UnknownPacketFunc
 	recent          recentRing // ring buffer of last recentPacketDepth dispatched packets
 	faulted         bool
@@ -246,7 +246,7 @@ done:
 
 // registerHandler registers fn as the handler for the given packet ID.
 // A second call with the same ID overwrites the previous registration.
-func (c *sessionCore) registerHandler(id uint16, fn HandlerFunc) {
+func (c *sessionCore) registerHandler(id uint16, fn handlerFunc) {
 	c.handlers[id] = fn
 }
 

@@ -1,8 +1,8 @@
 //go:build integration
 
 // Package fsm_test contains the live server integration test for ConnectionFSM.
-// Run with: go test -tags integration -timeout 60s -v ./pkg/fsm/ -run TestLiveServer
-package fsm_test
+// Run with: go test -tags integration -timeout 60s -v ./pkg/session/ -run TestLiveServer
+package session_test
 
 import (
 	"context"
@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/lenaxia/rathena-client/pkg/decode"
-	"github.com/lenaxia/rathena-client/pkg/fsm"
 	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
@@ -120,12 +119,12 @@ func TestLiveServer_FullAuthSequence(t *testing.T) {
 		return d.DialContext(ctx, "tcp", a)
 	}
 
-	server := fsm.ServerConfig{
+	server := session.ServerConfig{
 		LoginAddr:   addr,
 		Packetver:   pver,
 		StepTimeout: 15 * time.Second,
 	}
-	creds := fsm.Credentials{
+	creds := session.Credentials{
 		Username: user,
 		Password: pass,
 		CharSlot: slot,
@@ -137,10 +136,10 @@ func TestLiveServer_FullAuthSequence(t *testing.T) {
 	}
 	readyCh := make(chan readyResult, 1)
 
-	f := fsm.New(server, creds, dialer).
-		OnCharServerList(func(_ []fsm.CharServerInfo) int { return 0 }).
+	f := session.New(server, creds, dialer).
+		OnCharServerList(func(_ []session.CharServerInfo) int { return 0 }).
 		OnCharList(func(_ []byte) uint8 { return slot }).
-		OnReady(func(s *session.MapSession, c net.Conn, _ fsm.ReadyInfo) {
+		OnReady(func(s *session.MapSession, c net.Conn, _ session.ReadyInfo) {
 			readyCh <- readyResult{s, c}
 		}).
 		OnFailed(func(err error) {

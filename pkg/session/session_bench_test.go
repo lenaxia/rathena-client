@@ -1,19 +1,17 @@
 // Package session benchmarks — verifies zero-alloc invariant on the decode hot path.
-package session_test
+package session
 
 import (
 	"encoding/binary"
 	"sync"
 	"testing"
-
-	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // BenchmarkFeed_SmallFixedPacket benchmarks Feed processing a small fixed-length packet.
 // Target: 0 allocs/op, < 200 ns/op (HLD §8).
 func BenchmarkFeed_SmallFixedPacket(b *testing.B) {
-	s := session.NewMapSession(20181002)
-	s.RegisterHandler(0x0080, func(data []byte, pv uint32) {}) // actor_vanished, 7 bytes
+	s := NewMapSession(20181002)
+	s.registerHandler(0x0080, func(data []byte, pv uint32) {}) // actor_vanished, 7 bytes
 
 	frame := make([]byte, 7)
 	frame[0] = 0x80
@@ -34,8 +32,8 @@ func BenchmarkFeed_SmallFixedPacket(b *testing.B) {
 // BenchmarkFeed_VariableLengthPacket benchmarks Feed processing a variable-length packet.
 // Target: 0 allocs/op (HLD §8).
 func BenchmarkFeed_VariableLengthPacket(b *testing.B) {
-	s := session.NewMapSession(20181002)
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {}) // 0x0069 is variable-length
+	s := NewMapSession(20181002)
+	s.registerHandler(0x0069, func(data []byte, pv uint32) {}) // 0x0069 is variable-length
 
 	frame := makeVarFrame(0x0069, 64)
 
@@ -51,15 +49,15 @@ func BenchmarkFeed_VariableLengthPacket(b *testing.B) {
 	}
 }
 
-// BenchmarkEncode_NoObfuscation benchmarks the Encode no-op path.
+// BenchmarkEncode_NoObfuscation benchmarks the EncodePacketID no-op path.
 // Target: 0 allocs/op, < 10 ns/op.
 func BenchmarkEncode_NoObfuscation(b *testing.B) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 	id := uint16(0x0085)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		id = 0x0085
-		s.Encode(&id)
+		s.encodePacketID(&id)
 	}
 }
 
@@ -72,8 +70,8 @@ func BenchmarkEncode_NoObfuscation(b *testing.B) {
 // struct packet_idle_unit at PACKETVER=20181121 (total=108 bytes, variable-length packet).
 // Bytes [2:4] carry the length field (108 LE); the session framer reads it to determine frame size.
 func BenchmarkFeed_ActorExists_0x09FF(b *testing.B) {
-	s := session.NewMapSession(20181121)
-	s.RegisterHandler(0x09FF, func(data []byte, pv uint32) {}) // no-op handler
+	s := NewMapSession(20181121)
+	s.registerHandler(0x09FF, func(data []byte, pv uint32) {}) // no-op handler
 
 	// Build a 108-byte variable-length frame for 0x09FF.
 	frame := make([]byte, 108)
@@ -97,10 +95,10 @@ func BenchmarkFeed_ActorExists_0x09FF(b *testing.B) {
 // Target: 0 allocs/op, < 100 ns/op (HLD §8).
 //
 // struct SYNTH_CZ_REQUEST_MOVE2: 0:2 packetType, 2:3 dest (total=5 bytes).
-// Encoding runs MapSession.Encode(&id) which XOR-transforms the ID in-place for obfuscation.
+// Encoding runs MapSession.EncodePacketID(&id) which XOR-transforms the ID in-place for obfuscation.
 // Without obfuscation enabled this is a no-op, measuring pure dispatch overhead.
 func BenchmarkEncode_RequestMove(b *testing.B) {
-	s := session.NewMapSession(20181121)
+	s := NewMapSession(20181121)
 	// Build a 5-byte move frame.
 	frame := make([]byte, 5)
 	frame[2] = 0xA8 // dest[0]
@@ -111,7 +109,7 @@ func BenchmarkEncode_RequestMove(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		id := uint16(0x035F)
-		s.Encode(&id)
+		s.encodePacketID(&id)
 		binary.LittleEndian.PutUint16(frame[0:2], id)
 		_ = frame
 	}
@@ -127,10 +125,10 @@ func BenchmarkFeed_1000Sessions_Parallel(b *testing.B) {
 	const nSessions = 1000
 
 	// Pre-allocate all sessions to avoid allocation during the benchmark loop.
-	sessions := make([]*session.MapSession, nSessions)
+	sessions := make([]*MapSession, nSessions)
 	for i := range sessions {
-		s := session.NewMapSession(20181121)
-		s.RegisterHandler(0x0080, func(data []byte, pv uint32) {})
+		s := NewMapSession(20181121)
+		s.registerHandler(0x0080, func(data []byte, pv uint32) {})
 		sessions[i] = s
 	}
 

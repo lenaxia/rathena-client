@@ -43,7 +43,7 @@ func bufStartPtr(sl []byte) uintptr {
 func TestFeed_CopyToFront_PartialFrames(t *testing.T) {
 	s := NewMapSession(20181121)
 	dispatched := 0
-	s.RegisterHandler(0x0080, func(data []byte, pv uint32) { dispatched++ })
+	s.registerHandler(0x0080, func(data []byte, pv uint32) { dispatched++ })
 
 	frame := make([]byte, 7)
 	binary.LittleEndian.PutUint16(frame[0:2], 0x0080)

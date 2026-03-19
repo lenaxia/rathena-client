@@ -1,6 +1,6 @@
 // Package session implements PACKETVER-aware network session framing and
 // packet dispatch for the three rAthena server types.
-package session_test
+package session
 
 import (
 	"errors"
@@ -8,7 +8,6 @@ import (
 
 	"github.com/lenaxia/rathena-client/pkg/decode"
 	"github.com/lenaxia/rathena-client/pkg/events"
-	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // makeFrame constructs a minimal fixed-length packet frame:
@@ -34,11 +33,11 @@ func makeVarFrame(packetID uint16, totalLen int) []byte {
 // TestMapSession_Feed_DispatchesRegisteredHandler verifies that a registered
 // On* callback fires once for a complete packet frame.
 func TestMapSession_Feed_DispatchesRegisteredHandler(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	called := 0
 	var gotData []byte
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {
+	s.registerHandler(0x0069, func(data []byte, pv uint32) {
 		called++
 		gotData = append([]byte(nil), data...)
 	})
@@ -58,10 +57,10 @@ func TestMapSession_Feed_DispatchesRegisteredHandler(t *testing.T) {
 // TestMapSession_Feed_AccumulatesPartialFrames verifies that a frame split
 // across two Feed calls is dispatched only once the full frame arrives.
 func TestMapSession_Feed_AccumulatesPartialFrames(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	called := 0
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) { called++ })
+	s.registerHandler(0x0069, func(data []byte, pv uint32) { called++ })
 
 	frame := makeVarFrame(0x0069, 10)
 	// Feed first 5 bytes — incomplete frame.
@@ -83,12 +82,12 @@ func TestMapSession_Feed_AccumulatesPartialFrames(t *testing.T) {
 // TestMapSession_Feed_MultipleFramesInOneBurst verifies that multiple complete
 // frames in a single Feed call are all dispatched.
 func TestMapSession_Feed_MultipleFramesInOneBurst(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	var counts [3]int
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) { counts[0]++ })
-	s.RegisterHandler(0x006B, func(data []byte, pv uint32) { counts[1]++ })
-	s.RegisterHandler(0x006B, func(data []byte, pv uint32) { counts[2]++ }) // overwrites previous
+	s.registerHandler(0x0069, func(data []byte, pv uint32) { counts[0]++ })
+	s.registerHandler(0x006B, func(data []byte, pv uint32) { counts[1]++ })
+	s.registerHandler(0x006B, func(data []byte, pv uint32) { counts[2]++ }) // overwrites previous
 
 	// Build two back-to-back variable-length frames.
 	f1 := makeVarFrame(0x0069, 8)
@@ -110,10 +109,10 @@ func TestMapSession_Feed_MultipleFramesInOneBurst(t *testing.T) {
 // callback with full context, clears the buffer, and does not fault the session —
 // a known packet arriving in the next TCP read is still dispatched normally.
 func TestMapSession_Feed_UnknownPacket(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
-	var events []session.UnknownPacketEvent
-	s.SetUnknownPacketHandler(func(ev session.UnknownPacketEvent) {
+	var events []UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(ev UnknownPacketEvent) {
 		events = append(events, ev)
 	})
 
@@ -126,7 +125,7 @@ func TestMapSession_Feed_UnknownPacket(t *testing.T) {
 	burst := append(append(known, unknown...), trailing...)
 
 	called := 0
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) { called++ })
+	s.registerHandler(0x0069, func(data []byte, pv uint32) { called++ })
 
 	if err := s.Feed(burst); err != nil {
 		t.Fatalf("Feed returned error %v, want nil", err)
@@ -179,7 +178,7 @@ func TestMapSession_Feed_UnknownPacket(t *testing.T) {
 // TestMapSession_Feed_NoHandlerOK verifies that a known packet with no registered
 // handler is silently consumed (no error, no panic).
 func TestMapSession_Feed_NoHandlerOK(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 	// 0x0069 is in the lengths table (variable-length) but has no handler.
 	frame := makeVarFrame(0x0069, 8)
 	if err := s.Feed(frame); err != nil {
@@ -190,11 +189,11 @@ func TestMapSession_Feed_NoHandlerOK(t *testing.T) {
 // TestMapSession_Feed_VariableLengthFrame verifies that a variable-length frame
 // (lengths[id] == -1) uses bytes [2:4] as the frame length.
 func TestMapSession_Feed_VariableLengthFrame(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	called := 0
 	var gotLen int
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {
+	s.registerHandler(0x0069, func(data []byte, pv uint32) {
 		called++
 		gotLen = len(data)
 	})
@@ -216,13 +215,13 @@ func TestMapSession_Feed_VariableLengthFrame(t *testing.T) {
 // LoginSession's lengths table is empty until common/packets.hpp is in the
 // codegen pipeline; SetLength is used here to register a test packet.
 func TestLoginSession_Feed_Dispatch(t *testing.T) {
-	s := session.NewLoginSession(20181002)
+	s := NewLoginSession(20181002)
 
 	const testID uint16 = 0x0069
-	s.SetLength(testID, -1) // variable-length
+	s.setLength(testID, -1) // variable-length
 
 	called := 0
-	s.RegisterHandler(testID, func(data []byte, pv uint32) { called++ })
+	s.registerHandler(testID, func(data []byte, pv uint32) { called++ })
 	frame := makeVarFrame(testID, 8)
 	if err := s.Feed(frame); err != nil {
 		t.Fatalf("Feed returned error: %v", err)
@@ -236,13 +235,13 @@ func TestLoginSession_Feed_Dispatch(t *testing.T) {
 // CharSession's lengths table is empty until common/packets.hpp is in the
 // codegen pipeline; SetLength is used here to register a test packet.
 func TestCharSession_Feed_Dispatch(t *testing.T) {
-	s := session.NewCharSession(20181002)
+	s := NewCharSession(20181002)
 
 	const testID uint16 = 0x006B
-	s.SetLength(testID, -1) // variable-length
+	s.setLength(testID, -1) // variable-length
 
 	called := 0
-	s.RegisterHandler(testID, func(data []byte, pv uint32) { called++ })
+	s.registerHandler(testID, func(data []byte, pv uint32) { called++ })
 	frame := makeVarFrame(testID, 8)
 	if err := s.Feed(frame); err != nil {
 		t.Fatalf("Feed returned error: %v", err)
@@ -255,9 +254,9 @@ func TestCharSession_Feed_Dispatch(t *testing.T) {
 // TestMapSession_Encode_NoObfuscation verifies that Encode is a no-op when
 // obfuscation is not enabled.
 func TestMapSession_Encode_NoObfuscation(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 	var id uint16 = 0x0085
-	s.Encode(&id)
+	s.encodePacketID(&id)
 	if id != 0x0085 {
 		t.Errorf("Encode without obfuscation changed packetID to %#04x, want 0x0085", id)
 	}
@@ -270,20 +269,20 @@ func TestMapSession_Encode_NoObfuscation(t *testing.T) {
 // Source: src/map/clif_obfuscation.hpp, processed with -DPACKET_OBFUSCATION.
 func TestMapSession_Encode_Obfuscation(t *testing.T) {
 	// Lookup known keys for a packetver that has obfuscation.
-	k0, k1, k2 := session.ObfuscationKeysFor(20180307)
+	k0, k1, k2 := obfuscationKeysFor(20180307)
 	if k0 == 0 && k1 == 0 && k2 == 0 {
 		t.Skip("no obfuscation keys found for 20180307 — skipping obfuscation test")
 	}
 
-	s := session.NewMapSession(20180307)
-	s.EnableObfuscation(k0, k1, k2)
+	s := NewMapSession(20180307)
+	s.enableObfuscation(k0, k1, k2)
 
 	// First packet: rawID XOR firstKey where firstKey = ((k0*k1+k2)>>16)&0x7FFF
 	firstKey := uint16(((uint64(k0)*uint64(k1) + uint64(k2)) >> 16) & 0x7FFF)
 
 	var rawID uint16 = 0x0436
 	id := rawID
-	s.Encode(&id)
+	s.encodePacketID(&id)
 	if id != rawID^firstKey {
 		t.Errorf("first Encode: got %#04x, want %#04x (raw=%#04x firstKey=%#04x)",
 			id, rawID^firstKey, rawID, firstKey)
@@ -297,7 +296,7 @@ func TestMapSession_Encode_Obfuscation(t *testing.T) {
 
 	var rawID2 uint16 = 0x007D
 	id2 := rawID2
-	s.Encode(&id2)
+	s.encodePacketID(&id2)
 	if id2 != rawID2^rollKey {
 		t.Errorf("second Encode: got %#04x, want %#04x (raw=%#04x rollKey=%#04x)",
 			id2, rawID2^rollKey, rawID2, rollKey)
@@ -334,23 +333,23 @@ func TestMapSession_Encode_Obfuscation_Oracle(t *testing.T) {
 	const wantFirst = uint16(0x0DA8)  // 0x0436 ^ 0x099E
 	const wantSecond = uint16(0x6BD4) // 0x007D ^ 0x6BA9
 
-	s := session.NewMapSession(20180307)
-	s.EnableObfuscation(k0, k1, k2)
+	s := NewMapSession(20180307)
+	s.enableObfuscation(k0, k1, k2)
 
 	var id1 uint16 = 0x0436
-	s.Encode(&id1)
+	s.encodePacketID(&id1)
 	if id1 != wantFirst {
 		t.Errorf("first Encode(0x0436): got %#04x, want %#04x", id1, wantFirst)
 	}
 
 	var id2 uint16 = 0x007D
-	s.Encode(&id2)
+	s.encodePacketID(&id2)
 	if id2 != wantSecond {
 		t.Errorf("second Encode(0x007D): got %#04x, want %#04x", id2, wantSecond)
 	}
 }
 func TestErrUnknownPacket_Error(t *testing.T) {
-	e := session.ErrUnknownPacket{ID: 0x1234}
+	e := ErrUnknownPacket{ID: 0x1234}
 	msg := e.Error()
 	if msg == "" {
 		t.Error("ErrUnknownPacket.Error() returned empty string")
@@ -376,14 +375,14 @@ func makeVarFrameEmbedLen(packetID uint16, sliceLen int, embeddedLen uint16) []b
 // Packet 0x09FF is registered as variable-length (length == -1) for
 // 20141022 <= pv < 20150513. We use pv=20141023 to hit this range.
 func TestFeed_VariableLength_ZeroEmbeddedLen_Faults(t *testing.T) {
-	s := session.NewMapSession(20141023)
+	s := NewMapSession(20141023)
 
 	frame := makeVarFrameEmbedLen(0x09FF, 10, 0)
 	err := s.Feed(frame)
 	if err == nil {
 		t.Fatal("Feed returned nil, want ErrUnknownPacket for embedded length 0")
 	}
-	var e session.ErrUnknownPacket
+	var e ErrUnknownPacket
 	if !errors.As(err, &e) {
 		t.Fatalf("error type is %T, want ErrUnknownPacket", err)
 	}
@@ -397,14 +396,14 @@ func TestFeed_VariableLength_ZeroEmbeddedLen_Faults(t *testing.T) {
 // frame header size of 4).
 func TestFeed_VariableLength_TruncatedEmbeddedLen_Faults(t *testing.T) {
 	for _, embLen := range []uint16{1, 2, 3} {
-		s := session.NewMapSession(20141023)
+		s := NewMapSession(20141023)
 		frame := makeVarFrameEmbedLen(0x09FF, 10, embLen)
 		err := s.Feed(frame)
 		if err == nil {
 			t.Errorf("embedded length %d: Feed returned nil, want ErrUnknownPacket", embLen)
 			continue
 		}
-		var e session.ErrUnknownPacket
+		var e ErrUnknownPacket
 		if !errors.As(err, &e) {
 			t.Errorf("embedded length %d: error type is %T, want ErrUnknownPacket", embLen, err)
 		}
@@ -443,12 +442,12 @@ func TestFeed_NullTermString_CopyString_PreservesAcrossFeeds(t *testing.T) {
 		return b
 	}
 
-	s := session.NewMapSession(pv)
+	s := NewMapSession(pv)
 
 	callCount := 0
 	var storedAlias string
 	var storedCopy string
-	s.RegisterHandler(0x09FF, func(data []byte, packetver uint32) {
+	s.registerHandler(0x09FF, func(data []byte, packetver uint32) {
 		e := decode.ActorExists_0x09FF(data, packetver)
 		callCount++
 		if callCount == 1 {
@@ -496,8 +495,8 @@ func TestFeed_NullTermString_CopyString_PreservesAcrossFeeds(t *testing.T) {
 // Feed hot path does not allocate on the heap in steady state.
 // (Real alloc measurement is done in session_bench_test.go.)
 func TestMapSession_Feed_ZeroAlloc(t *testing.T) {
-	s := session.NewMapSession(20181002)
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {})
+	s := NewMapSession(20181002)
+	s.registerHandler(0x0069, func(data []byte, pv uint32) {})
 
 	// Prime: run once to warm up recvBuf backing array.
 	frame := makeVarFrame(0x0069, 20)
@@ -519,10 +518,10 @@ func TestMapSession_Feed_ZeroAlloc(t *testing.T) {
 // TestMapSession_Feed_UnknownPacket_NoCallback verifies that unknown packet IDs
 // are silently cleared when no callback is registered — no panic, no fault.
 func TestMapSession_Feed_UnknownPacket_NoCallback(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	called := 0
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) { called++ })
+	s.registerHandler(0x0069, func(data []byte, pv uint32) { called++ })
 
 	// Unknown packet with no callback registered — must not panic or fault.
 	if err := s.Feed(makeFrame(0xFFFF, 2)); err != nil {
@@ -542,10 +541,10 @@ func TestMapSession_Feed_UnknownPacket_NoCallback(t *testing.T) {
 // RecentPackets is nil/empty when no packet has been dispatched before the
 // unknown ID.
 func TestMapSession_Feed_UnknownPacket_RecentPackets_Empty(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
-	var ev session.UnknownPacketEvent
-	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+	var ev UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e UnknownPacketEvent) { ev = e })
 
 	if err := s.Feed(makeFrame(0xFFFF, 2)); err != nil {
 		t.Fatalf("Feed error: %v", err)
@@ -559,10 +558,10 @@ func TestMapSession_Feed_UnknownPacket_RecentPackets_Empty(t *testing.T) {
 // the event is a heap copy independent of the session buffer — retaining it after
 // the callback returns is safe.
 func TestMapSession_Feed_UnknownPacket_RawBuffer_IsCopy(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	var retained []byte
-	s.SetUnknownPacketHandler(func(ev session.UnknownPacketEvent) {
+	s.SetUnknownPacketHandler(func(ev UnknownPacketEvent) {
 		retained = ev.RawBuffer // retain beyond callback
 	})
 
@@ -584,17 +583,17 @@ func TestMapSession_Feed_UnknownPacket_RawBuffer_IsCopy(t *testing.T) {
 // TestRecentRing_ChronologicalOrder verifies that RecentPackets are returned
 // oldest-first when fewer than depth packets have been dispatched.
 func TestRecentRing_ChronologicalOrder(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	// Register handlers for three known packet IDs.
 	for _, id := range []uint16{0x0069, 0x006B, 0x006D} {
 		id := id
-		s.RegisterHandler(id, func(data []byte, pv uint32) {})
-		s.SetLength(id, -1)
+		s.registerHandler(id, func(data []byte, pv uint32) {})
+		s.setLength(id, -1)
 	}
 
-	var ev session.UnknownPacketEvent
-	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+	var ev UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e UnknownPacketEvent) { ev = e })
 
 	// Dispatch three packets then trigger unknown.
 	burst := append(makeVarFrame(0x0069, 8), makeVarFrame(0x006B, 10)...)
@@ -619,16 +618,16 @@ func TestRecentRing_ChronologicalOrder(t *testing.T) {
 // have been dispatched, the ring wraps and only the most recent depth packets
 // appear in the event, still in chronological order.
 func TestRecentRing_WrapEvictsOldest(t *testing.T) {
-	s := session.NewMapSession(20181002)
+	s := NewMapSession(20181002)
 
 	for _, id := range []uint16{0x0069, 0x006B, 0x006D, 0x0071} {
 		id := id
-		s.RegisterHandler(id, func(data []byte, pv uint32) {})
-		s.SetLength(id, -1)
+		s.registerHandler(id, func(data []byte, pv uint32) {})
+		s.setLength(id, -1)
 	}
 
-	var ev session.UnknownPacketEvent
-	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+	var ev UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e UnknownPacketEvent) { ev = e })
 
 	// Dispatch 4 packets (> depth of 3), then unknown.
 	// Expected recent: 0x006B, 0x006D, 0x0071 (0x0069 evicted).
@@ -655,12 +654,12 @@ func TestRecentRing_WrapEvictsOldest(t *testing.T) {
 // TestRecentRing_FrameBytes verifies that RecentPackets[i].Frame contains
 // the correct frame bytes and FrameTotal reflects the true length.
 func TestRecentRing_FrameBytes(t *testing.T) {
-	s := session.NewMapSession(20181002)
-	s.SetLength(0x0069, -1)
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {})
+	s := NewMapSession(20181002)
+	s.setLength(0x0069, -1)
+	s.registerHandler(0x0069, func(data []byte, pv uint32) {})
 
-	var ev session.UnknownPacketEvent
-	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { ev = e })
+	var ev UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e UnknownPacketEvent) { ev = e })
 
 	frame := makeVarFrame(0x0069, 16)
 	// Put a recognisable pattern in the payload.
@@ -695,12 +694,12 @@ func TestRecentRing_FrameBytes(t *testing.T) {
 // TestRecentRing_FrameIsCopy verifies that mutating the session buffer after
 // the callback does not corrupt the frame bytes stored in RecentPackets.
 func TestRecentRing_FrameIsCopy(t *testing.T) {
-	s := session.NewMapSession(20181002)
-	s.SetLength(0x0069, -1)
-	s.RegisterHandler(0x0069, func(data []byte, pv uint32) {})
+	s := NewMapSession(20181002)
+	s.setLength(0x0069, -1)
+	s.registerHandler(0x0069, func(data []byte, pv uint32) {})
 
-	var retained session.UnknownPacketEvent
-	s.SetUnknownPacketHandler(func(e session.UnknownPacketEvent) { retained = e })
+	var retained UnknownPacketEvent
+	s.SetUnknownPacketHandler(func(e UnknownPacketEvent) { retained = e })
 
 	frame := makeVarFrame(0x0069, 8)
 	frame[4] = 0xAB

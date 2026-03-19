@@ -9,7 +9,7 @@
 //  1. OnReady fires (full three-phase auth completes)
 //  2. Feed() does not fault during the fixture's S→C bytes
 //  3. At least one expected event fires with a non-zero field
-package fsm
+package session
 
 import (
 	"context"
@@ -18,7 +18,6 @@ import (
 	"time"
 
 	"github.com/lenaxia/rathena-client/pkg/decode"
-	"github.com/lenaxia/rathena-client/pkg/session"
 )
 
 // testFixturePath returns the path to a fixture file in the package's testdata dir.
@@ -40,8 +39,8 @@ func testFixturePath(name string) string {
 func runReplayTest(
 	t *testing.T,
 	fixtureName string,
-	setupHandlers func(sess *session.MapSession),
-	postReadyAction func(sess *session.MapSession, conn net.Conn),
+	setupHandlers func(sess *MapSession),
+	postReadyAction func(sess *MapSession, conn net.Conn),
 ) {
 	t.Helper()
 	fix := mustLoadFixture(t, testFixturePath(fixtureName))
@@ -66,7 +65,7 @@ func runReplayTest(
 	}
 
 	type readyResult struct {
-		sess *session.MapSession
+		sess *MapSession
 		conn net.Conn
 	}
 	readyCh := make(chan readyResult, 1)
@@ -74,7 +73,7 @@ func runReplayTest(
 	f := New(server, creds, ss.Dialer()).
 		OnCharServerList(func(_ []CharServerInfo) int { return 0 }).
 		OnCharList(func(_ []byte) uint8 { return 0 }).
-		OnReady(func(s *session.MapSession, c net.Conn, _ ReadyInfo) {
+		OnReady(func(s *MapSession, c net.Conn, _ ReadyInfo) {
 			setupHandlers(s)
 			readyCh <- readyResult{s, c}
 		}).
@@ -110,37 +109,37 @@ func TestReplay_FullAuth_20200401(t *testing.T) {
 	var feedErrors int
 
 	runReplayTest(t, "auth_20200401.fixture",
-		func(sess *session.MapSession) {
+		func(sess *MapSession) {
 			// 0x07FB ZC_USESKILL_CASTINIT — skill cast begins.
 			// lengths_map.go sets this to 0 for pv >= 20191120 (disabled in
 			// modern packets.hpp), but the real packetver 20200401 server sends it.
 			// Observed in DUMP1: 25 bytes. GCC-verified against rAthena clif source.
 			// Source: clif.cpp clif_skillcasting — WFIFOW(fd,0)=0x07FB; size=25
-			sess.SetLength(0x07FB, 25)
-			sess.RegisterHandler(0x00B0, func(data []byte, pv uint32) {
+			sess.setLength(0x07FB, 25)
+			sess.registerHandler(0x00B0, func(data []byte, pv uint32) {
 				e := decode.StatUpdate_0x00B0(data, pv)
 				if e.VarID != 0 || e.Count != 0 {
 					gotStatUpdate = true
 				}
 			})
-			sess.RegisterHandler(0x00B1, func(data []byte, pv uint32) {
+			sess.registerHandler(0x00B1, func(data []byte, pv uint32) {
 				_ = decode.StatUpdate_0x00B1(data, pv)
 				gotStatUpdate = true
 			})
-			sess.RegisterHandler(0x09FF, func(data []byte, pv uint32) {
+			sess.registerHandler(0x09FF, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x09FF(data, pv)
 				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
-			sess.RegisterHandler(0x0078, func(data []byte, pv uint32) {
+			sess.registerHandler(0x0078, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x0078(data, pv)
 				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
 		},
-		func(sess *session.MapSession, conn net.Conn) {
+		func(sess *MapSession, conn net.Conn) {
 			// Read and feed all remaining S→C bytes from the map connection.
 			buf := make([]byte, 4096)
 			deadline := time.Now().Add(5 * time.Second)
@@ -180,27 +179,27 @@ func TestReplay_Movement_20200401(t *testing.T) {
 	var feedErrors int
 
 	runReplayTest(t, "movement_20200401.fixture",
-		func(sess *session.MapSession) {
-			sess.RegisterHandler(0x09FF, func(data []byte, pv uint32) {
+		func(sess *MapSession) {
+			sess.registerHandler(0x09FF, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x09FF(data, pv)
 				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
-			sess.RegisterHandler(0x0078, func(data []byte, pv uint32) {
+			sess.registerHandler(0x0078, func(data []byte, pv uint32) {
 				e := decode.ActorExists_0x0078(data, pv)
 				if e.GID != 0 {
 					gotActorExists = true
 				}
 			})
-			sess.RegisterHandler(0x00B0, func(data []byte, pv uint32) {
+			sess.registerHandler(0x00B0, func(data []byte, pv uint32) {
 				e := decode.StatUpdate_0x00B0(data, pv)
 				if e.VarID != 0 || e.Count != 0 {
 					gotStatUpdate = true
 				}
 			})
 		},
-		func(sess *session.MapSession, conn net.Conn) {
+		func(sess *MapSession, conn net.Conn) {
 			buf := make([]byte, 4096)
 			deadline := time.Now().Add(5 * time.Second)
 			_ = conn.SetDeadline(deadline)
