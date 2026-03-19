@@ -148,6 +148,60 @@ func TestEncodeMoveTo_PacketverVaries(t *testing.T) {
 	}
 }
 
+// TestEncodeMoveTo_AllBreakpoints verifies the correct wire packet ID is emitted
+// for every distinct packetver breakpoint in clif_packetdb.hpp and clif_shuffle.hpp.
+// Sources:
+//
+//	clif_packetdb.hpp — explicit per-block parseable_packet(0xNNNN,5,clif_parse_WalkToXY,2)
+//	clif_shuffle.hpp  — per-week exact-match shuffle assignments for 0x0085
+func TestEncodeMoveTo_AllBreakpoints(t *testing.T) {
+	cases := []struct {
+		name   string
+		pv     uint32
+		wantID uint16
+	}{
+		// clif_packetdb.hpp line 37: default (pre-all-guards)
+		{"pre-2004 baseline", 20030000, 0x0085},
+		// clif_packetdb.hpp >= 20040726: 0x009b
+		{"20040726", 20040726, 0x009b},
+		// clif_packetdb.hpp >= 20040906: 0x0089
+		{"20040906", 20040906, 0x0089},
+		// clif_packetdb.hpp >= 20041129: 0x00a7
+		{"20041129", 20041129, 0x00a7},
+		{"20100101", 20100101, 0x00a7},
+		// clif_packetdb.hpp >= 20101124: 0x035f
+		{"20101124", 20101124, 0x035f},
+		// clif_packetdb.hpp >= 20111005: 0x0364
+		{"20111005", 20111005, 0x0364},
+		// clif_packetdb.hpp >= 20120307: 0x0437
+		{"20120307", 20120307, 0x0437},
+		// clif_packetdb.hpp >= 20120702: 0x0953
+		{"20120702", 20120702, 0x0953},
+		// clif_packetdb.hpp >= 20130320: 0x0881
+		// THIS IS THE BUG: current code returns 0x0085 for this range
+		{"20130320 (bug range start)", 20130320, 0x0881},
+		{"20130514 (bug range end)", 20130514, 0x0881},
+		// clif_shuffle.hpp == 20130515: 0x0437
+		{"20130515 (shuffle era start)", 20130515, 0x0437},
+		// clif_shuffle.hpp == 20130522: 0x0360
+		{"20130522", 20130522, 0x0360},
+		// clif_shuffle.hpp == 20180307: 0x0877
+		{"20180307 (last shuffle week)", 20180307, 0x0877},
+		// clif_shuffle.hpp > 20180307: 0x035F
+		{"20180308 (post-shuffle)", 20180308, 0x035F},
+		{"20200401", 20200401, 0x035F},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			p := encode.EncodeMoveTo(send.MoveTo{X: 100, Y: 200}, tc.pv)
+			got := uint16(p[0]) | uint16(p[1])<<8
+			if got != tc.wantID {
+				t.Fatalf("pv=%d: wire ID = 0x%04X, want 0x%04X", tc.pv, got, tc.wantID)
+			}
+		})
+	}
+}
+
 func BenchmarkEncodeMoveTo(b *testing.B) {
 	req := send.MoveTo{X: 100, Y: 200}
 	b.ResetTimer()
