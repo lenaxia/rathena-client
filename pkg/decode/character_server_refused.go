@@ -12,3 +12,11 @@ func CharacterServerRefused_0x006C(data []byte, packetver uint32) events.Charact
 	return e
 }
 
+// CharacterServerRefused_0x02CA decodes a 0x02CA packet (struct SYNTH_HC_REFUSE_ENTER_OLD).
+func CharacterServerRefused_0x02CA(data []byte, packetver uint32) events.CharacterServerRefused {
+	var e events.CharacterServerRefused
+	_ = packetver
+	e.ErrorCode = data[2]  // rAthena: errorCode (offset 2, size 1)
+	return e
+}
+

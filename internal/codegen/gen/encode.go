@@ -106,9 +106,45 @@ func resolveLayout(structName string, packetverMin int, vt preprocess.VersionTab
 	return nil
 }
 
+// hasFlexField reports whether any field in the layout is a C flexible array member
+// (IsFlexArray=true). Such packets are variable-length: the struct body has a fixed
+// header followed by a trailing variable payload. The encoder must return []byte and
+// allocate based on the runtime payload length.
+func hasFlexField(layout *preprocess.StructLayout) bool {
+	for i := range layout.Fields {
+		if layout.Fields[i].IsFlexArray {
+			return true
+		}
+	}
+	return false
+}
+
+// flexFieldGoName returns the exported Go identifier of the first IsFlexArray field
+// in the layout, or "" if no flex field exists. Used to emit the dynamic allocation.
+func flexFieldGoName(layout *preprocess.StructLayout) string {
+	for i := range layout.Fields {
+		if layout.Fields[i].IsFlexArray {
+			return cFieldToGoIdent(layout.Fields[i].Name)
+		}
+	}
+	return ""
+}
+
+// isLengthField reports whether the C field name represents the packet's own wire
+// length. For structs with flex array payloads the encoder computes this value
+// internally (as len(p) after allocation) rather than reading it from the caller.
+func isLengthField(name string) bool {
+	lower := strings.ToLower(name)
+	return lower == "packetlength" || lower == "packetlen" || lower == "packetsize"
+}
+
 // generateEncodeFunc generates a single encode function for a packet implementation.
 // Fields are derived directly from the rAthena struct layout — no canonical_params
 // or field_mapping expressions needed.
+//
+// For fixed-size packets the function returns [N]byte (zero allocs).
+// For variable-size packets (struct has a flex array field) it returns []byte and
+// allocates dynamically based on the payload length.
 func generateEncodeFunc(
 	structName string,
 	impl *semantics.Implementation,
@@ -116,8 +152,10 @@ func generateEncodeFunc(
 ) string {
 	fnName := fmt.Sprintf("Encode%s", structName)
 	totalSize := layout.TotalSize
+	isVariable := totalSize <= 0 || hasFlexField(layout)
+
 	returnType := fmt.Sprintf("[%d]byte", totalSize)
-	if totalSize <= 0 {
+	if isVariable {
 		returnType = "[]byte"
 	}
 
@@ -126,8 +164,11 @@ func generateEncodeFunc(
 		structName, impl.PacketID, impl.StructName))
 	sb.WriteString(fmt.Sprintf("func %s(req send.%s, packetver uint32) %s {\n", fnName, structName, returnType))
 
-	if totalSize > 0 {
+	if !isVariable {
 		sb.WriteString(fmt.Sprintf("\tvar p %s\n", returnType))
+	} else if flexName := flexFieldGoName(layout); flexName != "" {
+		// Allocate header bytes + runtime length of the flex payload field.
+		sb.WriteString(fmt.Sprintf("\tp := make([]byte, %d+len(req.%s))\n", totalSize, flexName))
 	} else {
 		sb.WriteString("\tp := make([]byte, 4)\n")
 	}
@@ -140,6 +181,14 @@ func generateEncodeFunc(
 	for i := range layout.Fields {
 		f := &layout.Fields[i]
 		if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
+			continue
+		}
+		// For variable-length packets the wire length is computed from len(p), not
+		// taken from a caller-supplied field.  Emit the computation inline and skip
+		// the req.PacketLength/PacketSize field (which is absent from the send struct
+		// after send.go strips it for flex-array structs).
+		if isVariable && isLengthField(f.Name) {
+			sb.WriteString(fmt.Sprintf("\tleU16Put(p[%d:], uint16(len(p)))  // rAthena: %s (computed)\n", f.Offset, f.Name))
 			continue
 		}
 		goFieldName := cFieldToGoIdent(f.Name)
@@ -179,13 +228,14 @@ func generateEncodeDispatcher(
 	impls = sendImpls
 
 	// Determine the common fixed size across all resolvable implementations.
+	// Any flex-array field forces the whole dispatcher to return []byte.
 	commonSize := -1
 	for i := range impls {
 		layout := resolveLayout(impls[i].StructName, impls[i].PacketverMin, vt)
 		if layout == nil {
 			continue
 		}
-		if layout.TotalSize <= 0 {
+		if layout.TotalSize <= 0 || hasFlexField(layout) {
 			commonSize = 0
 			break
 		}
@@ -216,10 +266,13 @@ func generateEncodeDispatcher(
 		}
 		sb.WriteString(fmt.Sprintf("\tcase packetver >= %d: // %s\n", impl.PacketverMin, impl.PacketID))
 		totalSize := layout.TotalSize
+		isImplVariable := totalSize <= 0 || hasFlexField(layout)
 		if commonSize > 0 {
 			sb.WriteString(fmt.Sprintf("\t\tvar p [%d]byte\n", commonSize))
-		} else if totalSize > 0 {
+		} else if !isImplVariable {
 			sb.WriteString(fmt.Sprintf("\t\tp := make([]byte, %d)\n", totalSize))
+		} else if flexName := flexFieldGoName(layout); flexName != "" {
+			sb.WriteString(fmt.Sprintf("\t\tp := make([]byte, %d+len(req.%s))\n", totalSize, flexName))
 		} else {
 			sb.WriteString("\t\tp := make([]byte, 4)\n")
 		}
@@ -231,6 +284,10 @@ func generateEncodeDispatcher(
 		for j := range layout.Fields {
 			f := &layout.Fields[j]
 			if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
+				continue
+			}
+			if isImplVariable && isLengthField(f.Name) {
+				sb.WriteString(fmt.Sprintf("\t\tleU16Put(p[%d:], uint16(len(p)))  // rAthena: %s (computed)\n", f.Offset, f.Name))
 				continue
 			}
 			goFieldName := cFieldToGoIdent(f.Name)
@@ -262,6 +319,10 @@ func fieldWriteStmt(pVar string, f *preprocess.Field, goType, reqExpr string) st
 	case "int32":
 		return fmt.Sprintf("\tleU32Put(%s[%d:], uint32(%s))  // rAthena: %s\n", pVar, off, reqExpr, f.Name)
 	case "string":
+		if f.IsFlexArray {
+			// Flex char[] field: open-ended copy into the already-allocated buffer.
+			return fmt.Sprintf("\tcopy(%s[%d:], %s)  // rAthena: %s\n", pVar, off, reqExpr, f.Name)
+		}
 		if f.IsArray {
 			return fmt.Sprintf("\tcopy(%s[%d:%d], %s)  // rAthena: %s\n", pVar, off, off+f.Size, reqExpr, f.Name)
 		}

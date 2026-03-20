@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeShopBuy encodes a 0x00C8 (PACKET_CZ_PC_PURCHASE_ITEMLIST) packet for sending to the server.
-func EncodeShopBuy(req send.ShopBuy, packetver uint32) [4]byte {
-	var p [4]byte
+func EncodeShopBuy(req send.ShopBuy, packetver uint32) []byte {
+	p := make([]byte, 4+len(req.Items))
 	// Packet ID: 0x00C8 (little-endian)
 	p[0] = 0xc8
 	p[1] = 0x00
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	copy(p[4:], req.Items)  // rAthena: items
 	_ = packetver
 	return p

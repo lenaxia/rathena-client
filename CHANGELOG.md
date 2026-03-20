@@ -5,6 +5,54 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.0] — 2026-03-20
+
+### Added
+
+- **EPIC-08 receive coverage** — 10 new decode actions (worklogs 0059-0062, 0064):
+  `char_created`, `exp`, `inventory_items_equip`, `inventory_items_stackable`,
+  `mail_receive`, `zc_el_par_change`, `zc_ho_par_change`, `zc_req_takeoff_equip_ack`
+  plus updated decoders for `actor_connected`, `actor_exists`, `actor_moved`,
+  `add_exchange_item`, `area_spell`, `character_server_refused`, `item_pickup`,
+  `pin_code_request`, `received_characters_page`, `received_map_server_info`,
+  `skill_add`, `skills_list`, `stat_update`, `zc_accept_enter`,
+  `zc_equipwin_microscope`, `zc_guild_info`, `zc_hoskillinfo_list`,
+  `zc_req_wear_equip_ack`, `zc_shortcut_key_list`, `zc_skillinfo_update2`.
+  New corresponding event types added to `pkg/events/`.
+
+- **`ActionRequestBuySellList`** — new send action for `0x00C5`
+  (`PACKET_CZ_ACK_SELECT_DEALTYPE`): `send.RequestBuySellList{GID, Type}`.
+
+- **`ActionGuildChat` send encoder** — `session.Send(ActionGuildChat, ...)` now works;
+  `EncodeGuildChat` was already implemented but not registered in `register.go`.
+
+### Fixed
+
+- **13 broken variable-length send encoders** returned a fixed `[N]byte` and silently
+  dropped the flex-array payload field (items, sell list, text value, etc.).
+  Root cause: `internal/codegen/gen/encode.go` did not check `IsFlexArray` when
+  choosing the return type. All 13 encoders now return `[]byte` and correctly write
+  the full payload (worklogs 0061, 0063):
+  `EncodeShopBuy`, `EncodeShopSell`, `EncodeNpcTalkText`, `EncodeMarketPurchase`,
+  `EncodeCzNpcBarterMarketPurchase`, `EncodeCzNpcExpandedBarterMarketPurchase`,
+  `EncodeCzPcPurchaseItemlistFrommc`, `EncodeCzPcPurchaseItemlistFrommc2`,
+  `EncodeCzReqChangeMemberpos`, `EncodeCzReqMergeItem`,
+  `EncodeCzReqRandomCombineItem`, `EncodeCzSePcBuyCashitemList`,
+  `EncodeCzUploadMacroDetectorCaptcha`, `EncodeCaSsoLoginReq`.
+
+### Changed (breaking)
+
+- **14 send structs** no longer expose `PacketLength` / `PacketSize` as caller-visible
+  fields. The encoders compute the wire length internally (`uint16(len(p))`). Remove
+  these fields from any `send.X{PacketLength: n, ...}` struct literals:
+  `ShopBuy`, `ShopSell`, `NpcTalkText`, `MarketPurchase`,
+  `CzNpcBarterMarketPurchase`, `CzNpcExpandedBarterMarketPurchase`,
+  `CzPcPurchaseItemlistFrommc`, `CzPcPurchaseItemlistFrommc2`,
+  `CzReqChangeMemberpos`, `CzReqMergeItem`, `CzReqRandomCombineItem`,
+  `CzSePcBuyCashitemList`, `CzUploadMacroDetectorCaptcha`, `CaSsoLoginReq`.
+
+---
+
 ## [v0.3.0] — 2026-03-12
 
 ### Added

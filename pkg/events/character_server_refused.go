@@ -5,4 +5,5 @@ package events
 // CharacterServerRefused is the event emitted for the character_server_refused action.
 type CharacterServerRefused struct {
 	Error uint8
+	ErrorCode uint8
 }

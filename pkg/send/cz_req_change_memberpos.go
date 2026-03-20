@@ -4,6 +4,5 @@ package send
 
 // CzReqChangeMemberpos is the request struct for the cz_req_change_memberpos action.
 type CzReqChangeMemberpos struct {
-	PacketLength int16
 	List []byte
 }

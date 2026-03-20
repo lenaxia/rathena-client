@@ -4,6 +4,5 @@ package send
 
 // CzReqMergeItem is the request struct for the cz_req_merge_item action.
 type CzReqMergeItem struct {
-	PacketLength int16
 	Indices []byte
 }

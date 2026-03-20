@@ -660,7 +660,7 @@ mappings:
           semantic: 'Null-terminated guild chat message, format: name : text'
 metadata:
     total_packets: 30
-    last_updated: "2026-03-19"
+    last_updated: "2026-03-20"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -669,7 +669,7 @@ semantic_actions:
     ac_accept_login:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: account_server_info
         canonical_params: []
         implementations:
             - packet_id: "0x0069"
@@ -687,7 +687,7 @@ semantic_actions:
     ac_ack_hash:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: secure_login_key
         canonical_params: []
         implementations:
             - packet_id: "0x01DC"
@@ -699,7 +699,7 @@ semantic_actions:
     ac_refuse_login:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: login_error
         canonical_params: []
         implementations:
             - packet_id: "0x006A"
@@ -723,7 +723,7 @@ semantic_actions:
     account_id:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: account_id
         canonical_params: []
         implementations:
             - packet_id: "0x0283"
@@ -735,7 +735,7 @@ semantic_actions:
     actor_action:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_action
         canonical_params: []
         implementations:
             - packet_id: "0x008A"
@@ -765,25 +765,25 @@ semantic_actions:
     actor_connected:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_connected
         canonical_params: []
         implementations:
             - packet_id: "0x0079"
               packetver_range:
-                - null
-                - null
+                - 20030000
+                - 20030000
               struct_name: packet_spawn_unit
               field_mapping: {}
             - packet_id: "0x01D9"
               packetver_range:
-                - null
-                - null
+                - 20030001
+                - 20050410
               struct_name: packet_spawn_unit
               field_mapping: {}
             - packet_id: "0x02ED"
               packetver_range:
-                - null
-                - null
+                - 20080102
+                - 20091102
               struct_name: packet_spawn_unit
               field_mapping: {}
             - packet_id: "0x09FE"
@@ -792,10 +792,22 @@ semantic_actions:
                 - null
               struct_name: packet_spawn_unit
               field_mapping: {}
+            - packet_id: "0x022B"
+              packetver_range:
+                - 20050411
+                - 20080101
+              struct_name: packet_spawn_unit
+              field_mapping: {}
+            - packet_id: "0x09DC"
+              packetver_range:
+                - 20131223
+                - 20150512
+              struct_name: packet_spawn_unit
+              field_mapping: {}
     actor_died_or_disappeared:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_died_or_disappeared
         canonical_params: []
         implementations:
             - packet_id: "0x0080"
@@ -807,26 +819,20 @@ semantic_actions:
     actor_exists:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_exists
         canonical_params: []
         implementations:
             - packet_id: "0x0078"
               packetver_range:
-                - null
-                - null
+                - 20030000
+                - 20030000
               struct_name: packet_idle_unit
               field_mapping: {}
             - packet_id: "0x01D8"
               packetver_range:
-                - null
-                - null
+                - 20030001
+                - 20050410
               struct_name: packet_idle_unit
-              field_mapping: {}
-            - packet_id: "0x02EC"
-              packetver_range:
-                - null
-                - null
-              struct_name: packet_unit_walking
               field_mapping: {}
             - packet_id: "0x09FF"
               packetver_range:
@@ -834,28 +840,46 @@ semantic_actions:
                 - null
               struct_name: packet_idle_unit
               field_mapping: {}
+            - packet_id: "0x022A"
+              packetver_range:
+                - 20050411
+                - 20080101
+              struct_name: packet_idle_unit
+              field_mapping: {}
+            - packet_id: "0x02EE"
+              packetver_range:
+                - 20080102
+                - 20091102
+              struct_name: packet_idle_unit
+              field_mapping: {}
+            - packet_id: "0x09DD"
+              packetver_range:
+                - 20131223
+                - 20150512
+              struct_name: packet_idle_unit
+              field_mapping: {}
     actor_moved:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_moved
         canonical_params: []
         implementations:
             - packet_id: "0x007B"
               packetver_range:
-                - null
-                - null
+                - 20030000
+                - 20030000
               struct_name: packet_unit_walking
               field_mapping: {}
             - packet_id: "0x01DA"
               packetver_range:
-                - null
-                - null
+                - 20030001
+                - 20050410
               struct_name: packet_unit_walking
               field_mapping: {}
             - packet_id: "0x022C"
               packetver_range:
-                - null
-                - null
+                - 20050411
+                - 20080101
               struct_name: packet_unit_walking
               field_mapping: {}
             - packet_id: "0x09DB"
@@ -870,10 +894,16 @@ semantic_actions:
                 - null
               struct_name: packet_unit_walking
               field_mapping: {}
+            - packet_id: "0x02EC"
+              packetver_range:
+                - 20080102
+                - 20091102
+              struct_name: packet_unit_walking
+              field_mapping: {}
     actor_status_active:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_status_active
         canonical_params: []
         implementations:
             - packet_id: "0x0196"
@@ -885,7 +915,7 @@ semantic_actions:
     actor_status_effect_extended:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_status_active
         canonical_params: []
         implementations:
             - packet_id: "0x043F"
@@ -897,19 +927,37 @@ semantic_actions:
     add_exchange_item:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: deal_add_other
         canonical_params: []
         implementations:
             - packet_id: "0x00E9"
               packetver_range:
-                - null
+                - 20030000
+                - 20100222
+              struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
+              field_mapping: {}
+            - packet_id: "0x080F"
+              packetver_range:
+                - 20100223
+                - 20150225
+              struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
+              field_mapping: {}
+            - packet_id: "0x0A09"
+              packetver_range:
+                - 20150226
+                - 20161025
+              struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
+              field_mapping: {}
+            - packet_id: "0x0A96"
+              packetver_range:
+                - 20161026
                 - null
               struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
               field_mapping: {}
     area_spell:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: area_spell
         canonical_params: []
         implementations:
             - packet_id: "0x011F"
@@ -918,10 +966,16 @@ semantic_actions:
                 - null
               struct_name: packet_skill_entry
               field_mapping: {}
+            - packet_id: "0x08C7"
+              packetver_range:
+                - 20121212
+                - null
+              struct_name: SYNTH_ZC_SKILL_ENTRY3
+              field_mapping: {}
     attack_range:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: attack_range
         canonical_params: []
         implementations:
             - packet_id: "0x013A"
@@ -945,7 +999,7 @@ semantic_actions:
     banking_check:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: banking_check
         canonical_params: []
         implementations:
             - packet_id: "0x09A6"
@@ -957,7 +1011,7 @@ semantic_actions:
     banking_deposit:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: banking_deposit
         canonical_params: []
         implementations:
             - packet_id: "0x09A8"
@@ -981,7 +1035,7 @@ semantic_actions:
     banking_withdraw:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: banking_withdraw
         canonical_params: []
         implementations:
             - packet_id: "0x09AA"
@@ -1101,7 +1155,7 @@ semantic_actions:
     cast_cancelled:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cast_cancelled
         canonical_params: []
         implementations:
             - packet_id: "0x01B9"
@@ -1146,6 +1200,24 @@ semantic_actions:
                 - null
               struct_name: PACKET_CH_MAKE_CHAR
               field_mapping: {}
+    char_created:
+        name: char_created
+        description: Char server accepts new character creation
+        openkore_name: character_creation_successful
+        canonical_params: []
+        implementations:
+            - packet_id: "0x006D"
+              packetver_range:
+                - null
+                - 20201006
+              struct_name: PACKET_HC_ACCEPT_MAKECHAR
+              field_mapping: {}
+            - packet_id: "0x0B6F"
+              packetver_range:
+                - 20201007
+                - null
+              struct_name: PACKET_HC_ACCEPT_MAKECHAR
+              field_mapping: {}
     char_delete:
         name: ""
         description: ""
@@ -1161,7 +1233,7 @@ semantic_actions:
     character_blocked:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: character_block_info
         canonical_params: []
         implementations:
             - packet_id: "0x020D"
@@ -1173,7 +1245,7 @@ semantic_actions:
     character_creation_failed:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: character_creation_failed
         canonical_params: []
         implementations:
             - packet_id: "0x006E"
@@ -1197,7 +1269,7 @@ semantic_actions:
     character_moves:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: character_moves
         canonical_params: []
         implementations:
             - packet_id: "0x0087"
@@ -1209,7 +1281,7 @@ semantic_actions:
     character_pages_notify:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: sync_received_characters
         canonical_params: []
         implementations:
             - packet_id: "0x09A0"
@@ -1221,7 +1293,7 @@ semantic_actions:
     character_server_refused:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: login_error_game_login_server
         canonical_params: []
         implementations:
             - packet_id: "0x006C"
@@ -1230,10 +1302,16 @@ semantic_actions:
                 - null
               struct_name: PACKET_HC_REFUSE_ENTER
               field_mapping: {}
+            - packet_id: "0x02CA"
+              packetver_range:
+                - 20070227
+                - null
+              struct_name: SYNTH_HC_REFUSE_ENTER_OLD
+              field_mapping: {}
     chat_message:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: public_chat
         canonical_params: []
         implementations:
             - packet_id: "0x008D"
@@ -2337,7 +2415,7 @@ semantic_actions:
     deal_finalize:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: deal_finalize
         canonical_params: []
         implementations:
             - packet_id: "0x00EB"
@@ -2451,7 +2529,7 @@ semantic_actions:
     entity_move:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_display
         canonical_params: []
         implementations:
             - packet_id: "0x0086"
@@ -2483,6 +2561,24 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CZ_REQ_WEAR_EQUIP
+              field_mapping: {}
+    exp:
+        name: exp
+        description: Base or job experience gain notification
+        openkore_name: exp
+        canonical_params: []
+        implementations:
+            - packet_id: "0x07F6"
+              packetver_range:
+                - null
+                - 20170829
+              struct_name: SYNTH_ZC_LONG_PAR_CHANGE
+              field_mapping: {}
+            - packet_id: "0x0ACC"
+              packetver_range:
+                - 20170830
+                - null
+              struct_name: SYNTH_ZC_LONG_PAR_CHANGE2
               field_mapping: {}
     friends_add:
         name: friends_add
@@ -2577,7 +2673,7 @@ semantic_actions:
     homunculus_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: homunculus_info
         canonical_params: []
         implementations:
             - packet_id: "0x0230"
@@ -2622,10 +2718,76 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_REQ_ITEMCOMPOSITION
               field_mapping: {}
+    inventory_items_equip:
+        name: inventory_items_equip
+        description: Bulk equippable inventory items sent on login or map change
+        openkore_name: inventory_items_nonstackable
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00A4"
+              packetver_range:
+                - null
+                - 20071001
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
+            - packet_id: "0x0992"
+              packetver_range:
+                - 20120925
+                - 20150225
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
+            - packet_id: "0x0A0D"
+              packetver_range:
+                - 20150226
+                - 20181001
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
+            - packet_id: "0x0B0A"
+              packetver_range:
+                - 20181002
+                - 20200915
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
+            - packet_id: "0x0B39"
+              packetver_range:
+                - 20200916
+                - null
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
+    inventory_items_stackable:
+        name: inventory_items_stackable
+        description: Bulk stackable inventory items sent on login or map change
+        openkore_name: inventory_items_stackable
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00A3"
+              packetver_range:
+                - null
+                - 20071001
+              struct_name: packet_itemlist_normal
+              field_mapping: {}
+            - packet_id: "0x01EE"
+              packetver_range:
+                - 20071002
+                - 20080101
+              struct_name: packet_itemlist_normal
+              field_mapping: {}
+            - packet_id: "0x02E8"
+              packetver_range:
+                - 20080102
+                - 20120924
+              struct_name: packet_itemlist_normal
+              field_mapping: {}
+            - packet_id: "0x0991"
+              packetver_range:
+                - 20120925
+                - 20181001
+              struct_name: packet_itemlist_normal
+              field_mapping: {}
     item_appeared:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_appeared
         canonical_params: []
         implementations:
             - packet_id: "0x009E"
@@ -2637,7 +2799,7 @@ semantic_actions:
     item_exists:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_exists
         canonical_params: []
         implementations:
             - packet_id: "0x009D"
@@ -2661,18 +2823,48 @@ semantic_actions:
     item_pickup:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: inventory_item_added
         canonical_params: []
         implementations:
             - packet_id: "0x00A0"
               packetver_range:
                 - 20030000
-                - 20181120
+                - 20061217
               struct_name: PACKET_ZC_ITEM_PICKUP_ACK
               field_mapping: {}
             - packet_id: "0x0A37"
               packetver_range:
+                - 20160921
+                - 20200915
+              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
+              field_mapping: {}
+            - packet_id: "0x029A"
+              packetver_range:
+                - 20061218
+                - 20071001
+              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
+              field_mapping: {}
+            - packet_id: "0x02D4"
+              packetver_range:
+                - 20071002
+                - 20120924
+              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
+              field_mapping: {}
+            - packet_id: "0x0990"
+              packetver_range:
+                - 20120925
+                - 20150225
+              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
+              field_mapping: {}
+            - packet_id: "0x0A0C"
+              packetver_range:
                 - 20150226
+                - 20160920
+              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
+              field_mapping: {}
+            - packet_id: "0x0B41"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ITEM_PICKUP_ACK
               field_mapping: {}
@@ -2691,7 +2883,7 @@ semantic_actions:
     login_error:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: login_error
         canonical_params: []
         implementations:
             - packet_id: "0x083E"
@@ -2711,6 +2903,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: SYNTH_CZ_CHANGE_DIRECTION
+              field_mapping: {}
+    mail_receive:
+        name: mail_receive
+        description: Mail received notification
+        openkore_name: mail_return
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0274"
+              packetver_range:
+                - 20060306
+                - null
+              struct_name: SYNTH_ZC_MAIL_RECEIVE
               field_mapping: {}
     map_changed:
         name: ""
@@ -2781,7 +2985,7 @@ semantic_actions:
     monster_hp_update:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: monster_hp_info
         canonical_params: []
         implementations:
             - packet_id: "0x0977"
@@ -2793,7 +2997,7 @@ semantic_actions:
     monster_ranged_attack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: monster_ranged_attack
         canonical_params: []
         implementations:
             - packet_id: "0x0139"
@@ -2883,7 +3087,7 @@ semantic_actions:
     npc_store_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_store_info
         canonical_params: []
         implementations:
             - packet_id: "0x00C6"
@@ -3015,7 +3219,7 @@ semantic_actions:
     pet_egg_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: egg_list
         canonical_params: []
         implementations:
             - packet_id: "0x01A6"
@@ -3027,7 +3231,7 @@ semantic_actions:
     pet_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: pet_info
         canonical_params: []
         implementations:
             - packet_id: "0x01A2"
@@ -3063,7 +3267,7 @@ semantic_actions:
     pin_code_request:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: login_pin_code_request
         canonical_params: []
         implementations:
             - packet_id: "0x08B9"
@@ -3071,6 +3275,12 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_HC_SECOND_PASSWD_LOGIN
+              field_mapping: {}
+            - packet_id: "0x02AD"
+              packetver_range:
+                - 20070227
+                - 20110308
+              struct_name: SYNTH_HC_SECOND_PASSWD_LOGIN_OLD
               field_mapping: {}
     pin_code_response:
         name: ""
@@ -3087,7 +3297,7 @@ semantic_actions:
     private_message:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: private_message
         canonical_params: []
         implementations:
             - packet_id: "0x0097"
@@ -3165,7 +3375,7 @@ semantic_actions:
     received_characters:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: received_characters_info
         canonical_params: []
         implementations:
             - packet_id: "0x006B"
@@ -3177,7 +3387,7 @@ semantic_actions:
     received_characters_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: received_characters_info
         canonical_params: []
         implementations:
             - packet_id: "0x082D"
@@ -3189,19 +3399,25 @@ semantic_actions:
     received_characters_page:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: received_characters
         canonical_params: []
         implementations:
             - packet_id: "0x099D"
               packetver_range:
                 - 20100803
+                - 20201006
+              struct_name: PACKET_HC_ACK_CHARINFO_PER_PAGE
+              field_mapping: {}
+            - packet_id: "0x0B72"
+              packetver_range:
+                - 20201007
                 - null
               struct_name: PACKET_HC_ACK_CHARINFO_PER_PAGE
               field_mapping: {}
     received_map_server_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: received_character_ID_and_Map
         canonical_params: []
         implementations:
             - packet_id: "0x0AC5"
@@ -3209,6 +3425,12 @@ semantic_actions:
                 - 20170315
                 - null
               struct_name: PACKET_HC_NOTIFY_ZONESVR
+              field_mapping: {}
+            - packet_id: "0x0071"
+              packetver_range:
+                - null
+                - 20170314
+              struct_name: SYNTH_HC_NOTIFY_ZONESVR_OLD
               field_mapping: {}
     remove_option:
         name: remove_option
@@ -3245,6 +3467,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CZ_REPLY_JOIN_GROUP
+              field_mapping: {}
+    request_buy_sell_list:
+        name: request_buy_sell_list
+        description: Open NPC buy or sell dialog — client selects buy (Type=1) or sell (Type=0)
+        openkore_name: request_buy_sell_list
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00C5"
+              packetver_range:
+                - null
+                - null
+              struct_name: PACKET_CZ_ACK_SELECT_DEALTYPE
               field_mapping: {}
     request_character_page:
         name: ""
@@ -3285,7 +3519,7 @@ semantic_actions:
     sc_notify_ban:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: errors
         canonical_params: []
         implementations:
             - packet_id: "0x0081"
@@ -3333,7 +3567,7 @@ semantic_actions:
     self_chat:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: self_chat
         canonical_params: []
         implementations:
             - packet_id: "0x008E"
@@ -3393,19 +3627,25 @@ semantic_actions:
     skill_add:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_add
         canonical_params: []
         implementations:
             - packet_id: "0x0111"
               packetver_range:
-                - null
+                - 20030000
+                - 20190806
+              struct_name: PACKET_ZC_ADD_SKILL
+              field_mapping: {}
+            - packet_id: "0x0B31"
+              packetver_range:
+                - 20190807
                 - null
               struct_name: PACKET_ZC_ADD_SKILL
               field_mapping: {}
     skill_cast:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_cast
         canonical_params: []
         implementations:
             - packet_id: "0x07FB"
@@ -3417,7 +3657,7 @@ semantic_actions:
     skill_delete:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_delete
         canonical_params: []
         implementations:
             - packet_id: "0x0441"
@@ -3429,7 +3669,7 @@ semantic_actions:
     skill_post_delay:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_post_delay
         canonical_params: []
         implementations:
             - packet_id: "0x043D"
@@ -3453,7 +3693,7 @@ semantic_actions:
     skill_update:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_update
         canonical_params: []
         implementations:
             - packet_id: "0x010E"
@@ -3465,7 +3705,7 @@ semantic_actions:
     skill_use:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_use
         canonical_params: []
         implementations:
             - packet_id: "0x01DE"
@@ -3495,7 +3735,7 @@ semantic_actions:
     skill_use_failed:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_use_failed
         canonical_params: []
         implementations:
             - packet_id: "0x0110"
@@ -3519,7 +3759,7 @@ semantic_actions:
     skill_used_no_damage:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_used_no_damage
         canonical_params: []
         implementations:
             - packet_id: "0x011A"
@@ -3531,19 +3771,25 @@ semantic_actions:
     skills_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skills_list
         canonical_params: []
         implementations:
             - packet_id: "0x010F"
               packetver_range:
-                - null
+                - 20030000
+                - 20190806
+              struct_name: PACKET_ZC_SKILLINFO_LIST
+              field_mapping: {}
+            - packet_id: "0x0B32"
+              packetver_range:
+                - 20190807
                 - null
               struct_name: PACKET_ZC_SKILLINFO_LIST
               field_mapping: {}
     stat_update:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: stat_info
         canonical_params: []
         implementations:
             - packet_id: "0x00B0"
@@ -3570,6 +3816,12 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PAR_4JOB_CHANGE
               field_mapping: {}
+            - packet_id: "0x02A2"
+              packetver_range:
+                - 20060424
+                - null
+              struct_name: SYNTH_ZC_PAR_CHANGE2
+              field_mapping: {}
     status_up:
         name: status_up
         description: Request to increase a base status point (STR/AGI/VIT/INT/DEX/LUK)
@@ -3585,7 +3837,7 @@ semantic_actions:
     sync:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: received_sync
         canonical_params: []
         implementations:
             - packet_id: "0x007F"
@@ -3597,7 +3849,7 @@ semantic_actions:
     tc_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: received_login_token
         canonical_params: []
         implementations:
             - packet_id: "0x0AE3"
@@ -3651,7 +3903,7 @@ semantic_actions:
     vender_found:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: vender_found
         canonical_params: []
         implementations:
             - packet_id: "0x0131"
@@ -3687,7 +3939,7 @@ semantic_actions:
     whisper_sent:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: private_message_sent
         canonical_params: []
         implementations:
             - packet_id: "0x0098"
@@ -3699,19 +3951,31 @@ semantic_actions:
     zc_accept_enter:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: map_loaded
         canonical_params: []
         implementations:
             - packet_id: "0x0A18"
               packetver_range:
+                - 20141022
+                - 20160329
+              struct_name: PACKET_ZC_ACCEPT_ENTER
+              field_mapping: {}
+            - packet_id: "0x0073"
+              packetver_range:
                 - null
-                - null
+                - 20080101
+              struct_name: PACKET_ZC_ACCEPT_ENTER
+              field_mapping: {}
+            - packet_id: "0x02EB"
+              packetver_range:
+                - 20080102
+                - 20141021
               struct_name: PACKET_ZC_ACCEPT_ENTER
               field_mapping: {}
     zc_ack_add_exchange_item:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: deal_add_you
         canonical_params: []
         implementations:
             - packet_id: "0x00EA"
@@ -3723,7 +3987,7 @@ semantic_actions:
     zc_ack_add_item_rodex:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: rodex_add_item
         canonical_params: []
         implementations:
             - packet_id: "0x0A05"
@@ -3735,7 +3999,7 @@ semantic_actions:
     zc_ack_additem_to_cart:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cart_add_failed
         canonical_params: []
         implementations:
             - packet_id: "0x012C"
@@ -3747,7 +4011,7 @@ semantic_actions:
     zc_ack_apply_macro_detector:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: macro_reporter_status
         canonical_params: []
         implementations:
             - packet_id: "0x0A57"
@@ -3807,7 +4071,7 @@ semantic_actions:
     zc_ack_create_chatroom:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: chat_created
         canonical_params: []
         implementations:
             - packet_id: "0x00D6"
@@ -3819,7 +4083,7 @@ semantic_actions:
     zc_ack_disorganize_guild_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_broken
         canonical_params: []
         implementations:
             - packet_id: "0x015E"
@@ -3843,7 +4107,7 @@ semantic_actions:
     zc_ack_guildstorage_log:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_storage_log
         canonical_params: []
         implementations:
             - packet_id: "0x09DA"
@@ -3855,7 +4119,7 @@ semantic_actions:
     zc_ack_itemcomposition:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: card_merge_status
         canonical_params: []
         implementations:
             - packet_id: "0x017D"
@@ -3867,7 +4131,7 @@ semantic_actions:
     zc_ack_itemidentify:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: identify
         canonical_params: []
         implementations:
             - packet_id: "0x0179"
@@ -3879,7 +4143,7 @@ semantic_actions:
     zc_ack_itemrefining:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_upgrade
         canonical_params: []
         implementations:
             - packet_id: "0x0188"
@@ -3891,7 +4155,7 @@ semantic_actions:
     zc_ack_itemrepair:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: repair_result
         canonical_params: []
         implementations:
             - packet_id: "0x01FE"
@@ -3903,7 +4167,7 @@ semantic_actions:
     zc_ack_make_group:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_organize_result
         canonical_params: []
         implementations:
             - packet_id: "0x00FA"
@@ -3915,7 +4179,7 @@ semantic_actions:
     zc_ack_merge_item:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: merge_item_result
         canonical_params: []
         implementations:
             - packet_id: "0x096F"
@@ -3939,7 +4203,7 @@ semantic_actions:
     zc_ack_openstore2:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: open_store_status
         canonical_params: []
         implementations:
             - packet_id: "0x0A28"
@@ -3951,7 +4215,7 @@ semantic_actions:
     zc_ack_player_aid_in_range:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: macro_reporter_select
         canonical_params: []
         implementations:
             - packet_id: "0x0A6D"
@@ -3963,7 +4227,7 @@ semantic_actions:
     zc_ack_preview_macro_detector:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: captcha_preview
         canonical_params: []
         implementations:
             - packet_id: "0x0A6A"
@@ -3999,7 +4263,7 @@ semantic_actions:
     zc_ack_ranking:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: top10
         canonical_params: []
         implementations:
             - packet_id: "0x097d"
@@ -4011,7 +4275,7 @@ semantic_actions:
     zc_ack_read_rodex:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: rodex_read_mail
         canonical_params: []
         implementations:
             - packet_id: "0x09EB"
@@ -4023,7 +4287,7 @@ semantic_actions:
     zc_ack_remember_warppoint:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: memo_success
         canonical_params: []
         implementations:
             - packet_id: "0x011E"
@@ -4035,7 +4299,7 @@ semantic_actions:
     zc_ack_req_join_guild:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_invite_result
         canonical_params: []
         implementations:
             - packet_id: "0x0169"
@@ -4047,7 +4311,7 @@ semantic_actions:
     zc_ack_reqnameall:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_info
         canonical_params: []
         implementations:
             - packet_id: "0x0195"
@@ -4059,7 +4323,7 @@ semantic_actions:
     zc_ack_reqnameall_npc:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_info
         canonical_params: []
         implementations:
             - packet_id: "0x0095"
@@ -4095,7 +4359,7 @@ semantic_actions:
     zc_ack_upload_macro_detector:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: captcha_upload_request
         canonical_params: []
         implementations:
             - packet_id: "0x0A53"
@@ -4107,7 +4371,7 @@ semantic_actions:
     zc_action_failure:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: arrow_none
         canonical_params: []
         implementations:
             - packet_id: "0x013B"
@@ -4119,7 +4383,7 @@ semantic_actions:
     zc_add_item_to_cart:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cart_item_added
         canonical_params: []
         implementations:
             - packet_id: "0x0124"
@@ -4131,7 +4395,7 @@ semantic_actions:
     zc_add_item_to_store:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: storage_item_added
         canonical_params: []
         implementations:
             - packet_id: "0x00F4"
@@ -4167,7 +4431,7 @@ semantic_actions:
     zc_apply_macro_detector:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: macro_detector
         canonical_params: []
         implementations:
             - packet_id: "0x0A58"
@@ -4179,7 +4443,7 @@ semantic_actions:
     zc_apply_macro_detector_captcha:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: macro_detector_image
         canonical_params: []
         implementations:
             - packet_id: "0x0A59"
@@ -4191,7 +4455,7 @@ semantic_actions:
     zc_autorun_skill:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_skill
         canonical_params: []
         implementations:
             - packet_id: "0x0147"
@@ -4203,7 +4467,7 @@ semantic_actions:
     zc_autospelllist:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: sage_autospell
         canonical_params: []
         implementations:
             - packet_id: "0x01CD"
@@ -4215,7 +4479,7 @@ semantic_actions:
     zc_battlefield_notify_hp:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: battleground_hp
         canonical_params: []
         implementations:
             - packet_id: "0x02E0"
@@ -4227,7 +4491,7 @@ semantic_actions:
     zc_boss_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: boss_map_info
         canonical_params: []
         implementations:
             - packet_id: "0x0293"
@@ -4239,7 +4503,7 @@ semantic_actions:
     zc_broadcast:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: system_chat
         canonical_params: []
         implementations:
             - packet_id: "0x009A"
@@ -4251,7 +4515,7 @@ semantic_actions:
     zc_broadcast_itemrefining_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: refine_status
         canonical_params: []
         implementations:
             - packet_id: "0x0ADA"
@@ -4263,7 +4527,7 @@ semantic_actions:
     zc_broadcast2:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: local_broadcast
         canonical_params: []
         implementations:
             - packet_id: "0x01C3"
@@ -4275,7 +4539,7 @@ semantic_actions:
     zc_broadcasting_special_item_obtain_item:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: special_item_obtain
         canonical_params: []
         implementations:
             - packet_id: "0x07FD"
@@ -4287,7 +4551,7 @@ semantic_actions:
     zc_buying_store_entry:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: buying_store_found
         canonical_params: []
         implementations:
             - packet_id: "0x0814"
@@ -4311,7 +4575,7 @@ semantic_actions:
     zc_cancel_exchange_item:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: deal_cancelled
         canonical_params: []
         implementations:
             - packet_id: "0x00EE"
@@ -4323,7 +4587,7 @@ semantic_actions:
     zc_cartoff:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cart_off
         canonical_params: []
         implementations:
             - packet_id: "0x012B"
@@ -4335,7 +4599,7 @@ semantic_actions:
     zc_change_guild:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_emblem_update
         canonical_params: []
         implementations:
             - packet_id: "0x01B4"
@@ -4347,7 +4611,7 @@ semantic_actions:
     zc_change_item_option:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_preview
         canonical_params: []
         implementations:
             - packet_id: "0x0AB9"
@@ -4359,7 +4623,7 @@ semantic_actions:
     zc_changestate_pet:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: pet_info2
         canonical_params: []
         implementations:
             - packet_id: "0x01A4"
@@ -4371,7 +4635,7 @@ semantic_actions:
     zc_checkname:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: rodex_check_player
         canonical_params: []
         implementations:
             - packet_id: "0x0A14"
@@ -4389,7 +4653,7 @@ semantic_actions:
     zc_claninfo:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: clan_info
         canonical_params: []
         implementations:
             - packet_id: "0x098A"
@@ -4401,7 +4665,7 @@ semantic_actions:
     zc_clear_dialog:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_clear_dialog
         canonical_params: []
         implementations:
             - packet_id: "0x08D6"
@@ -4413,7 +4677,7 @@ semantic_actions:
     zc_close_dialog:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_talk_close
         canonical_params: []
         implementations:
             - packet_id: "0x00B6"
@@ -4425,7 +4689,7 @@ semantic_actions:
     zc_close_macro_detector:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: macro_detector_status
         canonical_params: []
         implementations:
             - packet_id: "0x0A5D"
@@ -4437,7 +4701,7 @@ semantic_actions:
     zc_close_store:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: storage_closed
         canonical_params: []
         implementations:
             - packet_id: "0x00F8"
@@ -4449,7 +4713,7 @@ semantic_actions:
     zc_compass:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: minimap_indicator
         canonical_params: []
         implementations:
             - packet_id: "0x0144"
@@ -4461,7 +4725,7 @@ semantic_actions:
     zc_complete_upload_macro_detector_captcha:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: captcha_upload_request_status
         canonical_params: []
         implementations:
             - packet_id: "0x0A55"
@@ -4473,7 +4737,7 @@ semantic_actions:
     zc_couplename:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: marriage_partner_name
         canonical_params: []
         implementations:
             - packet_id: "0x01E6"
@@ -4485,7 +4749,7 @@ semantic_actions:
     zc_couplestatus:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: stat_info2
         canonical_params: []
         implementations:
             - packet_id: "0x0141"
@@ -4509,7 +4773,7 @@ semantic_actions:
     zc_delete_item_from_body:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: inventory_item_removed
         canonical_params: []
         implementations:
             - packet_id: "0x07FA"
@@ -4521,7 +4785,7 @@ semantic_actions:
     zc_delete_item_from_cart:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cart_item_removed
         canonical_params: []
         implementations:
             - packet_id: "0x0125"
@@ -4533,7 +4797,7 @@ semantic_actions:
     zc_delete_item_from_store:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: storage_item_removed
         canonical_params: []
         implementations:
             - packet_id: "0x00F6"
@@ -4545,7 +4809,7 @@ semantic_actions:
     zc_delete_member_from_group:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_leave
         canonical_params: []
         implementations:
             - packet_id: "0x0105"
@@ -4557,7 +4821,7 @@ semantic_actions:
     zc_deleteitem_from_mcstore:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: shop_sold
         canonical_params: []
         implementations:
             - packet_id: "0x0137"
@@ -4617,7 +4881,7 @@ semantic_actions:
     zc_disappear_buying_store_entry:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: buying_store_lost
         canonical_params: []
         implementations:
             - packet_id: "0x0816"
@@ -4629,7 +4893,7 @@ semantic_actions:
     zc_dynamicnpc_create_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: dynamicnpc_create_result
         canonical_params: []
         implementations:
             - packet_id: "0x0A17"
@@ -4637,6 +4901,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_DYNAMICNPC_CREATE_RESULT
+              field_mapping: {}
+    zc_el_par_change:
+        name: zc_el_par_change
+        description: Elemental stat change notification
+        openkore_name: stat_info
+        canonical_params: []
+        implementations:
+            - packet_id: "0x081E"
+              packetver_range:
+                - null
+                - null
+              struct_name: PACKET_ZC_EL_PAR_CHANGE
               field_mapping: {}
     zc_entry_queue_init:
         name: ""
@@ -4653,7 +4929,7 @@ semantic_actions:
     zc_equip_arrow:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: arrow_equipped
         canonical_params: []
         implementations:
             - packet_id: "0x013C"
@@ -4665,7 +4941,7 @@ semantic_actions:
     zc_equipitem_damaged:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: equipitem_damaged
         canonical_params: []
         implementations:
             - packet_id: "0x02BB"
@@ -4677,7 +4953,7 @@ semantic_actions:
     zc_equipment_effect:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: hat_effect
         canonical_params: []
         implementations:
             - packet_id: "0x0A3B"
@@ -4689,19 +4965,49 @@ semantic_actions:
     zc_equipwin_microscope:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: show_eq
         canonical_params: []
         implementations:
             - packet_id: "0x02D7"
               packetver_range:
-                - null
+                - 20030000
+                - 20101122
+              struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
+              field_mapping: {}
+            - packet_id: "0x0859"
+              packetver_range:
+                - 20101123
+                - 20111206
+              struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
+              field_mapping: {}
+            - packet_id: "0x0906"
+              packetver_range:
+                - 20111122
+                - 20121204
+              struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
+              field_mapping: {}
+            - packet_id: "0x0997"
+              packetver_range:
+                - 20121107
+                - 20140819
+              struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
+              field_mapping: {}
+            - packet_id: "0x0A2D"
+              packetver_range:
+                - 20140820
+                - 20180800
+              struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
+              field_mapping: {}
+            - packet_id: "0x0B03"
+              packetver_range:
+                - 20180801
                 - null
               struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
               field_mapping: {}
     zc_exchangeitem_undo:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: deal_undo
         canonical_params: []
         implementations:
             - packet_id: "0x00F1"
@@ -4713,7 +5019,7 @@ semantic_actions:
     zc_exec_exchange_item:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: deal_complete
         canonical_params: []
         implementations:
             - packet_id: "0x00F0"
@@ -4725,7 +5031,7 @@ semantic_actions:
     zc_extend_bodyitem_size:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: inventory_expansion_result
         canonical_params: []
         implementations:
             - packet_id: "0x0B18"
@@ -4737,7 +5043,7 @@ semantic_actions:
     zc_friends_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: friend_list
         canonical_params: []
         implementations:
             - packet_id: "0x0201"
@@ -4749,7 +5055,7 @@ semantic_actions:
     zc_goldpccafe_point:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: gold_pc_cafe_point
         canonical_params: []
         implementations:
             - packet_id: "0x0A15"
@@ -4809,7 +5115,7 @@ semantic_actions:
     zc_guild_emblem_img:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_emblem
         canonical_params: []
         implementations:
             - packet_id: "0x0152"
@@ -4821,19 +5127,31 @@ semantic_actions:
     zc_guild_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_info
         canonical_params: []
         implementations:
             - packet_id: "0x0A84"
               packetver_range:
+                - 20160921
+                - 20200901
+              struct_name: PACKET_ZC_GUILD_INFO
+              field_mapping: {}
+            - packet_id: "0x01B6"
+              packetver_range:
                 - null
+                - 20160920
+              struct_name: PACKET_ZC_GUILD_INFO
+              field_mapping: {}
+            - packet_id: "0x0B7B"
+              packetver_range:
+                - 20200902
                 - null
               struct_name: PACKET_ZC_GUILD_INFO
               field_mapping: {}
     zc_guild_notice:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_notice
         canonical_params: []
         implementations:
             - packet_id: "0x016F"
@@ -4845,7 +5163,7 @@ semantic_actions:
     zc_guild_skillinfo:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_skills_list
         canonical_params: []
         implementations:
             - packet_id: "0x0162"
@@ -4854,22 +5172,40 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GUILD_SKILLINFO
               field_mapping: {}
+    zc_ho_par_change:
+        name: zc_ho_par_change
+        description: Homunculus stat change notification
+        openkore_name: stat_info
+        canonical_params: []
+        implementations:
+            - packet_id: "0x07DB"
+              packetver_range:
+                - null
+                - 20209999
+              struct_name: PACKET_ZC_HO_PAR_CHANGE
+              field_mapping: {}
     zc_hoskillinfo_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skills_list
         canonical_params: []
         implementations:
             - packet_id: "0x0235"
               packetver_range:
-                - null
+                - 20030000
+                - 20060423
+              struct_name: PACKET_ZC_HOSKILLINFO_LIST
+              field_mapping: {}
+            - packet_id: "0x029D"
+              packetver_range:
+                - 20060424
                 - null
               struct_name: PACKET_ZC_HOSKILLINFO_LIST
               field_mapping: {}
     zc_hoskillinfo_update:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_update
         canonical_params: []
         implementations:
             - packet_id: "0x0239"
@@ -4881,7 +5217,7 @@ semantic_actions:
     zc_inventory_end:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_list_end
         canonical_params: []
         implementations:
             - packet_id: "0x0B0B"
@@ -4893,7 +5229,7 @@ semantic_actions:
     zc_inventory_start:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_list_start
         canonical_params: []
         implementations:
             - packet_id: "0x0B08"
@@ -4905,7 +5241,7 @@ semantic_actions:
     zc_inventory_tab:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: inventory_item_favorite
         canonical_params: []
         implementations:
             - packet_id: "0x0908"
@@ -4917,7 +5253,7 @@ semantic_actions:
     zc_item_disappear:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: item_disappeared
         canonical_params: []
         implementations:
             - packet_id: "0x00A1"
@@ -4929,7 +5265,7 @@ semantic_actions:
     zc_item_pickup_party:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_show_picker
         canonical_params: []
         implementations:
             - packet_id: "0x02B8"
@@ -4953,7 +5289,7 @@ semantic_actions:
     zc_item_throw_ack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: inventory_item_removed
         canonical_params: []
         implementations:
             - packet_id: "0x00AF"
@@ -4965,7 +5301,7 @@ semantic_actions:
     zc_longlongpar_change:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: stat_info
         canonical_params: []
         implementations:
             - packet_id: "0x0ACB"
@@ -4977,7 +5313,7 @@ semantic_actions:
     zc_makingarrow_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: arrowcraft_list
         canonical_params: []
         implementations:
             - packet_id: "0x01AD"
@@ -4989,7 +5325,7 @@ semantic_actions:
     zc_makingitem_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cooking_list
         canonical_params: []
         implementations:
             - packet_id: "0x025A"
@@ -5001,7 +5337,7 @@ semantic_actions:
     zc_membermgr_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_members_list
         canonical_params: []
         implementations:
             - packet_id: "0x0154"
@@ -5013,7 +5349,7 @@ semantic_actions:
     zc_menu_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_talk_responses
         canonical_params: []
         implementations:
             - packet_id: "0x00B7"
@@ -5025,7 +5361,7 @@ semantic_actions:
     zc_merge_item_open:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: merge_item_open
         canonical_params: []
         implementations:
             - packet_id: "0x096D"
@@ -5037,7 +5373,7 @@ semantic_actions:
     zc_millenniumshield:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: millenium_shield
         canonical_params: []
         implementations:
             - packet_id: "0x0440"
@@ -5073,7 +5409,7 @@ semantic_actions:
     zc_myguild_basic_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_allies_enemy_list
         canonical_params: []
         implementations:
             - packet_id: "0x014C"
@@ -5085,7 +5421,7 @@ semantic_actions:
     zc_notify_actorinit:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: load_confirm
         canonical_params: []
         implementations:
             - packet_id: "0x0B1B"
@@ -5121,7 +5457,7 @@ semantic_actions:
     zc_notify_bind_on_equip:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: bind_on_equip
         canonical_params: []
         implementations:
             - packet_id: "0x02D3"
@@ -5133,7 +5469,7 @@ semantic_actions:
     zc_notify_cartitem_countinfo:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cart_info
         canonical_params: []
         implementations:
             - packet_id: "0x0121"
@@ -5145,7 +5481,7 @@ semantic_actions:
     zc_notify_chat_party:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_chat
         canonical_params: []
         implementations:
             - packet_id: "0x0109"
@@ -5157,7 +5493,7 @@ semantic_actions:
     zc_notify_effect:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: unit_levelup
         canonical_params: []
         implementations:
             - packet_id: "0x019B"
@@ -5169,7 +5505,7 @@ semantic_actions:
     zc_notify_effect3:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: GANSI_RANK
         canonical_params: []
         implementations:
             - packet_id: "0x0284"
@@ -5181,7 +5517,7 @@ semantic_actions:
     zc_notify_groundskill:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_use_location
         canonical_params: []
         implementations:
             - packet_id: "0x0117"
@@ -5193,7 +5529,7 @@ semantic_actions:
     zc_notify_hp_to_groupm:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_hp_info
         canonical_params: []
         implementations:
             - packet_id: "0x0106"
@@ -5205,7 +5541,7 @@ semantic_actions:
     zc_notify_mapinfo:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: no_teleport
         canonical_params: []
         implementations:
             - packet_id: "0x0189"
@@ -5217,7 +5553,7 @@ semantic_actions:
     zc_notify_mapproperty2:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: map_property2
         canonical_params: []
         implementations:
             - packet_id: "0x01D6"
@@ -5229,7 +5565,7 @@ semantic_actions:
     zc_notify_memberinfo_to_groupm:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: partylv_info
         canonical_params: []
         implementations:
             - packet_id: "0x0ABD"
@@ -5241,7 +5577,7 @@ semantic_actions:
     zc_notify_position_to_groupm:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_location
         canonical_params: []
         implementations:
             - packet_id: "0x0107"
@@ -5253,7 +5589,7 @@ semantic_actions:
     zc_notify_position_to_guildm:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_location
         canonical_params: []
         implementations:
             - packet_id: "0x01EB"
@@ -5265,7 +5601,7 @@ semantic_actions:
     zc_notify_storeitem_countinfo:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: storage_opened
         canonical_params: []
         implementations:
             - packet_id: "0x00F2"
@@ -5289,7 +5625,7 @@ semantic_actions:
     zc_npc_market_open:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_market_info
         canonical_params: []
         implementations:
             - packet_id: "0x09D5"
@@ -5301,7 +5637,7 @@ semantic_actions:
     zc_npc_market_purchase_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_market_purchase_result
         canonical_params: []
         implementations:
             - packet_id: "0x09D7"
@@ -5313,7 +5649,7 @@ semantic_actions:
     zc_npc_showefst_update:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: character_status
         canonical_params: []
         implementations:
             - packet_id: "0x028A"
@@ -5325,7 +5661,7 @@ semantic_actions:
     zc_open_editdlg:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_talk_number
         canonical_params: []
         implementations:
             - packet_id: "0x0142"
@@ -5337,7 +5673,7 @@ semantic_actions:
     zc_open_editdlgstr:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_talk_text
         canonical_params: []
         implementations:
             - packet_id: "0x01D4"
@@ -5349,7 +5685,7 @@ semantic_actions:
     zc_open_refining_ui:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: refineui_opened
         canonical_params: []
         implementations:
             - packet_id: "0x0AA0"
@@ -5373,7 +5709,7 @@ semantic_actions:
     zc_open_search_store_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: search_store_open
         canonical_params: []
         implementations:
             - packet_id: "0x083A"
@@ -5385,7 +5721,7 @@ semantic_actions:
     zc_openstore:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: shop_skill
         canonical_params: []
         implementations:
             - packet_id: "0x012D"
@@ -5397,7 +5733,7 @@ semantic_actions:
     zc_par_change_user:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: stat_info
         canonical_params: []
         implementations:
             - packet_id: "0x01AB"
@@ -5409,7 +5745,7 @@ semantic_actions:
     zc_party_config:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: party_allow_invite
         canonical_params: []
         implementations:
             - packet_id: "0x02C9"
@@ -5421,7 +5757,7 @@ semantic_actions:
     zc_pc_purchase_itemlist_frommc:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: vender_items_list
         canonical_params: []
         implementations:
             - packet_id: "0x0133"
@@ -5433,7 +5769,7 @@ semantic_actions:
     zc_pc_purchase_myitemlist:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: vending_start
         canonical_params: []
         implementations:
             - packet_id: "0x0136"
@@ -5445,7 +5781,7 @@ semantic_actions:
     zc_pc_purchase_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: buy_result
         canonical_params: []
         implementations:
             - packet_id: "0x00CA"
@@ -5457,7 +5793,7 @@ semantic_actions:
     zc_pc_purchase_result_frommc:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: vender_buy_fail
         canonical_params: []
         implementations:
             - packet_id: "0x0135"
@@ -5469,7 +5805,7 @@ semantic_actions:
     zc_pc_sell_itemlist:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_sell_list
         canonical_params: []
         implementations:
             - packet_id: "0x00C7"
@@ -5481,7 +5817,7 @@ semantic_actions:
     zc_personal_infomation:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: rates_info
         canonical_params: []
         implementations:
             - packet_id: "0x08CB"
@@ -5493,7 +5829,7 @@ semantic_actions:
     zc_ping_live:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: ping
         canonical_params: []
         implementations:
             - packet_id: "0x0B1D"
@@ -5505,7 +5841,7 @@ semantic_actions:
     zc_play_npc_bgm:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: sound_effect
         canonical_params: []
         implementations:
             - packet_id: "0x07FE"
@@ -5517,7 +5853,7 @@ semantic_actions:
     zc_position_id_name_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_members_title_list
         canonical_params: []
         implementations:
             - packet_id: "0x0166"
@@ -5529,7 +5865,7 @@ semantic_actions:
     zc_position_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_member_setting_list
         canonical_params: []
         implementations:
             - packet_id: "0x0160"
@@ -5541,7 +5877,7 @@ semantic_actions:
     zc_preview_macro_detector_captcha:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: captcha_preview_image
         canonical_params: []
         implementations:
             - packet_id: "0x0A6B"
@@ -5589,7 +5925,7 @@ semantic_actions:
     zc_recovery:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: hp_sp_changed
         canonical_params: []
         implementations:
             - packet_id: "0x013D"
@@ -5601,7 +5937,7 @@ semantic_actions:
     zc_refining_material_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: refineui_info
         canonical_params: []
         implementations:
             - packet_id: "0x0AA2"
@@ -5613,7 +5949,7 @@ semantic_actions:
     zc_refuse_enter_room:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: chat_join_result
         canonical_params: []
         implementations:
             - packet_id: "0x00DA"
@@ -5625,7 +5961,7 @@ semantic_actions:
     zc_repairitemlist:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: repair_list
         canonical_params: []
         implementations:
             - packet_id: "0x01FC"
@@ -5637,7 +5973,7 @@ semantic_actions:
     zc_repute_info:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: repute_info
         canonical_params: []
         implementations:
             - packet_id: "0x0B8D"
@@ -5673,7 +6009,7 @@ semantic_actions:
     zc_req_answer_macro_detector:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: macro_detector_show
         canonical_params: []
         implementations:
             - packet_id: "0x0A5B"
@@ -5685,7 +6021,7 @@ semantic_actions:
     zc_req_join_guild:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_request
         canonical_params: []
         implementations:
             - packet_id: "0x016A"
@@ -5693,6 +6029,30 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_REQ_JOIN_GUILD
+              field_mapping: {}
+    zc_req_takeoff_equip_ack:
+        name: zc_req_takeoff_equip_ack
+        description: Server acknowledgement for unequip request
+        openkore_name: unequip_item
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00AC"
+              packetver_range:
+                - null
+                - 20110823
+              struct_name: PACKET_ZC_REQ_TAKEOFF_EQUIP_ACK
+              field_mapping: {}
+            - packet_id: "0x08D1"
+              packetver_range:
+                - 20110824
+                - 20129999
+              struct_name: PACKET_ZC_REQ_TAKEOFF_EQUIP_ACK
+              field_mapping: {}
+            - packet_id: "0x099A"
+              packetver_range:
+                - 20130000
+                - null
+              struct_name: PACKET_ZC_REQ_TAKEOFF_EQUIP_ACK
               field_mapping: {}
     zc_req_wear_equip_ack:
         name: ""
@@ -5702,7 +6062,13 @@ semantic_actions:
         implementations:
             - packet_id: "0x00AA"
               packetver_range:
-                - null
+                - 20030000
+                - 20101122
+              struct_name: PACKET_ZC_REQ_WEAR_EQUIP_ACK
+              field_mapping: {}
+            - packet_id: "0x0999"
+              packetver_range:
+                - 20121107
                 - null
               struct_name: PACKET_ZC_REQ_WEAR_EQUIP_ACK
               field_mapping: {}
@@ -5721,7 +6087,7 @@ semantic_actions:
     zc_restart_ack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: switch_character
         canonical_params: []
         implementations:
             - packet_id: "0x00B3"
@@ -5733,7 +6099,7 @@ semantic_actions:
     zc_result_make_guild:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_create_result
         canonical_params: []
         implementations:
             - packet_id: "0x0167"
@@ -5745,7 +6111,7 @@ semantic_actions:
     zc_resurrection:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: resurrection
         canonical_params: []
         implementations:
             - packet_id: "0x0148"
@@ -5757,7 +6123,7 @@ semantic_actions:
     zc_role_change:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: chat_newowner
         canonical_params: []
         implementations:
             - packet_id: "0x00E1"
@@ -5769,7 +6135,7 @@ semantic_actions:
     zc_say_dialog:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_talk
         canonical_params: []
         implementations:
             - packet_id: "0x00B4"
@@ -5781,7 +6147,7 @@ semantic_actions:
     zc_se_cashshop_open:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cash_shop_open_result
         canonical_params: []
         implementations:
             - packet_id: "0x0845"
@@ -5793,7 +6159,7 @@ semantic_actions:
     zc_se_pc_buy_cashitem_result:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: cash_shop_buy_result
         canonical_params: []
         implementations:
             - packet_id: "0x0849"
@@ -5805,7 +6171,7 @@ semantic_actions:
     zc_search_store_info_ack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: search_store_result
         canonical_params: []
         implementations:
             - packet_id: "0x0836"
@@ -5817,7 +6183,7 @@ semantic_actions:
     zc_search_store_info_failed:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: search_store_fail
         canonical_params: []
         implementations:
             - packet_id: "0x0837"
@@ -5829,7 +6195,7 @@ semantic_actions:
     zc_select_dealtype:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_store_begin
         canonical_params: []
         implementations:
             - packet_id: "0x00C4"
@@ -5841,19 +6207,37 @@ semantic_actions:
     zc_shortcut_key_list:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: hotkeys
         canonical_params: []
         implementations:
             - packet_id: "0x02B9"
               packetver_range:
-                - null
+                - 20030000
+                - 20090616
+              struct_name: PACKET_ZC_SHORTCUT_KEY_LIST
+              field_mapping: {}
+            - packet_id: "0x07D9"
+              packetver_range:
+                - 20090617
+                - 20141021
+              struct_name: PACKET_ZC_SHORTCUT_KEY_LIST
+              field_mapping: {}
+            - packet_id: "0x0A00"
+              packetver_range:
+                - 20141022
+                - 20190521
+              struct_name: PACKET_ZC_SHORTCUT_KEY_LIST
+              field_mapping: {}
+            - packet_id: "0x0B20"
+              packetver_range:
+                - 20190522
                 - null
               struct_name: PACKET_ZC_SHORTCUT_KEY_LIST
               field_mapping: {}
     zc_show_image:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_image
         canonical_params: []
         implementations:
             - packet_id: "0x01B3"
@@ -5865,7 +6249,7 @@ semantic_actions:
     zc_skill_disappear:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: area_spell_disappears
         canonical_params: []
         implementations:
             - packet_id: "0x0120"
@@ -5877,7 +6261,7 @@ semantic_actions:
     zc_skill_select_request:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: sage_autospell
         canonical_params: []
         implementations:
             - packet_id: "0x0442"
@@ -5889,7 +6273,7 @@ semantic_actions:
     zc_skill_update:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_trapped
         canonical_params: []
         implementations:
             - packet_id: "0x01AC"
@@ -5901,19 +6285,25 @@ semantic_actions:
     zc_skillinfo_update2:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_update
         canonical_params: []
         implementations:
             - packet_id: "0x07E1"
               packetver_range:
-                - null
+                - 20030000
+                - 20190806
+              struct_name: PACKET_ZC_SKILLINFO_UPDATE2
+              field_mapping: {}
+            - packet_id: "0x0B33"
+              packetver_range:
+                - 20190807
                 - null
               struct_name: PACKET_ZC_SKILLINFO_UPDATE2
               field_mapping: {}
     zc_soulenergy:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: revolving_entity
         canonical_params: []
         implementations:
             - packet_id: "0x0B73"
@@ -5925,7 +6315,7 @@ semantic_actions:
     zc_sound:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: sound_effect
         canonical_params: []
         implementations:
             - packet_id: "0x01D3"
@@ -5949,7 +6339,7 @@ semantic_actions:
     zc_spirits:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: revolving_entity
         canonical_params: []
         implementations:
             - packet_id: "0x01D0"
@@ -5961,7 +6351,7 @@ semantic_actions:
     zc_spirits_attribute:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: revolving_entity
         canonical_params: []
         implementations:
             - packet_id: "0x08CF"
@@ -5973,7 +6363,7 @@ semantic_actions:
     zc_spirits2:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: revolving_entity
         canonical_params: []
         implementations:
             - packet_id: "0x01E1"
@@ -5985,7 +6375,7 @@ semantic_actions:
     zc_ssilist_item_click_ack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: search_store_pos
         canonical_params: []
         implementations:
             - packet_id: "0x083D"
@@ -5997,7 +6387,7 @@ semantic_actions:
     zc_start_capture:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: pet_capture_process
         canonical_params: []
         implementations:
             - packet_id: "0x019E"
@@ -6009,7 +6399,7 @@ semantic_actions:
     zc_state_change:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: character_status
         canonical_params: []
         implementations:
             - packet_id: "0x0119"
@@ -6027,7 +6417,7 @@ semantic_actions:
     zc_status:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: stats_info
         canonical_params: []
         implementations:
             - packet_id: "0x00BD"
@@ -6039,7 +6429,7 @@ semantic_actions:
     zc_status_change_ack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: stats_added
         canonical_params: []
         implementations:
             - packet_id: "0x00BC"
@@ -6051,7 +6441,7 @@ semantic_actions:
     zc_stopmove:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: actor_movement_interrupted
         canonical_params: []
         implementations:
             - packet_id: "0x0088"
@@ -6087,7 +6477,7 @@ semantic_actions:
     zc_talkbox_chatcontents:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: talkie_box
         canonical_params: []
         implementations:
             - packet_id: "0x0191"
@@ -6111,7 +6501,7 @@ semantic_actions:
     zc_trycapture_monster:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: pet_capture_result
         canonical_params: []
         implementations:
             - packet_id: "0x01A0"
@@ -6123,7 +6513,7 @@ semantic_actions:
     zc_ui_open:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: open_ui
         canonical_params: []
         implementations:
             - packet_id: "0x0A38"
@@ -6159,7 +6549,7 @@ semantic_actions:
     zc_update_gdid:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: guild_name
         canonical_params: []
         implementations:
             - packet_id: "0x016C"
@@ -6171,7 +6561,7 @@ semantic_actions:
     zc_useskill_ack:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: skill_cast
         canonical_params: []
         implementations:
             - packet_id: "0x013E"
@@ -6195,7 +6585,7 @@ semantic_actions:
     zc_wait_dialog:
         name: ""
         description: ""
-        openkore_name: ""
+        openkore_name: npc_talk_continue
         canonical_params: []
         implementations:
             - packet_id: "0x00B5"

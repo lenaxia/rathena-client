@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeCzPcPurchaseItemlistFrommc2 encodes a 0x0801 (PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC2) packet for sending to the server.
-func EncodeCzPcPurchaseItemlistFrommc2(req send.CzPcPurchaseItemlistFrommc2, packetver uint32) [12]byte {
-	var p [12]byte
+func EncodeCzPcPurchaseItemlistFrommc2(req send.CzPcPurchaseItemlistFrommc2, packetver uint32) []byte {
+	p := make([]byte, 12+len(req.List))
 	// Packet ID: 0x0801 (little-endian)
 	p[0] = 0x01
 	p[1] = 0x08
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	leU32Put(p[4:], req.AID)  // rAthena: AID
 	leU32Put(p[8:], req.UniqueID)  // rAthena: UniqueID
 	copy(p[12:], req.List)  // rAthena: list

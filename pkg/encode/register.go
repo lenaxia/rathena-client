@@ -29,6 +29,7 @@ import (
 //   banking_open
 //   banking_withdraw
 //   cast_cancelled
+//   char_created
 //   character_blocked
 //   character_creation_failed
 //   character_moves
@@ -40,12 +41,15 @@ import (
 //   enter_world
 //   entity_move
 //   entity_spawn
-//   guild_chat
+//   exp
 //   homunculus_info
+//   inventory_items_equip
+//   inventory_items_stackable
 //   item_appeared
 //   item_exists
 //   item_pickup
 //   login_error
+//   mail_receive
 //   map_changed
 //   map_loaded
 //   monster_hp_update
@@ -159,6 +163,7 @@ import (
 //   zc_dialog_window_size
 //   zc_disappear_buying_store_entry
 //   zc_dynamicnpc_create_result
+//   zc_el_par_change
 //   zc_entry_queue_init
 //   zc_equip_arrow
 //   zc_equipitem_damaged
@@ -177,6 +182,7 @@ import (
 //   zc_guild_info
 //   zc_guild_notice
 //   zc_guild_skillinfo
+//   zc_ho_par_change
 //   zc_hoskillinfo_list
 //   zc_hoskillinfo_update
 //   zc_inventory_end
@@ -247,6 +253,7 @@ import (
 //   zc_req_ack_move_guild_agit
 //   zc_req_answer_macro_detector
 //   zc_req_join_guild
+//   zc_req_takeoff_equip_ack
 //   zc_req_wear_equip_ack
 //   zc_response_enchant
 //   zc_restart_ack
@@ -397,8 +404,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCaSsoLoginReq(r, pv)
-			return b[:], nil
+			return EncodeCaSsoLoginReq(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCatchPet,
@@ -737,8 +743,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzNpcBarterMarketPurchase(r, pv)
-			return b[:], nil
+			return EncodeCzNpcBarterMarketPurchase(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzNpcExpandedBarterMarketClose,
@@ -757,8 +762,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzNpcExpandedBarterMarketPurchase(r, pv)
-			return b[:], nil
+			return EncodeCzNpcExpandedBarterMarketPurchase(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzPartyConfig,
@@ -797,8 +801,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzPcPurchaseItemlistFrommc(r, pv)
-			return b[:], nil
+			return EncodeCzPcPurchaseItemlistFrommc(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzPcPurchaseItemlistFrommc2,
@@ -807,8 +810,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzPcPurchaseItemlistFrommc2(r, pv)
-			return b[:], nil
+			return EncodeCzPcPurchaseItemlistFrommc2(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzPingLive,
@@ -907,8 +909,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzReqChangeMemberpos(r, pv)
-			return b[:], nil
+			return EncodeCzReqChangeMemberpos(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzReqDisorganizeGuild,
@@ -1017,8 +1018,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzReqMergeItem(r, pv)
-			return b[:], nil
+			return EncodeCzReqMergeItem(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzReqMoveGuildAgit,
@@ -1067,8 +1067,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzReqRandomCombineItem(r, pv)
-			return b[:], nil
+			return EncodeCzReqRandomCombineItem(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzReqRandomUpgradeItem,
@@ -1227,8 +1226,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzSePcBuyCashitemList(r, pv)
-			return b[:], nil
+			return EncodeCzSePcBuyCashitemList(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzShortcutKeyChange1,
@@ -1287,8 +1285,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzUploadMacroDetectorCaptcha(r, pv)
-			return b[:], nil
+			return EncodeCzUploadMacroDetectorCaptcha(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzUsePackageitem,
@@ -1471,6 +1468,15 @@ func init() {
 			return b[:], nil
 		},
 	)
+	session.RegisterSendEncoder(session.ActionGuildChat,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.GuildChat)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			return EncodeGuildChat(r, pv), nil
+		},
+	)
 	session.RegisterSendEncoder(session.ActionHomunculusAttack,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.HomunculusAttack)
@@ -1557,8 +1563,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeMarketPurchase(r, pv)
-			return b[:], nil
+			return EncodeMarketPurchase(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionMasterLogin,
@@ -1667,8 +1672,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeNpcTalkText(r, pv)
-			return b[:], nil
+			return EncodeNpcTalkText(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionNpcTradeQuit,
@@ -1800,6 +1804,16 @@ func init() {
 			return b[:], nil
 		},
 	)
+	session.RegisterSendEncoder(session.ActionRequestBuySellList,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.RequestBuySellList)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			b := EncodeRequestBuySellList(r, pv)
+			return b[:], nil
+		},
+	)
 	session.RegisterSendEncoder(session.ActionRequestCharacterPage,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RequestCharacterPage)
@@ -1876,8 +1890,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeShopBuy(r, pv)
-			return b[:], nil
+			return EncodeShopBuy(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionShopSell,
@@ -1886,8 +1899,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeShopSell(r, pv)
-			return b[:], nil
+			return EncodeShopSell(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionSkillUp,

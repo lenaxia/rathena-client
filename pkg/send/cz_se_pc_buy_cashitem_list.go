@@ -4,7 +4,6 @@ package send
 
 // CzSePcBuyCashitemList is the request struct for the cz_se_pc_buy_cashitem_list action.
 type CzSePcBuyCashitemList struct {
-	PacketLength int16
 	Count uint16
 	KafraPoints uint32
 	Items []byte

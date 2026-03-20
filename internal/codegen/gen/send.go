@@ -50,6 +50,8 @@ func GenerateSendFile(input SendInput) (filename string, src string, err error) 
 }
 
 // sendFields collects the fields from the first resolvable send-direction implementation.
+// For structs that contain a flex array payload the packetLength/packetSize field is
+// excluded — the encoder computes it internally from len(p), so callers must not set it.
 func sendFields(a *semantics.Action, vt preprocess.VersionTable) []eventField {
 	seen := make(map[string]string)
 	var ordered []eventField
@@ -62,9 +64,15 @@ func sendFields(a *semantics.Action, vt preprocess.VersionTable) []eventField {
 		if layout == nil {
 			continue
 		}
+		flex := hasFlexField(layout)
 		for i := range layout.Fields {
 			f := &layout.Fields[i]
 			if f.Name == "PacketType" || f.Name == "packetType" || f.Name == "packet_type" {
+				continue
+			}
+			// Strip the wire-length field from flex-array structs — the encoder
+			// computes it as uint16(len(p)) rather than reading from the caller.
+			if flex && isLengthField(f.Name) {
 				continue
 			}
 			goName := cFieldToGoIdent(f.Name)

@@ -7,14 +7,14 @@ import (
 )
 
 // EncodeCzUploadMacroDetectorCaptcha encodes a 0x0A54 (PACKET_CZ_UPLOAD_MACRO_DETECTOR_CAPTCHA) packet for sending to the server.
-func EncodeCzUploadMacroDetectorCaptcha(req send.CzUploadMacroDetectorCaptcha, packetver uint32) [8]byte {
-	var p [8]byte
+func EncodeCzUploadMacroDetectorCaptcha(req send.CzUploadMacroDetectorCaptcha, packetver uint32) []byte {
+	p := make([]byte, 8+len(req.ImageData))
 	// Packet ID: 0x0A54 (little-endian)
 	p[0] = 0x54
 	p[1] = 0x0a
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: PacketLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: PacketLength (computed)
 	copy(p[4:8], req.CaptchaKey)  // rAthena: captchaKey
-	copy(p[8:8], req.ImageData)  // rAthena: imageData
+	copy(p[8:], req.ImageData)  // rAthena: imageData
 	_ = packetver
 	return p
 }

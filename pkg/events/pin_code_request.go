@@ -7,4 +7,6 @@ type PinCodeRequest struct {
 	Seed uint32
 	AID uint32
 	Result uint16
+	Flag uint16
+	Key uint32
 }

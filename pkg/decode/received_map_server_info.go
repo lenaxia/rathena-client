@@ -16,3 +16,14 @@ func ReceivedMapServerInfo_0x0AC5(data []byte, packetver uint32) events.Received
 	return e
 }
 
+// ReceivedMapServerInfo_0x0071 decodes a 0x0071 packet (struct SYNTH_HC_NOTIFY_ZONESVR_OLD).
+func ReceivedMapServerInfo_0x0071(data []byte, packetver uint32) events.ReceivedMapServerInfo {
+	var e events.ReceivedMapServerInfo
+	_ = packetver
+	e.CID = leU32(data, 2)  // rAthena: CID (offset 2, size 4)
+	e.Mapname = nullTermString(data[6:22])  // rAthena: mapname (offset 6, size 16)
+	e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
+	e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+	return e
+}
+

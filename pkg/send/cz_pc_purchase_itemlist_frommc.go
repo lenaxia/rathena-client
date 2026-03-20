@@ -4,7 +4,6 @@ package send
 
 // CzPcPurchaseItemlistFrommc is the request struct for the cz_pc_purchase_itemlist_frommc action.
 type CzPcPurchaseItemlistFrommc struct {
-	PacketLength int16
 	AID uint32
 	List []byte
 }

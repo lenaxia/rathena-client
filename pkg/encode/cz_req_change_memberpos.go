@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeCzReqChangeMemberpos encodes a 0x0155 (PACKET_CZ_REQ_CHANGE_MEMBERPOS) packet for sending to the server.
-func EncodeCzReqChangeMemberpos(req send.CzReqChangeMemberpos, packetver uint32) [4]byte {
-	var p [4]byte
+func EncodeCzReqChangeMemberpos(req send.CzReqChangeMemberpos, packetver uint32) []byte {
+	p := make([]byte, 4+len(req.List))
 	// Packet ID: 0x0155 (little-endian)
 	p[0] = 0x55
 	p[1] = 0x01
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	copy(p[4:], req.List)  // rAthena: list
 	_ = packetver
 	return p

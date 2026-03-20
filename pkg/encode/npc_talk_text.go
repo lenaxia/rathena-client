@@ -7,14 +7,14 @@ import (
 )
 
 // EncodeNpcTalkText encodes a 0x01D5 (PACKET_CZ_INPUT_EDITDLGSTR) packet for sending to the server.
-func EncodeNpcTalkText(req send.NpcTalkText, packetver uint32) [8]byte {
-	var p [8]byte
+func EncodeNpcTalkText(req send.NpcTalkText, packetver uint32) []byte {
+	p := make([]byte, 8+len(req.Value))
 	// Packet ID: 0x01D5 (little-endian)
 	p[0] = 0xd5
 	p[1] = 0x01
-	leU16Put(p[2:], req.PacketSize)  // rAthena: packetSize
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetSize (computed)
 	leU32Put(p[4:], uint32(req.GID))  // rAthena: GID
-	copy(p[8:8], req.Value)  // rAthena: value
+	copy(p[8:], req.Value)  // rAthena: value
 	_ = packetver
 	return p
 }

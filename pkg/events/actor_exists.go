@@ -40,6 +40,4 @@ type ActorExists struct {
 	Name string
 	Body uint16
 	Shield uint32
-	MoveStartTime uint32
-	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
 }

@@ -7,98 +7,24 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ItemPickup_0x00A0 decodes a 0x00A0 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
 func ItemPickup_0x00A0(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
-	if packetver >= 20170315 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = leU32(data, 19)  // rAthena: location (offset 19, size 4)
-		e.Type = data[23]  // rAthena: type (offset 23, size 1)
-		e.Result = data[24]  // rAthena: result (offset 24, size 1)
-		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
-		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
-		e.Favorite = data[56]  // rAthena: favorite (offset 56, size 1)
-		e.Look = leU16(data, 57)  // rAthena: look (offset 57, size 2)
-	} else if packetver >= 20150520 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = leU32(data, 19)  // rAthena: location (offset 19, size 4)
-		e.Type = data[23]  // rAthena: type (offset 23, size 1)
-		e.Result = data[24]  // rAthena: result (offset 24, size 1)
-		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
-		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
-	} else if packetver >= 20120925 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = leU32(data, 19)  // rAthena: location (offset 19, size 4)
-		e.Type = data[23]  // rAthena: type (offset 23, size 1)
-		e.Result = data[24]  // rAthena: result (offset 24, size 1)
-		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
-		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
-	} else if packetver >= 20071113 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
-		e.Type = data[21]  // rAthena: type (offset 21, size 1)
-		e.Result = data[22]  // rAthena: result (offset 22, size 1)
-		e.HireExpireDate = leI32(data, 23)  // rAthena: HireExpireDate (offset 23, size 4)
-		e.BindOnEquipType = leU16(data, 27)  // rAthena: bindOnEquipType (offset 27, size 2)
-	} else {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
-		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
-		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
-		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
-		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
-		e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
-		e.Type = data[21]  // rAthena: type (offset 21, size 1)
-		e.Result = data[22]  // rAthena: result (offset 22, size 1)
-	}
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+	e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+	e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
+	e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
+	e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
+	e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
+	e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
+	e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
+	e.Type = data[21]  // rAthena: type (offset 21, size 1)
+	e.Result = data[22]  // rAthena: result (offset 22, size 1)
 	return e
 }
 
 // ItemPickup_0x0A37 decodes a 0x0A37 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
 func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
-	if packetver >= 20200916 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)
-		e.IsIdentified = data[10]  // rAthena: IsIdentified (offset 10, size 1)
-		e.IsDamaged = data[11]  // rAthena: IsDamaged (offset 11, size 1)
-		e.Slot = data[12:]  // rAthena: slot (offset 12, size 16)
-		e.Location = leU32(data, 28)  // rAthena: location (offset 28, size 4)
-		e.Type = data[32]  // rAthena: type (offset 32, size 1)
-		e.Result = data[33]  // rAthena: result (offset 33, size 1)
-		e.HireExpireDate = leI32(data, 34)  // rAthena: HireExpireDate (offset 34, size 4)
-		e.BindOnEquipType = leU16(data, 38)  // rAthena: bindOnEquipType (offset 38, size 2)
-		e.Option_data = data[40:65]  // rAthena: option_data (offset 40, size 25)
-		e.Favorite = data[65]  // rAthena: favorite (offset 65, size 1)
-		e.Look = leU16(data, 66)  // rAthena: look (offset 66, size 2)
-		e.RefiningLevel = data[68]  // rAthena: refiningLevel (offset 68, size 1)
-		e.Grade = data[69]  // rAthena: grade (offset 69, size 1)
-	} else if packetver >= 20181121 {
+	if packetver >= 20181121 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)
@@ -130,7 +56,95 @@ func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
 		e.Favorite = data[56]  // rAthena: favorite (offset 56, size 1)
 		e.Look = leU16(data, 57)  // rAthena: look (offset 57, size 2)
-	} else if packetver >= 20150520 {
+	} else {
+		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
+		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
+		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
+		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
+		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
+		e.Location = leU32(data, 19)  // rAthena: location (offset 19, size 4)
+		e.Type = data[23]  // rAthena: type (offset 23, size 1)
+		e.Result = data[24]  // rAthena: result (offset 24, size 1)
+		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
+		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
+		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
+	}
+	return e
+}
+
+// ItemPickup_0x029A decodes a 0x029A packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
+func ItemPickup_0x029A(data []byte, packetver uint32) events.ItemPickup {
+	var e events.ItemPickup
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+	e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+	e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
+	e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
+	e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
+	e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
+	e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
+	e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
+	e.Type = data[21]  // rAthena: type (offset 21, size 1)
+	e.Result = data[22]  // rAthena: result (offset 22, size 1)
+	return e
+}
+
+// ItemPickup_0x02D4 decodes a 0x02D4 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
+func ItemPickup_0x02D4(data []byte, packetver uint32) events.ItemPickup {
+	var e events.ItemPickup
+	if packetver >= 20071113 {
+		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
+		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
+		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
+		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
+		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
+		e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
+		e.Type = data[21]  // rAthena: type (offset 21, size 1)
+		e.Result = data[22]  // rAthena: result (offset 22, size 1)
+		e.HireExpireDate = leI32(data, 23)  // rAthena: HireExpireDate (offset 23, size 4)
+		e.BindOnEquipType = leU16(data, 27)  // rAthena: bindOnEquipType (offset 27, size 2)
+	} else {
+		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
+		e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
+		e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
+		e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
+		e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
+		e.Location = uint32(leU16(data, 19))  // rAthena: location (offset 19, size 2)
+		e.Type = data[21]  // rAthena: type (offset 21, size 1)
+		e.Result = data[22]  // rAthena: result (offset 22, size 1)
+	}
+	return e
+}
+
+// ItemPickup_0x0990 decodes a 0x0990 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
+func ItemPickup_0x0990(data []byte, packetver uint32) events.ItemPickup {
+	var e events.ItemPickup
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+	e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+	e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
+	e.IsIdentified = data[8]  // rAthena: IsIdentified (offset 8, size 1)
+	e.IsDamaged = data[9]  // rAthena: IsDamaged (offset 9, size 1)
+	e.RefiningLevel = data[10]  // rAthena: refiningLevel (offset 10, size 1)
+	e.Slot = data[11:]  // rAthena: slot (offset 11, size 8)
+	e.Location = leU32(data, 19)  // rAthena: location (offset 19, size 4)
+	e.Type = data[23]  // rAthena: type (offset 23, size 1)
+	e.Result = data[24]  // rAthena: result (offset 24, size 1)
+	e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
+	e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
+	return e
+}
+
+// ItemPickup_0x0A0C decodes a 0x0A0C packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
+func ItemPickup_0x0A0C(data []byte, packetver uint32) events.ItemPickup {
+	var e events.ItemPickup
+	if packetver >= 20150520 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))  // rAthena: nameid (offset 6, size 2)
@@ -158,6 +172,29 @@ func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 		e.HireExpireDate = leI32(data, 25)  // rAthena: HireExpireDate (offset 25, size 4)
 		e.BindOnEquipType = leU16(data, 29)  // rAthena: bindOnEquipType (offset 29, size 2)
 	}
+	return e
+}
+
+// ItemPickup_0x0B41 decodes a 0x0B41 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
+func ItemPickup_0x0B41(data []byte, packetver uint32) events.ItemPickup {
+	var e events.ItemPickup
+	_ = packetver
+	e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
+	e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+	e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)
+	e.IsIdentified = data[10]  // rAthena: IsIdentified (offset 10, size 1)
+	e.IsDamaged = data[11]  // rAthena: IsDamaged (offset 11, size 1)
+	e.Slot = data[12:]  // rAthena: slot (offset 12, size 16)
+	e.Location = leU32(data, 28)  // rAthena: location (offset 28, size 4)
+	e.Type = data[32]  // rAthena: type (offset 32, size 1)
+	e.Result = data[33]  // rAthena: result (offset 33, size 1)
+	e.HireExpireDate = leI32(data, 34)  // rAthena: HireExpireDate (offset 34, size 4)
+	e.BindOnEquipType = leU16(data, 38)  // rAthena: bindOnEquipType (offset 38, size 2)
+	e.Option_data = data[40:65]  // rAthena: option_data (offset 40, size 25)
+	e.Favorite = data[65]  // rAthena: favorite (offset 65, size 1)
+	e.Look = leU16(data, 66)  // rAthena: look (offset 66, size 2)
+	e.RefiningLevel = data[68]  // rAthena: refiningLevel (offset 68, size 1)
+	e.Grade = data[69]  // rAthena: grade (offset 69, size 1)
 	return e
 }
 

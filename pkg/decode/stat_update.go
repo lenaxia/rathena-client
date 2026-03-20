@@ -27,9 +27,18 @@ func StatUpdate_0x00BE(data []byte, packetver uint32) events.StatUpdate {
 	var e events.StatUpdate
 	_ = packetver
 	e.StatusID = leU16(data, 2)  // rAthena: statusID (offset 2, size 2)
-	e.Value = data[4]  // rAthena: value (offset 4, size 1)
+	e.Value = uint32(data[4])  // rAthena: value (offset 4, size 1)
 	return e
 }
 
 // SKIP StatUpdate_0x0B25: struct PACKET_ZC_PAR_4JOB_CHANGE not found in VersionTable
+
+// StatUpdate_0x02A2 decodes a 0x02A2 packet (struct SYNTH_ZC_PAR_CHANGE2).
+func StatUpdate_0x02A2(data []byte, packetver uint32) events.StatUpdate {
+	var e events.StatUpdate
+	_ = packetver
+	e.Type = leI16(data, 2)  // rAthena: type (offset 2, size 2)
+	e.Value = leU32(data, 4)  // rAthena: value (offset 4, size 4)
+	return e
+}
 

@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeCzReqMergeItem encodes a 0x096E (PACKET_CZ_REQ_MERGE_ITEM) packet for sending to the server.
-func EncodeCzReqMergeItem(req send.CzReqMergeItem, packetver uint32) [4]byte {
-	var p [4]byte
+func EncodeCzReqMergeItem(req send.CzReqMergeItem, packetver uint32) []byte {
+	p := make([]byte, 4+len(req.Indices))
 	// Packet ID: 0x096E (little-endian)
 	p[0] = 0x6e
 	p[1] = 0x09
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	copy(p[4:], req.Indices)  // rAthena: indices
 	_ = packetver
 	return p

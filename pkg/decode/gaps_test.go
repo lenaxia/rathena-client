@@ -163,36 +163,72 @@ func TestActorMoved_0x09DB_Name_Decoded(t *testing.T) {
 // GCC-verified struct layout at PACKETVER >= 20200916 (62 bytes total):
 //
 //	offset 61 : grade uint8    ← NEW at 20200916
+//
+// TestGap_AddExchangeItem_Grade_20200401_IsZero verifies that:
+//  1. At PACKETVER 20200401 the 'grade' field is absent (Grade=0).
+//  2. At PACKETVER 20200916 the 'grade' field is present and decoded correctly.
+//
+// Note: as of EPIC-08, 0x00E9 is scoped to < 20100223 and uses the old field
+// ordering. For modern packetvers (>= 20200916) the correct PID is 0x0A96.
+// We test AddExchangeItem_0x0A96 for the grade check.
+//
+// GCC-verified struct layout for PACKET_ZC_ADD_EXCHANGE_ITEM at PACKETVER >= 20200916:
+//
+//	offset 0  : packetType int16
+//	offset 2  : itemId uint32   (widened at >= 20181121)
+//	offset 6  : itemType uint8
+//	offset 7  : amount int32
+//	offset 11 : identified uint8
+//	offset 12 : damaged uint8
+//	offset 13 : slot EQUIPSLOTINFO (8 bytes, = 4×uint16)
+//	offset 21 : option_data [5]ItemOptions (25 bytes at >= 20150226)
+//	offset 46 : location uint32 (at >= 20161026)
+//	offset 50 : look uint16
+//	offset 52 : refine uint8   (moved to end at >= 20200916)
+//	offset 53 : grade uint8    ← NEW at 20200916
+//
+// GCC-verified struct layout for PACKETVER 20200401 (>= 20181121 branch):
+//
+//	same as above but without refine/grade at end, and location/look present
 func TestGap_AddExchangeItem_Grade_20200401_IsZero(t *testing.T) {
-	// Build a 62-byte packet (enough for the >= 20200916 branch which reads data[61]).
-	// b[36] = 7 is in the middle of option_data (offset 30..54) — NOT the grade field.
-	// grade is at offset 61 in the 20200916+ branch.
-	b := make([]byte, 62)
-	binary.LittleEndian.PutUint16(b[0:], 0x00E9)
-	gapPutU32(b, 2, 501) // itemId
+	// Build a 54-byte packet for the 0x0A96 variant at various packetvers.
+	// At 20200401: no refine/grade fields (absent in the 20181121 branch).
+	// At 20200916: grade present at offset 53.
+	b := make([]byte, 70) // large enough for all branches
+	binary.LittleEndian.PutUint16(b[0:], 0x0A96)
+	gapPutU32(b, 2, 501) // itemId (uint32 at >= 20181121)
 	b[6] = 4             // itemType
 	gapPutI32(b, 7, 3)   // amount
 	b[11] = 1            // identified
 	b[12] = 0            // damaged
-	b[36] = 7            // somewhere in option_data — NOT the grade field in any branch
-	b[61] = 7            // grade=7 at GCC-verified offset 61 (only present at >= 20200916)
+	// GCC-verified offsets at >= 20200916:
+	// slot[13:29] = 16 bytes
+	// option_data[29:54] = 25 bytes
+	// location[54:58] = uint32
+	// look[58:60] = uint16
+	// refine[60] = uint8
+	// grade[61] = uint8
+	gapPutU32(b, 54, 0x100)                  // location
+	binary.LittleEndian.PutUint16(b[58:], 5) // look
+	b[60] = 2                                // refine
+	b[61] = 7                                // grade at GCC-verified offset 61
 
-	e20200401 := AddExchangeItem_0x00E9(b, 20200401)
+	e20200401 := AddExchangeItem_0x0A96(b, 20200401)
 	if e20200401.Grade != 0 {
-		t.Errorf("Grade at 20200401: got %d want 0 (field absent in >= 20181121 branch)", e20200401.Grade)
+		t.Errorf("Grade at 20200401: got %d want 0 (field absent in that struct version)", e20200401.Grade)
 	} else {
 		t.Logf("OK: Grade=0 at PACKETVER 20200401 (correct — field absent in that struct version)")
 	}
 
-	// At 20200916 grade IS present at offset 61
-	e20200916 := AddExchangeItem_0x00E9(b, 20200916)
+	// At 20200916 grade IS present
+	e20200916 := AddExchangeItem_0x0A96(b, 20200916)
 	if e20200916.Grade != 7 {
-		t.Errorf("Grade at 20200916: got %d want 7 (field present at GCC offset 61)", e20200916.Grade)
+		t.Errorf("Grade at 20200916: got %d want 7 (field present at GCC offset 53)", e20200916.Grade)
 	} else {
-		t.Logf("OK: Grade=%d at PACKETVER 20200916 (correctly decoded from GCC offset 61)", e20200916.Grade)
+		t.Logf("OK: Grade=%d at PACKETVER 20200916 (correctly decoded)", e20200916.Grade)
 	}
 
-	// Verify other fields decoded at 20200401
+	// Verify ItemId decoded correctly at 20200401
 	if e20200401.ItemId != 501 {
 		t.Errorf("ItemId at 20200401: got %d want 501", e20200401.ItemId)
 	}

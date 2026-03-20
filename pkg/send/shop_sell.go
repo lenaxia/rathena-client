@@ -4,6 +4,5 @@ package send
 
 // ShopSell is the request struct for the shop_sell action.
 type ShopSell struct {
-	PacketLength int16
 	SellList []byte
 }

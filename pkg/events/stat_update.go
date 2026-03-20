@@ -8,5 +8,6 @@ type StatUpdate struct {
 	Count int32
 	Amount int32
 	StatusID uint16
-	Value uint8
+	Value uint32
+	Type int16
 }

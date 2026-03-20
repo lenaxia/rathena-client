@@ -110,7 +110,13 @@ func generateRegisterFileInner(db *semantics.DB, vt preprocess.VersionTable, enc
 				sendImpls = append(sendImpls, impl)
 			}
 		}
-		if len(sendImpls) == 0 {
+
+		// Check whether a hand-written Encode* function exists even without a DB
+		// send-direction implementation (e.g. guild_chat / EncodeGuildChat).
+		encodeFuncName := fmt.Sprintf("Encode%s", goIdent)
+		hasHandWrittenEncoder := encodeDir != "" && existingEncoders[encodeFuncName]
+
+		if len(sendImpls) == 0 && !hasHandWrittenEncoder {
 			skipped = append(skipped, name)
 			continue
 		}
@@ -119,7 +125,6 @@ func generateRegisterFileInner(db *semantics.DB, vt preprocess.VersionTable, enc
 		// This handles the case where the encode codegen skips an action (e.g.
 		// because its struct layout is unknown), but the action has a send-direction
 		// entry in the DB.
-		encodeFuncName := fmt.Sprintf("Encode%s", goIdent)
 		if encodeDir != "" && !existingEncoders[encodeFuncName] {
 			skipped = append(skipped, name)
 			continue

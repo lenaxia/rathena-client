@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeCzSePcBuyCashitemList encodes a 0x0848 (PACKET_CZ_SE_PC_BUY_CASHITEM_LIST) packet for sending to the server.
-func EncodeCzSePcBuyCashitemList(req send.CzSePcBuyCashitemList, packetver uint32) [10]byte {
-	var p [10]byte
+func EncodeCzSePcBuyCashitemList(req send.CzSePcBuyCashitemList, packetver uint32) []byte {
+	p := make([]byte, 10+len(req.Items))
 	// Packet ID: 0x0848 (little-endian)
 	p[0] = 0x48
 	p[1] = 0x08
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	leU16Put(p[4:], req.Count)  // rAthena: count
 	leU32Put(p[6:], req.KafraPoints)  // rAthena: kafraPoints
 	copy(p[10:], req.Items)  // rAthena: items

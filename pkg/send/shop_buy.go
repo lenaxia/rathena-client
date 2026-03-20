@@ -4,6 +4,5 @@ package send
 
 // ShopBuy is the request struct for the shop_buy action.
 type ShopBuy struct {
-	PacketLength int16
 	Items []byte
 }

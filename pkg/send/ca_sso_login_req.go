@@ -4,7 +4,6 @@ package send
 
 // CaSsoLoginReq is the request struct for the ca_sso_login_req action.
 type CaSsoLoginReq struct {
-	PacketLength int16
 	Version uint32
 	Clienttype uint8
 	Username string

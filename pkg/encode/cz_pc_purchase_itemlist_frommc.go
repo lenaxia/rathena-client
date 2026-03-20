@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeCzPcPurchaseItemlistFrommc encodes a 0x0134 (PACKET_CZ_PC_PURCHASE_ITEMLIST_FROMMC) packet for sending to the server.
-func EncodeCzPcPurchaseItemlistFrommc(req send.CzPcPurchaseItemlistFrommc, packetver uint32) [8]byte {
-	var p [8]byte
+func EncodeCzPcPurchaseItemlistFrommc(req send.CzPcPurchaseItemlistFrommc, packetver uint32) []byte {
+	p := make([]byte, 8+len(req.List))
 	// Packet ID: 0x0134 (little-endian)
 	p[0] = 0x34
 	p[1] = 0x01
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	leU32Put(p[4:], req.AID)  // rAthena: AID
 	copy(p[8:], req.List)  // rAthena: list
 	_ = packetver

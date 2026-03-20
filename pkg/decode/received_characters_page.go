@@ -13,3 +13,12 @@ func ReceivedCharactersPage_0x099D(data []byte, packetver uint32) events.Receive
 	return e
 }
 
+// ReceivedCharactersPage_0x0B72 decodes a 0x0B72 packet (struct PACKET_HC_ACK_CHARINFO_PER_PAGE).
+func ReceivedCharactersPage_0x0B72(data []byte, packetver uint32) events.ReceivedCharactersPage {
+	var e events.ReceivedCharactersPage
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Characters = data[4:]  // rAthena: characters (offset 4, size 0)
+	return e
+}
+

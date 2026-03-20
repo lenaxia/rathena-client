@@ -167,6 +167,7 @@ import (
 //   remove_option
 //   repair_item
 //   reply_party_invite
+//   request_buy_sell_list
 //   request_character_page
 //   request_memo
 //   restart
@@ -220,6 +221,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x01D9, fn: func(d []byte, pv uint32) interface{} { return decode.ActorConnected_0x01D9(d, pv) }},
 		{id: 0x02ED, fn: func(d []byte, pv uint32) interface{} { return decode.ActorConnected_0x02ED(d, pv) }},
 		{id: 0x09FE, fn: func(d []byte, pv uint32) interface{} { return decode.ActorConnected_0x09FE(d, pv) }},
+		{id: 0x022B, fn: func(d []byte, pv uint32) interface{} { return decode.ActorConnected_0x022B(d, pv) }},
+		{id: 0x09DC, fn: func(d []byte, pv uint32) interface{} { return decode.ActorConnected_0x09DC(d, pv) }},
 	},
 	ActionActorDiedOrDisappeared: {
 		{id: 0x0080, fn: func(d []byte, pv uint32) interface{} { return decode.ActorDiedOrDisappeared_0x0080(d, pv) }},
@@ -227,8 +230,10 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionActorExists: {
 		{id: 0x0078, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x0078(d, pv) }},
 		{id: 0x01D8, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x01D8(d, pv) }},
-		{id: 0x02EC, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x02EC(d, pv) }},
 		{id: 0x09FF, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x09FF(d, pv) }},
+		{id: 0x022A, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x022A(d, pv) }},
+		{id: 0x02EE, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x02EE(d, pv) }},
+		{id: 0x09DD, fn: func(d []byte, pv uint32) interface{} { return decode.ActorExists_0x09DD(d, pv) }},
 	},
 	ActionActorMoved: {
 		{id: 0x007B, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x007B(d, pv) }},
@@ -236,6 +241,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x022C, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x022C(d, pv) }},
 		{id: 0x09DB, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x09DB(d, pv) }},
 		{id: 0x09FD, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x09FD(d, pv) }},
+		{id: 0x02EC, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x02EC(d, pv) }},
 	},
 	ActionActorStatusActive: {
 		{id: 0x0196, fn: func(d []byte, pv uint32) interface{} { return decode.ActorStatusActive_0x0196(d, pv) }},
@@ -245,9 +251,13 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionAddExchangeItem: {
 		{id: 0x00E9, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x00E9(d, pv) }},
+		{id: 0x080F, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x080F(d, pv) }},
+		{id: 0x0A09, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x0A09(d, pv) }},
+		{id: 0x0A96, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x0A96(d, pv) }},
 	},
 	ActionAreaSpell: {
 		{id: 0x011F, fn: func(d []byte, pv uint32) interface{} { return decode.AreaSpell_0x011F(d, pv) }},
+		{id: 0x08C7, fn: func(d []byte, pv uint32) interface{} { return decode.AreaSpell_0x08C7(d, pv) }},
 	},
 	ActionAttackRange: {
 		{id: 0x013A, fn: func(d []byte, pv uint32) interface{} { return decode.AttackRange_0x013A(d, pv) }},
@@ -267,6 +277,10 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionCastCancelled: {
 		{id: 0x01B9, fn: func(d []byte, pv uint32) interface{} { return decode.CastCancelled_0x01B9(d, pv) }},
 	},
+	ActionCharCreated: {
+		{id: 0x006D, fn: func(d []byte, pv uint32) interface{} { return decode.CharCreated_0x006D(d, pv) }},
+		{id: 0x0B6F, fn: func(d []byte, pv uint32) interface{} { return decode.CharCreated_0x0B6F(d, pv) }},
+	},
 	ActionCharacterBlocked: {
 		{id: 0x020D, fn: func(d []byte, pv uint32) interface{} { return decode.CharacterBlocked_0x020D(d, pv) }},
 	},
@@ -281,6 +295,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionCharacterServerRefused: {
 		{id: 0x006C, fn: func(d []byte, pv uint32) interface{} { return decode.CharacterServerRefused_0x006C(d, pv) }},
+		{id: 0x02CA, fn: func(d []byte, pv uint32) interface{} { return decode.CharacterServerRefused_0x02CA(d, pv) }},
 	},
 	ActionChatMessage: {
 		{id: 0x008D, fn: func(d []byte, pv uint32) interface{} { return decode.ChatMessage_0x008D(d, pv) }},
@@ -299,11 +314,28 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionEntitySpawn: {
 		{id: 0x007C, fn: func(d []byte, pv uint32) interface{} { return decode.EntitySpawn_0x007C(d, pv) }},
 	},
+	ActionExp: {
+		{id: 0x07F6, fn: func(d []byte, pv uint32) interface{} { return decode.Exp_0x07F6(d, pv) }},
+		{id: 0x0ACC, fn: func(d []byte, pv uint32) interface{} { return decode.Exp_0x0ACC(d, pv) }},
+	},
 	ActionGuildChat: {
 		{id: 0x017F, fn: func(d []byte, pv uint32) interface{} { return decode.GuildChat_0x017F(d, pv) }},
 	},
 	ActionHomunculusInfo: {
 		{id: 0x0230, fn: func(d []byte, pv uint32) interface{} { return decode.HomunculusInfo_0x0230(d, pv) }},
+	},
+	ActionInventoryItemsEquip: {
+		{id: 0x00A4, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsEquip_0x00A4(d, pv) }},
+		{id: 0x0992, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsEquip_0x0992(d, pv) }},
+		{id: 0x0A0D, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsEquip_0x0A0D(d, pv) }},
+		{id: 0x0B0A, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsEquip_0x0B0A(d, pv) }},
+		{id: 0x0B39, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsEquip_0x0B39(d, pv) }},
+	},
+	ActionInventoryItemsStackable: {
+		{id: 0x00A3, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsStackable_0x00A3(d, pv) }},
+		{id: 0x01EE, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsStackable_0x01EE(d, pv) }},
+		{id: 0x02E8, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsStackable_0x02E8(d, pv) }},
+		{id: 0x0991, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemsStackable_0x0991(d, pv) }},
 	},
 	ActionItemAppeared: {
 		{id: 0x009E, fn: func(d []byte, pv uint32) interface{} { return decode.ItemAppeared_0x009E(d, pv) }},
@@ -314,9 +346,17 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionItemPickup: {
 		{id: 0x00A0, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x00A0(d, pv) }},
 		{id: 0x0A37, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x0A37(d, pv) }},
+		{id: 0x029A, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x029A(d, pv) }},
+		{id: 0x02D4, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x02D4(d, pv) }},
+		{id: 0x0990, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x0990(d, pv) }},
+		{id: 0x0A0C, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x0A0C(d, pv) }},
+		{id: 0x0B41, fn: func(d []byte, pv uint32) interface{} { return decode.ItemPickup_0x0B41(d, pv) }},
 	},
 	ActionLoginError: {
 		{id: 0x083E, fn: func(d []byte, pv uint32) interface{} { return decode.LoginError_0x083E(d, pv) }},
+	},
+	ActionMailReceive: {
+		{id: 0x0274, fn: func(d []byte, pv uint32) interface{} { return decode.MailReceive_0x0274(d, pv) }},
 	},
 	ActionMapChanged: {
 		{id: 0x0091, fn: func(d []byte, pv uint32) interface{} { return decode.MapChanged_0x0091(d, pv) }},
@@ -340,6 +380,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionPinCodeRequest: {
 		{id: 0x08B9, fn: func(d []byte, pv uint32) interface{} { return decode.PinCodeRequest_0x08B9(d, pv) }},
+		{id: 0x02AD, fn: func(d []byte, pv uint32) interface{} { return decode.PinCodeRequest_0x02AD(d, pv) }},
 	},
 	ActionPrivateMessage: {
 		{id: 0x0097, fn: func(d []byte, pv uint32) interface{} { return decode.PrivateMessage_0x0097(d, pv) }},
@@ -352,9 +393,11 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionReceivedCharactersPage: {
 		{id: 0x099D, fn: func(d []byte, pv uint32) interface{} { return decode.ReceivedCharactersPage_0x099D(d, pv) }},
+		{id: 0x0B72, fn: func(d []byte, pv uint32) interface{} { return decode.ReceivedCharactersPage_0x0B72(d, pv) }},
 	},
 	ActionReceivedMapServerInfo: {
 		{id: 0x0AC5, fn: func(d []byte, pv uint32) interface{} { return decode.ReceivedMapServerInfo_0x0AC5(d, pv) }},
+		{id: 0x0071, fn: func(d []byte, pv uint32) interface{} { return decode.ReceivedMapServerInfo_0x0071(d, pv) }},
 	},
 	ActionScNotifyBan: {
 		{id: 0x0081, fn: func(d []byte, pv uint32) interface{} { return decode.ScNotifyBan_0x0081(d, pv) }},
@@ -367,6 +410,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionSkillAdd: {
 		{id: 0x0111, fn: func(d []byte, pv uint32) interface{} { return decode.SkillAdd_0x0111(d, pv) }},
+		{id: 0x0B31, fn: func(d []byte, pv uint32) interface{} { return decode.SkillAdd_0x0B31(d, pv) }},
 	},
 	ActionSkillCast: {
 		{id: 0x07FB, fn: func(d []byte, pv uint32) interface{} { return decode.SkillCast_0x07FB(d, pv) }},
@@ -392,11 +436,13 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionSkillsList: {
 		{id: 0x010F, fn: func(d []byte, pv uint32) interface{} { return decode.SkillsList_0x010F(d, pv) }},
+		{id: 0x0B32, fn: func(d []byte, pv uint32) interface{} { return decode.SkillsList_0x0B32(d, pv) }},
 	},
 	ActionStatUpdate: {
 		{id: 0x00B0, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x00B0(d, pv) }},
 		{id: 0x00B1, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x00B1(d, pv) }},
 		{id: 0x00BE, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x00BE(d, pv) }},
+		{id: 0x02A2, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x02A2(d, pv) }},
 	},
 	ActionSync: {
 		{id: 0x007F, fn: func(d []byte, pv uint32) interface{} { return decode.Sync_0x007F(d, pv) }},
@@ -412,6 +458,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcAcceptEnter: {
 		{id: 0x0A18, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAcceptEnter_0x0A18(d, pv) }},
+		{id: 0x0073, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAcceptEnter_0x0073(d, pv) }},
+		{id: 0x02EB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAcceptEnter_0x02EB(d, pv) }},
 	},
 	ActionZcAckAddExchangeItem: {
 		{id: 0x00EA, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckAddExchangeItem_0x00EA(d, pv) }},
@@ -645,6 +693,9 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionZcDynamicnpcCreateResult: {
 		{id: 0x0A17, fn: func(d []byte, pv uint32) interface{} { return decode.ZcDynamicnpcCreateResult_0x0A17(d, pv) }},
 	},
+	ActionZcElParChange: {
+		{id: 0x081E, fn: func(d []byte, pv uint32) interface{} { return decode.ZcElParChange_0x081E(d, pv) }},
+	},
 	ActionZcEntryQueueInit: {
 		{id: 0x090E, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEntryQueueInit_0x090E(d, pv) }},
 	},
@@ -659,6 +710,11 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcEquipwinMicroscope: {
 		{id: 0x02D7, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x02D7(d, pv) }},
+		{id: 0x0859, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0859(d, pv) }},
+		{id: 0x0906, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0906(d, pv) }},
+		{id: 0x0997, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0997(d, pv) }},
+		{id: 0x0A2D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0A2D(d, pv) }},
+		{id: 0x0B03, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0B03(d, pv) }},
 	},
 	ActionZcExchangeitemUndo: {
 		{id: 0x00F1, fn: func(d []byte, pv uint32) interface{} { return decode.ZcExchangeitemUndo_0x00F1(d, pv) }},
@@ -692,6 +748,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcGuildInfo: {
 		{id: 0x0A84, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildInfo_0x0A84(d, pv) }},
+		{id: 0x01B6, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildInfo_0x01B6(d, pv) }},
+		{id: 0x0B7B, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildInfo_0x0B7B(d, pv) }},
 	},
 	ActionZcGuildNotice: {
 		{id: 0x016F, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildNotice_0x016F(d, pv) }},
@@ -699,8 +757,12 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionZcGuildSkillinfo: {
 		{id: 0x0162, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildSkillinfo_0x0162(d, pv) }},
 	},
+	ActionZcHoParChange: {
+		{id: 0x07DB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcHoParChange_0x07DB(d, pv) }},
+	},
 	ActionZcHoskillinfoList: {
 		{id: 0x0235, fn: func(d []byte, pv uint32) interface{} { return decode.ZcHoskillinfoList_0x0235(d, pv) }},
+		{id: 0x029D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcHoskillinfoList_0x029D(d, pv) }},
 	},
 	ActionZcHoskillinfoUpdate: {
 		{id: 0x0239, fn: func(d []byte, pv uint32) interface{} { return decode.ZcHoskillinfoUpdate_0x0239(d, pv) }},
@@ -906,8 +968,14 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionZcReqJoinGuild: {
 		{id: 0x016A, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqJoinGuild_0x016A(d, pv) }},
 	},
+	ActionZcReqTakeoffEquipAck: {
+		{id: 0x00AC, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqTakeoffEquipAck_0x00AC(d, pv) }},
+		{id: 0x08D1, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqTakeoffEquipAck_0x08D1(d, pv) }},
+		{id: 0x099A, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqTakeoffEquipAck_0x099A(d, pv) }},
+	},
 	ActionZcReqWearEquipAck: {
 		{id: 0x00AA, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqWearEquipAck_0x00AA(d, pv) }},
+		{id: 0x0999, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqWearEquipAck_0x0999(d, pv) }},
 	},
 	ActionZcResponseEnchant: {
 		{id: 0x0B9F, fn: func(d []byte, pv uint32) interface{} { return decode.ZcResponseEnchant_0x0B9F(d, pv) }},
@@ -944,6 +1012,9 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcShortcutKeyList: {
 		{id: 0x02B9, fn: func(d []byte, pv uint32) interface{} { return decode.ZcShortcutKeyList_0x02B9(d, pv) }},
+		{id: 0x07D9, fn: func(d []byte, pv uint32) interface{} { return decode.ZcShortcutKeyList_0x07D9(d, pv) }},
+		{id: 0x0A00, fn: func(d []byte, pv uint32) interface{} { return decode.ZcShortcutKeyList_0x0A00(d, pv) }},
+		{id: 0x0B20, fn: func(d []byte, pv uint32) interface{} { return decode.ZcShortcutKeyList_0x0B20(d, pv) }},
 	},
 	ActionZcShowImage: {
 		{id: 0x01B3, fn: func(d []byte, pv uint32) interface{} { return decode.ZcShowImage_0x01B3(d, pv) }},
@@ -959,6 +1030,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcSkillinfoUpdate2: {
 		{id: 0x07E1, fn: func(d []byte, pv uint32) interface{} { return decode.ZcSkillinfoUpdate2_0x07E1(d, pv) }},
+		{id: 0x0B33, fn: func(d []byte, pv uint32) interface{} { return decode.ZcSkillinfoUpdate2_0x0B33(d, pv) }},
 	},
 	ActionZcSoulenergy: {
 		{id: 0x0B73, fn: func(d []byte, pv uint32) interface{} { return decode.ZcSoulenergy_0x0B73(d, pv) }},

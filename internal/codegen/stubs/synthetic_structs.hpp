@@ -14,6 +14,7 @@
 typedef uint8_t  uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
+typedef uint64_t uint64;
 typedef int16_t  int16;
 typedef int32_t  int32;
 
@@ -759,4 +760,104 @@ struct SYNTH_CZ_NPC_TRADE_QUIT {
 // Layout: int16 PacketType = 2 bytes
 struct SYNTH_CZ_NPC_MARKET_CLOSE {
     int16 PacketType;
+} __attribute__((packed));
+
+// ============================================================================
+// EPIC-08: Missing packet coverage — ZC (Server → Client) SYNTH_ structs
+// ============================================================================
+
+// 0x0071 HC_NOTIFY_ZONESVR (pre-2017 format, 28 bytes)
+// Used before rAthena switched to 0x0081 (PACKET_HC_NOTIFY_ZONESVR without domain).
+// Layout verified from: char_clif.cpp chclif_send_map_data() + OpenKore Sakexe_0.pm
+// pack='a4 Z16 a4 v' fields=[charID, mapName, mapIP, mapPort]
+// MAP_NAME_LENGTH_EXT = 16 (MAP_NAME_LENGTH(12) + 4)
+struct SYNTH_HC_NOTIFY_ZONESVR_OLD {
+    int16  packetType;   // = 0x0071
+    uint32 CID;          // character ID
+    char   mapname[16];  // MAP_NAME_LENGTH_EXT = 16
+    uint32 ip;           // map server IP (network byte order)
+    uint16 port;         // map server port
+} __attribute__((packed));
+
+// 0x07F6 ZC_LONG_PAR_CHANGE (EXP gain, pre-20170830, 14 bytes)
+// Source: clif.cpp clif_displayexp() — raw WFIFOW/WFIFOL writes
+// WFIFOW(fd,0)=cmd, WFIFOL(fd,2)=sd->id, WFIFOL(fd,6)=exp, WFIFOW(fd,10)=type, WFIFOW(fd,12)=quest
+struct SYNTH_ZC_LONG_PAR_CHANGE {
+    int16  packetType;   // = 0x07F6
+    uint32 aid;          // actor ID
+    uint32 exp;          // experience value (uint32)
+    uint16 type;         // SP_BASEEXP=1, SP_JOBEXP=2
+    uint16 quest;        // 1 if quest exp, 0 otherwise
+} __attribute__((packed));
+
+// 0x0ACC ZC_LONG_PAR_CHANGE2 (EXP gain, >=20170830, 18 bytes)
+// Source: clif.cpp clif_displayexp() — WFIFOQ(fd,6) writes uint64
+// WFIFOW(fd,0)=cmd, WFIFOL(fd,2)=sd->id, WFIFOQ(fd,6)=exp(int64), WFIFOW(fd,14)=type, WFIFOW(fd,16)=quest
+struct SYNTH_ZC_LONG_PAR_CHANGE2 {
+    int16    packetType;   // = 0x0ACC
+    uint32   aid;          // actor ID
+    uint64 exp;          // experience value (int64)
+    uint16   type;         // SP_BASEEXP=1, SP_JOBEXP=2
+    uint16   quest;        // 1 if quest exp, 0 otherwise
+} __attribute__((packed));
+
+// 0x02A2 ZC_PAR_CHANGE2 (stat update variant, 8 bytes)
+// Source: clif_packetdb.hpp packet(0x02a2, 8)
+// OpenKore Sakexe_0.pm pack='v V' fields=[type, val]
+// Same layout as PACKET_ZC_PAR_CHANGE (0x00B0) — type + value, no actor ID
+struct SYNTH_ZC_PAR_CHANGE2 {
+    int16  packetType;   // = 0x02A2
+    int16  type;         // stat type (SP_*)
+    uint32 value;        // new value
+} __attribute__((packed));
+
+// 0x02AD HC_SECOND_PASSWD_LOGIN_OLD (PIN code request, pre-0x08B9, 8 bytes)
+// Source: clif_packetdb.hpp packet(0x02ad, 8)
+// OpenKore Sakexe_0.pm pack='v V' fields=[flag, key]
+struct SYNTH_HC_SECOND_PASSWD_LOGIN_OLD {
+    int16  packetType;   // = 0x02AD
+    uint16 flag;         // 0=correct, 1=wrong, 2=no pin, 3=new pin
+    uint32 key;          // random key for PIN encoding
+} __attribute__((packed));
+
+// 0x02CA HC_REFUSE_ENTER_OLD (char server refused, 3 bytes)
+// Source: clif_packetdb.hpp packet(0x02ca, 3)
+// OpenKore Sakexe_0.pm pack='C' fields=[type]
+struct SYNTH_HC_REFUSE_ENTER_OLD {
+    int16 packetType;   // = 0x02CA
+    uint8 errorCode;    // same semantics as PACKET_HC_REFUSE_ENTER
+} __attribute__((packed));
+
+// 0x08C7 ZC_SKILL_ENTRY3 (area spell variant, 20 bytes)
+// Source: clif.cpp clif_getareachar_skillunit() case 0x08c7 (commented-out path)
+// Wire layout from WBUF calls with pos=2 (after packetType+length header):
+//   WBUFW(buf,0)    = 0x08C7  (packetType)
+//   WBUFW(buf,2)    = len     (packetLength)
+//   WBUFL(buf,pos+2) = unit->id          → offset 4 (uint32)
+//   WBUFL(buf,pos+6) = unit->group->src_id → offset 8 (uint32)
+//   WBUFW(buf,pos+10) = unit->x          → offset 12 (uint16)
+//   WBUFW(buf,pos+12) = unit->y          → offset 14 (uint16)
+//   WBUFB(buf,pos+14) = unit_id          → offset 16 (uint8)
+//   WBUFW(buf,pos+15) = unit->range      → offset 17 (uint16, NOT uint8!)
+//   WBUFB(buf,pos+17) = visible          → offset 19 (uint8)
+//   Total: 20 bytes
+struct SYNTH_ZC_SKILL_ENTRY3 {
+    int16  packetType;   // = 0x08C7
+    uint16 Pad;          // packetLength field (pos offset)
+    uint32 id;           // area spell ID
+    uint32 creatorId;    // source unit ID
+    uint16 x;            // x position
+    uint16 y;            // y position
+    uint8  type;         // skill unit type (unit_id)
+    uint16 range;        // effect range (WBUFW = uint16, not uint8)
+    uint8  isVisible;    // visibility flag
+} __attribute__((packed));
+
+// 0x0274 ZC_MAIL_RECEIVE (mail notification, 8 bytes)
+// Source: clif_packetdb.hpp packet(0x0274, 8)
+// OpenKore Sakexe_0.pm handler=mail_return, pack='V v' fields=[mailID, fail]
+struct SYNTH_ZC_MAIL_RECEIVE {
+    int16  packetType;   // = 0x0274
+    uint32 mailId;       // mail ID
+    uint16 fail;         // 0=success, nonzero=failure
 } __attribute__((packed));

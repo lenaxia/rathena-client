@@ -517,13 +517,13 @@ goKore calls session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y:
 | `validation/` | **Complete** | preprocess_check.sh, phase1_gate.sh, struct_layout.sh (worklogs 0002-0007) |
 | `internal/codegen` | **Complete** | Full GCC+semantics pipeline; 770 structs in VersionTable (worklog 0039) |
 | `pkg/events` | **Complete** | 281 generated event structs (worklog 0013) |
-| `pkg/send` | **Complete** | 152 generated send request structs (worklog 0039) |
-| `pkg/decode` | **Complete** | 282 generated decode functions; zero allocs; zero "complex expression" gaps (worklogs 0036-0037) |
-| `pkg/encode` | **Complete** | 178 generated encode functions + `shuffle_map.go` (`shuffledCtoSID`, unexported) (worklog 0055) |
+| `pkg/send` | **Complete** | 177 generated send request structs (worklogs 0039, 0063) |
+| `pkg/decode` | **Complete** | 284 generated decode functions; zero allocs; zero "complex expression" gaps (worklogs 0036-0037, 0064) |
+| `pkg/encode` | **Complete** | 176 generated encode functions + `shuffle_map.go` (`shuffledCtoSID`, unexported) (worklogs 0055, 0063) |
 | `pkg/session` (generated) | **Complete** | lengths_login.go, lengths_char.go, lengths_map.go, obfuscation_keys.go (`obfuscationKeysFor`, unexported); `shuffle_map.go` moved to pkg/encode (worklog 0055) |
 | `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go, fsm.go, fsm_parse.go, fsm_packets.go, semantic.go, actions.go, receive_dispatch.go; all tests pass; 0 allocs/op benchmarks |
 | `pkg/fsm` | **Deleted** | Merged into pkg/session (worklog 0054). ConnectionFSM, ServerConfig, Credentials, CharServerInfo, IdentityInfo, ReadyInfo, Dialer now live in pkg/session. |
-| Semantic action API | **Complete** | RegisterSemanticHandler, Send, SemanticAction enum (460 constants), receive dispatch (277 actions), send encoders (178); all old low-level API unexported (worklogs 0050-0055) |
+| Semantic action API | **Complete** | RegisterSemanticHandler, Send, SemanticAction enum (450 constants), receive dispatch (276 actions, 349 packet IDs), send encoders (171); all old low-level API unexported (worklogs 0050-0055, 0063) |
 
 **Gate status**: 76 PASS / 1 FAIL (expected; CH_MAKE_CHAR 0x0065 shuffle — documented). `go build ./...` and `go test ./...` are clean.
 
@@ -574,8 +574,8 @@ Codegen output:
 - `pkg/session/lengths_char.go` — 37+ entries; CH_/HC_/SC_/PING packets
 - `pkg/session/lengths_map.go` — full map server table (4 codegen passes + post-merge dedup)
 - `pkg/session/obfuscation_keys.go` — `obfuscationKeysFor(packetver)` (unexported, package session)
-- `pkg/session/actions.go` — `SemanticAction` enum, 460 constants, `String()` method (worklog 0050)
-- `pkg/session/receive_dispatch.go` — `receiveDispatch` table, 277 receive-direction actions (worklog 0051)
+- `pkg/session/actions.go` — `SemanticAction` enum, 450 constants, `String()` method (worklog 0050)
+- `pkg/session/receive_dispatch.go` — `receiveDispatch` table, 276 receive-direction actions, 349 packet IDs (worklog 0051)
 
 ### Phase 5 — pkg/session (hand-written parts) ✅ COMPLETE (worklogs 0013, 0043)
 
@@ -606,8 +606,8 @@ After the merge:
 The public-facing API is now completely packet-ID agnostic. goKore never sees raw packet IDs or packetver-conditional dispatch logic.
 
 **Delivered:**
-- `pkg/session/actions.go` (generated) — `SemanticAction uint16` enum, 460 constants, `String()` method, `maxSemanticAction`
-- `pkg/session/receive_dispatch.go` (generated) — `receiveDispatch map[SemanticAction][]receiveEntry` covering 277 receive-direction actions
+- `pkg/session/actions.go` (generated) — `SemanticAction uint16` enum, 450 constants, `String()` method, `maxSemanticAction`
+- `pkg/session/receive_dispatch.go` (generated) — `receiveDispatch map[SemanticAction][]receiveEntry` covering 276 receive-direction actions
 - `pkg/encode/register.go` (generated) — `init()` with 178 `RegisterSendEncoder` calls
 - `pkg/session/semantic.go` (hand-written) — `RegisterSemanticHandler[E any]`, `Send`, `RegisterSendEncoder`, `ErrWrongSendType`
 - All old low-level symbols unexported: `registerHandler`, `setLength`, `encodePacketID`, `enableObfuscation`, `shuffledCtoSID` (in pkg/encode), `obfuscationKeysFor`, `handlerFunc`
@@ -704,9 +704,9 @@ codegen joins StructDB + ActionDB
     → pkg/session/lengths_map.go
     → pkg/encode/shuffle_map.go         shuffledCtoSID(packetver, baseID) — unexported, pkg/encode
     → pkg/session/obfuscation_keys.go   obfuscationKeysFor(packetver) (k0,k1,k2) — unexported, pkg/session
-    → pkg/session/actions.go            SemanticAction enum (460 constants)
-    → pkg/session/receive_dispatch.go   receiveDispatch table (277 actions)
-    → pkg/encode/register.go            init() with 178 RegisterSendEncoder calls
+    → pkg/session/actions.go            SemanticAction enum (450 constants)
+    → pkg/session/receive_dispatch.go   receiveDispatch table (276 actions, 349 packet IDs)
+    → pkg/encode/register.go            init() with 171 RegisterSendEncoder calls
 ```
 
 ### Running the codegen

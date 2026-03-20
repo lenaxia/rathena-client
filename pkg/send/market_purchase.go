@@ -4,6 +4,5 @@ package send
 
 // MarketPurchase is the request struct for the market_purchase action.
 type MarketPurchase struct {
-	PacketLength int16
 	List []byte
 }

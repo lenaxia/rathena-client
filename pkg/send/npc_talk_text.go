@@ -4,7 +4,6 @@ package send
 
 // NpcTalkText is the request struct for the npc_talk_text action.
 type NpcTalkText struct {
-	PacketSize uint16
 	GID int32
 	Value string
 }

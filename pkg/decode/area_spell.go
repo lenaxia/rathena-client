@@ -46,3 +46,18 @@ func AreaSpell_0x011F(data []byte, packetver uint32) events.AreaSpell {
 	return e
 }
 
+// AreaSpell_0x08C7 decodes a 0x08C7 packet (struct SYNTH_ZC_SKILL_ENTRY3).
+func AreaSpell_0x08C7(data []byte, packetver uint32) events.AreaSpell {
+	var e events.AreaSpell
+	_ = packetver
+	e.Pad = leU16(data, 2)  // rAthena: Pad (offset 2, size 2)
+	e.Id = leU32(data, 4)  // rAthena: id (offset 4, size 4)
+	e.CreatorId = leU32(data, 8)  // rAthena: creatorId (offset 8, size 4)
+	e.X = leU16(data, 12)  // rAthena: x (offset 12, size 2)
+	e.Y = leU16(data, 14)  // rAthena: y (offset 14, size 2)
+	e.Type = data[16]  // rAthena: type (offset 16, size 1)
+	e.Range = leU16(data, 17)  // rAthena: range (offset 17, size 2)
+	e.IsVisible = data[19]  // rAthena: isVisible (offset 19, size 1)
+	return e
+}
+

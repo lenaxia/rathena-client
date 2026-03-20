@@ -28,7 +28,7 @@ func TestLoaderDeepValidation(t *testing.T) {
 		{"actor_died_or_disappeared", 1, "0x0080", "PACKET_ZC_NOTIFY_VANISH", 20030000},
 		{"ac_accept_login", 2, "0x0069", "PACKET_AC_ACCEPT_LOGIN", 20030000},
 		{"account_id", 1, "0x0283", "SYNTH_ZC_AID", 20030000},
-		{"actor_exists", 4, "0x0078", "packet_idle_unit", 20030000},
+		{"actor_exists", 6, "0x0078", "packet_idle_unit", 20030000},
 		{"move_to", 2, "0x0085", "SYNTH_CZ_REQUEST_MOVE", 20030000},
 	}
 	for _, c := range checks {
@@ -53,12 +53,18 @@ func TestLoaderDeepValidation(t *testing.T) {
 		}
 	}
 
-	// actor_exists 4th impl (0x09FF) — pvMin bumped to 20181121
+	// actor_exists must contain 0x09FF with pvMin=20181121
 	ae := db.Actions["actor_exists"]
-	if ae != nil && len(ae.Implementations) >= 4 {
-		impl3 := ae.Implementations[3]
-		if impl3.PacketID != "0x09FF" || impl3.StructName != "packet_idle_unit" || impl3.PacketverMin != 20181121 {
-			t.Errorf("actor_exists[3]: pkt=%s struct=%s pvMin=%d", impl3.PacketID, impl3.StructName, impl3.PacketverMin)
+	if ae != nil {
+		found := false
+		for _, impl := range ae.Implementations {
+			if impl.PacketID == "0x09FF" && impl.StructName == "packet_idle_unit" && impl.PacketverMin == 20181121 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("actor_exists: missing 0x09FF/packet_idle_unit/pvMin=20181121")
 		}
 	}
 

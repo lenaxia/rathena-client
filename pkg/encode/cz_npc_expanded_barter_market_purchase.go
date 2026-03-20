@@ -7,12 +7,12 @@ import (
 )
 
 // EncodeCzNpcExpandedBarterMarketPurchase encodes a 0x0B57 (PACKET_CZ_NPC_EXPANDED_BARTER_MARKET_PURCHASE) packet for sending to the server.
-func EncodeCzNpcExpandedBarterMarketPurchase(req send.CzNpcExpandedBarterMarketPurchase, packetver uint32) [4]byte {
-	var p [4]byte
+func EncodeCzNpcExpandedBarterMarketPurchase(req send.CzNpcExpandedBarterMarketPurchase, packetver uint32) []byte {
+	p := make([]byte, 4+len(req.List))
 	// Packet ID: 0x0B57 (little-endian)
 	p[0] = 0x57
 	p[1] = 0x0b
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
+	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
 	copy(p[4:], req.List)  // rAthena: list
 	_ = packetver
 	return p

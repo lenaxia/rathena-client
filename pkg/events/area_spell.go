@@ -13,4 +13,11 @@ type AreaSpell struct {
 	PacketLength int16
 	RadiusRange int8
 	Level uint8
+	Pad uint16
+	Id uint32
+	CreatorId uint32
+	X uint16
+	Y uint16
+	Type uint8
+	Range uint16
 }

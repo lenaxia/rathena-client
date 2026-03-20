@@ -4,6 +4,5 @@ package send
 
 // CzNpcBarterMarketPurchase is the request struct for the cz_npc_barter_market_purchase action.
 type CzNpcBarterMarketPurchase struct {
-	PacketLength int16
 	List []byte
 }

@@ -14,3 +14,12 @@ func PinCodeRequest_0x08B9(data []byte, packetver uint32) events.PinCodeRequest 
 	return e
 }
 
+// PinCodeRequest_0x02AD decodes a 0x02AD packet (struct SYNTH_HC_SECOND_PASSWD_LOGIN_OLD).
+func PinCodeRequest_0x02AD(data []byte, packetver uint32) events.PinCodeRequest {
+	var e events.PinCodeRequest
+	_ = packetver
+	e.Flag = leU16(data, 2)  // rAthena: flag (offset 2, size 2)
+	e.Key = leU32(data, 4)  // rAthena: key (offset 4, size 4)
+	return e
+}
+
