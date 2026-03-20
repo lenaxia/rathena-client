@@ -4,8 +4,8 @@ package decode
 
 import "github.com/lenaxia/rathena-client/pkg/events"
 
-// ZcAckRanking_0x0AF6 decodes a 0x0AF6 packet (struct PACKET_ZC_ACK_RANKING).
-func ZcAckRanking_0x0AF6(data []byte, packetver uint32) events.ZcAckRanking {
+// ZcAckRanking_0x097D decodes a 0x097D packet (struct PACKET_ZC_ACK_RANKING).
+func ZcAckRanking_0x097D(data []byte, packetver uint32) events.ZcAckRanking {
 	var e events.ZcAckRanking
 	_ = packetver
 	e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)

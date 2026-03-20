@@ -15,463 +15,449 @@ const (
 	ActionAcRefuseLogin SemanticAction = 3
 	ActionAccessibleMaps SemanticAction = 4
 	ActionAccountId SemanticAction = 5
-	ActionAccountServerInfo SemanticAction = 6
-	ActionActorAction SemanticAction = 7
-	ActionActorConnected SemanticAction = 8
-	ActionActorDiedOrDisappeared SemanticAction = 9
-	ActionActorExists SemanticAction = 10
-	ActionActorMoved SemanticAction = 11
-	ActionActorStatusActive SemanticAction = 12
-	ActionActorStatusEffectExtended SemanticAction = 13
-	ActionAddExchangeItem SemanticAction = 14
-	ActionAreaSpell SemanticAction = 15
-	ActionAttackRange SemanticAction = 16
-	ActionAutoSpell SemanticAction = 17
-	ActionBankingCheck SemanticAction = 18
-	ActionBankingDeposit SemanticAction = 19
-	ActionBankingOpen SemanticAction = 20
-	ActionBankingWithdraw SemanticAction = 21
-	ActionCaConnectInfoChanged SemanticAction = 22
-	ActionCaExeHashcheck SemanticAction = 23
-	ActionCaLogin2 SemanticAction = 24
-	ActionCaLogin3 SemanticAction = 25
-	ActionCaLogin4 SemanticAction = 26
-	ActionCaLoginChannel SemanticAction = 27
-	ActionCaLoginPcbang SemanticAction = 28
-	ActionCaReqHash SemanticAction = 29
-	ActionCaSsoLoginReq SemanticAction = 30
-	ActionCastCancelled SemanticAction = 31
-	ActionCatchPet SemanticAction = 32
-	ActionChangeCart SemanticAction = 33
-	ActionCharCreate SemanticAction = 34
-	ActionCharDelete SemanticAction = 35
-	ActionCharLogin SemanticAction = 36
-	ActionCharacterBlocked SemanticAction = 37
-	ActionCharacterCreationFailed SemanticAction = 38
-	ActionCharacterMove SemanticAction = 39
-	ActionCharacterMoves SemanticAction = 40
-	ActionCharacterPagesNotify SemanticAction = 41
-	ActionCharacterServerRefused SemanticAction = 42
-	ActionChatMessage SemanticAction = 43
-	ActionCloseStorage SemanticAction = 44
-	ActionCloseVending SemanticAction = 45
-	ActionCtAuth SemanticAction = 46
-	ActionCzAckAnswerMacroDetector SemanticAction = 47
-	ActionCzAdvancedStatusChange SemanticAction = 48
-	ActionCzAdventurerAgencyJoinReq SemanticAction = 49
-	ActionCzAdventurerAgencyJoinResult SemanticAction = 50
-	ActionCzApproximateActor SemanticAction = 51
-	ActionCzCheckname1 SemanticAction = 52
-	ActionCzCheckname2 SemanticAction = 53
-	ActionCzChooseMenuZero SemanticAction = 54
-	ActionCzClientVersion SemanticAction = 55
-	ActionCzCloseMsgboxExtendBodyitemSize SemanticAction = 56
-	ActionCzCloseRefiningUi SemanticAction = 57
-	ActionCzCloseReformUi SemanticAction = 58
-	ActionCzCloseUiEnchant SemanticAction = 59
-	ActionCzCloseUiStylingshop SemanticAction = 60
-	ActionCzCmdResetcooltime SemanticAction = 61
-	ActionCzCompleteApplyMacroDetectorCaptcha SemanticAction = 62
-	ActionCzContactnpc SemanticAction = 63
-	ActionCzDynamicnpcCreateRequest SemanticAction = 64
-	ActionCzGetAccountLimtiedSaleList SemanticAction = 65
-	ActionCzGradeEnchantCloseUi SemanticAction = 66
-	ActionCzGradeEnchantRequest SemanticAction = 67
-	ActionCzGradeEnchantSelectEquipment SemanticAction = 68
-	ActionCzInventoryTab SemanticAction = 69
-	ActionCzItemReform SemanticAction = 70
-	ActionCzJoinGroup SemanticAction = 71
-	ActionCzJoinGuild SemanticAction = 72
-	ActionCzMoveItemFromBodyToCart SemanticAction = 73
-	ActionCzNpcBarterMarketClose SemanticAction = 74
-	ActionCzNpcBarterMarketPurchase SemanticAction = 75
-	ActionCzNpcExpandedBarterMarketClose SemanticAction = 76
-	ActionCzNpcExpandedBarterMarketPurchase SemanticAction = 77
-	ActionCzNpcMarketPurchase SemanticAction = 78
-	ActionCzPartyConfig SemanticAction = 79
-	ActionCzPartyJoinReq SemanticAction = 80
-	ActionCzPartyJoinReqAck SemanticAction = 81
-	ActionCzPcPurchaseItemlistFrommc SemanticAction = 82
-	ActionCzPcPurchaseItemlistFrommc2 SemanticAction = 83
-	ActionCzPingLive SemanticAction = 84
-	ActionCzRandomCombineItemUiClose SemanticAction = 85
-	ActionCzRandomUpgradeItemUiClose SemanticAction = 86
-	ActionCzRefiningSelectItem SemanticAction = 87
-	ActionCzReqAgitInvestment SemanticAction = 88
-	ActionCzReqApplyBargainSaleItem SemanticAction = 89
-	ActionCzReqApplyMacroDetector SemanticAction = 90
-	ActionCzReqBanGuild SemanticAction = 91
-	ActionCzReqCashBargainSaleItemInfo SemanticAction = 92
-	ActionCzReqChangeMemberpos SemanticAction = 93
-	ActionCzReqDisorganizeGuild SemanticAction = 94
-	ActionCzReqExtendBodyitemSize SemanticAction = 95
-	ActionCzReqGuildEmblemImg1 SemanticAction = 96
-	ActionCzReqGuildEmblemImg2 SemanticAction = 97
-	ActionCzReqGuildEmblemImg3 SemanticAction = 98
-	ActionCzReqItemrepair1 SemanticAction = 99
-	ActionCzReqItemrepair2 SemanticAction = 100
-	ActionCzReqJoinGuild SemanticAction = 101
-	ActionCzReqJoinGuild2 SemanticAction = 102
-	ActionCzReqLeaveGuild SemanticAction = 103
-	ActionCzReqMakingarrow SemanticAction = 104
-	ActionCzReqMergeItem SemanticAction = 105
-	ActionCzReqMoveGuildAgit SemanticAction = 106
-	ActionCzReqOpenMsgboxExtendBodyitemSize SemanticAction = 107
-	ActionCzReqPlayerAidInRange SemanticAction = 108
-	ActionCzReqPreviewMacroDetector SemanticAction = 109
-	ActionCzReqRandomCombineItem SemanticAction = 110
-	ActionCzReqRandomUpgradeItem SemanticAction = 111
-	ActionCzReqRefining SemanticAction = 112
-	ActionCzReqRemaintime SemanticAction = 113
-	ActionCzReqRemoveBargainSaleItem SemanticAction = 114
-	ActionCzReqSeCashTabCode SemanticAction = 115
-	ActionCzReqTakeoffEquipAll SemanticAction = 116
-	ActionCzReqUploadMacroDetector SemanticAction = 117
-	ActionCzRequestPerfectEnchant SemanticAction = 118
-	ActionCzRequestRandomEnchant SemanticAction = 119
-	ActionCzRequestResetEnchant SemanticAction = 120
-	ActionCzRequestUpgradeEnchant SemanticAction = 121
-	ActionCzResetSkill SemanticAction = 122
-	ActionCzRodexReturn SemanticAction = 123
-	ActionCzSeCashshopOpen1 SemanticAction = 124
-	ActionCzSeCashshopOpen2 SemanticAction = 125
-	ActionCzSePcBuyCashitemList SemanticAction = 126
-	ActionCzShortcutKeyChange1 SemanticAction = 127
-	ActionCzShortcutKeyChange2 SemanticAction = 128
-	ActionCzShortcutkeybarRotate1 SemanticAction = 129
-	ActionCzShortcutkeybarRotate2 SemanticAction = 130
-	ActionCzUninstallation SemanticAction = 131
-	ActionCzUploadMacroDetectorCaptcha SemanticAction = 132
-	ActionCzUsePackageitem SemanticAction = 133
-	ActionCzUseSkillEnd SemanticAction = 134
-	ActionCzUseSkillStart SemanticAction = 135
-	ActionCzViewCamerainfo SemanticAction = 136
-	ActionDealAddOther SemanticAction = 137
-	ActionDealCancel SemanticAction = 138
-	ActionDealFinalize SemanticAction = 139
-	ActionDealInitiate SemanticAction = 140
-	ActionDealReply SemanticAction = 141
-	ActionDealRequest SemanticAction = 142
-	ActionDealTrade SemanticAction = 143
-	ActionDropItem SemanticAction = 144
-	ActionEmote SemanticAction = 145
-	ActionEnterWorld SemanticAction = 146
-	ActionEntityMove SemanticAction = 147
-	ActionEntitySpawn SemanticAction = 148
-	ActionEquipItem SemanticAction = 149
-	ActionFriendsAdd SemanticAction = 150
-	ActionFriendsRemove SemanticAction = 151
-	ActionFriendsReply SemanticAction = 152
-	ActionGameLogin SemanticAction = 153
-	ActionGetItemFromCart SemanticAction = 154
-	ActionGuildChat SemanticAction = 155
-	ActionHomunculusAttack SemanticAction = 156
-	ActionHomunculusInfo SemanticAction = 157
-	ActionHomunculusMenu SemanticAction = 158
-	ActionIgnoreListReq SemanticAction = 159
-	ActionInsertCard SemanticAction = 160
-	ActionInventoryItemAdded SemanticAction = 161
-	ActionItemAppeared SemanticAction = 162
-	ActionItemDisappeared SemanticAction = 163
-	ActionItemExists SemanticAction = 164
-	ActionItemIdentify SemanticAction = 165
-	ActionItemPickup SemanticAction = 166
-	ActionItemUse SemanticAction = 167
-	ActionLoginError SemanticAction = 168
-	ActionLook SemanticAction = 169
-	ActionMapChanged SemanticAction = 170
-	ActionMapLoaded SemanticAction = 171
-	ActionMapLogin SemanticAction = 172
-	ActionMarketPurchase SemanticAction = 173
-	ActionMasterLogin SemanticAction = 174
-	ActionMonsterHpUpdate SemanticAction = 175
-	ActionMonsterRangedAttack SemanticAction = 176
-	ActionMoveFromStorage SemanticAction = 177
-	ActionMoveTo SemanticAction = 178
-	ActionMoveToStorage SemanticAction = 179
-	ActionNpcContact SemanticAction = 180
-	ActionNpcMarketClose SemanticAction = 181
-	ActionNpcMenuResponse SemanticAction = 182
-	ActionNpcStoreInfo SemanticAction = 183
-	ActionNpcTalkClose SemanticAction = 184
-	ActionNpcTalkContinue SemanticAction = 185
-	ActionNpcTalkNumber SemanticAction = 186
-	ActionNpcTalkText SemanticAction = 187
-	ActionNpcTradeQuit SemanticAction = 188
-	ActionPartyChangeOption SemanticAction = 189
-	ActionPartyCreate SemanticAction = 190
-	ActionPartyInvite SemanticAction = 191
-	ActionPartyKick SemanticAction = 192
-	ActionPartyLeave SemanticAction = 193
-	ActionPetEggList SemanticAction = 194
-	ActionPetInfo SemanticAction = 195
-	ActionPetMenu SemanticAction = 196
-	ActionPickupItem SemanticAction = 197
-	ActionPinCodeRequest SemanticAction = 198
-	ActionPinCodeResponse SemanticAction = 199
-	ActionPrivateMessage SemanticAction = 200
-	ActionPublicChat SemanticAction = 201
-	ActionQuestDialog SemanticAction = 202
-	ActionQuestDialogList SemanticAction = 203
-	ActionQuestUpdateMissionHunt SemanticAction = 204
-	ActionQuitGame SemanticAction = 205
-	ActionReceivedCharacterIDAndMap SemanticAction = 206
-	ActionReceivedCharacterIdAndMap SemanticAction = 207
-	ActionReceivedCharacters SemanticAction = 208
-	ActionReceivedCharactersInfo SemanticAction = 209
-	ActionReceivedCharactersPage SemanticAction = 210
-	ActionReceivedMapServerInfo SemanticAction = 211
-	ActionRemoveOption SemanticAction = 212
-	ActionRemovePartyMember SemanticAction = 213
-	ActionRepairItem SemanticAction = 214
-	ActionReplyPartyInvite SemanticAction = 215
-	ActionRequestAction SemanticAction = 216
-	ActionRequestCharacterPage SemanticAction = 217
-	ActionRequestCharlist SemanticAction = 218
-	ActionRequestMemo SemanticAction = 219
-	ActionRestart SemanticAction = 220
-	ActionScNotifyBan SemanticAction = 221
-	ActionSelectAccessibleMap SemanticAction = 222
-	ActionSelectArrow SemanticAction = 223
-	ActionSelectCharacter SemanticAction = 224
-	ActionSelectEgg SemanticAction = 225
-	ActionSelfChat SemanticAction = 226
-	ActionSellResult SemanticAction = 227
-	ActionSendEmotion SemanticAction = 228
-	ActionShopBuy SemanticAction = 229
-	ActionShopSell SemanticAction = 230
-	ActionSkillAdd SemanticAction = 231
-	ActionSkillCast SemanticAction = 232
-	ActionSkillDelete SemanticAction = 233
-	ActionSkillPostDelay SemanticAction = 234
-	ActionSkillUp SemanticAction = 235
-	ActionSkillUpdate SemanticAction = 236
-	ActionSkillUse SemanticAction = 237
-	ActionSkillUseFailed SemanticAction = 238
-	ActionSkillUseLocation SemanticAction = 239
-	ActionSkillUsedNoDamage SemanticAction = 240
-	ActionSkillsList SemanticAction = 241
-	ActionStatUpdate SemanticAction = 242
-	ActionStatusUp SemanticAction = 243
-	ActionSync SemanticAction = 244
-	ActionSystemChat SemanticAction = 245
-	ActionTcResult SemanticAction = 246
-	ActionTimeSyncResponse SemanticAction = 247
-	ActionUnequipItem SemanticAction = 248
-	ActionUseCard SemanticAction = 249
-	ActionVenderFound SemanticAction = 250
-	ActionVendingListReq SemanticAction = 251
-	ActionWeaponRefine SemanticAction = 252
-	ActionWhisperSent SemanticAction = 253
-	ActionZcAcceptEnter SemanticAction = 254
-	ActionZcAckAddExchangeItem SemanticAction = 255
-	ActionZcAckAddItemRodex SemanticAction = 256
-	ActionZcAckAdditemToCart SemanticAction = 257
-	ActionZcAckApplyMacroDetector SemanticAction = 258
-	ActionZcAckCashBargainSaleItemInfo SemanticAction = 259
-	ActionZcAckCloseBanking SemanticAction = 260
-	ActionZcAckCloseRoulette SemanticAction = 261
-	ActionZcAckCountBargainSaleItem SemanticAction = 262
-	ActionZcAckCreateChatroom SemanticAction = 263
-	ActionZcAckDisorganizeGuildResult SemanticAction = 264
-	ActionZcAckExtendBodyitemSize SemanticAction = 265
-	ActionZcAckGuildstorageLog SemanticAction = 266
-	ActionZcAckItemcomposition SemanticAction = 267
-	ActionZcAckItemidentify SemanticAction = 268
-	ActionZcAckItemrefining SemanticAction = 269
-	ActionZcAckItemrepair SemanticAction = 270
-	ActionZcAckMakeGroup SemanticAction = 271
-	ActionZcAckMergeItem SemanticAction = 272
-	ActionZcAckOpenMsgboxExtendBodyitemSize SemanticAction = 273
-	ActionZcAckOpenstore2 SemanticAction = 274
-	ActionZcAckPlayerAidInRange SemanticAction = 275
-	ActionZcAckPreviewMacroDetector SemanticAction = 276
-	ActionZcAckRandomCombineItem SemanticAction = 277
-	ActionZcAckRandomUpgradeItem SemanticAction = 278
-	ActionZcAckRanking SemanticAction = 279
-	ActionZcAckReadRodex SemanticAction = 280
-	ActionZcAckRememberWarppoint SemanticAction = 281
-	ActionZcAckReqJoinGuild SemanticAction = 282
-	ActionZcAckReqnameall SemanticAction = 283
-	ActionZcAckReqnameallNpc SemanticAction = 284
-	ActionZcAckSeCashItemList2 SemanticAction = 285
-	ActionZcAckTakeoffEquipAll SemanticAction = 286
-	ActionZcAckUploadMacroDetector SemanticAction = 287
-	ActionZcActionFailure SemanticAction = 288
-	ActionZcAddItemToCart SemanticAction = 289
-	ActionZcAddItemToStore SemanticAction = 290
-	ActionZcAdventurerAgencyJoinReq SemanticAction = 291
-	ActionZcAdventurerAgencyJoinResult SemanticAction = 292
-	ActionZcApplyMacroDetector SemanticAction = 293
-	ActionZcApplyMacroDetectorCaptcha SemanticAction = 294
-	ActionZcAutorunSkill SemanticAction = 295
-	ActionZcAutospelllist SemanticAction = 296
-	ActionZcBattlefieldNotifyHp SemanticAction = 297
-	ActionZcBossInfo SemanticAction = 298
-	ActionZcBroadcast SemanticAction = 299
-	ActionZcBroadcast2 SemanticAction = 300
-	ActionZcBroadcastItemrefiningResult SemanticAction = 301
-	ActionZcBroadcastingSpecialItemObtainItem SemanticAction = 302
-	ActionZcBuyingStoreEntry SemanticAction = 303
-	ActionZcCMarkerinfo SemanticAction = 304
-	ActionZcCancelExchangeItem SemanticAction = 305
-	ActionZcCartoff SemanticAction = 306
-	ActionZcChangeGuild SemanticAction = 307
-	ActionZcChangeItemOption SemanticAction = 308
-	ActionZcChangestatePet SemanticAction = 309
-	ActionZcCheckname SemanticAction = 310
-	ActionZcClaninfo SemanticAction = 311
-	ActionZcClearDialog SemanticAction = 312
-	ActionZcCloseDialog SemanticAction = 313
-	ActionZcCloseMacroDetector SemanticAction = 314
-	ActionZcCloseStore SemanticAction = 315
-	ActionZcCompass SemanticAction = 316
-	ActionZcCompleteUploadMacroDetectorCaptcha SemanticAction = 317
-	ActionZcCouplename SemanticAction = 318
-	ActionZcCouplestatus SemanticAction = 319
-	ActionZcDebugmsg SemanticAction = 320
-	ActionZcDeleteItemFromBody SemanticAction = 321
-	ActionZcDeleteItemFromCart SemanticAction = 322
-	ActionZcDeleteItemFromStore SemanticAction = 323
-	ActionZcDeleteMemberFromGroup SemanticAction = 324
-	ActionZcDeleteitemFromMcstore SemanticAction = 325
-	ActionZcDialogTextAlign SemanticAction = 326
-	ActionZcDialogWindowPos SemanticAction = 327
-	ActionZcDialogWindowPos2 SemanticAction = 328
-	ActionZcDialogWindowSize SemanticAction = 329
-	ActionZcDisappearBuyingStoreEntry SemanticAction = 330
-	ActionZcDynamicnpcCreateResult SemanticAction = 331
-	ActionZcEntryQueueInit SemanticAction = 332
-	ActionZcEquipArrow SemanticAction = 333
-	ActionZcEquipitemDamaged SemanticAction = 334
-	ActionZcEquipmentEffect SemanticAction = 335
-	ActionZcEquipwinMicroscope SemanticAction = 336
-	ActionZcExchangeitemUndo SemanticAction = 337
-	ActionZcExecExchangeItem SemanticAction = 338
-	ActionZcExtendBodyitemSize SemanticAction = 339
-	ActionZcFriendsList SemanticAction = 340
-	ActionZcGoldpccafePoint SemanticAction = 341
-	ActionZcGradeEnchantAck SemanticAction = 342
-	ActionZcGradeEnchantBroadcastResult SemanticAction = 343
-	ActionZcGradeEnchantMaterialList SemanticAction = 344
-	ActionZcGuildAgitInfo SemanticAction = 345
-	ActionZcGuildEmblemImg SemanticAction = 346
-	ActionZcGuildInfo SemanticAction = 347
-	ActionZcGuildNotice SemanticAction = 348
-	ActionZcGuildSkillinfo SemanticAction = 349
-	ActionZcHoskillinfoList SemanticAction = 350
-	ActionZcHoskillinfoUpdate SemanticAction = 351
-	ActionZcInventoryEnd SemanticAction = 352
-	ActionZcInventoryStart SemanticAction = 353
-	ActionZcInventoryTab SemanticAction = 354
-	ActionZcItemDisappear SemanticAction = 355
-	ActionZcItemPickupParty SemanticAction = 356
-	ActionZcItemReformAck SemanticAction = 357
-	ActionZcItemThrowAck SemanticAction = 358
-	ActionZcLonglongparChange SemanticAction = 359
-	ActionZcMakingarrowList SemanticAction = 360
-	ActionZcMakingitemList SemanticAction = 361
-	ActionZcMembermgrInfo SemanticAction = 362
-	ActionZcMenuList SemanticAction = 363
-	ActionZcMergeItemOpen SemanticAction = 364
-	ActionZcMillenniumshield SemanticAction = 365
-	ActionZcMonologDialog SemanticAction = 366
-	ActionZcMoveItemFailed SemanticAction = 367
-	ActionZcMyguildBasicInfo SemanticAction = 368
-	ActionZcNotifyActorinit SemanticAction = 369
-	ActionZcNotifyBargainSaleClose SemanticAction = 370
-	ActionZcNotifyBargainSaleSelling SemanticAction = 371
-	ActionZcNotifyBindOnEquip SemanticAction = 372
-	ActionZcNotifyCartitemCountinfo SemanticAction = 373
-	ActionZcNotifyChatParty SemanticAction = 374
-	ActionZcNotifyEffect SemanticAction = 375
-	ActionZcNotifyEffect3 SemanticAction = 376
-	ActionZcNotifyGroundskill SemanticAction = 377
-	ActionZcNotifyHpToGroupm SemanticAction = 378
-	ActionZcNotifyMapinfo SemanticAction = 379
-	ActionZcNotifyMapproperty2 SemanticAction = 380
-	ActionZcNotifyMemberinfoToGroupm SemanticAction = 381
-	ActionZcNotifyPositionToGroupm SemanticAction = 382
-	ActionZcNotifyPositionToGuildm SemanticAction = 383
-	ActionZcNotifyStoreitemCountinfo SemanticAction = 384
-	ActionZcNpcBarterMarketIteminfo SemanticAction = 385
-	ActionZcNpcMarketOpen SemanticAction = 386
-	ActionZcNpcMarketPurchaseResult SemanticAction = 387
-	ActionZcNpcShowefstUpdate SemanticAction = 388
-	ActionZcNpcackServermove SemanticAction = 389
-	ActionZcOpenEditdlg SemanticAction = 390
-	ActionZcOpenEditdlgstr SemanticAction = 391
-	ActionZcOpenRefiningUi SemanticAction = 392
-	ActionZcOpenReformUi SemanticAction = 393
-	ActionZcOpenSearchStoreInfo SemanticAction = 394
-	ActionZcOpenstore SemanticAction = 395
-	ActionZcParChangeUser SemanticAction = 396
-	ActionZcPartyConfig SemanticAction = 397
-	ActionZcPcPurchaseItemlistFrommc SemanticAction = 398
-	ActionZcPcPurchaseMyitemlist SemanticAction = 399
-	ActionZcPcPurchaseResult SemanticAction = 400
-	ActionZcPcPurchaseResultFrommc SemanticAction = 401
-	ActionZcPcSellItemlist SemanticAction = 402
-	ActionZcPersonalInfomation SemanticAction = 403
-	ActionZcPingLive SemanticAction = 404
-	ActionZcPlayNpcBgm SemanticAction = 405
-	ActionZcPositionIdNameInfo SemanticAction = 406
-	ActionZcPositionInfo SemanticAction = 407
-	ActionZcPreviewMacroDetectorCaptcha SemanticAction = 408
-	ActionZcPropertyHomun SemanticAction = 409
-	ActionZcRandomCombineItemUiOpen SemanticAction = 410
-	ActionZcRandomUpgradeItemUiOpen SemanticAction = 411
-	ActionZcRecovery SemanticAction = 412
-	ActionZcRefiningMaterialList SemanticAction = 413
-	ActionZcRefuseEnterRoom SemanticAction = 414
-	ActionZcRepairitemlist SemanticAction = 415
-	ActionZcReputeInfo SemanticAction = 416
-	ActionZcReqAckAgitInvestment SemanticAction = 417
-	ActionZcReqAckMoveGuildAgit SemanticAction = 418
-	ActionZcReqAnswerMacroDetector SemanticAction = 419
-	ActionZcReqJoinGuild SemanticAction = 420
-	ActionZcReqWearEquipAck SemanticAction = 421
-	ActionZcResponseEnchant SemanticAction = 422
-	ActionZcRestartAck SemanticAction = 423
-	ActionZcResultMakeGuild SemanticAction = 424
-	ActionZcResurrection SemanticAction = 425
-	ActionZcRoleChange SemanticAction = 426
-	ActionZcSayDialog SemanticAction = 427
-	ActionZcSeCashshopOpen SemanticAction = 428
-	ActionZcSePcBuyCashitemResult SemanticAction = 429
-	ActionZcSearchStoreInfoAck SemanticAction = 430
-	ActionZcSearchStoreInfoFailed SemanticAction = 431
-	ActionZcSelectDealtype SemanticAction = 432
-	ActionZcShortcutKeyList SemanticAction = 433
-	ActionZcShowImage SemanticAction = 434
-	ActionZcSkillDisappear SemanticAction = 435
-	ActionZcSkillSelectRequest SemanticAction = 436
-	ActionZcSkillUpdate SemanticAction = 437
-	ActionZcSkillinfoUpdate2 SemanticAction = 438
-	ActionZcSoulenergy SemanticAction = 439
-	ActionZcSound SemanticAction = 440
-	ActionZcSpecialpopup SemanticAction = 441
-	ActionZcSpirits SemanticAction = 442
-	ActionZcSpirits2 SemanticAction = 443
-	ActionZcSpiritsAttribute SemanticAction = 444
-	ActionZcSsilistItemClickAck SemanticAction = 445
-	ActionZcStartCapture SemanticAction = 446
-	ActionZcStateChange SemanticAction = 447
-	ActionZcStatus SemanticAction = 448
-	ActionZcStatusChangeAck SemanticAction = 449
-	ActionZcStopmove SemanticAction = 450
-	ActionZcSummonHpInit SemanticAction = 451
-	ActionZcSummonHpUpdate SemanticAction = 452
-	ActionZcTalkboxChatcontents SemanticAction = 453
-	ActionZcTargetSpirits SemanticAction = 454
-	ActionZcTrycaptureMonster SemanticAction = 455
-	ActionZcUiOpen SemanticAction = 456
-	ActionZcUiOpen2 SemanticAction = 457
-	ActionZcUpdateCardslot SemanticAction = 458
-	ActionZcUpdateGdid SemanticAction = 459
-	ActionZcUseskillAck SemanticAction = 460
-	ActionZcViewCamerainfo SemanticAction = 461
-	ActionZcWaitDialog SemanticAction = 462
+	ActionActorAction SemanticAction = 6
+	ActionActorConnected SemanticAction = 7
+	ActionActorDiedOrDisappeared SemanticAction = 8
+	ActionActorExists SemanticAction = 9
+	ActionActorMoved SemanticAction = 10
+	ActionActorStatusActive SemanticAction = 11
+	ActionActorStatusEffectExtended SemanticAction = 12
+	ActionAddExchangeItem SemanticAction = 13
+	ActionAreaSpell SemanticAction = 14
+	ActionAttackRange SemanticAction = 15
+	ActionAutoSpell SemanticAction = 16
+	ActionBankingCheck SemanticAction = 17
+	ActionBankingDeposit SemanticAction = 18
+	ActionBankingOpen SemanticAction = 19
+	ActionBankingWithdraw SemanticAction = 20
+	ActionCaConnectInfoChanged SemanticAction = 21
+	ActionCaExeHashcheck SemanticAction = 22
+	ActionCaLogin2 SemanticAction = 23
+	ActionCaLogin3 SemanticAction = 24
+	ActionCaLogin4 SemanticAction = 25
+	ActionCaLoginChannel SemanticAction = 26
+	ActionCaLoginPcbang SemanticAction = 27
+	ActionCaReqHash SemanticAction = 28
+	ActionCaSsoLoginReq SemanticAction = 29
+	ActionCastCancelled SemanticAction = 30
+	ActionCatchPet SemanticAction = 31
+	ActionChangeCart SemanticAction = 32
+	ActionCharCreate SemanticAction = 33
+	ActionCharDelete SemanticAction = 34
+	ActionCharacterBlocked SemanticAction = 35
+	ActionCharacterCreationFailed SemanticAction = 36
+	ActionCharacterMove SemanticAction = 37
+	ActionCharacterMoves SemanticAction = 38
+	ActionCharacterPagesNotify SemanticAction = 39
+	ActionCharacterServerRefused SemanticAction = 40
+	ActionChatMessage SemanticAction = 41
+	ActionCloseStorage SemanticAction = 42
+	ActionCloseVending SemanticAction = 43
+	ActionCtAuth SemanticAction = 44
+	ActionCzAckAnswerMacroDetector SemanticAction = 45
+	ActionCzAdvancedStatusChange SemanticAction = 46
+	ActionCzAdventurerAgencyJoinReq SemanticAction = 47
+	ActionCzAdventurerAgencyJoinResult SemanticAction = 48
+	ActionCzApproximateActor SemanticAction = 49
+	ActionCzCheckname1 SemanticAction = 50
+	ActionCzCheckname2 SemanticAction = 51
+	ActionCzChooseMenuZero SemanticAction = 52
+	ActionCzClientVersion SemanticAction = 53
+	ActionCzCloseMsgboxExtendBodyitemSize SemanticAction = 54
+	ActionCzCloseRefiningUi SemanticAction = 55
+	ActionCzCloseReformUi SemanticAction = 56
+	ActionCzCloseUiEnchant SemanticAction = 57
+	ActionCzCloseUiStylingshop SemanticAction = 58
+	ActionCzCmdResetcooltime SemanticAction = 59
+	ActionCzCompleteApplyMacroDetectorCaptcha SemanticAction = 60
+	ActionCzDynamicnpcCreateRequest SemanticAction = 61
+	ActionCzGetAccountLimtiedSaleList SemanticAction = 62
+	ActionCzGradeEnchantCloseUi SemanticAction = 63
+	ActionCzGradeEnchantRequest SemanticAction = 64
+	ActionCzGradeEnchantSelectEquipment SemanticAction = 65
+	ActionCzInventoryTab SemanticAction = 66
+	ActionCzItemReform SemanticAction = 67
+	ActionCzJoinGuild SemanticAction = 68
+	ActionCzMoveItemFromBodyToCart SemanticAction = 69
+	ActionCzNpcBarterMarketClose SemanticAction = 70
+	ActionCzNpcBarterMarketPurchase SemanticAction = 71
+	ActionCzNpcExpandedBarterMarketClose SemanticAction = 72
+	ActionCzNpcExpandedBarterMarketPurchase SemanticAction = 73
+	ActionCzPartyConfig SemanticAction = 74
+	ActionCzPartyJoinReq SemanticAction = 75
+	ActionCzPartyJoinReqAck SemanticAction = 76
+	ActionCzPcPurchaseItemlistFrommc SemanticAction = 77
+	ActionCzPcPurchaseItemlistFrommc2 SemanticAction = 78
+	ActionCzPingLive SemanticAction = 79
+	ActionCzRandomCombineItemUiClose SemanticAction = 80
+	ActionCzRandomUpgradeItemUiClose SemanticAction = 81
+	ActionCzRefiningSelectItem SemanticAction = 82
+	ActionCzReqAgitInvestment SemanticAction = 83
+	ActionCzReqApplyBargainSaleItem SemanticAction = 84
+	ActionCzReqApplyMacroDetector SemanticAction = 85
+	ActionCzReqBanGuild SemanticAction = 86
+	ActionCzReqCashBargainSaleItemInfo SemanticAction = 87
+	ActionCzReqChangeMemberpos SemanticAction = 88
+	ActionCzReqDisorganizeGuild SemanticAction = 89
+	ActionCzReqExtendBodyitemSize SemanticAction = 90
+	ActionCzReqGuildEmblemImg1 SemanticAction = 91
+	ActionCzReqGuildEmblemImg2 SemanticAction = 92
+	ActionCzReqGuildEmblemImg3 SemanticAction = 93
+	ActionCzReqItemrepair2 SemanticAction = 94
+	ActionCzReqJoinGuild SemanticAction = 95
+	ActionCzReqJoinGuild2 SemanticAction = 96
+	ActionCzReqLeaveGuild SemanticAction = 97
+	ActionCzReqMakingarrow SemanticAction = 98
+	ActionCzReqMergeItem SemanticAction = 99
+	ActionCzReqMoveGuildAgit SemanticAction = 100
+	ActionCzReqOpenMsgboxExtendBodyitemSize SemanticAction = 101
+	ActionCzReqPlayerAidInRange SemanticAction = 102
+	ActionCzReqPreviewMacroDetector SemanticAction = 103
+	ActionCzReqRandomCombineItem SemanticAction = 104
+	ActionCzReqRandomUpgradeItem SemanticAction = 105
+	ActionCzReqRefining SemanticAction = 106
+	ActionCzReqRemaintime SemanticAction = 107
+	ActionCzReqRemoveBargainSaleItem SemanticAction = 108
+	ActionCzReqSeCashTabCode SemanticAction = 109
+	ActionCzReqTakeoffEquipAll SemanticAction = 110
+	ActionCzReqUploadMacroDetector SemanticAction = 111
+	ActionCzRequestPerfectEnchant SemanticAction = 112
+	ActionCzRequestRandomEnchant SemanticAction = 113
+	ActionCzRequestResetEnchant SemanticAction = 114
+	ActionCzRequestUpgradeEnchant SemanticAction = 115
+	ActionCzResetSkill SemanticAction = 116
+	ActionCzRodexReturn SemanticAction = 117
+	ActionCzSeCashshopOpen1 SemanticAction = 118
+	ActionCzSeCashshopOpen2 SemanticAction = 119
+	ActionCzSePcBuyCashitemList SemanticAction = 120
+	ActionCzShortcutKeyChange1 SemanticAction = 121
+	ActionCzShortcutKeyChange2 SemanticAction = 122
+	ActionCzShortcutkeybarRotate1 SemanticAction = 123
+	ActionCzShortcutkeybarRotate2 SemanticAction = 124
+	ActionCzUninstallation SemanticAction = 125
+	ActionCzUploadMacroDetectorCaptcha SemanticAction = 126
+	ActionCzUsePackageitem SemanticAction = 127
+	ActionCzUseSkillEnd SemanticAction = 128
+	ActionCzUseSkillStart SemanticAction = 129
+	ActionCzViewCamerainfo SemanticAction = 130
+	ActionDealAddOther SemanticAction = 131
+	ActionDealCancel SemanticAction = 132
+	ActionDealFinalize SemanticAction = 133
+	ActionDealInitiate SemanticAction = 134
+	ActionDealReply SemanticAction = 135
+	ActionDealRequest SemanticAction = 136
+	ActionDealTrade SemanticAction = 137
+	ActionDropItem SemanticAction = 138
+	ActionEmote SemanticAction = 139
+	ActionEnterWorld SemanticAction = 140
+	ActionEntityMove SemanticAction = 141
+	ActionEntitySpawn SemanticAction = 142
+	ActionEquipItem SemanticAction = 143
+	ActionFriendsAdd SemanticAction = 144
+	ActionFriendsRemove SemanticAction = 145
+	ActionFriendsReply SemanticAction = 146
+	ActionGameLogin SemanticAction = 147
+	ActionGetItemFromCart SemanticAction = 148
+	ActionGuildChat SemanticAction = 149
+	ActionHomunculusAttack SemanticAction = 150
+	ActionHomunculusInfo SemanticAction = 151
+	ActionHomunculusMenu SemanticAction = 152
+	ActionIgnoreListReq SemanticAction = 153
+	ActionInsertCard SemanticAction = 154
+	ActionItemAppeared SemanticAction = 155
+	ActionItemExists SemanticAction = 156
+	ActionItemIdentify SemanticAction = 157
+	ActionItemPickup SemanticAction = 158
+	ActionItemUse SemanticAction = 159
+	ActionLoginError SemanticAction = 160
+	ActionLook SemanticAction = 161
+	ActionMapChanged SemanticAction = 162
+	ActionMapLoaded SemanticAction = 163
+	ActionMapLogin SemanticAction = 164
+	ActionMarketPurchase SemanticAction = 165
+	ActionMasterLogin SemanticAction = 166
+	ActionMonsterHpUpdate SemanticAction = 167
+	ActionMonsterRangedAttack SemanticAction = 168
+	ActionMoveFromStorage SemanticAction = 169
+	ActionMoveTo SemanticAction = 170
+	ActionMoveToStorage SemanticAction = 171
+	ActionNpcContact SemanticAction = 172
+	ActionNpcMarketClose SemanticAction = 173
+	ActionNpcMenuResponse SemanticAction = 174
+	ActionNpcStoreInfo SemanticAction = 175
+	ActionNpcTalkClose SemanticAction = 176
+	ActionNpcTalkContinue SemanticAction = 177
+	ActionNpcTalkNumber SemanticAction = 178
+	ActionNpcTalkText SemanticAction = 179
+	ActionNpcTradeQuit SemanticAction = 180
+	ActionPartyChangeOption SemanticAction = 181
+	ActionPartyCreate SemanticAction = 182
+	ActionPartyInvite SemanticAction = 183
+	ActionPartyKick SemanticAction = 184
+	ActionPartyLeave SemanticAction = 185
+	ActionPetEggList SemanticAction = 186
+	ActionPetInfo SemanticAction = 187
+	ActionPetMenu SemanticAction = 188
+	ActionPickupItem SemanticAction = 189
+	ActionPinCodeRequest SemanticAction = 190
+	ActionPinCodeResponse SemanticAction = 191
+	ActionPrivateMessage SemanticAction = 192
+	ActionPublicChat SemanticAction = 193
+	ActionQuestDialog SemanticAction = 194
+	ActionQuestDialogList SemanticAction = 195
+	ActionQuestUpdateMissionHunt SemanticAction = 196
+	ActionQuitGame SemanticAction = 197
+	ActionReceivedCharacterIDAndMap SemanticAction = 198
+	ActionReceivedCharacterIdAndMap SemanticAction = 199
+	ActionReceivedCharacters SemanticAction = 200
+	ActionReceivedCharactersInfo SemanticAction = 201
+	ActionReceivedCharactersPage SemanticAction = 202
+	ActionReceivedMapServerInfo SemanticAction = 203
+	ActionRemoveOption SemanticAction = 204
+	ActionRepairItem SemanticAction = 205
+	ActionReplyPartyInvite SemanticAction = 206
+	ActionRequestCharacterPage SemanticAction = 207
+	ActionRequestMemo SemanticAction = 208
+	ActionRestart SemanticAction = 209
+	ActionScNotifyBan SemanticAction = 210
+	ActionSelectAccessibleMap SemanticAction = 211
+	ActionSelectCharacter SemanticAction = 212
+	ActionSelectEgg SemanticAction = 213
+	ActionSelfChat SemanticAction = 214
+	ActionSellResult SemanticAction = 215
+	ActionSendEmotion SemanticAction = 216
+	ActionShopBuy SemanticAction = 217
+	ActionShopSell SemanticAction = 218
+	ActionSkillAdd SemanticAction = 219
+	ActionSkillCast SemanticAction = 220
+	ActionSkillDelete SemanticAction = 221
+	ActionSkillPostDelay SemanticAction = 222
+	ActionSkillUp SemanticAction = 223
+	ActionSkillUpdate SemanticAction = 224
+	ActionSkillUse SemanticAction = 225
+	ActionSkillUseFailed SemanticAction = 226
+	ActionSkillUseLocation SemanticAction = 227
+	ActionSkillUsedNoDamage SemanticAction = 228
+	ActionSkillsList SemanticAction = 229
+	ActionStatUpdate SemanticAction = 230
+	ActionStatusUp SemanticAction = 231
+	ActionSync SemanticAction = 232
+	ActionTcResult SemanticAction = 233
+	ActionTimeSyncResponse SemanticAction = 234
+	ActionUnequipItem SemanticAction = 235
+	ActionUseCard SemanticAction = 236
+	ActionVenderFound SemanticAction = 237
+	ActionVendingListReq SemanticAction = 238
+	ActionWeaponRefine SemanticAction = 239
+	ActionWhisperSent SemanticAction = 240
+	ActionZcAcceptEnter SemanticAction = 241
+	ActionZcAckAddExchangeItem SemanticAction = 242
+	ActionZcAckAddItemRodex SemanticAction = 243
+	ActionZcAckAdditemToCart SemanticAction = 244
+	ActionZcAckApplyMacroDetector SemanticAction = 245
+	ActionZcAckCashBargainSaleItemInfo SemanticAction = 246
+	ActionZcAckCloseBanking SemanticAction = 247
+	ActionZcAckCloseRoulette SemanticAction = 248
+	ActionZcAckCountBargainSaleItem SemanticAction = 249
+	ActionZcAckCreateChatroom SemanticAction = 250
+	ActionZcAckDisorganizeGuildResult SemanticAction = 251
+	ActionZcAckExtendBodyitemSize SemanticAction = 252
+	ActionZcAckGuildstorageLog SemanticAction = 253
+	ActionZcAckItemcomposition SemanticAction = 254
+	ActionZcAckItemidentify SemanticAction = 255
+	ActionZcAckItemrefining SemanticAction = 256
+	ActionZcAckItemrepair SemanticAction = 257
+	ActionZcAckMakeGroup SemanticAction = 258
+	ActionZcAckMergeItem SemanticAction = 259
+	ActionZcAckOpenMsgboxExtendBodyitemSize SemanticAction = 260
+	ActionZcAckOpenstore2 SemanticAction = 261
+	ActionZcAckPlayerAidInRange SemanticAction = 262
+	ActionZcAckPreviewMacroDetector SemanticAction = 263
+	ActionZcAckRandomCombineItem SemanticAction = 264
+	ActionZcAckRandomUpgradeItem SemanticAction = 265
+	ActionZcAckRanking SemanticAction = 266
+	ActionZcAckReadRodex SemanticAction = 267
+	ActionZcAckRememberWarppoint SemanticAction = 268
+	ActionZcAckReqJoinGuild SemanticAction = 269
+	ActionZcAckReqnameall SemanticAction = 270
+	ActionZcAckReqnameallNpc SemanticAction = 271
+	ActionZcAckSeCashItemList2 SemanticAction = 272
+	ActionZcAckTakeoffEquipAll SemanticAction = 273
+	ActionZcAckUploadMacroDetector SemanticAction = 274
+	ActionZcActionFailure SemanticAction = 275
+	ActionZcAddItemToCart SemanticAction = 276
+	ActionZcAddItemToStore SemanticAction = 277
+	ActionZcAdventurerAgencyJoinReq SemanticAction = 278
+	ActionZcAdventurerAgencyJoinResult SemanticAction = 279
+	ActionZcApplyMacroDetector SemanticAction = 280
+	ActionZcApplyMacroDetectorCaptcha SemanticAction = 281
+	ActionZcAutorunSkill SemanticAction = 282
+	ActionZcAutospelllist SemanticAction = 283
+	ActionZcBattlefieldNotifyHp SemanticAction = 284
+	ActionZcBossInfo SemanticAction = 285
+	ActionZcBroadcast SemanticAction = 286
+	ActionZcBroadcast2 SemanticAction = 287
+	ActionZcBroadcastItemrefiningResult SemanticAction = 288
+	ActionZcBroadcastingSpecialItemObtainItem SemanticAction = 289
+	ActionZcBuyingStoreEntry SemanticAction = 290
+	ActionZcCMarkerinfo SemanticAction = 291
+	ActionZcCancelExchangeItem SemanticAction = 292
+	ActionZcCartoff SemanticAction = 293
+	ActionZcChangeGuild SemanticAction = 294
+	ActionZcChangeItemOption SemanticAction = 295
+	ActionZcChangestatePet SemanticAction = 296
+	ActionZcCheckname SemanticAction = 297
+	ActionZcClaninfo SemanticAction = 298
+	ActionZcClearDialog SemanticAction = 299
+	ActionZcCloseDialog SemanticAction = 300
+	ActionZcCloseMacroDetector SemanticAction = 301
+	ActionZcCloseStore SemanticAction = 302
+	ActionZcCompass SemanticAction = 303
+	ActionZcCompleteUploadMacroDetectorCaptcha SemanticAction = 304
+	ActionZcCouplename SemanticAction = 305
+	ActionZcCouplestatus SemanticAction = 306
+	ActionZcDebugmsg SemanticAction = 307
+	ActionZcDeleteItemFromBody SemanticAction = 308
+	ActionZcDeleteItemFromCart SemanticAction = 309
+	ActionZcDeleteItemFromStore SemanticAction = 310
+	ActionZcDeleteMemberFromGroup SemanticAction = 311
+	ActionZcDeleteitemFromMcstore SemanticAction = 312
+	ActionZcDialogTextAlign SemanticAction = 313
+	ActionZcDialogWindowPos SemanticAction = 314
+	ActionZcDialogWindowPos2 SemanticAction = 315
+	ActionZcDialogWindowSize SemanticAction = 316
+	ActionZcDisappearBuyingStoreEntry SemanticAction = 317
+	ActionZcDynamicnpcCreateResult SemanticAction = 318
+	ActionZcEntryQueueInit SemanticAction = 319
+	ActionZcEquipArrow SemanticAction = 320
+	ActionZcEquipitemDamaged SemanticAction = 321
+	ActionZcEquipmentEffect SemanticAction = 322
+	ActionZcEquipwinMicroscope SemanticAction = 323
+	ActionZcExchangeitemUndo SemanticAction = 324
+	ActionZcExecExchangeItem SemanticAction = 325
+	ActionZcExtendBodyitemSize SemanticAction = 326
+	ActionZcFriendsList SemanticAction = 327
+	ActionZcGoldpccafePoint SemanticAction = 328
+	ActionZcGradeEnchantAck SemanticAction = 329
+	ActionZcGradeEnchantBroadcastResult SemanticAction = 330
+	ActionZcGradeEnchantMaterialList SemanticAction = 331
+	ActionZcGuildAgitInfo SemanticAction = 332
+	ActionZcGuildEmblemImg SemanticAction = 333
+	ActionZcGuildInfo SemanticAction = 334
+	ActionZcGuildNotice SemanticAction = 335
+	ActionZcGuildSkillinfo SemanticAction = 336
+	ActionZcHoskillinfoList SemanticAction = 337
+	ActionZcHoskillinfoUpdate SemanticAction = 338
+	ActionZcInventoryEnd SemanticAction = 339
+	ActionZcInventoryStart SemanticAction = 340
+	ActionZcInventoryTab SemanticAction = 341
+	ActionZcItemDisappear SemanticAction = 342
+	ActionZcItemPickupParty SemanticAction = 343
+	ActionZcItemReformAck SemanticAction = 344
+	ActionZcItemThrowAck SemanticAction = 345
+	ActionZcLonglongparChange SemanticAction = 346
+	ActionZcMakingarrowList SemanticAction = 347
+	ActionZcMakingitemList SemanticAction = 348
+	ActionZcMembermgrInfo SemanticAction = 349
+	ActionZcMenuList SemanticAction = 350
+	ActionZcMergeItemOpen SemanticAction = 351
+	ActionZcMillenniumshield SemanticAction = 352
+	ActionZcMonologDialog SemanticAction = 353
+	ActionZcMoveItemFailed SemanticAction = 354
+	ActionZcMyguildBasicInfo SemanticAction = 355
+	ActionZcNotifyActorinit SemanticAction = 356
+	ActionZcNotifyBargainSaleClose SemanticAction = 357
+	ActionZcNotifyBargainSaleSelling SemanticAction = 358
+	ActionZcNotifyBindOnEquip SemanticAction = 359
+	ActionZcNotifyCartitemCountinfo SemanticAction = 360
+	ActionZcNotifyChatParty SemanticAction = 361
+	ActionZcNotifyEffect SemanticAction = 362
+	ActionZcNotifyEffect3 SemanticAction = 363
+	ActionZcNotifyGroundskill SemanticAction = 364
+	ActionZcNotifyHpToGroupm SemanticAction = 365
+	ActionZcNotifyMapinfo SemanticAction = 366
+	ActionZcNotifyMapproperty2 SemanticAction = 367
+	ActionZcNotifyMemberinfoToGroupm SemanticAction = 368
+	ActionZcNotifyPositionToGroupm SemanticAction = 369
+	ActionZcNotifyPositionToGuildm SemanticAction = 370
+	ActionZcNotifyStoreitemCountinfo SemanticAction = 371
+	ActionZcNpcBarterMarketIteminfo SemanticAction = 372
+	ActionZcNpcMarketOpen SemanticAction = 373
+	ActionZcNpcMarketPurchaseResult SemanticAction = 374
+	ActionZcNpcShowefstUpdate SemanticAction = 375
+	ActionZcOpenEditdlg SemanticAction = 376
+	ActionZcOpenEditdlgstr SemanticAction = 377
+	ActionZcOpenRefiningUi SemanticAction = 378
+	ActionZcOpenReformUi SemanticAction = 379
+	ActionZcOpenSearchStoreInfo SemanticAction = 380
+	ActionZcOpenstore SemanticAction = 381
+	ActionZcParChangeUser SemanticAction = 382
+	ActionZcPartyConfig SemanticAction = 383
+	ActionZcPcPurchaseItemlistFrommc SemanticAction = 384
+	ActionZcPcPurchaseMyitemlist SemanticAction = 385
+	ActionZcPcPurchaseResult SemanticAction = 386
+	ActionZcPcPurchaseResultFrommc SemanticAction = 387
+	ActionZcPcSellItemlist SemanticAction = 388
+	ActionZcPersonalInfomation SemanticAction = 389
+	ActionZcPingLive SemanticAction = 390
+	ActionZcPlayNpcBgm SemanticAction = 391
+	ActionZcPositionIdNameInfo SemanticAction = 392
+	ActionZcPositionInfo SemanticAction = 393
+	ActionZcPreviewMacroDetectorCaptcha SemanticAction = 394
+	ActionZcPropertyHomun SemanticAction = 395
+	ActionZcRandomCombineItemUiOpen SemanticAction = 396
+	ActionZcRandomUpgradeItemUiOpen SemanticAction = 397
+	ActionZcRecovery SemanticAction = 398
+	ActionZcRefiningMaterialList SemanticAction = 399
+	ActionZcRefuseEnterRoom SemanticAction = 400
+	ActionZcRepairitemlist SemanticAction = 401
+	ActionZcReputeInfo SemanticAction = 402
+	ActionZcReqAckAgitInvestment SemanticAction = 403
+	ActionZcReqAckMoveGuildAgit SemanticAction = 404
+	ActionZcReqAnswerMacroDetector SemanticAction = 405
+	ActionZcReqJoinGuild SemanticAction = 406
+	ActionZcReqWearEquipAck SemanticAction = 407
+	ActionZcResponseEnchant SemanticAction = 408
+	ActionZcRestartAck SemanticAction = 409
+	ActionZcResultMakeGuild SemanticAction = 410
+	ActionZcResurrection SemanticAction = 411
+	ActionZcRoleChange SemanticAction = 412
+	ActionZcSayDialog SemanticAction = 413
+	ActionZcSeCashshopOpen SemanticAction = 414
+	ActionZcSePcBuyCashitemResult SemanticAction = 415
+	ActionZcSearchStoreInfoAck SemanticAction = 416
+	ActionZcSearchStoreInfoFailed SemanticAction = 417
+	ActionZcSelectDealtype SemanticAction = 418
+	ActionZcShortcutKeyList SemanticAction = 419
+	ActionZcShowImage SemanticAction = 420
+	ActionZcSkillDisappear SemanticAction = 421
+	ActionZcSkillSelectRequest SemanticAction = 422
+	ActionZcSkillUpdate SemanticAction = 423
+	ActionZcSkillinfoUpdate2 SemanticAction = 424
+	ActionZcSoulenergy SemanticAction = 425
+	ActionZcSound SemanticAction = 426
+	ActionZcSpecialpopup SemanticAction = 427
+	ActionZcSpirits SemanticAction = 428
+	ActionZcSpirits2 SemanticAction = 429
+	ActionZcSpiritsAttribute SemanticAction = 430
+	ActionZcSsilistItemClickAck SemanticAction = 431
+	ActionZcStartCapture SemanticAction = 432
+	ActionZcStateChange SemanticAction = 433
+	ActionZcStatus SemanticAction = 434
+	ActionZcStatusChangeAck SemanticAction = 435
+	ActionZcStopmove SemanticAction = 436
+	ActionZcSummonHpInit SemanticAction = 437
+	ActionZcSummonHpUpdate SemanticAction = 438
+	ActionZcTalkboxChatcontents SemanticAction = 439
+	ActionZcTargetSpirits SemanticAction = 440
+	ActionZcTrycaptureMonster SemanticAction = 441
+	ActionZcUiOpen SemanticAction = 442
+	ActionZcUiOpen2 SemanticAction = 443
+	ActionZcUpdateCardslot SemanticAction = 444
+	ActionZcUpdateGdid SemanticAction = 445
+	ActionZcUseskillAck SemanticAction = 446
+	ActionZcViewCamerainfo SemanticAction = 447
+	ActionZcWaitDialog SemanticAction = 448
 
 	// maxSemanticAction is the highest assigned SemanticAction value.
 	// Used to size the sendRegistry array in semantic.go.
@@ -494,8 +480,6 @@ func (a SemanticAction) String() string {
 		return "ActionAccessibleMaps"
 	case ActionAccountId:
 		return "ActionAccountId"
-	case ActionAccountServerInfo:
-		return "ActionAccountServerInfo"
 	case ActionActorAction:
 		return "ActionActorAction"
 	case ActionActorConnected:
@@ -554,8 +538,6 @@ func (a SemanticAction) String() string {
 		return "ActionCharCreate"
 	case ActionCharDelete:
 		return "ActionCharDelete"
-	case ActionCharLogin:
-		return "ActionCharLogin"
 	case ActionCharacterBlocked:
 		return "ActionCharacterBlocked"
 	case ActionCharacterCreationFailed:
@@ -608,8 +590,6 @@ func (a SemanticAction) String() string {
 		return "ActionCzCmdResetcooltime"
 	case ActionCzCompleteApplyMacroDetectorCaptcha:
 		return "ActionCzCompleteApplyMacroDetectorCaptcha"
-	case ActionCzContactnpc:
-		return "ActionCzContactnpc"
 	case ActionCzDynamicnpcCreateRequest:
 		return "ActionCzDynamicnpcCreateRequest"
 	case ActionCzGetAccountLimtiedSaleList:
@@ -624,8 +604,6 @@ func (a SemanticAction) String() string {
 		return "ActionCzInventoryTab"
 	case ActionCzItemReform:
 		return "ActionCzItemReform"
-	case ActionCzJoinGroup:
-		return "ActionCzJoinGroup"
 	case ActionCzJoinGuild:
 		return "ActionCzJoinGuild"
 	case ActionCzMoveItemFromBodyToCart:
@@ -638,8 +616,6 @@ func (a SemanticAction) String() string {
 		return "ActionCzNpcExpandedBarterMarketClose"
 	case ActionCzNpcExpandedBarterMarketPurchase:
 		return "ActionCzNpcExpandedBarterMarketPurchase"
-	case ActionCzNpcMarketPurchase:
-		return "ActionCzNpcMarketPurchase"
 	case ActionCzPartyConfig:
 		return "ActionCzPartyConfig"
 	case ActionCzPartyJoinReq:
@@ -680,8 +656,6 @@ func (a SemanticAction) String() string {
 		return "ActionCzReqGuildEmblemImg2"
 	case ActionCzReqGuildEmblemImg3:
 		return "ActionCzReqGuildEmblemImg3"
-	case ActionCzReqItemrepair1:
-		return "ActionCzReqItemrepair1"
 	case ActionCzReqItemrepair2:
 		return "ActionCzReqItemrepair2"
 	case ActionCzReqJoinGuild:
@@ -804,12 +778,8 @@ func (a SemanticAction) String() string {
 		return "ActionIgnoreListReq"
 	case ActionInsertCard:
 		return "ActionInsertCard"
-	case ActionInventoryItemAdded:
-		return "ActionInventoryItemAdded"
 	case ActionItemAppeared:
 		return "ActionItemAppeared"
-	case ActionItemDisappeared:
-		return "ActionItemDisappeared"
 	case ActionItemExists:
 		return "ActionItemExists"
 	case ActionItemIdentify:
@@ -908,18 +878,12 @@ func (a SemanticAction) String() string {
 		return "ActionReceivedMapServerInfo"
 	case ActionRemoveOption:
 		return "ActionRemoveOption"
-	case ActionRemovePartyMember:
-		return "ActionRemovePartyMember"
 	case ActionRepairItem:
 		return "ActionRepairItem"
 	case ActionReplyPartyInvite:
 		return "ActionReplyPartyInvite"
-	case ActionRequestAction:
-		return "ActionRequestAction"
 	case ActionRequestCharacterPage:
 		return "ActionRequestCharacterPage"
-	case ActionRequestCharlist:
-		return "ActionRequestCharlist"
 	case ActionRequestMemo:
 		return "ActionRequestMemo"
 	case ActionRestart:
@@ -928,8 +892,6 @@ func (a SemanticAction) String() string {
 		return "ActionScNotifyBan"
 	case ActionSelectAccessibleMap:
 		return "ActionSelectAccessibleMap"
-	case ActionSelectArrow:
-		return "ActionSelectArrow"
 	case ActionSelectCharacter:
 		return "ActionSelectCharacter"
 	case ActionSelectEgg:
@@ -972,8 +934,6 @@ func (a SemanticAction) String() string {
 		return "ActionStatusUp"
 	case ActionSync:
 		return "ActionSync"
-	case ActionSystemChat:
-		return "ActionSystemChat"
 	case ActionTcResult:
 		return "ActionTcResult"
 	case ActionTimeSyncResponse:
@@ -1260,8 +1220,6 @@ func (a SemanticAction) String() string {
 		return "ActionZcNpcMarketPurchaseResult"
 	case ActionZcNpcShowefstUpdate:
 		return "ActionZcNpcShowefstUpdate"
-	case ActionZcNpcackServermove:
-		return "ActionZcNpcackServermove"
 	case ActionZcOpenEditdlg:
 		return "ActionZcOpenEditdlg"
 	case ActionZcOpenEditdlgstr:

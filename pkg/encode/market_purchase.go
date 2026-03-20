@@ -6,12 +6,12 @@ import (
 	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
-// EncodeMarketPurchase encodes a 0x0134 (PACKET_CZ_NPC_MARKET_PURCHASE) packet for sending to the server.
+// EncodeMarketPurchase encodes a 0x09D6 (PACKET_CZ_NPC_MARKET_PURCHASE) packet for sending to the server.
 func EncodeMarketPurchase(req send.MarketPurchase, packetver uint32) [4]byte {
 	var p [4]byte
-	// Packet ID: 0x0134 (little-endian)
-	p[0] = 0x34
-	p[1] = 0x01
+	// Packet ID: 0x09D6 (little-endian)
+	p[0] = 0xd6
+	p[1] = 0x09
 	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: PacketLength
 	copy(p[4:], req.List)  // rAthena: list
 	_ = packetver

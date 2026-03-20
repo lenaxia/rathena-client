@@ -678,6 +678,12 @@ semantic_actions:
                 - null
               struct_name: PACKET_AC_ACCEPT_LOGIN
               field_mapping: {}
+            - packet_id: "0x0ac4"
+              packetver_range:
+                - null
+                - null
+              struct_name: PACKET_AC_ACCEPT_LOGIN
+              field_mapping: {}
     ac_ack_hash:
         name: ""
         description: ""
@@ -725,18 +731,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: SYNTH_ZC_AID
-              field_mapping: {}
-    account_server_info:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0AC4"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_AC_ACCEPT_LOGIN
               field_mapping: {}
     actor_action:
         name: ""
@@ -1164,18 +1158,6 @@ semantic_actions:
                 - null
               struct_name: PACKET_CH_DELETE_CHAR
               field_mapping: {}
-    char_login:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0066"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_CH_SELECT_CHAR
-              field_mapping: {}
     character_blocked:
         name: ""
         description: ""
@@ -1254,12 +1236,6 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations:
-            - packet_id: "0x008E"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_NOTIFY_CHAT
-              field_mapping: {}
             - packet_id: "0x008D"
               packetver_range:
                 - null
@@ -1494,18 +1470,6 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_COMPLETE_APPLY_MACRO_DETECTOR_CAPTCHA
               field_mapping: {}
-    cz_contactnpc:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0090"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_CZ_CONTACTNPC
-              field_mapping: {}
     cz_dynamicnpc_create_request:
         name: ""
         description: ""
@@ -1590,18 +1554,6 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_ITEM_REFORM
               field_mapping: {}
-    cz_join_group:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x00FF"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_CZ_JOIN_GROUP
-              field_mapping: {}
     cz_join_guild:
         name: ""
         description: ""
@@ -1673,18 +1625,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CZ_NPC_EXPANDED_BARTER_MARKET_PURCHASE
-              field_mapping: {}
-    cz_npc_market_purchase:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x09D6"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_CZ_NPC_MARKET_PURCHASE
               field_mapping: {}
     cz_party_config:
         name: ""
@@ -1925,18 +1865,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CZ_REQ_GUILD_EMBLEM_IMG3
-              field_mapping: {}
-    cz_req_itemrepair1:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x01FD"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_CZ_REQ_ITEMREPAIR1
               field_mapping: {}
     cz_req_itemrepair2:
         name: ""
@@ -2694,24 +2622,6 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_REQ_ITEMCOMPOSITION
               field_mapping: {}
-    inventory_item_added:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x00A0"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
-              field_mapping: {}
-            - packet_id: "0x0A37"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_ITEM_PICKUP_ACK
-              field_mapping: {}
     item_appeared:
         name: ""
         description: ""
@@ -2723,18 +2633,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: packet_dropflooritem
-              field_mapping: {}
-    item_disappeared:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x00A1"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_ITEM_DISAPPEAR
               field_mapping: {}
     item_exists:
         name: ""
@@ -2843,19 +2741,7 @@ semantic_actions:
         description: ""
         openkore_name: ""
         canonical_params: []
-        implementations:
-            - packet_id: "0x02EB"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_ACCEPT_ENTER
-              field_mapping: {}
-            - packet_id: "0x007D"
-              packetver_range:
-                - null
-                - null
-              struct_name: SYNTH_CZ_NOTIFY_ACTORINIT
-              field_mapping: {}
+        implementations: []
     map_login:
         name: ""
         description: ""
@@ -2874,7 +2760,7 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations:
-            - packet_id: "0x0134"
+            - packet_id: "0x09d6"
               packetver_range:
                 - null
                 - null
@@ -3216,12 +3102,6 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations:
-            - packet_id: "0x008D"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_NOTIFY_CHAT
-              field_mapping: {}
             - packet_id: "0x008C"
               packetver_range:
                 - null
@@ -3342,18 +3222,6 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_REMOVE_AID
               field_mapping: {}
-    remove_party_member:
-        name: remove_party_member
-        description: Kick a member from the party (leader only)
-        openkore_name: remove_party_member
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0103"
-              packetver_range:
-                - null
-                - null
-              struct_name: SYNTH_CZ_REQ_EXPEL_GROUP_MEMBER
-              field_mapping: {}
     repair_item:
         name: repair_item
         description: Request weapon repair at a repair NPC
@@ -3378,18 +3246,6 @@ semantic_actions:
                 - null
               struct_name: PACKET_CZ_REPLY_JOIN_GROUP
               field_mapping: {}
-    request_action:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0089"
-              packetver_range:
-                - null
-                - null
-              struct_name: SYNTH_CZ_REQUEST_ACT
-              field_mapping: {}
     request_character_page:
         name: ""
         description: ""
@@ -3401,18 +3257,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CH_CHARLIST_REQ
-              field_mapping: {}
-    request_charlist:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0065"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_CH_ENTER_0x0065
               field_mapping: {}
     request_memo:
         name: request_memo
@@ -3461,18 +3305,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CH_SELECT_ACCESSIBLE_MAPNAME
-              field_mapping: {}
-    select_arrow:
-        name: select_arrow
-        description: Request arrow crafting from a specific item
-        openkore_name: select_arrow
-        canonical_params: []
-        implementations:
-            - packet_id: "0x01AE"
-              packetver_range:
-                - null
-                - null
-              struct_name: SYNTH_CZ_REQ_MAKINGARROW
               field_mapping: {}
     select_character:
         name: ""
@@ -3761,18 +3593,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_NOTIFY_TIME
-              field_mapping: {}
-    system_chat:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x009A"
-              packetver_range:
-                - null
-                - null
-              struct_name: PACKET_ZC_BROADCAST
               field_mapping: {}
     tc_result:
         name: ""
@@ -4182,7 +4002,7 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations:
-            - packet_id: "0x0AF6"
+            - packet_id: "0x097d"
               packetver_range:
                 - null
                 - null
@@ -5501,18 +5321,6 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_ZC_NPC_SHOWEFST_UPDATE
-              field_mapping: {}
-    zc_npcack_servermove:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations:
-            - packet_id: "0x0092"
-              packetver_range:
-                - null
-                - 20170315
-              struct_name: PACKET_ZC_NPCACK_SERVERMOVE
               field_mapping: {}
     zc_open_editdlg:
         name: ""

@@ -15,7 +15,6 @@ import (
 //   ac_refuse_login
 //   accessible_maps
 //   account_id
-//   account_server_info
 //   actor_connected
 //   actor_died_or_disappeared
 //   actor_exists
@@ -43,13 +42,12 @@ import (
 //   entity_spawn
 //   guild_chat
 //   homunculus_info
-//   inventory_item_added
 //   item_appeared
-//   item_disappeared
 //   item_exists
 //   item_pickup
 //   login_error
 //   map_changed
+//   map_loaded
 //   monster_hp_update
 //   monster_ranged_attack
 //   npc_store_info
@@ -67,7 +65,6 @@ import (
 //   received_characters_page
 //   received_map_server_info
 //   reply_party_invite
-//   request_charlist
 //   sc_notify_ban
 //   self_chat
 //   sell_result
@@ -81,7 +78,6 @@ import (
 //   skills_list
 //   stat_update
 //   sync
-//   system_chat
 //   tc_result
 //   vender_found
 //   whisper_sent
@@ -220,7 +216,6 @@ import (
 //   zc_npc_market_open
 //   zc_npc_market_purchase_result
 //   zc_npc_showefst_update
-//   zc_npcack_servermove
 //   zc_open_editdlg
 //   zc_open_editdlgstr
 //   zc_open_refining_ui
@@ -446,16 +441,6 @@ func init() {
 			return b[:], nil
 		},
 	)
-	session.RegisterSendEncoder(session.ActionCharLogin,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.CharLogin)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeCharLogin(r, pv)
-			return b[:], nil
-		},
-	)
 	session.RegisterSendEncoder(session.ActionCharacterMove,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CharacterMove)
@@ -646,16 +631,6 @@ func init() {
 			return b[:], nil
 		},
 	)
-	session.RegisterSendEncoder(session.ActionCzContactnpc,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.CzContactnpc)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeCzContactnpc(r, pv)
-			return b[:], nil
-		},
-	)
 	session.RegisterSendEncoder(session.ActionCzDynamicnpcCreateRequest,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzDynamicnpcCreateRequest)
@@ -726,16 +701,6 @@ func init() {
 			return b[:], nil
 		},
 	)
-	session.RegisterSendEncoder(session.ActionCzJoinGroup,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.CzJoinGroup)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeCzJoinGroup(r, pv)
-			return b[:], nil
-		},
-	)
 	session.RegisterSendEncoder(session.ActionCzJoinGuild,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CzJoinGuild)
@@ -793,16 +758,6 @@ func init() {
 				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzNpcExpandedBarterMarketPurchase(r, pv)
-			return b[:], nil
-		},
-	)
-	session.RegisterSendEncoder(session.ActionCzNpcMarketPurchase,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.CzNpcMarketPurchase)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeCzNpcMarketPurchase(r, pv)
 			return b[:], nil
 		},
 	)
@@ -1003,16 +958,6 @@ func init() {
 				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeCzReqGuildEmblemImg3(r, pv)
-			return b[:], nil
-		},
-	)
-	session.RegisterSendEncoder(session.ActionCzReqItemrepair1,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.CzReqItemrepair1)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeCzReqItemrepair1(r, pv)
 			return b[:], nil
 		},
 	)
@@ -1596,16 +1541,6 @@ func init() {
 			return b[:], nil
 		},
 	)
-	session.RegisterSendEncoder(session.ActionMapLoaded,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.MapLoaded)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeMapLoaded(r, pv)
-			return b[:], nil
-		},
-	)
 	session.RegisterSendEncoder(session.ActionMapLogin,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.MapLogin)
@@ -1855,16 +1790,6 @@ func init() {
 			return b[:], nil
 		},
 	)
-	session.RegisterSendEncoder(session.ActionRemovePartyMember,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.RemovePartyMember)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeRemovePartyMember(r, pv)
-			return b[:], nil
-		},
-	)
 	session.RegisterSendEncoder(session.ActionRepairItem,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.RepairItem)
@@ -1872,16 +1797,6 @@ func init() {
 				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeRepairItem(r, pv)
-			return b[:], nil
-		},
-	)
-	session.RegisterSendEncoder(session.ActionRequestAction,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.RequestAction)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeRequestAction(r, pv)
 			return b[:], nil
 		},
 	)
@@ -1922,16 +1837,6 @@ func init() {
 				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSelectAccessibleMap(r, pv)
-			return b[:], nil
-		},
-	)
-	session.RegisterSendEncoder(session.ActionSelectArrow,
-		func(req interface{}, pv uint32) ([]byte, error) {
-			r, ok := req.(send.SelectArrow)
-			if !ok {
-				return nil, session.ErrWrongSendType{}
-			}
-			b := EncodeSelectArrow(r, pv)
 			return b[:], nil
 		},
 	)

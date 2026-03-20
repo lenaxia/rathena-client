@@ -150,7 +150,7 @@ func TestEncodeGameLogin_FemaleChar(t *testing.T) {
 	}
 }
 
-// ── EncodeCharLogin (0x0066 CH_SELECT_CHAR) ───────────────────────────────────
+// ── EncodeSelectCharacter (0x0066 CH_SELECT_CHAR) ────────────────────────────
 //
 // struct PACKET_CH_SELECT_CHAR (GCC-verified):
 //
@@ -159,7 +159,7 @@ func TestEncodeGameLogin_FemaleChar(t *testing.T) {
 //	total = 3 bytes
 
 func TestEncodeCharLogin_Slot0(t *testing.T) {
-	pkt := encode.EncodeCharLogin(send.CharLogin{Slot: 0}, 20180307)
+	pkt := encode.EncodeSelectCharacter(send.SelectCharacter{Slot: 0}, 20180307)
 	if len(pkt) != 3 {
 		t.Fatalf("len=%d want 3", len(pkt))
 	}
@@ -173,7 +173,7 @@ func TestEncodeCharLogin_Slot0(t *testing.T) {
 
 func TestEncodeCharLogin_AllSlots(t *testing.T) {
 	for slot := uint8(0); slot <= 8; slot++ {
-		pkt := encode.EncodeCharLogin(send.CharLogin{Slot: slot}, 20180307)
+		pkt := encode.EncodeSelectCharacter(send.SelectCharacter{Slot: slot}, 20180307)
 		if pkt[2] != slot {
 			t.Errorf("slot=%d: pkt[2]=%d want %d", slot, pkt[2], slot)
 		}
@@ -249,21 +249,6 @@ func TestEncodeMapLogin_ZeroCharID(t *testing.T) {
 	}
 	if got := binary.LittleEndian.Uint32(pkt[10:14]); got != 0xABCD {
 		t.Errorf("AuthCode=%#x want 0xABCD", got)
-	}
-}
-
-// ── EncodeMapLoaded (0x007D CZ_NOTIFY_ACTORINIT) ──────────────────────────────
-//
-// SYNTH_CZ_NOTIFY_ACTORINIT: int16 only = 2 bytes
-// Source: clif.cpp:10742, parseable_packet(0x007d, 2, ...)
-
-func TestEncodeMapLoaded_FieldLayout(t *testing.T) {
-	pkt := encode.EncodeMapLoaded(send.MapLoaded{}, 20180307)
-	if len(pkt) != 2 {
-		t.Fatalf("len=%d want 2", len(pkt))
-	}
-	if id := binary.LittleEndian.Uint16(pkt[0:2]); id != 0x007D {
-		t.Errorf("packetType=%#04x want 0x007D", id)
 	}
 }
 

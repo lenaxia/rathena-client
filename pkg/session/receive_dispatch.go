@@ -23,7 +23,6 @@ import (
 //   change_cart
 //   char_create
 //   char_delete
-//   char_login
 //   character_move
 //   close_storage
 //   close_vending
@@ -44,7 +43,6 @@ import (
 //   cz_close_ui_stylingshop
 //   cz_cmd_resetcooltime
 //   cz_complete_apply_macro_detector_captcha
-//   cz_contactnpc
 //   cz_dynamicnpc_create_request
 //   cz_get_account_limtied_sale_list
 //   cz_grade_enchant_close_ui
@@ -52,14 +50,12 @@ import (
 //   cz_grade_enchant_select_equipment
 //   cz_inventory_tab
 //   cz_item_reform
-//   cz_join_group
 //   cz_join_guild
 //   cz_move_item_from_body_to_cart
 //   cz_npc_barter_market_close
 //   cz_npc_barter_market_purchase
 //   cz_npc_expanded_barter_market_close
 //   cz_npc_expanded_barter_market_purchase
-//   cz_npc_market_purchase
 //   cz_party_config
 //   cz_party_join_req
 //   cz_party_join_req_ack
@@ -80,7 +76,6 @@ import (
 //   cz_req_guild_emblem_img1
 //   cz_req_guild_emblem_img2
 //   cz_req_guild_emblem_img3
-//   cz_req_itemrepair1
 //   cz_req_itemrepair2
 //   cz_req_join_guild
 //   cz_req_join_guild2
@@ -139,6 +134,7 @@ import (
 //   item_identify
 //   item_use
 //   look
+//   map_loaded
 //   map_login
 //   market_purchase
 //   master_login
@@ -161,6 +157,7 @@ import (
 //   pet_menu
 //   pickup_item
 //   pin_code_response
+//   public_chat
 //   quest_dialog
 //   quest_dialog_list
 //   quest_update_mission_hunt
@@ -168,16 +165,12 @@ import (
 //   received_character_ID_and_Map
 //   received_character_id_and_map
 //   remove_option
-//   remove_party_member
 //   repair_item
 //   reply_party_invite
-//   request_action
 //   request_character_page
-//   request_charlist
 //   request_memo
 //   restart
 //   select_accessible_map
-//   select_arrow
 //   select_character
 //   select_egg
 //   send_emotion
@@ -204,6 +197,7 @@ type receiveEntry struct {
 var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionAcAcceptLogin: {
 		{id: 0x0069, fn: func(d []byte, pv uint32) interface{} { return decode.AcAcceptLogin_0x0069(d, pv) }},
+		{id: 0x0AC4, fn: func(d []byte, pv uint32) interface{} { return decode.AcAcceptLogin_0x0AC4(d, pv) }},
 	},
 	ActionAcAckHash: {
 		{id: 0x01DC, fn: func(d []byte, pv uint32) interface{} { return decode.AcAckHash_0x01DC(d, pv) }},
@@ -216,9 +210,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionAccountId: {
 		{id: 0x0283, fn: func(d []byte, pv uint32) interface{} { return decode.AccountId_0x0283(d, pv) }},
-	},
-	ActionAccountServerInfo: {
-		{id: 0x0AC4, fn: func(d []byte, pv uint32) interface{} { return decode.AccountServerInfo_0x0AC4(d, pv) }},
 	},
 	ActionActorAction: {
 		{id: 0x008A, fn: func(d []byte, pv uint32) interface{} { return decode.ActorAction_0x008A(d, pv) }},
@@ -292,7 +283,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x006C, fn: func(d []byte, pv uint32) interface{} { return decode.CharacterServerRefused_0x006C(d, pv) }},
 	},
 	ActionChatMessage: {
-		{id: 0x008E, fn: func(d []byte, pv uint32) interface{} { return decode.ChatMessage_0x008E(d, pv) }},
 		{id: 0x008D, fn: func(d []byte, pv uint32) interface{} { return decode.ChatMessage_0x008D(d, pv) }},
 	},
 	ActionDealFinalize: {
@@ -315,15 +305,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionHomunculusInfo: {
 		{id: 0x0230, fn: func(d []byte, pv uint32) interface{} { return decode.HomunculusInfo_0x0230(d, pv) }},
 	},
-	ActionInventoryItemAdded: {
-		{id: 0x00A0, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemAdded_0x00A0(d, pv) }},
-		{id: 0x0A37, fn: func(d []byte, pv uint32) interface{} { return decode.InventoryItemAdded_0x0A37(d, pv) }},
-	},
 	ActionItemAppeared: {
 		{id: 0x009E, fn: func(d []byte, pv uint32) interface{} { return decode.ItemAppeared_0x009E(d, pv) }},
-	},
-	ActionItemDisappeared: {
-		{id: 0x00A1, fn: func(d []byte, pv uint32) interface{} { return decode.ItemDisappeared_0x00A1(d, pv) }},
 	},
 	ActionItemExists: {
 		{id: 0x009D, fn: func(d []byte, pv uint32) interface{} { return decode.ItemExists_0x009D(d, pv) }},
@@ -339,9 +322,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x0091, fn: func(d []byte, pv uint32) interface{} { return decode.MapChanged_0x0091(d, pv) }},
 		{id: 0x0AC7, fn: func(d []byte, pv uint32) interface{} { return decode.MapChanged_0x0AC7(d, pv) }},
 		{id: 0x0092, fn: func(d []byte, pv uint32) interface{} { return decode.MapChanged_0x0092(d, pv) }},
-	},
-	ActionMapLoaded: {
-		{id: 0x02EB, fn: func(d []byte, pv uint32) interface{} { return decode.MapLoaded_0x02EB(d, pv) }},
 	},
 	ActionMonsterHpUpdate: {
 		{id: 0x0977, fn: func(d []byte, pv uint32) interface{} { return decode.MonsterHpUpdate_0x0977(d, pv) }},
@@ -363,9 +343,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionPrivateMessage: {
 		{id: 0x0097, fn: func(d []byte, pv uint32) interface{} { return decode.PrivateMessage_0x0097(d, pv) }},
-	},
-	ActionPublicChat: {
-		{id: 0x008D, fn: func(d []byte, pv uint32) interface{} { return decode.PublicChat_0x008D(d, pv) }},
 	},
 	ActionReceivedCharacters: {
 		{id: 0x006B, fn: func(d []byte, pv uint32) interface{} { return decode.ReceivedCharacters_0x006B(d, pv) }},
@@ -424,9 +401,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionSync: {
 		{id: 0x007F, fn: func(d []byte, pv uint32) interface{} { return decode.Sync_0x007F(d, pv) }},
-	},
-	ActionSystemChat: {
-		{id: 0x009A, fn: func(d []byte, pv uint32) interface{} { return decode.SystemChat_0x009A(d, pv) }},
 	},
 	ActionTcResult: {
 		{id: 0x0AE3, fn: func(d []byte, pv uint32) interface{} { return decode.TcResult_0x0AE3(d, pv) }},
@@ -513,7 +487,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x0AB7, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckRandomUpgradeItem_0x0AB7(d, pv) }},
 	},
 	ActionZcAckRanking: {
-		{id: 0x0AF6, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckRanking_0x0AF6(d, pv) }},
+		{id: 0x097D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckRanking_0x097D(d, pv) }},
 	},
 	ActionZcAckReadRodex: {
 		{id: 0x09EB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckReadRodex_0x09EB(d, pv) }},
@@ -839,9 +813,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcNpcShowefstUpdate: {
 		{id: 0x028A, fn: func(d []byte, pv uint32) interface{} { return decode.ZcNpcShowefstUpdate_0x028A(d, pv) }},
-	},
-	ActionZcNpcackServermove: {
-		{id: 0x0092, fn: func(d []byte, pv uint32) interface{} { return decode.ZcNpcackServermove_0x0092(d, pv) }},
 	},
 	ActionZcOpenEditdlg: {
 		{id: 0x0142, fn: func(d []byte, pv uint32) interface{} { return decode.ZcOpenEditdlg_0x0142(d, pv) }},

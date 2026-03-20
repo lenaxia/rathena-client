@@ -26,7 +26,7 @@ func TestLoaderDeepValidation(t *testing.T) {
 	}
 	checks := []check{
 		{"actor_died_or_disappeared", 1, "0x0080", "PACKET_ZC_NOTIFY_VANISH", 20030000},
-		{"ac_accept_login", 1, "0x0069", "PACKET_AC_ACCEPT_LOGIN", 20030000},
+		{"ac_accept_login", 2, "0x0069", "PACKET_AC_ACCEPT_LOGIN", 20030000},
 		{"account_id", 1, "0x0283", "SYNTH_ZC_AID", 20030000},
 		{"actor_exists", 4, "0x0078", "packet_idle_unit", 20030000},
 		{"move_to", 2, "0x0085", "SYNTH_CZ_REQUEST_MOVE", 20030000},

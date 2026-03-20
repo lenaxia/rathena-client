@@ -869,25 +869,26 @@ func TestChatMessage_0x008D_ZeroSender(t *testing.T) {
 	}
 }
 
-// ─── ChatMessage_0x008E ───────────────────────────────────────────────────────
+// ─── ChatMessage_0x008D ───────────────────────────────────────────────────────
 //
-// struct PACKET_ZC_NOTIFY_PLAYERCHAT (variable length):
+// struct PACKET_ZC_NOTIFY_CHAT (variable length):
 //
 //	0:2  PacketType    2:2  PacketLength   4:4  GID   8:+  Message (null-terminated)
 //
-// 0x008E uses the same struct as 0x008D — GID at offset 4, Message at offset 8.
+// 0x008D is the authoritative ID for ZC_NOTIFY_CHAT.
+// Source: packets.hpp DEFINE_PACKET_HEADER(ZC_NOTIFY_CHAT, 0x8d), clif.cpp:6753.
+// (Previously documented as 0x008E — that was a DB error now corrected.)
 func TestChatMessage_0x008E_Golden(t *testing.T) {
-	// 0x008E uses same PACKET_ZC_NOTIFY_CHAT struct as 0x008D
 	msg := "My own chat"
 	msgBytes := append([]byte(msg), 0x00)
 	totalLen := 8 + len(msgBytes) // full struct with GID field
 	b := make([]byte, totalLen)
-	putI16LE(b, 0, 0x008E)
+	putI16LE(b, 0, 0x008D)
 	putI16LE(b, 2, int16(totalLen))
 	putU32LE(b, 4, 7777) // GID
 	copy(b[8:], msgBytes)
 
-	e := ChatMessage_0x008E(b, 20181121)
+	e := ChatMessage_0x008D(b, 20181121)
 
 	if e.GID != 7777 {
 		t.Errorf("GID: got %d want 7777", e.GID)
