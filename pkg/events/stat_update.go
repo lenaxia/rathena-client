@@ -6,7 +6,7 @@ package events
 type StatUpdate struct {
 	VarID uint16
 	Count int32
-	Amount int64
+	Amount int32
 	StatusID uint16
 	Value uint8
 }

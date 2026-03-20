@@ -1997,7 +1997,6 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 		t[0x0ADF] = 58
 		t[0x0AE2] = 7
 		t[0x0AF7] = 32
-		t[0x0B25] = 12
 	}
 	if pv >= 20180307 {
 		t[0x0A68] = 3

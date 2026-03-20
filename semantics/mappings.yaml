@@ -3568,7 +3568,7 @@ semantic_actions:
               packetver_range:
                 - null
                 - null
-              struct_name: PACKET_ZC_LONGLONGPAR_CHANGE
+              struct_name: PACKET_ZC_PAR_4JOB_CHANGE
               field_mapping: {}
     status_up:
         name: status_up

@@ -18,7 +18,7 @@ func StatUpdate_0x00B1(data []byte, packetver uint32) events.StatUpdate {
 	var e events.StatUpdate
 	_ = packetver
 	e.VarID = leU16(data, 2)  // rAthena: varID (offset 2, size 2)
-	e.Amount = int64(leI32(data, 4))  // rAthena: amount (offset 4, size 4)
+	e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
 	return e
 }
 
@@ -31,12 +31,5 @@ func StatUpdate_0x00BE(data []byte, packetver uint32) events.StatUpdate {
 	return e
 }
 
-// StatUpdate_0x0B25 decodes a 0x0B25 packet (struct PACKET_ZC_LONGLONGPAR_CHANGE).
-func StatUpdate_0x0B25(data []byte, packetver uint32) events.StatUpdate {
-	var e events.StatUpdate
-	_ = packetver
-	e.VarID = leU16(data, 2)  // rAthena: varID (offset 2, size 2)
-	e.Amount = leI64(data, 4)  // rAthena: amount (offset 4, size 8)
-	return e
-}
+// SKIP StatUpdate_0x0B25: struct PACKET_ZC_PAR_4JOB_CHANGE not found in VersionTable
 

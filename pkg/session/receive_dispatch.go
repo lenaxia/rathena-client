@@ -397,7 +397,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x00B0, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x00B0(d, pv) }},
 		{id: 0x00B1, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x00B1(d, pv) }},
 		{id: 0x00BE, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x00BE(d, pv) }},
-		{id: 0x0B25, fn: func(d []byte, pv uint32) interface{} { return decode.StatUpdate_0x0B25(d, pv) }},
 	},
 	ActionSync: {
 		{id: 0x007F, fn: func(d []byte, pv uint32) interface{} { return decode.Sync_0x007F(d, pv) }},
