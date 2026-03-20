@@ -84,3 +84,61 @@ func BenchmarkEncodeActorAction(b *testing.B) {
 		_ = encode.EncodeActorAction(req, 20200401)
 	}
 }
+
+// TestEncodeActorAction_AllBreakpoints verifies the correct wire packet ID is
+// emitted for every distinct packetver breakpoint.
+// Sources:
+//
+//	clif_packetdb.hpp — parseable_packet(0xNNNN,7,clif_parse_ActionRequest,2,6)
+//	clif_shuffle.hpp  — per-week exact-match shuffle assignments for 0x0089
+func TestEncodeActorAction_AllBreakpoints(t *testing.T) {
+	cases := []struct {
+		name   string
+		pv     uint32
+		wantID uint16
+	}{
+		// clif_packetdb.hpp line 38: default baseline
+		{"pre-2004 baseline", 20030000, 0x0089},
+		// clif_packetdb.hpp >= 20040726: 0x0193
+		{"20040726", 20040726, 0x0193},
+		// clif_packetdb.hpp >= 20040906: 0x0085
+		{"20040906", 20040906, 0x0085},
+		// clif_packetdb.hpp >= 20041129: 0x009f
+		{"20041129", 20041129, 0x009f},
+		// clif_packetdb.hpp >= 20050110: 0x0190
+		{"20050110", 20050110, 0x0190},
+		{"20080909", 20080909, 0x0190},
+		// clif_packetdb.hpp >= 20080910: 0x0437
+		{"20080910", 20080910, 0x0437},
+		{"20111101", 20111101, 0x0437},
+		// clif_packetdb.hpp >= 20111102: 0x08aa
+		{"20111102", 20111102, 0x08aa},
+		// clif_packetdb.hpp >= 20120307: 0x0885
+		{"20120307", 20120307, 0x0885},
+		// clif_packetdb.hpp >= 20120410: 0x0369
+		{"20120410", 20120410, 0x0369},
+		// clif_packetdb.hpp >= 20120702: 0x085a
+		{"20120702", 20120702, 0x085a},
+		// clif_packetdb.hpp >= 20130320: 0x088e
+		{"20130320 (bug range start)", 20130320, 0x088e},
+		{"20130514 (bug range end)", 20130514, 0x088e},
+		// clif_shuffle.hpp == 20130515: 0x0369
+		{"20130515 (shuffle era start)", 20130515, 0x0369},
+		// clif_shuffle.hpp == 20130522: 0x08A2
+		{"20130522", 20130522, 0x08A2},
+		// clif_shuffle.hpp == 20180307: 0x0969
+		{"20180307 (last shuffle week)", 20180307, 0x0969},
+		// clif_shuffle.hpp > 20180307: 0x0437
+		{"20180308 (post-shuffle)", 20180308, 0x0437},
+		{"20200401", 20200401, 0x0437},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			p := encode.EncodeActorAction(send.ActorAction{TargetGID: 1, Action: 7}, tc.pv)
+			got := uint16(p[0]) | uint16(p[1])<<8
+			if got != tc.wantID {
+				t.Fatalf("pv=%d: wire ID = 0x%04X, want 0x%04X", tc.pv, got, tc.wantID)
+			}
+		})
+	}
+}

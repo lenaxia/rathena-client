@@ -190,7 +190,7 @@ func generateRegisterFileInner(db *semantics.DB, vt preprocess.VersionTable, enc
 		sb.WriteString(fmt.Sprintf("\t\tfunc(req interface{}, pv uint32) ([]byte, error) {\n"))
 		sb.WriteString(fmt.Sprintf("\t\t\tr, ok := req.(send.%s)\n", e.structName))
 		sb.WriteString(fmt.Sprintf("\t\t\tif !ok {\n"))
-		sb.WriteString(fmt.Sprintf("\t\t\t\treturn nil, session.ErrWrongSendType\n"))
+		sb.WriteString(fmt.Sprintf("\t\t\t\treturn nil, session.ErrWrongSendType{}\n"))
 		sb.WriteString(fmt.Sprintf("\t\t\t}\n"))
 		if e.isFixed {
 			sb.WriteString(fmt.Sprintf("\t\t\tb := Encode%s(r, pv)\n", e.structName))
