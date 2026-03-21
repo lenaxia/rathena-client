@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.3] — 2026-03-21
+
+### Fixed
+
+- **`t[0x009E]` stale length at `pv == 20130000`** — `packet_dropflooritem` gains a
+  `type` field at `PACKETVER >= 20130000`, making the wire size 19 bytes, but
+  `dropflooritemType` only switches from `0x009E` to `0x084B` at `PACKETVER > 20130000`
+  (strictly greater). At exactly `pv == 20130000` the server sends `0x009E` with a
+  19-byte body while the length table had 17, causing `IsIdentified`, `xPos`, `yPos`,
+  `subX`, `subY`, and `count` to all be read from wrong offsets (silent corruption).
+  Fix: `lengths_map_overrides.go` sets `t[0x009E] = 19` at `pv == 20130000`;
+  `ItemAppeared_0x009E` now branches on `pv >= 20130000` to read `type` at offset 8.
+  GCC verified at pv=20120925 (17 bytes), pv=20130000 (19 bytes), pv=20130001
+  (19 bytes, 0x084B). (goKore-test worklog 0778)
+
+- **`0x08C7` length override was dead code** — the `t[0x08C7] = 19` correction
+  (introduced in v0.5.2) was accidentally nested inside the `pv >= 20181121` block in
+  `lengths_map_overrides.go`, so it was never applied. It is now a standalone condition
+  (`pv >= 20110718 && pv < 20121212`), correctly fixing the packet length for the
+  area spell packet at those versions.
+
+---
+
 ## [v0.5.2] — 2026-03-21
 
 ### Fixed
