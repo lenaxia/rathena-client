@@ -516,14 +516,14 @@ goKore calls session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y:
 | `pkg/packing` | **Complete** | packing.go + packing_test.go; all tests pass (worklog 0001) |
 | `validation/` | **Complete** | preprocess_check.sh, phase1_gate.sh, struct_layout.sh (worklogs 0002-0007) |
 | `internal/codegen` | **Complete** | Full GCC+semantics pipeline; 770 structs in VersionTable (worklog 0039) |
-| `pkg/events` | **Complete** | 281 generated event structs (worklog 0013) |
+| `pkg/events` | **Complete** | 281 generated event structs + `NormalItemEntry`, `EquipItemEntry`, `ItemOption` (hand-written); worklog 0066 |
 | `pkg/send` | **Complete** | 177 generated send request structs (worklogs 0039, 0063) |
-| `pkg/decode` | **Complete** | 284 generated decode functions; zero allocs; zero "complex expression" gaps (worklogs 0036-0037, 0064) |
+| `pkg/decode` | **Complete** | 284 generated decode functions + hand-written inventory decoders (`inventory_items_stackable.go`, `inventory_items_equip.go`); all packetver breakpoints covered; 1 alloc/op for item-list packets (worklogs 0036-0037, 0064, 0066) |
 | `pkg/encode` | **Complete** | 176 generated encode functions + `shuffle_map.go` (`shuffledCtoSID`, unexported) (worklogs 0055, 0063) |
 | `pkg/session` (generated) | **Complete** | lengths_login.go, lengths_char.go, lengths_map.go, obfuscation_keys.go (`obfuscationKeysFor`, unexported); `shuffle_map.go` moved to pkg/encode (worklog 0055) |
-| `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go, fsm.go, fsm_parse.go, fsm_packets.go, semantic.go, actions.go, receive_dispatch.go; all tests pass; 0 allocs/op benchmarks |
+| `pkg/session` (hand-written) | **Complete** | session.go, login.go, char.go, map.go, obfuscation.go, fsm.go, fsm_parse.go, fsm_packets.go, semantic.go, actions.go, receive_dispatch.go; all tests pass; 0 allocs/op benchmarks; 0x0B09 dispatch fix (worklog 0066) |
 | `pkg/fsm` | **Deleted** | Merged into pkg/session (worklog 0054). ConnectionFSM, ServerConfig, Credentials, CharServerInfo, IdentityInfo, ReadyInfo, Dialer now live in pkg/session. |
-| Semantic action API | **Complete** | RegisterSemanticHandler, Send, SemanticAction enum (450 constants), receive dispatch (276 actions, 349 packet IDs), send encoders (171); all old low-level API unexported (worklogs 0050-0055, 0063) |
+| Semantic action API | **Complete** | RegisterSemanticHandler, Send, SemanticAction enum (450 constants), receive dispatch (276 actions, 350 packet IDs), send encoders (171); all old low-level API unexported (worklogs 0050-0055, 0063) |
 
 **Gate status**: 76 PASS / 1 FAIL (expected; CH_MAKE_CHAR 0x0065 shuffle — documented). `go build ./...` and `go test ./...` are clean.
 
@@ -622,9 +622,9 @@ session.RegisterSemanticHandler(ms, session.ActionActorMoved, func(e events.Acto
 session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y: 200})
 ```
 
-### Phase 8 — goKore Integration
+### Phase 8 — goKore Integration ✅ COMPLETE (worklog 0065)
 
-Replace goKore's `internal/network/` layer with `pkg/session` semantic API. See HLD §7.
+Replaced goKore's `internal/network/` layer with `pkg/session` semantic API. Feature parity achieved with the previous implementation. See HLD §7.
 
 ---
 
@@ -1213,7 +1213,7 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 
 ---
 
-**Last Updated**: 2026-03-19 (Phases 0–7 complete; 55 work logs; semantic action API complete; old low-level API fully unexported; pkg/fsm merged into pkg/session)
+**Last Updated**: 2026-03-20 (Phases 0–8 complete; 65 work logs; goKore integration complete; feature parity achieved)
 **Design Authority**: `docs/DESIGN/HLD.md` (Draft v9)
 **Ground Truth**: GCC preprocessor output against `~/personal/rathena/src/`
 **Packet Cross-Reference**: `semantics/mappings.yaml` via `gokore-semantics` MCP (306 known errors — verify against GCC before trusting)

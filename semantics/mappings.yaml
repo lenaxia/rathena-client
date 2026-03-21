@@ -2784,6 +2784,12 @@ semantic_actions:
                 - 20181001
               struct_name: packet_itemlist_normal
               field_mapping: {}
+            - packet_id: "0x0B09"
+              packetver_range:
+                - 20181002
+                - null
+              struct_name: packet_itemlist_normal
+              field_mapping: {}
     item_appeared:
         name: ""
         description: ""

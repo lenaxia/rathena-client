@@ -5,6 +5,62 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.1] — 2026-03-20
+
+### Fixed
+
+- **`ActionInventoryItemsStackable` never fired at pv≥20181002** — `0x0B09`
+  (`inventorylistnormalType` at `PACKETVER_MAIN_NUM >= 20181002`) was present in
+  `lengths_map.go` but absent from `receive_dispatch.go`. At production packetver
+  `20200401` the server sends `0x0B09`; `0x0991` is disabled (`length=0`) at that
+  version. The action now fires correctly via a new
+  `InventoryItemsStackable_0x0B09` decoder and dispatch entry.
+  (worklog 0066, rAthena source: `packets_struct.hpp:138`)
+
+- **`InventoryItemsStackable` and `InventoryItemsEquip` exposed raw `[]byte`** —
+  the inner `NORMALITEM_INFO` / `EQUIPITEM_INFO` array was left as an opaque
+  `List []byte`, forcing consumers to implement their own packetver-aware binary
+  parser. Both events now expose fully decoded typed slices:
+  - `InventoryItemsStackable.Items []NormalItemEntry`
+  - `InventoryItemsEquip.Items []EquipItemEntry`
+
+  New types `NormalItemEntry`, `EquipItemEntry`, and `ItemOption` added to
+  `pkg/events/`. Decoders handle all packetver-conditional field widths internally
+  (`NORMALITEM_INFO`: 4 breakpoints; `EQUIPITEM_INFO`: 8 breakpoints covering
+  pv < 20071002 through pv ≥ 20200916). One heap allocation per packet
+  (`make([]T, n)`) — documented in HLD §known-exceptions.
+
+  Also added decoders `InventoryItemsEquip_0x0295` and `InventoryItemsEquip_0x02D0`
+  which were present in the rAthena enum but had no corresponding decode functions.
+  (worklog 0066)
+
+### Changed (breaking)
+
+- **`events.InventoryItemsStackable.List []byte` removed** — replaced by
+  `Items []NormalItemEntry`. Update handlers:
+  ```go
+  // Before
+  session.RegisterSemanticHandler(ms, session.ActionInventoryItemsStackable,
+      func(e events.InventoryItemsStackable) {
+          raw := e.List  // []byte
+      })
+
+  // After
+  session.RegisterSemanticHandler(ms, session.ActionInventoryItemsStackable,
+      func(e events.InventoryItemsStackable) {
+          for _, item := range e.Items {
+              _ = item.ITID      // uint32
+              _ = item.Count     // uint16
+              _ = item.InvType   // on e, not item
+          }
+      })
+  ```
+
+- **`events.InventoryItemsEquip.List []byte` removed** — replaced by
+  `Items []EquipItemEntry`. Same pattern as above.
+
+---
+
 ## [v0.5.0] — 2026-03-20
 
 ### Added
