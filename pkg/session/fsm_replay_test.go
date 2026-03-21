@@ -29,9 +29,10 @@ func testFixturePath(name string) string {
 // It:
 //  1. Loads the fixture
 //  2. Drives ConnectionFSM.Connect() against a ScriptedServer
-//  3. Calls setupHandlers(mapSess) to register event handlers
-//  4. Feeds the map phase bytes remaining after OnReady fires
-//  5. Returns the mapSess and conn for the caller to assert on
+//  3. Calls setupHandlers(mapSess) via OnMapSessionCreated, before feedUntil
+//     processes any bytes — this ensures early-burst packets (inventory, stats,
+//     actors) are captured even when co-delivered with ZC_ACCEPT_ENTER.
+//  4. Hands off mapSess and conn to the caller via OnReady for post-burst assertions
 //
 // The caller receives the mapSess and conn from OnReady. conn is already
 // exhausted of fixture bytes (up to the timeout). The caller asserts its own
@@ -73,8 +74,10 @@ func runReplayTest(
 	f := New(server, creds, ss.Dialer()).
 		OnCharServerList(func(_ []CharServerInfo) int { return 0 }).
 		OnCharList(func(_ []byte) uint8 { return 0 }).
-		OnReady(func(s *MapSession, c net.Conn, _ ReadyInfo) {
+		OnMapSessionCreated(func(s *MapSession) {
 			setupHandlers(s)
+		}).
+		OnReady(func(s *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCh <- readyResult{s, c}
 		}).
 		OnFailed(func(err error) {

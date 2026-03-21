@@ -100,12 +100,13 @@ type ConnectionFSM struct {
 	creds  Credentials
 	dialer Dialer
 
-	onCharServerList func([]CharServerInfo) int
-	onCharList       func([]byte) uint8
-	onReady          func(*MapSession, net.Conn, ReadyInfo)
-	onFailed         func(error)
-	onServerNotify   func(uint8)
-	onIdentity       func(IdentityInfo)
+	onCharServerList    func([]CharServerInfo) int
+	onCharList          func([]byte) uint8
+	onMapSessionCreated func(*MapSession)
+	onReady             func(*MapSession, net.Conn, ReadyInfo)
+	onFailed            func(error)
+	onServerNotify      func(uint8)
+	onIdentity          func(IdentityInfo)
 
 	// auth state — populated during Connect, cleared when Connect returns
 	accountID  uint32
@@ -151,6 +152,25 @@ func (f *ConnectionFSM) OnCharServerList(fn func([]CharServerInfo) int) *Connect
 // []byte signature is a documented Phase 1 deviation; see HLD §4.
 func (f *ConnectionFSM) OnCharList(fn func([]byte) uint8) *ConnectionFSM {
 	f.onCharList = fn
+	return f
+}
+
+// OnMapSessionCreated registers fn to be called immediately after the MapSession
+// is created for the map phase and the FSM's own internal auth handlers are
+// registered, but before feedUntil processes any packets. This is the correct
+// place to register semantic handlers that need to capture packets sent by the
+// server as part of the initial map-login sequence (e.g., inventory burst, skill
+// list, character stats broadcast sent in response to CZ_NOTIFY_ACTORINIT).
+//
+// fn is called synchronously from Connect(). It must not block.
+// fn receives the MapSession fully configured (packetver, lengths, obfuscation,
+// FSM auth handlers). Handlers registered here are keyed by SemanticAction and
+// will not collide with the FSM's internal raw-ID handlers.
+//
+// The net.Conn is NOT available at this point (it is handed to the caller via
+// OnReady). fn should only register receive-direction handlers.
+func (f *ConnectionFSM) OnMapSessionCreated(fn func(*MapSession)) *ConnectionFSM {
+	f.onMapSessionCreated = fn
 	return f
 }
 
@@ -728,6 +748,16 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		mapSess.core.registerHandler(0x02EB, onMapEnter) // ZC_ACCEPT_ENTER2
 	} else {
 		mapSess.core.registerHandler(0x0073, onMapEnter) // ZC_ACCEPT_ENTER (original)
+	}
+
+	// Fire OnMapSessionCreated after FSM auth handlers are registered but before
+	// feedUntil processes any bytes. This is the correct place for callers to
+	// register receive-direction semantic handlers that must capture packets
+	// co-delivered with ZC_ACCEPT_ENTER (e.g., the inventory burst sent by
+	// clif_parse_LoadEndAck in response to 0x007D CZ_NOTIFY_ACTORINIT).
+	// See worklog 0068 for the full root-cause analysis.
+	if f.onMapSessionCreated != nil {
+		f.onMapSessionCreated(mapSess)
 	}
 
 	if err := f.feedUntil(conn, mapSess, f.stepTimeout(), &res.done); err != nil {

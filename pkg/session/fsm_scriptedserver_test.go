@@ -190,17 +190,7 @@ func (s *ScriptedServer) servePhase(conn net.Conn, phaseData []byte, phaseIdx in
 	}()
 
 	// Step 4: Write S→C bytes in random chunks.
-	// For the map phase, use a small maximum chunk size (16 bytes) so the FSM
-	// cannot consume all bytes — including post-OnReady packets — in a single
-	// conn.Read call before OnReady fires and the test registers its handlers.
-	// Without this, the entire 3857-byte map phase may be delivered in one chunk,
-	// causing the FSM's feedUntil loop to process all packets (including 0x09FF)
-	// before the test's handlers are registered in setupHandlers/OnReady.
-	// Login and char phases use up to 4096 bytes — they have no post-OnReady issue.
 	maxChunk := 4096
-	if phaseIdx == 2 {
-		maxChunk = 16
-	}
 	remaining := phaseData
 	for len(remaining) > 0 {
 		size := s.rng.Intn(maxChunk) + 1

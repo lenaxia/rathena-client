@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
 )
 
 // ── Test helpers ──────────────────────────────────────────────────────────────
@@ -1625,5 +1624,110 @@ func TestConnect_OnIdentity_ReceivesMapName(t *testing.T) {
 				t.Errorf("IdentityInfo.MapName = %q, want %q", gotMapName, mapName)
 			}
 		})
+	}
+}
+
+// TestConnect_OnMapSessionCreated_HandlersFire is the regression test for the
+// inventory-burst race (worklog 0068).
+//
+// The bug: rAthena co-delivers ZC_ACCEPT_ENTER and the inventory burst in the
+// same TCP segment on loopback. sessionCore.feed() drains all complete frames in
+// one call, so by the time feedUntil exits and OnReady fires, the burst has
+// already been dispatched — with no handlers registered — and is silently dropped.
+//
+// The fix: OnMapSessionCreated fires before feedUntil, giving the caller the
+// chance to register handlers that will catch co-delivered packets.
+//
+// Test design:
+//   - The scripted map server co-delivers ZC_AID (0x0283, 6 bytes) + ZC_ACCEPT_ENTER
+//     in a single conn.Write, guaranteeing they arrive in the same Feed() call.
+//   - ZC_AID is used as the proxy for "inventory burst packet" because it is a
+//     real, length-table-registered map packet with a known fixed size (6 bytes).
+//   - Part A: handler registered in OnMapSessionCreated — must fire.
+//   - Part B: handler registered only in OnReady — must NOT fire (packet already gone).
+//
+// If OnMapSessionCreated is not implemented (or fires after feedUntil), Part A fails.
+func TestConnect_OnMapSessionCreated_HandlersFire(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+	const charID = uint32(100001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+	}
+	charScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
+		mustWrite(t, conn, buildHC082D())
+		mustWrite(t, conn, buildCharEnterAccept(nil))
+		mustWrite(t, conn, buildHCCharlistNotify(1))
+		mustDrain(t, conn, 2)
+		mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+		mustDrain(t, conn, 3)
+		mustWrite(t, conn, buildHCNotifyZonesvrPost(charID, mapIP, mapPort))
+	}
+	// mapScript co-delivers ZC_AID and ZC_ACCEPT_ENTER in one write.
+	// This guarantees both are in the same Feed() call — the exact loopback
+	// scenario described in worklog 0068.
+	mapScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 19) // CZ_ENTER
+		coDelivered := append(buildZCAID(aid), buildZCAcceptEnter(pv)...)
+		mustWrite(t, conn, coDelivered)
+		mustDrain(t, conn, 2) // 0x007D
+		mustDrain(t, conn, 6) // 0x0360
+	}
+
+	server := ServerConfig{
+		LoginAddr:   "127.0.0.1:6900",
+		Packetver:   pv,
+		StepTimeout: 5 * time.Second,
+	}
+	creds := Credentials{}
+
+	// Part A: handler registered in OnMapSessionCreated fires for co-delivered ZC_AID.
+	aidCountEarly := 0
+
+	// Part B: handler registered only in OnReady does NOT fire for co-delivered ZC_AID
+	// (the packet was already consumed before OnReady).
+	aidCountLate := 0
+
+	readyCalled := false
+
+	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+		OnMapSessionCreated(func(ms *MapSession) {
+			// Register before feedUntil — must catch the co-delivered ZC_AID.
+			ms.core.registerHandler(0x0283, func(data []byte, _ uint32) {
+				aidCountEarly++
+			})
+		}).
+		OnReady(func(ms *MapSession, c net.Conn, _ ReadyInfo) {
+			readyCalled = true
+			// Register after feedUntil — too late for the co-delivered ZC_AID.
+			ms.core.registerHandler(0x0283, func(data []byte, _ uint32) {
+				aidCountLate++
+			})
+			c.Close()
+		})
+
+	if err := loginFSM.Connect(context.Background()); err != nil {
+		t.Fatalf("Connect: %v", err)
+	}
+	if !readyCalled {
+		t.Fatal("OnReady was not called")
+	}
+	// Part A: early handler must have fired exactly once for the co-delivered ZC_AID.
+	if aidCountEarly != 1 {
+		t.Errorf("OnMapSessionCreated handler fired %d times for co-delivered ZC_AID, want 1 — worklog 0068 bug not fixed", aidCountEarly)
+	}
+	// Part B: late handler must not have fired (ZC_AID was already consumed).
+	if aidCountLate != 0 {
+		t.Errorf("OnReady handler fired %d times for co-delivered ZC_AID, want 0", aidCountLate)
 	}
 }

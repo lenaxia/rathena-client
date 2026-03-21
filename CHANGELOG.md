@@ -5,6 +5,49 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.4] — 2026-03-21
+
+### Added
+
+- **`ConnectionFSM.OnMapSessionCreated`** — new callback hook that fires after the
+  `MapSession` is created and the FSM's own auth handlers are registered, but
+  **before** `feedUntil` processes any bytes from the map server. This is the
+  correct place for callers to register receive-direction semantic handlers that
+  must capture packets co-delivered with `ZC_ACCEPT_ENTER` in the same TCP
+  segment (e.g., the inventory burst, stat updates, actor spawns sent by
+  `clif_parse_LoadEndAck` in response to `0x007D CZ_NOTIFY_ACTORINIT`).
+
+  Previously, any handler registered in `OnReady` would silently miss these
+  packets: `sessionCore.feed()` drains all complete frames in a single call, so
+  the entire initial burst was dispatched — with no handlers registered — before
+  `feedUntil` returned and `OnReady` fired. (worklog 0068)
+
+### Fixed
+
+- **Inventory burst and initial-map-login packets silently dropped** — root cause
+  of the above. On loopback (and in practice on LAN), rAthena co-delivers
+  `ZC_ACCEPT_ENTER` and the full post-`LoadEndAck` burst in one TCP segment.
+  `feedUntil` consumed all frames before `OnReady` fired, dropping every packet
+  that arrived without a registered handler. `OnMapSessionCreated` closes this
+  window. (worklog 0068, rAthena source: `clif.cpp:10744 clif_parse_LoadEndAck`,
+  `pc.cpp:2241 clif_authok`)
+
+### Tests
+
+- **`TestConnect_OnMapSessionCreated_HandlersFire`** — regression test that
+  co-delivers `ZC_AID` (0x0283) with `ZC_ACCEPT_ENTER` in one `conn.Write`.
+  Asserts a handler registered in `OnMapSessionCreated` fires (Part A) and a
+  handler registered only in `OnReady` does not (Part B — packet already consumed).
+  The test failed before the fix and passes after.
+
+- **`ScriptedServer` `maxChunk=16` workaround removed** — the scripted server
+  previously throttled map-phase writes to 16-byte chunks to prevent the FSM from
+  consuming early-burst packets before `OnReady`-registered handlers were in place.
+  With `OnMapSessionCreated` available, `runReplayTest` now registers handlers via
+  `OnMapSessionCreated` and the chunk throttle is removed (all phases use 4096).
+
+---
+
 ## [v0.5.3] — 2026-03-21
 
 ### Fixed
