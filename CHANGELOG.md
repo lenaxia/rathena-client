@@ -5,6 +5,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.5] — 2026-03-21
+
+### Fixed
+
+- **`EncodeItemUse` sent wrong packet ID at `pv >= 20080910`** — the encoder
+  hardcoded `0x00A7` and silently ignored `packetver`. At `pv >= 20080910`,
+  rAthena reassigns `0x00A7` to `clif_parse_SolveCharName` (9 bytes) and moves
+  `clif_parse_UseItem` to `0x0439` (8 bytes). Sending `0x00A7` caused an immediate
+  server disconnect: `"received packet 0x00a7 with expected length 9, only 8 bytes"`.
+  Every item use attempt on any modern server was broken.
+
+  Fix: `semantics/mappings.yaml` `item_use` action now has two implementations —
+  `0x0439` for `pv >= 20080910` and `0x00A7` for `pv < 20080910`. Codegen
+  regenerates `pkg/encode/item_use.go` as a packetver dispatcher. Both variants
+  share the same 8-byte `SYNTH_CZ_USE_ITEM` layout (`index.W`, `AID.L`).
+  (worklog 0069, rAthena source: `src/map/clif_packetdb.hpp:1151`)
+
+### Tests
+
+- **`pkg/encode/item_use_test.go`** (new) — covers packet ID at `pv=20200401`
+  (must be `0x0439`), boundary at `pv=20080910` (must be `0x0439`), legacy at
+  `pv=20040705` (must be `0x00A7`), wire length (8 bytes), `Index` at `[2:4]`,
+  and `AID` at `[4:8]`.
+
+---
+
 ## [v0.5.4] — 2026-03-21
 
 ### Added

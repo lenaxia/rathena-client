@@ -2880,10 +2880,16 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations:
+            - packet_id: "0x0439"
+              packetver_range:
+                - 20080910
+                - null
+              struct_name: SYNTH_CZ_USE_ITEM
+              field_mapping: {}
             - packet_id: "0x00A7"
               packetver_range:
                 - null
-                - null
+                - 20080909
               struct_name: SYNTH_CZ_USE_ITEM
               field_mapping: {}
     login_error:
