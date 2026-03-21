@@ -532,7 +532,7 @@ goKore calls session.Send(ms, conn, session.ActionMoveTo, send.MoveTo{X: 100, Y:
 - lengths_char.go: HC_ACCEPT_MAKECHAR (0x006D/0x0B6F) sizes may still be wrong — nested struct CHARACTER_INFO not fully resolved by codegen.
 - `lengths_map.go` partially populated; FSM uses `setLength` for auth-phase packets where needed.
 - **Codegen blind spot — `clif_packetdb.hpp` hardcodes sizes as integer literals, not `sizeof()`.** When a packet struct gains a PACKETVER-conditional field that changes its wire size (e.g. `packet_dropflooritem` ITID `uint16→uint32` at `PACKETVER_MAIN_NUM >= 20181121`), `clif_packetdb.hpp` is never updated, so the codegen's Part 1 diff pass never detects the change. **Workaround**: `pkg/session/lengths_map_overrides.go` is a hand-maintained file applied after `populateMapLengths` in `NewMapSession`. **Long-term fix**: add a Part 5 cross-check pass to the codegen.
-- `EncodeSkillUse` and `EncodeActorAction` have a trailing panic that is unreachable (`case packetver >= 0` is always true).
+- `EncodeSkillUse`, `EncodeTimeSyncResponse`, and `EncodeGameLogin` have a trailing `panic()` reachable for `packetver < 20030000`. No real rAthena server uses such a value so this is harmless in practice, but a zero-initialised `packetver` field would trigger it. `EncodeActorAction` is fully exhaustive (uses `default:` branch — no panic).
 
 **Out of scope — not planned:**
 - **Homunculus packets** (`ZC_PROPERTY_HOMUN`, `ZC_FEED_MER`, `ZC_PROPERTY_HOMUN_*`, `PACKET_CZ_*_HOMUN`, etc.) — homunculus support is not planned for the initial goKore integration. The generated decode stubs exist but the known type truncation bugs (`hp`/`maxHp` `uint32→uint16`, `exp`/`expNext` `int64→uint32`) in those stubs will not be fixed.

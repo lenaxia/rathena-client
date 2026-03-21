@@ -29,5 +29,11 @@ func applyMapLengthOverrides(pv uint32, t *[65536]int16) {
 	// with zero remainder; old value of 22 left 0x0000 as the next packet ID.
 	if pv >= 20181121 {
 		t[0x0ADD] = 24
+		// 0x08C7 (skill_entryType pv 20110718–20121211): packet_skill_entry at this version
+		// is 19 bytes. clif_packetdb.hpp hardcodes 20 (off by one).
+		// GCC verified: pv=20110718 → 19 bytes; pv=20121212 → 22 bytes (separate ID 0x099F).
+		if pv >= 20110718 && pv < 20121212 {
+			t[0x08C7] = 19
+		}
 	}
 }

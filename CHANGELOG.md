@@ -5,6 +5,68 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.2] — 2026-03-21
+
+### Fixed
+
+- **`ActionInventoryItemsEquip` missing `0x0295` and `0x02D0` dispatch entries** —
+  decoder functions `InventoryItemsEquip_0x0295` and `_0x02D0` existed but were not
+  wired into the dispatch table. Equip inventory packets were silently dropped for
+  `pv 20071002–20120924`. (worklog 0067)
+
+- **`AreaSpell_0x08C7` out-of-bounds read and wrong field widths** — the generated
+  decoder used an invented `SYNTH_ZC_SKILL_ENTRY3` struct with 20-byte reads on a
+  19-byte packet (`data[19]` was OOB) and read `Range` as `uint16` where rAthena has
+  `int8`. The length table also hardcoded 20 instead of 19.
+  Fix: decoder now mirrors `AreaSpell_0x011F`'s `>= 20110718` branch (same struct);
+  `lengths_map_overrides.go` corrects the length to 19 for `pv 20110718–20121211`.
+  (worklog 0067, rAthena source: packets_struct.hpp:1434–1454)
+
+- **`ActionAreaSpell` missing `0x099F` and `0x09CA`** — `skill_entryType` has four
+  packet IDs across history; only two were dispatched. Area spells were invisible on
+  servers with `pv >= 20121212`. New decoders `AreaSpell_0x099F` (22 bytes, pv
+  20121212–20130730) and `AreaSpell_0x09CA` (23 bytes, pv >= 20130731) added and
+  wired. (worklog 0067)
+
+- **`ZcGuildInfo_0x0A84` else branch applied wrong layout** — the else branch
+  (`pv 20161019–20170314`) used the `0x01B6` struct (with `masterName` before
+  `manageLand`). The `0x0A84` struct has no `masterName` field; `manageLand` is at
+  offset 70. Both date ranges now use the same correct layout. (worklog 0067)
+
+- **`ActionItemAppeared` missing `0x084B` and `0x0ADD`** — `dropflooritemType` has
+  three packet IDs; only `0x009E` was dispatched. All items dropped on the floor were
+  invisible on **every modern server** (`pv > 20130000`). New decoders added:
+  `ItemAppeared_0x084B` (19 bytes, pv 20130000–20180417) and `ItemAppeared_0x0ADD`
+  (22 bytes at pv 20180418–20181120; 24 bytes at pv >= 20181121 via existing
+  `lengths_map_overrides.go`). The original `ItemAppeared_0x009E` now handles only
+  the pre-20130000 layout (dead branches removed). (worklog 0067)
+
+- **`ActionActorStatusActive` missing `0x0983`** — `status_changeType = 0x0983`
+  (pv >= 20120618) was never dispatched. Status effect events (buffs/debuffs) were
+  invisible on all clients from mid-2012 onwards. New decoder
+  `ActorStatusActive_0x0983` (29 bytes) reads `Total`, `Left`, `Val1–Val3` from
+  `packet_status_change`. `events.ActorStatusActive` extended with those five fields
+  (zero for the `0x0196` path). (worklog 0067)
+
+- **Actor "middle generation" packet IDs missing (9 total)** — the dispatch table
+  covered generation 1–3 (pre-20091103) and generation 7–9 (post-20131223) but
+  skipped three consecutive generations covering `pv 20091103–20131222`:
+  - `ActionActorExists`: `0x07F9`, `0x0857`, `0x0915`
+  - `ActionActorConnected`: `0x07F8`, `0x0858`, `0x090F`
+  - `ActionActorMoved`: `0x07F7`, `0x0856`, `0x0914`
+
+  New decoder functions and dispatch entries added for all nine. `packet_idle_unit`,
+  `packet_spawn_unit`, and `packet_unit_walking` layouts verified via GCC
+  preprocessor at each of the three breakpoints. (worklog 0067)
+
+### Changed (non-breaking)
+
+- `events.ActorStatusActive` gains five new zero-initialized fields: `Total uint32`,
+  `Left uint32`, `Val1 int32`, `Val2 int32`, `Val3 int32`. Existing handlers that
+  only read `Index`, `AID`, `State` are unaffected.
+
+---
+
 ## [v0.5.1] — 2026-03-20
 
 ### Fixed
