@@ -1,8 +1,9 @@
-// Tests for bug fixes in 0067:
+// Tests for bug fixes in 0067 + 0778:
 //   BUG-2:     AreaSpell 0x08C7 fix + 0x099F/0x09CA new decoders
 //   BUG-NEW-1: ItemAppeared 0x084B / 0x0ADD decoders
 //   BUG-NEW-2: ActorStatusActive 0x0983 decoder
 //   BUG-NEW-3: Actor middle-gen decoders (0x07F9/0x0857/0x0915 exists,
+//   BUG-0778:  0x009E 19-byte layout at pv==20130000
 //              0x07F8/0x0858/0x090F connected, 0x07F7/0x0856/0x0914 moved)
 //
 // Each golden test constructs bytes directly from the rAthena struct layout
@@ -360,5 +361,96 @@ func TestActorMoved_0x0856_Golden(t *testing.T) {
 	}
 	if e.MoveData[0] != 0x11 || e.MoveData[5] != 0x66 {
 		t.Errorf("MoveData: got %v, want [0x11 ... 0x66]", e.MoveData)
+	}
+}
+
+// ── BUG-0778: 0x009E 19-byte boundary at pv==20130000 ────────────────────────
+
+// TestItemAppeared_0x009E_pv20130000 verifies that at pv==20130000 the decoder
+// reads the type field (offset 6-8) and shifts all subsequent fields by 2 bytes.
+// Bug: without the fix, the decoder read 17 bytes and ignored the type field,
+// causing IsIdentified/xPos/yPos/subX/subY/count to all be read at wrong offsets.
+//
+// Wire layout at pv=20130000 (19 bytes):
+//
+//	[0:2]  PacketType
+//	[2:6]  ITAID
+//	[6:8]  ITID (uint16)
+//	[8:10] type (NEW — shifts all following fields by +2)
+//	[10]   IsIdentified
+//	[11:13] xPos
+//	[13:15] yPos
+//	[15]   subX
+//	[16]   subY
+//	[17:19] count
+func TestItemAppeared_0x009E_pv20130000(t *testing.T) {
+	pv := uint32(20130000)
+	b := make([]byte, 19)
+	binary.LittleEndian.PutUint16(b[0:], 0x009E)
+	binary.LittleEndian.PutUint32(b[2:], 0x1234) // ITAID
+	binary.LittleEndian.PutUint16(b[6:], 777)    // ITID (uint16)
+	binary.LittleEndian.PutUint16(b[8:], 4)      // type (added at pv >= 20130000)
+	b[10] = 1                                    // IsIdentified
+	binary.LittleEndian.PutUint16(b[11:], 100)   // xPos
+	binary.LittleEndian.PutUint16(b[13:], 200)   // yPos
+	b[15] = 3                                    // subX
+	b[16] = 5                                    // subY
+	binary.LittleEndian.PutUint16(b[17:], 10)    // count
+
+	e := ItemAppeared_0x009E(b, pv)
+
+	if e.ITAID != 0x1234 {
+		t.Errorf("ITAID: got %#x, want 0x1234", e.ITAID)
+	}
+	if e.ITID != 777 {
+		t.Errorf("ITID: got %d, want 777", e.ITID)
+	}
+	if e.Type != 4 {
+		t.Errorf("Type: got %d, want 4 (was 0 before fix — type field not read)", e.Type)
+	}
+	if e.IsIdentified != 1 {
+		t.Errorf("IsIdentified: got %d, want 1 (was data[8] before fix, now data[10])", e.IsIdentified)
+	}
+	if e.XPos != 100 {
+		t.Errorf("XPos: got %d, want 100 (was data[9] before fix, now data[11])", e.XPos)
+	}
+	if e.YPos != 200 {
+		t.Errorf("YPos: got %d, want 200", e.YPos)
+	}
+	if e.Count != 10 {
+		t.Errorf("Count: got %d, want 10", e.Count)
+	}
+}
+
+// TestItemAppeared_0x009E_OldLayout verifies the pre-20130000 path is unchanged.
+func TestItemAppeared_0x009E_OldLayout(t *testing.T) {
+	pv := uint32(20120101) // pv < 20130000, no type field
+	b := make([]byte, 17)
+	binary.LittleEndian.PutUint16(b[0:], 0x009E)
+	binary.LittleEndian.PutUint32(b[2:], 0xABCD) // ITAID
+	binary.LittleEndian.PutUint16(b[6:], 501)    // ITID
+	b[8] = 1                                     // IsIdentified (no type field, so at offset 8)
+	binary.LittleEndian.PutUint16(b[9:], 55)     // xPos
+	binary.LittleEndian.PutUint16(b[11:], 77)    // yPos
+	b[13] = 2                                    // subX
+	b[14] = 3                                    // subY
+	binary.LittleEndian.PutUint16(b[15:], 99)    // count
+
+	e := ItemAppeared_0x009E(b, pv)
+
+	if e.ITAID != 0xABCD {
+		t.Errorf("ITAID: got %#x, want 0xABCD", e.ITAID)
+	}
+	if e.Type != 0 {
+		t.Errorf("Type: got %d, want 0 (not present at this pv)", e.Type)
+	}
+	if e.IsIdentified != 1 {
+		t.Errorf("IsIdentified: got %d, want 1", e.IsIdentified)
+	}
+	if e.XPos != 55 {
+		t.Errorf("XPos: got %d, want 55", e.XPos)
+	}
+	if e.Count != 99 {
+		t.Errorf("Count: got %d, want 99", e.Count)
 	}
 }

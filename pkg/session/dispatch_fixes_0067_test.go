@@ -258,3 +258,25 @@ func TestDispatch_MiddleGenActors(t *testing.T) {
 		})
 	}
 }
+
+// TestLengthOverride_0x009E_pv20130000 verifies BUG-0778:
+// at pv==20130000 the length override sets t[0x009E]=19 (not 17).
+// At pv < 20130000 it remains 17. At pv > 20130000 it remains 17 (dead entry).
+func TestLengthOverride_0x009E_pv20130000(t *testing.T) {
+	cases := []struct {
+		pv   uint32
+		want int16
+	}{
+		{20120101, 17}, // old layout, no type field
+		{20130000, 19}, // exact boundary: type field present, still ID 0x009E
+		{20130001, 17}, // server sends 0x084B, 0x009E stale but length irrelevant
+		{20200401, 17}, // modern: server sends 0x0ADD, 0x009E irrelevant
+	}
+	for _, c := range cases {
+		s := NewMapSession(c.pv)
+		got := s.core.lengths[0x009E]
+		if got != c.want {
+			t.Errorf("pv=%d: t[0x009E]=%d, want %d", c.pv, got, c.want)
+		}
+	}
+}

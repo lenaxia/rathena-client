@@ -17,17 +17,39 @@ package decode
 import "github.com/lenaxia/rathena-client/pkg/events"
 
 // ItemAppeared_0x009E decodes a 0x009E packet (struct packet_dropflooritem).
-// Active: pv <= ~20130000. Wire size: 17 bytes.
+// Active: pv <= 20130000 (strictly; at pv > 20130000 the server sends 0x084B instead).
+//
+// Wire sizes (GCC verified):
+//
+//	pv < 20130000:  17 bytes — no type field
+//	pv == 20130000: 19 bytes — type field added (PACKETVER >= 20130000 condition in struct)
+//
+// The boundary is exact: rAthena adds the type field at PACKETVER >= 20130000 but
+// only switches to packet ID 0x084B at PACKETVER > 20130000. So at exactly pv=20130000
+// the server sends 0x009E with a 19-byte body.
+// lengths_map_overrides.go corrects t[0x009E] = 19 at pv == 20130000.
 func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {
 	var e events.ItemAppeared
-	e.ITAID = leU32(data, 2)        // rAthena: ITAID
-	e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
-	e.IsIdentified = data[8]        // rAthena: IsIdentified
-	e.XPos = leI16(data, 9)         // rAthena: xPos
-	e.YPos = leI16(data, 11)        // rAthena: yPos
-	e.SubX = data[13]               // rAthena: subX
-	e.SubY = data[14]               // rAthena: subY
-	e.Count = leI16(data, 15)       // rAthena: count
+	e.ITAID = leU32(data, 2) // rAthena: ITAID
+	if packetver >= 20130000 {
+		// pv == 20130000 only: struct adds type field at offset 6.
+		e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
+		e.Type = leU16(data, 8)         // rAthena: type (added pv >= 20130000)
+		e.IsIdentified = data[10]       // rAthena: IsIdentified
+		e.XPos = leI16(data, 11)        // rAthena: xPos
+		e.YPos = leI16(data, 13)        // rAthena: yPos
+		e.SubX = data[15]               // rAthena: subX
+		e.SubY = data[16]               // rAthena: subY
+		e.Count = leI16(data, 17)       // rAthena: count
+	} else {
+		e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
+		e.IsIdentified = data[8]        // rAthena: IsIdentified
+		e.XPos = leI16(data, 9)         // rAthena: xPos
+		e.YPos = leI16(data, 11)        // rAthena: yPos
+		e.SubX = data[13]               // rAthena: subX
+		e.SubY = data[14]               // rAthena: subY
+		e.Count = leI16(data, 15)       // rAthena: count
+	}
 	return e
 }
 
