@@ -8,42 +8,42 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorExists_0x0078(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
-	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
-	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
-	e.GID = leU32(data, 9)                // rAthena: GID (offset 9, size 4)
-	e.Speed = leI16(data, 13)             // rAthena: speed (offset 13, size 2)
-	e.BodyState = leI16(data, 15)         // rAthena: bodyState (offset 15, size 2)
-	e.HealthState = leI16(data, 17)       // rAthena: healthState (offset 17, size 2)
-	e.EffectState = leI32(data, 19)       // rAthena: effectState (offset 19, size 4)
-	e.Job = leI16(data, 23)               // rAthena: job (offset 23, size 2)
-	e.Head = leU16(data, 25)              // rAthena: head (offset 25, size 2)
-	e.Weapon = leU32(data, 27)            // rAthena: weapon (offset 27, size 4)
-	e.Shield = leU32(data, 31)            // rAthena: shield (offset 31, size 4)
-	e.Accessory = leU16(data, 35)         // rAthena: accessory (offset 35, size 2)
-	e.Accessory2 = leU16(data, 37)        // rAthena: accessory2 (offset 37, size 2)
-	e.Accessory3 = leU16(data, 39)        // rAthena: accessory3 (offset 39, size 2)
-	e.Headpalette = leI16(data, 41)       // rAthena: headpalette (offset 41, size 2)
-	e.Bodypalette = leI16(data, 43)       // rAthena: bodypalette (offset 43, size 2)
-	e.HeadDir = leI16(data, 45)           // rAthena: headDir (offset 45, size 2)
-	e.Robe = leU16(data, 47)              // rAthena: robe (offset 47, size 2)
-	e.GUID = leU32(data, 49)              // rAthena: GUID (offset 49, size 4)
-	e.GEmblemVer = leI16(data, 53)        // rAthena: GEmblemVer (offset 53, size 2)
-	e.Honor = leI16(data, 55)             // rAthena: honor (offset 55, size 2)
-	e.Virtue = leI32(data, 57)            // rAthena: virtue (offset 57, size 4)
-	e.IsPKModeON = data[61]               // rAthena: isPKModeON (offset 61, size 1)
-	e.Sex = data[62]                      // rAthena: sex (offset 62, size 1)
-	e.PosDir = [3]byte(data[63:66])       // rAthena: PosDir (offset 63, size 3)
-	e.XSize = data[66]                    // rAthena: xSize (offset 66, size 1)
-	e.YSize = data[67]                    // rAthena: ySize (offset 67, size 1)
-	e.State = data[68]                    // rAthena: state (offset 68, size 1)
-	e.Clevel = leI16(data, 69)            // rAthena: clevel (offset 69, size 2)
-	e.Font = leI16(data, 71)              // rAthena: font (offset 71, size 2)
-	e.MaxHP = leI32(data, 73)             // rAthena: maxHP (offset 73, size 4)
-	e.HP = leI32(data, 77)                // rAthena: HP (offset 77, size 4)
-	e.IsBoss = data[81]                   // rAthena: isBoss (offset 81, size 1)
-	e.Body = leU16(data, 82)              // rAthena: body (offset 82, size 2)
-	e.Name = nullTermString(data[84:108]) // rAthena: name (offset 84, size 24)
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
+	e.GID = leU32(data, 9)  // rAthena: GID (offset 9, size 4)
+	e.Speed = leI16(data, 13)  // rAthena: speed (offset 13, size 2)
+	e.BodyState = leI16(data, 15)  // rAthena: bodyState (offset 15, size 2)
+	e.HealthState = leI16(data, 17)  // rAthena: healthState (offset 17, size 2)
+	e.EffectState = leI32(data, 19)  // rAthena: effectState (offset 19, size 4)
+	e.Job = leI16(data, 23)  // rAthena: job (offset 23, size 2)
+	e.Head = leU16(data, 25)  // rAthena: head (offset 25, size 2)
+	e.Weapon = leU32(data, 27)  // rAthena: weapon (offset 27, size 4)
+	e.Shield = leU32(data, 31)  // rAthena: shield (offset 31, size 4)
+	e.Accessory = leU16(data, 35)  // rAthena: accessory (offset 35, size 2)
+	e.Accessory2 = leU16(data, 37)  // rAthena: accessory2 (offset 37, size 2)
+	e.Accessory3 = leU16(data, 39)  // rAthena: accessory3 (offset 39, size 2)
+	e.Headpalette = leI16(data, 41)  // rAthena: headpalette (offset 41, size 2)
+	e.Bodypalette = leI16(data, 43)  // rAthena: bodypalette (offset 43, size 2)
+	e.HeadDir = leI16(data, 45)  // rAthena: headDir (offset 45, size 2)
+	e.Robe = leU16(data, 47)  // rAthena: robe (offset 47, size 2)
+	e.GUID = leU32(data, 49)  // rAthena: GUID (offset 49, size 4)
+	e.GEmblemVer = leI16(data, 53)  // rAthena: GEmblemVer (offset 53, size 2)
+	e.Honor = leI16(data, 55)  // rAthena: honor (offset 55, size 2)
+	e.Virtue = leI32(data, 57)  // rAthena: virtue (offset 57, size 4)
+	e.IsPKModeON = data[61]  // rAthena: isPKModeON (offset 61, size 1)
+	e.Sex = data[62]  // rAthena: sex (offset 62, size 1)
+	e.PosDir = [3]byte(data[63:66])  // rAthena: PosDir (offset 63, size 3)
+	e.XSize = data[66]  // rAthena: xSize (offset 66, size 1)
+	e.YSize = data[67]  // rAthena: ySize (offset 67, size 1)
+	e.State = data[68]  // rAthena: state (offset 68, size 1)
+	e.Clevel = leI16(data, 69)  // rAthena: clevel (offset 69, size 2)
+	e.Font = leI16(data, 71)  // rAthena: font (offset 71, size 2)
+	e.MaxHP = leI32(data, 73)  // rAthena: maxHP (offset 73, size 4)
+	e.HP = leI32(data, 77)  // rAthena: HP (offset 77, size 4)
+	e.IsBoss = data[81]  // rAthena: isBoss (offset 81, size 1)
+	e.Body = leU16(data, 82)  // rAthena: body (offset 82, size 2)
+	e.Name = nullTermString(data[84:108])  // rAthena: name (offset 84, size 24)
 	return e
 }
 
@@ -51,31 +51,31 @@ func ActorExists_0x0078(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x01D8(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.GID = leU32(data, 2)                 // rAthena: GID (offset 2, size 4)
-	e.Speed = leI16(data, 6)               // rAthena: speed (offset 6, size 2)
-	e.BodyState = leI16(data, 8)           // rAthena: bodyState (offset 8, size 2)
-	e.HealthState = leI16(data, 10)        // rAthena: healthState (offset 10, size 2)
-	e.EffectState = int32(leI16(data, 12)) // rAthena: effectState (offset 12, size 2)
-	e.Job = leI16(data, 14)                // rAthena: job (offset 14, size 2)
-	e.Head = leU16(data, 16)               // rAthena: head (offset 16, size 2)
-	e.Weapon = leU32(data, 18)             // rAthena: weapon (offset 18, size 4)
-	e.Accessory = leU16(data, 22)          // rAthena: accessory (offset 22, size 2)
-	e.Accessory2 = leU16(data, 24)         // rAthena: accessory2 (offset 24, size 2)
-	e.Accessory3 = leU16(data, 26)         // rAthena: accessory3 (offset 26, size 2)
-	e.Headpalette = leI16(data, 28)        // rAthena: headpalette (offset 28, size 2)
-	e.Bodypalette = leI16(data, 30)        // rAthena: bodypalette (offset 30, size 2)
-	e.HeadDir = leI16(data, 32)            // rAthena: headDir (offset 32, size 2)
-	e.GUID = leU32(data, 34)               // rAthena: GUID (offset 34, size 4)
-	e.GEmblemVer = leI16(data, 38)         // rAthena: GEmblemVer (offset 38, size 2)
-	e.Honor = leI16(data, 40)              // rAthena: honor (offset 40, size 2)
-	e.Virtue = leI32(data, 42)             // rAthena: virtue (offset 42, size 4)
-	e.IsPKModeON = data[46]                // rAthena: isPKModeON (offset 46, size 1)
-	e.Sex = data[47]                       // rAthena: sex (offset 47, size 1)
-	e.PosDir = [3]byte(data[48:51])        // rAthena: PosDir (offset 48, size 3)
-	e.XSize = data[51]                     // rAthena: xSize (offset 51, size 1)
-	e.YSize = data[52]                     // rAthena: ySize (offset 52, size 1)
-	e.State = data[53]                     // rAthena: state (offset 53, size 1)
-	e.Clevel = leI16(data, 54)             // rAthena: clevel (offset 54, size 2)
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	e.Speed = leI16(data, 6)  // rAthena: speed (offset 6, size 2)
+	e.BodyState = leI16(data, 8)  // rAthena: bodyState (offset 8, size 2)
+	e.HealthState = leI16(data, 10)  // rAthena: healthState (offset 10, size 2)
+	e.EffectState = int32(leI16(data, 12))  // rAthena: effectState (offset 12, size 2)
+	e.Job = leI16(data, 14)  // rAthena: job (offset 14, size 2)
+	e.Head = leU16(data, 16)  // rAthena: head (offset 16, size 2)
+	e.Weapon = leU32(data, 18)  // rAthena: weapon (offset 18, size 4)
+	e.Accessory = leU16(data, 22)  // rAthena: accessory (offset 22, size 2)
+	e.Accessory2 = leU16(data, 24)  // rAthena: accessory2 (offset 24, size 2)
+	e.Accessory3 = leU16(data, 26)  // rAthena: accessory3 (offset 26, size 2)
+	e.Headpalette = leI16(data, 28)  // rAthena: headpalette (offset 28, size 2)
+	e.Bodypalette = leI16(data, 30)  // rAthena: bodypalette (offset 30, size 2)
+	e.HeadDir = leI16(data, 32)  // rAthena: headDir (offset 32, size 2)
+	e.GUID = leU32(data, 34)  // rAthena: GUID (offset 34, size 4)
+	e.GEmblemVer = leI16(data, 38)  // rAthena: GEmblemVer (offset 38, size 2)
+	e.Honor = leI16(data, 40)  // rAthena: honor (offset 40, size 2)
+	e.Virtue = leI32(data, 42)  // rAthena: virtue (offset 42, size 4)
+	e.IsPKModeON = data[46]  // rAthena: isPKModeON (offset 46, size 1)
+	e.Sex = data[47]  // rAthena: sex (offset 47, size 1)
+	e.PosDir = [3]byte(data[48:51])  // rAthena: PosDir (offset 48, size 3)
+	e.XSize = data[51]  // rAthena: xSize (offset 51, size 1)
+	e.YSize = data[52]  // rAthena: ySize (offset 52, size 1)
+	e.State = data[53]  // rAthena: state (offset 53, size 1)
+	e.Clevel = leI16(data, 54)  // rAthena: clevel (offset 54, size 2)
 	return e
 }
 
@@ -83,42 +83,42 @@ func ActorExists_0x01D8(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
-	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
-	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
-	e.GID = leU32(data, 9)                // rAthena: GID (offset 9, size 4)
-	e.Speed = leI16(data, 13)             // rAthena: speed (offset 13, size 2)
-	e.BodyState = leI16(data, 15)         // rAthena: bodyState (offset 15, size 2)
-	e.HealthState = leI16(data, 17)       // rAthena: healthState (offset 17, size 2)
-	e.EffectState = leI32(data, 19)       // rAthena: effectState (offset 19, size 4)
-	e.Job = leI16(data, 23)               // rAthena: job (offset 23, size 2)
-	e.Head = leU16(data, 25)              // rAthena: head (offset 25, size 2)
-	e.Weapon = leU32(data, 27)            // rAthena: weapon (offset 27, size 4)
-	e.Shield = leU32(data, 31)            // rAthena: shield (offset 31, size 4)
-	e.Accessory = leU16(data, 35)         // rAthena: accessory (offset 35, size 2)
-	e.Accessory2 = leU16(data, 37)        // rAthena: accessory2 (offset 37, size 2)
-	e.Accessory3 = leU16(data, 39)        // rAthena: accessory3 (offset 39, size 2)
-	e.Headpalette = leI16(data, 41)       // rAthena: headpalette (offset 41, size 2)
-	e.Bodypalette = leI16(data, 43)       // rAthena: bodypalette (offset 43, size 2)
-	e.HeadDir = leI16(data, 45)           // rAthena: headDir (offset 45, size 2)
-	e.Robe = leU16(data, 47)              // rAthena: robe (offset 47, size 2)
-	e.GUID = leU32(data, 49)              // rAthena: GUID (offset 49, size 4)
-	e.GEmblemVer = leI16(data, 53)        // rAthena: GEmblemVer (offset 53, size 2)
-	e.Honor = leI16(data, 55)             // rAthena: honor (offset 55, size 2)
-	e.Virtue = leI32(data, 57)            // rAthena: virtue (offset 57, size 4)
-	e.IsPKModeON = data[61]               // rAthena: isPKModeON (offset 61, size 1)
-	e.Sex = data[62]                      // rAthena: sex (offset 62, size 1)
-	e.PosDir = [3]byte(data[63:66])       // rAthena: PosDir (offset 63, size 3)
-	e.XSize = data[66]                    // rAthena: xSize (offset 66, size 1)
-	e.YSize = data[67]                    // rAthena: ySize (offset 67, size 1)
-	e.State = data[68]                    // rAthena: state (offset 68, size 1)
-	e.Clevel = leI16(data, 69)            // rAthena: clevel (offset 69, size 2)
-	e.Font = leI16(data, 71)              // rAthena: font (offset 71, size 2)
-	e.MaxHP = leI32(data, 73)             // rAthena: maxHP (offset 73, size 4)
-	e.HP = leI32(data, 77)                // rAthena: HP (offset 77, size 4)
-	e.IsBoss = data[81]                   // rAthena: isBoss (offset 81, size 1)
-	e.Body = leU16(data, 82)              // rAthena: body (offset 82, size 2)
-	e.Name = nullTermString(data[84:108]) // rAthena: name (offset 84, size 24)
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
+	e.GID = leU32(data, 9)  // rAthena: GID (offset 9, size 4)
+	e.Speed = leI16(data, 13)  // rAthena: speed (offset 13, size 2)
+	e.BodyState = leI16(data, 15)  // rAthena: bodyState (offset 15, size 2)
+	e.HealthState = leI16(data, 17)  // rAthena: healthState (offset 17, size 2)
+	e.EffectState = leI32(data, 19)  // rAthena: effectState (offset 19, size 4)
+	e.Job = leI16(data, 23)  // rAthena: job (offset 23, size 2)
+	e.Head = leU16(data, 25)  // rAthena: head (offset 25, size 2)
+	e.Weapon = leU32(data, 27)  // rAthena: weapon (offset 27, size 4)
+	e.Shield = leU32(data, 31)  // rAthena: shield (offset 31, size 4)
+	e.Accessory = leU16(data, 35)  // rAthena: accessory (offset 35, size 2)
+	e.Accessory2 = leU16(data, 37)  // rAthena: accessory2 (offset 37, size 2)
+	e.Accessory3 = leU16(data, 39)  // rAthena: accessory3 (offset 39, size 2)
+	e.Headpalette = leI16(data, 41)  // rAthena: headpalette (offset 41, size 2)
+	e.Bodypalette = leI16(data, 43)  // rAthena: bodypalette (offset 43, size 2)
+	e.HeadDir = leI16(data, 45)  // rAthena: headDir (offset 45, size 2)
+	e.Robe = leU16(data, 47)  // rAthena: robe (offset 47, size 2)
+	e.GUID = leU32(data, 49)  // rAthena: GUID (offset 49, size 4)
+	e.GEmblemVer = leI16(data, 53)  // rAthena: GEmblemVer (offset 53, size 2)
+	e.Honor = leI16(data, 55)  // rAthena: honor (offset 55, size 2)
+	e.Virtue = leI32(data, 57)  // rAthena: virtue (offset 57, size 4)
+	e.IsPKModeON = data[61]  // rAthena: isPKModeON (offset 61, size 1)
+	e.Sex = data[62]  // rAthena: sex (offset 62, size 1)
+	e.PosDir = [3]byte(data[63:66])  // rAthena: PosDir (offset 63, size 3)
+	e.XSize = data[66]  // rAthena: xSize (offset 66, size 1)
+	e.YSize = data[67]  // rAthena: ySize (offset 67, size 1)
+	e.State = data[68]  // rAthena: state (offset 68, size 1)
+	e.Clevel = leI16(data, 69)  // rAthena: clevel (offset 69, size 2)
+	e.Font = leI16(data, 71)  // rAthena: font (offset 71, size 2)
+	e.MaxHP = leI32(data, 73)  // rAthena: maxHP (offset 73, size 4)
+	e.HP = leI32(data, 77)  // rAthena: HP (offset 77, size 4)
+	e.IsBoss = data[81]  // rAthena: isBoss (offset 81, size 1)
+	e.Body = leU16(data, 82)  // rAthena: body (offset 82, size 2)
+	e.Name = nullTermString(data[84:108])  // rAthena: name (offset 84, size 24)
 	return e
 }
 
@@ -126,31 +126,31 @@ func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x022A(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.GID = leU32(data, 2)                 // rAthena: GID (offset 2, size 4)
-	e.Speed = leI16(data, 6)               // rAthena: speed (offset 6, size 2)
-	e.BodyState = leI16(data, 8)           // rAthena: bodyState (offset 8, size 2)
-	e.HealthState = leI16(data, 10)        // rAthena: healthState (offset 10, size 2)
-	e.EffectState = int32(leI16(data, 12)) // rAthena: effectState (offset 12, size 2)
-	e.Job = leI16(data, 14)                // rAthena: job (offset 14, size 2)
-	e.Head = leU16(data, 16)               // rAthena: head (offset 16, size 2)
-	e.Weapon = leU32(data, 18)             // rAthena: weapon (offset 18, size 4)
-	e.Accessory = leU16(data, 22)          // rAthena: accessory (offset 22, size 2)
-	e.Accessory2 = leU16(data, 24)         // rAthena: accessory2 (offset 24, size 2)
-	e.Accessory3 = leU16(data, 26)         // rAthena: accessory3 (offset 26, size 2)
-	e.Headpalette = leI16(data, 28)        // rAthena: headpalette (offset 28, size 2)
-	e.Bodypalette = leI16(data, 30)        // rAthena: bodypalette (offset 30, size 2)
-	e.HeadDir = leI16(data, 32)            // rAthena: headDir (offset 32, size 2)
-	e.GUID = leU32(data, 34)               // rAthena: GUID (offset 34, size 4)
-	e.GEmblemVer = leI16(data, 38)         // rAthena: GEmblemVer (offset 38, size 2)
-	e.Honor = leI16(data, 40)              // rAthena: honor (offset 40, size 2)
-	e.Virtue = leI32(data, 42)             // rAthena: virtue (offset 42, size 4)
-	e.IsPKModeON = data[46]                // rAthena: isPKModeON (offset 46, size 1)
-	e.Sex = data[47]                       // rAthena: sex (offset 47, size 1)
-	e.PosDir = [3]byte(data[48:51])        // rAthena: PosDir (offset 48, size 3)
-	e.XSize = data[51]                     // rAthena: xSize (offset 51, size 1)
-	e.YSize = data[52]                     // rAthena: ySize (offset 52, size 1)
-	e.State = data[53]                     // rAthena: state (offset 53, size 1)
-	e.Clevel = leI16(data, 54)             // rAthena: clevel (offset 54, size 2)
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	e.Speed = leI16(data, 6)  // rAthena: speed (offset 6, size 2)
+	e.BodyState = leI16(data, 8)  // rAthena: bodyState (offset 8, size 2)
+	e.HealthState = leI16(data, 10)  // rAthena: healthState (offset 10, size 2)
+	e.EffectState = int32(leI16(data, 12))  // rAthena: effectState (offset 12, size 2)
+	e.Job = leI16(data, 14)  // rAthena: job (offset 14, size 2)
+	e.Head = leU16(data, 16)  // rAthena: head (offset 16, size 2)
+	e.Weapon = leU32(data, 18)  // rAthena: weapon (offset 18, size 4)
+	e.Accessory = leU16(data, 22)  // rAthena: accessory (offset 22, size 2)
+	e.Accessory2 = leU16(data, 24)  // rAthena: accessory2 (offset 24, size 2)
+	e.Accessory3 = leU16(data, 26)  // rAthena: accessory3 (offset 26, size 2)
+	e.Headpalette = leI16(data, 28)  // rAthena: headpalette (offset 28, size 2)
+	e.Bodypalette = leI16(data, 30)  // rAthena: bodypalette (offset 30, size 2)
+	e.HeadDir = leI16(data, 32)  // rAthena: headDir (offset 32, size 2)
+	e.GUID = leU32(data, 34)  // rAthena: GUID (offset 34, size 4)
+	e.GEmblemVer = leI16(data, 38)  // rAthena: GEmblemVer (offset 38, size 2)
+	e.Honor = leI16(data, 40)  // rAthena: honor (offset 40, size 2)
+	e.Virtue = leI32(data, 42)  // rAthena: virtue (offset 42, size 4)
+	e.IsPKModeON = data[46]  // rAthena: isPKModeON (offset 46, size 1)
+	e.Sex = data[47]  // rAthena: sex (offset 47, size 1)
+	e.PosDir = [3]byte(data[48:51])  // rAthena: PosDir (offset 48, size 3)
+	e.XSize = data[51]  // rAthena: xSize (offset 51, size 1)
+	e.YSize = data[52]  // rAthena: ySize (offset 52, size 1)
+	e.State = data[53]  // rAthena: state (offset 53, size 1)
+	e.Clevel = leI16(data, 54)  // rAthena: clevel (offset 54, size 2)
 	return e
 }
 
@@ -158,32 +158,32 @@ func ActorExists_0x022A(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x02EE(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.GID = leU32(data, 2)          // rAthena: GID (offset 2, size 4)
-	e.Speed = leI16(data, 6)        // rAthena: speed (offset 6, size 2)
-	e.BodyState = leI16(data, 8)    // rAthena: bodyState (offset 8, size 2)
-	e.HealthState = leI16(data, 10) // rAthena: healthState (offset 10, size 2)
-	e.EffectState = leI32(data, 12) // rAthena: effectState (offset 12, size 4)
-	e.Job = leI16(data, 16)         // rAthena: job (offset 16, size 2)
-	e.Head = leU16(data, 18)        // rAthena: head (offset 18, size 2)
-	e.Weapon = leU32(data, 20)      // rAthena: weapon (offset 20, size 4)
-	e.Accessory = leU16(data, 24)   // rAthena: accessory (offset 24, size 2)
+	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	e.Speed = leI16(data, 6)  // rAthena: speed (offset 6, size 2)
+	e.BodyState = leI16(data, 8)  // rAthena: bodyState (offset 8, size 2)
+	e.HealthState = leI16(data, 10)  // rAthena: healthState (offset 10, size 2)
+	e.EffectState = leI32(data, 12)  // rAthena: effectState (offset 12, size 4)
+	e.Job = leI16(data, 16)  // rAthena: job (offset 16, size 2)
+	e.Head = leU16(data, 18)  // rAthena: head (offset 18, size 2)
+	e.Weapon = leU32(data, 20)  // rAthena: weapon (offset 20, size 4)
+	e.Accessory = leU16(data, 24)  // rAthena: accessory (offset 24, size 2)
 	e.Accessory2 = leU16(data, 26)  // rAthena: accessory2 (offset 26, size 2)
 	e.Accessory3 = leU16(data, 28)  // rAthena: accessory3 (offset 28, size 2)
-	e.Headpalette = leI16(data, 30) // rAthena: headpalette (offset 30, size 2)
-	e.Bodypalette = leI16(data, 32) // rAthena: bodypalette (offset 32, size 2)
-	e.HeadDir = leI16(data, 34)     // rAthena: headDir (offset 34, size 2)
-	e.GUID = leU32(data, 36)        // rAthena: GUID (offset 36, size 4)
+	e.Headpalette = leI16(data, 30)  // rAthena: headpalette (offset 30, size 2)
+	e.Bodypalette = leI16(data, 32)  // rAthena: bodypalette (offset 32, size 2)
+	e.HeadDir = leI16(data, 34)  // rAthena: headDir (offset 34, size 2)
+	e.GUID = leU32(data, 36)  // rAthena: GUID (offset 36, size 4)
 	e.GEmblemVer = leI16(data, 40)  // rAthena: GEmblemVer (offset 40, size 2)
-	e.Honor = leI16(data, 42)       // rAthena: honor (offset 42, size 2)
-	e.Virtue = leI32(data, 44)      // rAthena: virtue (offset 44, size 4)
-	e.IsPKModeON = data[48]         // rAthena: isPKModeON (offset 48, size 1)
-	e.Sex = data[49]                // rAthena: sex (offset 49, size 1)
-	e.PosDir = [3]byte(data[50:53]) // rAthena: PosDir (offset 50, size 3)
-	e.XSize = data[53]              // rAthena: xSize (offset 53, size 1)
-	e.YSize = data[54]              // rAthena: ySize (offset 54, size 1)
-	e.State = data[55]              // rAthena: state (offset 55, size 1)
-	e.Clevel = leI16(data, 56)      // rAthena: clevel (offset 56, size 2)
-	e.Font = leI16(data, 58)        // rAthena: font (offset 58, size 2)
+	e.Honor = leI16(data, 42)  // rAthena: honor (offset 42, size 2)
+	e.Virtue = leI32(data, 44)  // rAthena: virtue (offset 44, size 4)
+	e.IsPKModeON = data[48]  // rAthena: isPKModeON (offset 48, size 1)
+	e.Sex = data[49]  // rAthena: sex (offset 49, size 1)
+	e.PosDir = [3]byte(data[50:53])  // rAthena: PosDir (offset 50, size 3)
+	e.XSize = data[53]  // rAthena: xSize (offset 53, size 1)
+	e.YSize = data[54]  // rAthena: ySize (offset 54, size 1)
+	e.State = data[55]  // rAthena: state (offset 55, size 1)
+	e.Clevel = leI16(data, 56)  // rAthena: clevel (offset 56, size 2)
+	e.Font = leI16(data, 58)  // rAthena: font (offset 58, size 2)
 	return e
 }
 
@@ -191,160 +191,150 @@ func ActorExists_0x02EE(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x09DD(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
-	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
-	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
-	e.GID = leU32(data, 9)                // rAthena: GID (offset 9, size 4)
-	e.Speed = leI16(data, 13)             // rAthena: speed (offset 13, size 2)
-	e.BodyState = leI16(data, 15)         // rAthena: bodyState (offset 15, size 2)
-	e.HealthState = leI16(data, 17)       // rAthena: healthState (offset 17, size 2)
-	e.EffectState = leI32(data, 19)       // rAthena: effectState (offset 19, size 4)
-	e.Job = leI16(data, 23)               // rAthena: job (offset 23, size 2)
-	e.Head = leU16(data, 25)              // rAthena: head (offset 25, size 2)
-	e.Weapon = leU32(data, 27)            // rAthena: weapon (offset 27, size 4)
-	e.Accessory = leU16(data, 31)         // rAthena: accessory (offset 31, size 2)
-	e.Accessory2 = leU16(data, 33)        // rAthena: accessory2 (offset 33, size 2)
-	e.Accessory3 = leU16(data, 35)        // rAthena: accessory3 (offset 35, size 2)
-	e.Headpalette = leI16(data, 37)       // rAthena: headpalette (offset 37, size 2)
-	e.Bodypalette = leI16(data, 39)       // rAthena: bodypalette (offset 39, size 2)
-	e.HeadDir = leI16(data, 41)           // rAthena: headDir (offset 41, size 2)
-	e.Robe = leU16(data, 43)              // rAthena: robe (offset 43, size 2)
-	e.GUID = leU32(data, 45)              // rAthena: GUID (offset 45, size 4)
-	e.GEmblemVer = leI16(data, 49)        // rAthena: GEmblemVer (offset 49, size 2)
-	e.Honor = leI16(data, 51)             // rAthena: honor (offset 51, size 2)
-	e.Virtue = leI32(data, 53)            // rAthena: virtue (offset 53, size 4)
-	e.IsPKModeON = data[57]               // rAthena: isPKModeON (offset 57, size 1)
-	e.Sex = data[58]                      // rAthena: sex (offset 58, size 1)
-	e.PosDir = [3]byte(data[59:62])       // rAthena: PosDir (offset 59, size 3)
-	e.XSize = data[62]                    // rAthena: xSize (offset 62, size 1)
-	e.YSize = data[63]                    // rAthena: ySize (offset 63, size 1)
-	e.State = data[64]                    // rAthena: state (offset 64, size 1)
-	e.Clevel = leI16(data, 65)            // rAthena: clevel (offset 65, size 2)
-	e.Font = leI16(data, 67)              // rAthena: font (offset 67, size 2)
-	e.MaxHP = leI32(data, 69)             // rAthena: maxHP (offset 69, size 4)
-	e.HP = leI32(data, 73)                // rAthena: HP (offset 73, size 4)
-	e.IsBoss = data[77]                   // rAthena: isBoss (offset 77, size 1)
-	e.Name = nullTermString(data[78:102]) // rAthena: name (offset 78, size 24)
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
+	e.GID = leU32(data, 9)  // rAthena: GID (offset 9, size 4)
+	e.Speed = leI16(data, 13)  // rAthena: speed (offset 13, size 2)
+	e.BodyState = leI16(data, 15)  // rAthena: bodyState (offset 15, size 2)
+	e.HealthState = leI16(data, 17)  // rAthena: healthState (offset 17, size 2)
+	e.EffectState = leI32(data, 19)  // rAthena: effectState (offset 19, size 4)
+	e.Job = leI16(data, 23)  // rAthena: job (offset 23, size 2)
+	e.Head = leU16(data, 25)  // rAthena: head (offset 25, size 2)
+	e.Weapon = leU32(data, 27)  // rAthena: weapon (offset 27, size 4)
+	e.Accessory = leU16(data, 31)  // rAthena: accessory (offset 31, size 2)
+	e.Accessory2 = leU16(data, 33)  // rAthena: accessory2 (offset 33, size 2)
+	e.Accessory3 = leU16(data, 35)  // rAthena: accessory3 (offset 35, size 2)
+	e.Headpalette = leI16(data, 37)  // rAthena: headpalette (offset 37, size 2)
+	e.Bodypalette = leI16(data, 39)  // rAthena: bodypalette (offset 39, size 2)
+	e.HeadDir = leI16(data, 41)  // rAthena: headDir (offset 41, size 2)
+	e.Robe = leU16(data, 43)  // rAthena: robe (offset 43, size 2)
+	e.GUID = leU32(data, 45)  // rAthena: GUID (offset 45, size 4)
+	e.GEmblemVer = leI16(data, 49)  // rAthena: GEmblemVer (offset 49, size 2)
+	e.Honor = leI16(data, 51)  // rAthena: honor (offset 51, size 2)
+	e.Virtue = leI32(data, 53)  // rAthena: virtue (offset 53, size 4)
+	e.IsPKModeON = data[57]  // rAthena: isPKModeON (offset 57, size 1)
+	e.Sex = data[58]  // rAthena: sex (offset 58, size 1)
+	e.PosDir = [3]byte(data[59:62])  // rAthena: PosDir (offset 59, size 3)
+	e.XSize = data[62]  // rAthena: xSize (offset 62, size 1)
+	e.YSize = data[63]  // rAthena: ySize (offset 63, size 1)
+	e.State = data[64]  // rAthena: state (offset 64, size 1)
+	e.Clevel = leI16(data, 65)  // rAthena: clevel (offset 65, size 2)
+	e.Font = leI16(data, 67)  // rAthena: font (offset 67, size 2)
+	e.MaxHP = leI32(data, 69)  // rAthena: maxHP (offset 69, size 4)
+	e.HP = leI32(data, 73)  // rAthena: HP (offset 73, size 4)
+	e.IsBoss = data[77]  // rAthena: isBoss (offset 77, size 1)
+	e.Name = nullTermString(data[78:102])  // rAthena: name (offset 78, size 24)
 	return e
 }
 
-// ── Middle-generation idle_unit decoders (pv 20091103–20131222) ────────────────────────────────
-// These packet IDs were missing from the generated dispatch. The struct has PacketLength+objecttype
-// but no AID (AID added at pv >= 20131223). Three generations:
-//   0x07F9: pv 20091103–20101123 — no robe, no maxHP/HP/isBoss (63 bytes)
-//   0x0857: pv 20101124–20120220 — adds robe (65 bytes)
-//   0x0915: pv 20120221–20131222 — adds maxHP+HP+isBoss (74 bytes)
-// Source: packets_struct.hpp:832–900 (packet_idle_unit).
-
 // ActorExists_0x07F9 decodes a 0x07F9 packet (struct packet_idle_unit).
-// Active: pv >= 20091103, < 20101124. Wire size: 63 bytes.
 func ActorExists_0x07F9(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
-	e.Objecttype = data[4]          // rAthena: objecttype
-	e.GID = leU32(data, 5)          // rAthena: GID (no AID at this pv)
-	e.Speed = leI16(data, 9)        // rAthena: speed
-	e.BodyState = leI16(data, 11)   // rAthena: bodyState
-	e.HealthState = leI16(data, 13) // rAthena: healthState
-	e.EffectState = leI32(data, 15) // rAthena: effectState
-	e.Job = leI16(data, 19)         // rAthena: job
-	e.Head = leU16(data, 21)        // rAthena: head
-	e.Weapon = leU32(data, 23)      // rAthena: weapon
-	e.Accessory = leU16(data, 27)   // rAthena: accessory
-	e.Accessory2 = leU16(data, 29)  // rAthena: accessory2
-	e.Accessory3 = leU16(data, 31)  // rAthena: accessory3
-	e.Headpalette = leI16(data, 33) // rAthena: headpalette
-	e.Bodypalette = leI16(data, 35) // rAthena: bodypalette
-	e.HeadDir = leI16(data, 37)     // rAthena: headDir
-	e.GUID = leU32(data, 39)        // rAthena: GUID
-	e.GEmblemVer = leI16(data, 43)  // rAthena: GEmblemVer
-	e.Honor = leI16(data, 45)       // rAthena: honor
-	e.Virtue = leI32(data, 47)      // rAthena: virtue
-	e.IsPKModeON = data[51]         // rAthena: isPKModeON
-	e.Sex = data[52]                // rAthena: sex
-	e.PosDir = [3]byte(data[53:56]) // rAthena: PosDir
-	e.XSize = data[56]              // rAthena: xSize
-	e.YSize = data[57]              // rAthena: ySize
-	e.State = data[58]              // rAthena: state
-	e.Clevel = leI16(data, 59)      // rAthena: clevel
-	e.Font = leI16(data, 61)        // rAthena: font
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.GID = leU32(data, 5)  // rAthena: GID (offset 5, size 4)
+	e.Speed = leI16(data, 9)  // rAthena: speed (offset 9, size 2)
+	e.BodyState = leI16(data, 11)  // rAthena: bodyState (offset 11, size 2)
+	e.HealthState = leI16(data, 13)  // rAthena: healthState (offset 13, size 2)
+	e.EffectState = leI32(data, 15)  // rAthena: effectState (offset 15, size 4)
+	e.Job = leI16(data, 19)  // rAthena: job (offset 19, size 2)
+	e.Head = leU16(data, 21)  // rAthena: head (offset 21, size 2)
+	e.Weapon = leU32(data, 23)  // rAthena: weapon (offset 23, size 4)
+	e.Accessory = leU16(data, 27)  // rAthena: accessory (offset 27, size 2)
+	e.Accessory2 = leU16(data, 29)  // rAthena: accessory2 (offset 29, size 2)
+	e.Accessory3 = leU16(data, 31)  // rAthena: accessory3 (offset 31, size 2)
+	e.Headpalette = leI16(data, 33)  // rAthena: headpalette (offset 33, size 2)
+	e.Bodypalette = leI16(data, 35)  // rAthena: bodypalette (offset 35, size 2)
+	e.HeadDir = leI16(data, 37)  // rAthena: headDir (offset 37, size 2)
+	e.GUID = leU32(data, 39)  // rAthena: GUID (offset 39, size 4)
+	e.GEmblemVer = leI16(data, 43)  // rAthena: GEmblemVer (offset 43, size 2)
+	e.Honor = leI16(data, 45)  // rAthena: honor (offset 45, size 2)
+	e.Virtue = leI32(data, 47)  // rAthena: virtue (offset 47, size 4)
+	e.IsPKModeON = data[51]  // rAthena: isPKModeON (offset 51, size 1)
+	e.Sex = data[52]  // rAthena: sex (offset 52, size 1)
+	e.PosDir = [3]byte(data[53:56])  // rAthena: PosDir (offset 53, size 3)
+	e.XSize = data[56]  // rAthena: xSize (offset 56, size 1)
+	e.YSize = data[57]  // rAthena: ySize (offset 57, size 1)
+	e.State = data[58]  // rAthena: state (offset 58, size 1)
+	e.Clevel = leI16(data, 59)  // rAthena: clevel (offset 59, size 2)
+	e.Font = leI16(data, 61)  // rAthena: font (offset 61, size 2)
 	return e
 }
 
 // ActorExists_0x0857 decodes a 0x0857 packet (struct packet_idle_unit).
-// Active: pv >= 20101124, < 20120221. Wire size: 65 bytes (adds robe).
 func ActorExists_0x0857(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
-	e.Objecttype = data[4]          // rAthena: objecttype
-	e.GID = leU32(data, 5)          // rAthena: GID
-	e.Speed = leI16(data, 9)        // rAthena: speed
-	e.BodyState = leI16(data, 11)   // rAthena: bodyState
-	e.HealthState = leI16(data, 13) // rAthena: healthState
-	e.EffectState = leI32(data, 15) // rAthena: effectState
-	e.Job = leI16(data, 19)         // rAthena: job
-	e.Head = leU16(data, 21)        // rAthena: head
-	e.Weapon = leU32(data, 23)      // rAthena: weapon
-	e.Accessory = leU16(data, 27)   // rAthena: accessory
-	e.Accessory2 = leU16(data, 29)  // rAthena: accessory2
-	e.Accessory3 = leU16(data, 31)  // rAthena: accessory3
-	e.Headpalette = leI16(data, 33) // rAthena: headpalette
-	e.Bodypalette = leI16(data, 35) // rAthena: bodypalette
-	e.HeadDir = leI16(data, 37)     // rAthena: headDir
-	e.Robe = leU16(data, 39)        // rAthena: robe (added pv >= 20101124)
-	e.GUID = leU32(data, 41)        // rAthena: GUID
-	e.GEmblemVer = leI16(data, 45)  // rAthena: GEmblemVer
-	e.Honor = leI16(data, 47)       // rAthena: honor
-	e.Virtue = leI32(data, 49)      // rAthena: virtue
-	e.IsPKModeON = data[53]         // rAthena: isPKModeON
-	e.Sex = data[54]                // rAthena: sex
-	e.PosDir = [3]byte(data[55:58]) // rAthena: PosDir
-	e.XSize = data[58]              // rAthena: xSize
-	e.YSize = data[59]              // rAthena: ySize
-	e.State = data[60]              // rAthena: state
-	e.Clevel = leI16(data, 61)      // rAthena: clevel
-	e.Font = leI16(data, 63)        // rAthena: font
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.GID = leU32(data, 5)  // rAthena: GID (offset 5, size 4)
+	e.Speed = leI16(data, 9)  // rAthena: speed (offset 9, size 2)
+	e.BodyState = leI16(data, 11)  // rAthena: bodyState (offset 11, size 2)
+	e.HealthState = leI16(data, 13)  // rAthena: healthState (offset 13, size 2)
+	e.EffectState = leI32(data, 15)  // rAthena: effectState (offset 15, size 4)
+	e.Job = leI16(data, 19)  // rAthena: job (offset 19, size 2)
+	e.Head = leU16(data, 21)  // rAthena: head (offset 21, size 2)
+	e.Weapon = leU32(data, 23)  // rAthena: weapon (offset 23, size 4)
+	e.Accessory = leU16(data, 27)  // rAthena: accessory (offset 27, size 2)
+	e.Accessory2 = leU16(data, 29)  // rAthena: accessory2 (offset 29, size 2)
+	e.Accessory3 = leU16(data, 31)  // rAthena: accessory3 (offset 31, size 2)
+	e.Headpalette = leI16(data, 33)  // rAthena: headpalette (offset 33, size 2)
+	e.Bodypalette = leI16(data, 35)  // rAthena: bodypalette (offset 35, size 2)
+	e.HeadDir = leI16(data, 37)  // rAthena: headDir (offset 37, size 2)
+	e.Robe = leU16(data, 39)  // rAthena: robe (offset 39, size 2)
+	e.GUID = leU32(data, 41)  // rAthena: GUID (offset 41, size 4)
+	e.GEmblemVer = leI16(data, 45)  // rAthena: GEmblemVer (offset 45, size 2)
+	e.Honor = leI16(data, 47)  // rAthena: honor (offset 47, size 2)
+	e.Virtue = leI32(data, 49)  // rAthena: virtue (offset 49, size 4)
+	e.IsPKModeON = data[53]  // rAthena: isPKModeON (offset 53, size 1)
+	e.Sex = data[54]  // rAthena: sex (offset 54, size 1)
+	e.PosDir = [3]byte(data[55:58])  // rAthena: PosDir (offset 55, size 3)
+	e.XSize = data[58]  // rAthena: xSize (offset 58, size 1)
+	e.YSize = data[59]  // rAthena: ySize (offset 59, size 1)
+	e.State = data[60]  // rAthena: state (offset 60, size 1)
+	e.Clevel = leI16(data, 61)  // rAthena: clevel (offset 61, size 2)
+	e.Font = leI16(data, 63)  // rAthena: font (offset 63, size 2)
 	return e
 }
 
 // ActorExists_0x0915 decodes a 0x0915 packet (struct packet_idle_unit).
-// Active: pv >= 20120221, < 20131223. Wire size: 74 bytes (adds maxHP+HP+isBoss).
 func ActorExists_0x0915(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
-	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
-	e.Objecttype = data[4]          // rAthena: objecttype
-	e.GID = leU32(data, 5)          // rAthena: GID
-	e.Speed = leI16(data, 9)        // rAthena: speed
-	e.BodyState = leI16(data, 11)   // rAthena: bodyState
-	e.HealthState = leI16(data, 13) // rAthena: healthState
-	e.EffectState = leI32(data, 15) // rAthena: effectState
-	e.Job = leI16(data, 19)         // rAthena: job
-	e.Head = leU16(data, 21)        // rAthena: head
-	e.Weapon = leU32(data, 23)      // rAthena: weapon
-	e.Accessory = leU16(data, 27)   // rAthena: accessory
-	e.Accessory2 = leU16(data, 29)  // rAthena: accessory2
-	e.Accessory3 = leU16(data, 31)  // rAthena: accessory3
-	e.Headpalette = leI16(data, 33) // rAthena: headpalette
-	e.Bodypalette = leI16(data, 35) // rAthena: bodypalette
-	e.HeadDir = leI16(data, 37)     // rAthena: headDir
-	e.Robe = leU16(data, 39)        // rAthena: robe
-	e.GUID = leU32(data, 41)        // rAthena: GUID
-	e.GEmblemVer = leI16(data, 45)  // rAthena: GEmblemVer
-	e.Honor = leI16(data, 47)       // rAthena: honor
-	e.Virtue = leI32(data, 49)      // rAthena: virtue
-	e.IsPKModeON = data[53]         // rAthena: isPKModeON
-	e.Sex = data[54]                // rAthena: sex
-	e.PosDir = [3]byte(data[55:58]) // rAthena: PosDir
-	e.XSize = data[58]              // rAthena: xSize
-	e.YSize = data[59]              // rAthena: ySize
-	e.State = data[60]              // rAthena: state
-	e.Clevel = leI16(data, 61)      // rAthena: clevel
-	e.Font = leI16(data, 63)        // rAthena: font
-	e.MaxHP = leI32(data, 65)       // rAthena: maxHP (added pv >= 20120221)
-	e.HP = leI32(data, 69)          // rAthena: HP
-	e.IsBoss = data[73]             // rAthena: isBoss
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.GID = leU32(data, 5)  // rAthena: GID (offset 5, size 4)
+	e.Speed = leI16(data, 9)  // rAthena: speed (offset 9, size 2)
+	e.BodyState = leI16(data, 11)  // rAthena: bodyState (offset 11, size 2)
+	e.HealthState = leI16(data, 13)  // rAthena: healthState (offset 13, size 2)
+	e.EffectState = leI32(data, 15)  // rAthena: effectState (offset 15, size 4)
+	e.Job = leI16(data, 19)  // rAthena: job (offset 19, size 2)
+	e.Head = leU16(data, 21)  // rAthena: head (offset 21, size 2)
+	e.Weapon = leU32(data, 23)  // rAthena: weapon (offset 23, size 4)
+	e.Accessory = leU16(data, 27)  // rAthena: accessory (offset 27, size 2)
+	e.Accessory2 = leU16(data, 29)  // rAthena: accessory2 (offset 29, size 2)
+	e.Accessory3 = leU16(data, 31)  // rAthena: accessory3 (offset 31, size 2)
+	e.Headpalette = leI16(data, 33)  // rAthena: headpalette (offset 33, size 2)
+	e.Bodypalette = leI16(data, 35)  // rAthena: bodypalette (offset 35, size 2)
+	e.HeadDir = leI16(data, 37)  // rAthena: headDir (offset 37, size 2)
+	e.Robe = leU16(data, 39)  // rAthena: robe (offset 39, size 2)
+	e.GUID = leU32(data, 41)  // rAthena: GUID (offset 41, size 4)
+	e.GEmblemVer = leI16(data, 45)  // rAthena: GEmblemVer (offset 45, size 2)
+	e.Honor = leI16(data, 47)  // rAthena: honor (offset 47, size 2)
+	e.Virtue = leI32(data, 49)  // rAthena: virtue (offset 49, size 4)
+	e.IsPKModeON = data[53]  // rAthena: isPKModeON (offset 53, size 1)
+	e.Sex = data[54]  // rAthena: sex (offset 54, size 1)
+	e.PosDir = [3]byte(data[55:58])  // rAthena: PosDir (offset 55, size 3)
+	e.XSize = data[58]  // rAthena: xSize (offset 58, size 1)
+	e.YSize = data[59]  // rAthena: ySize (offset 59, size 1)
+	e.State = data[60]  // rAthena: state (offset 60, size 1)
+	e.Clevel = leI16(data, 61)  // rAthena: clevel (offset 61, size 2)
+	e.Font = leI16(data, 63)  // rAthena: font (offset 63, size 2)
+	e.MaxHP = leI32(data, 65)  // rAthena: maxHP (offset 65, size 4)
+	e.HP = leI32(data, 69)  // rAthena: HP (offset 69, size 4)
+	e.IsBoss = data[73]  // rAthena: isBoss (offset 73, size 1)
 	return e
 }
+

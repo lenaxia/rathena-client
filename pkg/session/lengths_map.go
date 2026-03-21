@@ -456,6 +456,7 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 	t[0x028A] = 18
 	t[0x0291] = 4
 	t[0x0293] = 70
+	t[0x0295] = -1
 	t[0x0298] = 8
 	t[0x0299] = 6
 	t[0x029A] = 23
@@ -468,6 +469,7 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 	t[0x02C7] = 7
 	t[0x02C8] = 3
 	t[0x02CA] = 3
+	t[0x02D0] = -1
 	t[0x02D3] = 4
 	t[0x02D4] = 23
 	t[0x02DA] = 3
@@ -1108,7 +1110,6 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 		t[0x0122] = 0
 		t[0x0123] = 0
 		t[0x01EF] = -1
-		t[0x0295] = -1
 		t[0x0296] = -1
 		t[0x0297] = -1
 	}
@@ -1151,7 +1152,6 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 		t[0x0295] = 0
 		t[0x0296] = 0
 		t[0x0297] = 0
-		t[0x02D0] = -1
 		t[0x02D1] = -1
 		t[0x02D2] = -1
 		t[0x02D7] = -1
@@ -1546,6 +1546,11 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 	if pv >= 20120000 {
 		t[0x083E] = 26
 	}
+	if pv >= 20120221 {
+		t[0x090F] = 73
+		t[0x0914] = 80
+		t[0x0915] = 74
+	}
 	if pv >= 20120307 {
 		t[0x02C4] = 6
 		t[0x0365] = 41
@@ -1685,17 +1690,21 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 		t[0x0998] = 8
 		t[0x0A0C] = 31
 	}
+	if pv >= 20121212 {
+		t[0x099F] = 22
+	}
 	if pv >= 20130000 {
 		t[0x00AA] = 0
+		t[0x084B] = 19
 		t[0x08D1] = 0
 		t[0x0906] = 0
 		t[0x0999] = 11
 		t[0x099A] = 9
+		t[0x0ADD] = 19
 	}
 	if pv >= 20130320 {
 		t[0x0363] = 6
 		t[0x0438] = 6
-		t[0x084B] = 19
 		t[0x085A] = 90
 		t[0x085D] = 18
 		t[0x0868] = -1
@@ -1721,7 +1730,6 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 		t[0x0978] = 6
 		t[0x0979] = 50
 		t[0x099B] = 8
-		t[0x099F] = 22
 	}
 	if pv >= 20130731 {
 		t[0x09CA] = 23

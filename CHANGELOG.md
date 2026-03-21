@@ -5,6 +5,42 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.6] — 2026-03-21
+
+### Fixed
+
+- **16 packet ID → action mappings missing from semantics DB** — `semantics/mappings.yaml`
+  had no entries for 9 "middle generation" actor packets and 7 other packet IDs added
+  in v0.5.2. Because these were absent from the DB, every `go run ./internal/codegen`
+  invocation regenerated `receive_dispatch.go` without them, silently dropping all the
+  work from v0.5.2 and breaking the dispatch for those packet IDs.
+
+  All 16 implementations added via the semantics MCP tools:
+
+  **Actor "middle generation" (pv 20091103–20131222) — 9 IDs:**
+  - `actor_connected`: `0x07F8` (pv 20091103–20101123), `0x0858` (20101124–20120220),
+    `0x090F` (20120221–20131222) — `struct packet_spawn_unit`
+  - `actor_exists`: `0x07F9` (pv 20091103–20101123), `0x0857` (20101124–20120220),
+    `0x0915` (20120221–20131222) — `struct packet_idle_unit`
+  - `actor_moved`: `0x07F7` (pv 20091103–20101123), `0x0856` (20101124–20120220),
+    `0x0914` (20120221–20131222) — `struct packet_unit_walking`
+
+  **Dispatch-only IDs — 7 IDs:**
+  - `actor_status_active`: `0x0983` (pv >= 20120618) — `struct packet_status_change`
+  - `area_spell`: `0x099F` (pv 20121212–20130730), `0x09CA` (pv >= 20130731) —
+    `struct packet_skill_entry`
+  - `inventory_items_equip`: `0x0295` (pv 20071002–20080101), `0x02D0`
+    (pv 20080102–20120924) — `struct packet_itemlist_equip`
+  - `item_appeared`: `0x084B` (pv 20130001–20180417), `0x0ADD` (pv >= 20180418) —
+    `struct packet_dropflooritem`
+
+### Tests
+
+- **`internal/codegen/semantics/validate_test.go`** — updated `actor_exists` expected
+  implementation count from 6 to 9 to reflect the three new middle-generation entries.
+
+---
+
 ## [v0.5.5] — 2026-03-21
 
 ### Fixed

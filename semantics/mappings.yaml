@@ -660,7 +660,7 @@ mappings:
           semantic: 'Null-terminated guild chat message, format: name : text'
 metadata:
     total_packets: 30
-    last_updated: "2026-03-20"
+    last_updated: "2026-03-21"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -804,6 +804,24 @@ semantic_actions:
                 - 20150512
               struct_name: packet_spawn_unit
               field_mapping: {}
+            - packet_id: "0x07F8"
+              packetver_range:
+                - 20091103
+                - 20101123
+              struct_name: packet_spawn_unit
+              field_mapping: {}
+            - packet_id: "0x0858"
+              packetver_range:
+                - 20101124
+                - 20120220
+              struct_name: packet_spawn_unit
+              field_mapping: {}
+            - packet_id: "0x090F"
+              packetver_range:
+                - 20120221
+                - 20131222
+              struct_name: packet_spawn_unit
+              field_mapping: {}
     actor_died_or_disappeared:
         name: ""
         description: ""
@@ -858,6 +876,24 @@ semantic_actions:
                 - 20150512
               struct_name: packet_idle_unit
               field_mapping: {}
+            - packet_id: "0x07F9"
+              packetver_range:
+                - 20091103
+                - 20101123
+              struct_name: packet_idle_unit
+              field_mapping: {}
+            - packet_id: "0x0857"
+              packetver_range:
+                - 20101124
+                - 20120220
+              struct_name: packet_idle_unit
+              field_mapping: {}
+            - packet_id: "0x0915"
+              packetver_range:
+                - 20120221
+                - 20131222
+              struct_name: packet_idle_unit
+              field_mapping: {}
     actor_moved:
         name: ""
         description: ""
@@ -900,6 +936,24 @@ semantic_actions:
                 - 20091102
               struct_name: packet_unit_walking
               field_mapping: {}
+            - packet_id: "0x07F7"
+              packetver_range:
+                - 20091103
+                - 20101123
+              struct_name: packet_unit_walking
+              field_mapping: {}
+            - packet_id: "0x0856"
+              packetver_range:
+                - 20101124
+                - 20120220
+              struct_name: packet_unit_walking
+              field_mapping: {}
+            - packet_id: "0x0914"
+              packetver_range:
+                - 20120221
+                - 20131222
+              struct_name: packet_unit_walking
+              field_mapping: {}
     actor_status_active:
         name: ""
         description: ""
@@ -911,6 +965,12 @@ semantic_actions:
                 - null
                 - null
               struct_name: packet_sc_notick
+              field_mapping: {}
+            - packet_id: "0x0983"
+              packetver_range:
+                - 20120618
+                - null
+              struct_name: packet_status_change
               field_mapping: {}
     actor_status_effect_extended:
         name: ""
@@ -971,6 +1031,18 @@ semantic_actions:
                 - 20121212
                 - null
               struct_name: SYNTH_ZC_SKILL_ENTRY3
+              field_mapping: {}
+            - packet_id: "0x099F"
+              packetver_range:
+                - 20121212
+                - 20130730
+              struct_name: packet_skill_entry
+              field_mapping: {}
+            - packet_id: "0x09CA"
+              packetver_range:
+                - 20130731
+                - null
+              struct_name: packet_skill_entry
               field_mapping: {}
     attack_range:
         name: ""
@@ -2754,6 +2826,18 @@ semantic_actions:
                 - null
               struct_name: packet_itemlist_equip
               field_mapping: {}
+            - packet_id: "0x0295"
+              packetver_range:
+                - 20071002
+                - 20080101
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
+            - packet_id: "0x02D0"
+              packetver_range:
+                - 20080102
+                - 20120924
+              struct_name: packet_itemlist_equip
+              field_mapping: {}
     inventory_items_stackable:
         name: inventory_items_stackable
         description: Bulk stackable inventory items sent on login or map change
@@ -2799,6 +2883,18 @@ semantic_actions:
             - packet_id: "0x009E"
               packetver_range:
                 - null
+                - null
+              struct_name: packet_dropflooritem
+              field_mapping: {}
+            - packet_id: "0x084B"
+              packetver_range:
+                - 20130001
+                - 20180417
+              struct_name: packet_dropflooritem
+              field_mapping: {}
+            - packet_id: "0x0ADD"
+              packetver_range:
+                - 20180418
                 - null
               struct_name: packet_dropflooritem
               field_mapping: {}
