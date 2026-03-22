@@ -2,6 +2,7 @@ package preprocess
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -11,8 +12,16 @@ import (
 //
 // All entries must print FOUND — any MISSING entry means codegen will produce an
 // empty send struct and a broken (non-dispatching) encode function.
+//
+// This test requires the rAthena source tree at the hardcoded path and g++ on PATH.
+// It is skipped automatically in CI where neither is available.
 func TestCheckSendStructs(t *testing.T) {
 	rathenaRoot := "/home/mikekao/personal/rathena"
+
+	// Skip if rAthena source tree is not present (e.g. CI).
+	if _, err := os.Stat(rathenaRoot); os.IsNotExist(err) {
+		t.Skipf("rAthena source not found at %s — skipping (local-only test)", rathenaRoot)
+	}
 	synthPath := "/home/mikekao/personal/rathena-client/internal/codegen/stubs/synthetic_structs.hpp"
 	pv := uint32(20200401)
 
