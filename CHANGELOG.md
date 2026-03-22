@@ -5,6 +5,73 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.8] — 2026-03-21
+
+### Fixed (worklog 0072 — `enter_world`)
+
+- **`ActionEnterWorld` had no registered send encoder** — `send.EnterWorld{}` and
+  `ActionEnterWorld = 141` existed but `EncodeEnterWorld` was absent, forcing goKore
+  to use a raw `conn.Write([]byte{0x7D, 0x00})` workaround. The encoder is now
+  hand-written (`enter_world.go`) and codegen picks it up via `existingEncoders`
+  into `register.go`'s `init()`. `0x007D` is stable across all packetvers (single
+  entry in `clif_packetdb.hpp:32`, absent from `clif_shuffle.hpp`).
+
+  Note: worklog 0072 proposed `ActionCzNotifyActorinit` / `send.CzNotifyActorinit` —
+  both are incorrect names. The correct action is `ActionEnterWorld` / `send.EnterWorld`
+  which already existed. No new constants or structs were needed.
+
+### Fixed (worklog 0073 — 5 shuffle-era send encoder ID bugs)
+
+All five encoders hardcoded the pre-shuffle base packet ID and ignored `packetver`.
+Each has been replaced with a hand-written dispatcher following the `move_to.go` /
+`pickup_item.go` pattern (semantics DB codegen cannot express `shuffledCtoSID()` calls).
+Cross-validated against rAthena `clif_shuffle.hpp` stable post-20180307 block and
+OpenKore `RagexeRE_2018_11_21.pm`.
+
+- **`drop_item.go`** (`0x00A2` → `shuffledCtoSID(pv, 0x00A2)`, stable `0x0363` post-20180307)
+  — 6 bytes, `index(u16)@[2:4]`, `amount(u16)@[4:6]`
+
+- **`look.go`** — triple bug: wrong ID (`0x009B`), wrong size (`[4]byte` instead of `[5]byte`),
+  wrong `Dir` offset (`p[3]` instead of `p[4]`). The `Dir` field was silently dropped entirely.
+  Fixed: `shuffledCtoSID(pv, 0x009B)`, stable `0x0361`, `[5]byte`,
+  `headDir(u8)@[2]`, `padding(0x00)@[3]`, `dir(u8)@[4]`. Layout confirmed by rAthena
+  `RFIFOB(pos[0]=2)` / `RFIFOB(pos[1]=4)` and OpenKore pack `'v C'` (5 bytes total).
+
+- **`move_from_storage.go`** (`0x00F5` → `shuffledCtoSID(pv, 0x00F5)`, stable `0x0365`)
+  — 8 bytes, `index(u16)@[2:4]`, `amount(u32)@[4:8]`
+
+- **`move_to_storage.go`** (`0x00F3` → `shuffledCtoSID(pv, 0x00F3)`, stable `0x0364`)
+  — 8 bytes, `index(u16)@[2:4]`, `amount(u32)@[4:8]`
+
+- **`skill_use_location.go`** (`0x0116` → `shuffledCtoSID(pv, 0x0116)`, stable `0x0366`)
+  — 10 bytes, `skillLevel(u16)@[2:4]`, `skillID(u16)@[4:6]`, `xPos(u16)@[6:8]`, `yPos(u16)@[8:10]`
+
+### Fixed (semantics DB — packetver bounds corrected)
+
+All via MCP (no direct YAML edits):
+
+- `drop_item`, `look`, `move_from_storage`, `move_to_storage`, `skill_use_location`:
+  existing `[null, null]` implementation replaced with `[null, 20101123]` (legacy)
+  + `[20101124, null]` (modern stable wire ID)
+- `close_storage`: `0x00F7` bounded to `[null, 20050110]` — `clif_parse_CloseKafra`
+  removed from packet tables after pv=20050110 and is absent from `clif_shuffle.hpp`
+- `public_chat`: `0x008C` bounded to `[null, 20080909]` — `clif_parse_GlobalMessage`
+  absent from shuffle table; last confirmed valid ID is `0x00F3` up to ~pv=20080909
+
+### Tests
+
+- **`drop_item_test.go`** — 18 boundary sub-tests, field encoding, 0 allocs/op (9.8 ns/op)
+- **`look_test.go`** — 14 ID boundary sub-tests, length (5 bytes), HeadDir@[2], Padding@[3],
+  Dir@[4], DirNotAtOffset3 regression test, 0 allocs/op (4.2 ns/op)
+- **`move_from_storage_test.go`** — 14 boundary sub-tests, field encoding, 0 allocs/op (9.3 ns/op)
+- **`move_to_storage_test.go`** — 14 boundary sub-tests, field encoding, 0 allocs/op (9.1 ns/op)
+- **`skill_use_location_test.go`** — 13 boundary sub-tests, all-fields, 0 allocs/op (10.5 ns/op)
+- **`enter_world_test.go`** — wire format across all packetvers, 0 allocs/op (0.26 ns/op)
+
+All tests written before implementation (TDD red → green). `go test ./...` passes.
+
+---
+
 ## [v0.5.7] — 2026-03-21
 
 ### Fixed

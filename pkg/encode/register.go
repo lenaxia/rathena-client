@@ -38,7 +38,6 @@ import (
 //   chat_message
 //   ct_auth
 //   deal_request
-//   enter_world
 //   entity_move
 //   entity_spawn
 //   exp
@@ -1405,6 +1404,16 @@ func init() {
 				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeEmote(r, pv)
+			return b[:], nil
+		},
+	)
+	session.RegisterSendEncoder(session.ActionEnterWorld,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.EnterWorld)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			b := EncodeEnterWorld(r, pv)
 			return b[:], nil
 		},
 	)

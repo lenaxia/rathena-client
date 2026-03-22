@@ -1401,7 +1401,7 @@ semantic_actions:
             - packet_id: "0x00F7"
               packetver_range:
                 - null
-                - null
+                - 20050110
               struct_name: SYNTH_CZ_CLOSE_STORE
               field_mapping: {}
     close_vending:
@@ -2571,6 +2571,12 @@ semantic_actions:
             - packet_id: "0x00A2"
               packetver_range:
                 - null
+                - 20101123
+              struct_name: SYNTH_CZ_ITEM_THROW2
+              field_mapping: {}
+            - packet_id: "0x0363"
+              packetver_range:
+                - 20101124
                 - null
               struct_name: SYNTH_CZ_ITEM_THROW2
               field_mapping: {}
@@ -3009,6 +3015,12 @@ semantic_actions:
             - packet_id: "0x009B"
               packetver_range:
                 - null
+                - 20101123
+              struct_name: SYNTH_CZ_CHANGE_DIRECTION
+              field_mapping: {}
+            - packet_id: "0x0361"
+              packetver_range:
+                - 20101124
                 - null
               struct_name: SYNTH_CZ_CHANGE_DIRECTION
               field_mapping: {}
@@ -3123,6 +3135,12 @@ semantic_actions:
             - packet_id: "0x00F5"
               packetver_range:
                 - null
+                - 20101123
+              struct_name: SYNTH_CZ_MOVE_ITEM_FROM_STORE_TO_BODY
+              field_mapping: {}
+            - packet_id: "0x0365"
+              packetver_range:
+                - 20101124
                 - null
               struct_name: SYNTH_CZ_MOVE_ITEM_FROM_STORE_TO_BODY
               field_mapping: {}
@@ -3153,6 +3171,12 @@ semantic_actions:
             - packet_id: "0x00F3"
               packetver_range:
                 - null
+                - 20101123
+              struct_name: SYNTH_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
+              field_mapping: {}
+            - packet_id: "0x0364"
+              packetver_range:
+                - 20101124
                 - null
               struct_name: SYNTH_CZ_MOVE_ITEM_FROM_BODY_TO_STORE
               field_mapping: {}
@@ -3429,7 +3453,7 @@ semantic_actions:
             - packet_id: "0x008C"
               packetver_range:
                 - null
-                - null
+                - 20080909
               struct_name: PACKET_CZ_REQUEST_CHAT
               field_mapping: {}
     quest_dialog:
@@ -3867,6 +3891,12 @@ semantic_actions:
             - packet_id: "0x0116"
               packetver_range:
                 - null
+                - 20101123
+              struct_name: SYNTH_CZ_USE_SKILL_TOGROUND
+              field_mapping: {}
+            - packet_id: "0x0366"
+              packetver_range:
+                - 20101124
                 - null
               struct_name: SYNTH_CZ_USE_SKILL_TOGROUND
               field_mapping: {}
