@@ -237,9 +237,12 @@ func TestActorExists_0x0078_Golden_20181121(t *testing.T) {
 //	83:4  HP           87:1  isBoss        88:2  body
 //	90:24 name
 func makeActorMoved0x09DB_20181121() []byte {
-	b := make([]byte, 114)
+	// packet_unit_walking at pv=20131223 (0x09DB range: 20131223-20150512).
+	// Total: 108 bytes. No shield field (added at pv>=20181121).
+	// Field layout verified by GCC preprocessor at PACKETVER=20131223.
+	b := make([]byte, 108)
 	putI16LE(b, 0, 0x09DB)      // PacketType
-	putI16LE(b, 2, 114)         // PacketLength
+	putI16LE(b, 2, 108)         // PacketLength (108, not 114)
 	b[4] = 5                    // objecttype
 	putU32LE(b, 5, 1001)        // AID → CharID
 	putU32LE(b, 9, 2002)        // GID → ID
@@ -249,33 +252,32 @@ func makeActorMoved0x09DB_20181121() []byte {
 	putU32LE(b, 19, 0x00000020) // effectState → Option
 	putU16LE(b, 23, 6)          // job → Type
 	putU32LE(b, 27, 7)          // weapon → Weapon
-	putU32LE(b, 31, 8)          // shield → Shield
-	putU32LE(b, 53, 600)        // GUID → GuildID
-	putU16LE(b, 57, 5)          // GEmblemVer → EmblemID
-	putI32LE(b, 61, 120)        // virtue → Opt3 (leU32)
-	b[65] = 1                   // isPKModeON → Stance
-	b[66] = 0                   // sex → Sex
-	// MoveData at offset 67: encode fromX=100,fromY=200,toX=150,toY=250
-	// 10-bit each: fromX=100=0b0001100100, fromY=200=0b0011001000
-	// toX=150=0b0010010110, toY=250=0b0011111010
-	// packed into 5 bytes; use known-good values for test
-	b[67] = 0x19 // fromX high 8 bits of first 10
-	b[68] = 0x03 // fromX low 2 + fromY high 6
-	b[69] = 0x28 // ...
-	b[70] = 0x00
-	b[71] = 0x00
-	b[72] = 0x00
-	b[73] = 2           // xSize → XSize
-	b[74] = 3           // ySize → YSize
-	putU16LE(b, 75, 88) // clevel → Lv
-	putI16LE(b, 49, 2)  // headDir → HeadDir
-	putU16LE(b, 41, 10) // accessory2 → (not mapped in actor_moved for 0x09DB, skip)
+	// no shield field at this pv
+	putU16LE(b, 31, 0)      // accessory
+	putU32LE(b, 49, 600)    // GUID → GuildID (offset 49, no shield)
+	putU16LE(b, 53, 5)      // GEmblemVer → EmblemID
+	putI32LE(b, 57, 120)    // virtue → Opt3
+	b[61] = 1               // isPKModeON → Stance
+	b[62] = 0               // sex → Sex
+	b[63] = 0x19            // MoveData[0]
+	b[64] = 0x03            // MoveData[1]
+	b[65] = 0x28            // MoveData[2]
+	b[66] = 0x00            // MoveData[3]
+	b[67] = 0x00            // MoveData[4]
+	b[68] = 0x00            // MoveData[5]
+	b[69] = 2               // xSize → XSize
+	b[70] = 3               // ySize → YSize
+	putU16LE(b, 71, 88)     // clevel → Lv
+	putI16LE(b, 45, 2)      // headDir → HeadDir (offset 45)
+	copy(b[84:], "Raydric") // name at offset 84 (108-byte layout)
 	return b
 }
 
 func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 	data := makeActorMoved0x09DB_20181121()
-	e := ActorMoved_0x09DB(data, 20181121)
+	// Note: 0x09DB covers pv 20131223-20150512 (corrected in v0.5.12).
+	// Using pv=20140101 which is within the valid range for this packet ID.
+	e := ActorMoved_0x09DB(data, 20140101)
 
 	if e.AID != 1001 {
 		t.Errorf("AID: got %d want 1001", e.AID)
@@ -301,9 +303,7 @@ func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 	if e.Weapon != 7 {
 		t.Errorf("Weapon: got %d want 7", e.Weapon)
 	}
-	if e.Shield != 8 {
-		t.Errorf("Shield: got %d want 8", e.Shield)
-	}
+	// No Shield field at pv=20131223-20150512 layout (added at pv>=20181121)
 	if e.GUID != 600 {
 		t.Errorf("GUID: got %d want 600", e.GUID)
 	}
@@ -334,10 +334,49 @@ func TestActorMoved_0x09DB_Golden_20181121(t *testing.T) {
 
 // ─── ActorMoved_0x007B ────────────────────────────────────────────────────────
 //
+// makeActorMoved_114byte builds a 114-byte packet_unit_walking packet
+// matching the pv>=20181121 layout (with shield and body fields).
+// Field offsets verified by GCC preprocessor at PACKETVER=20181121.
+func makeActorMoved_114byte() []byte {
+	b := make([]byte, 114)
+	putI16LE(b, 0, 0x09DB)      // PacketType
+	putI16LE(b, 2, 114)         // PacketLength
+	b[4] = 5                    // objecttype
+	putU32LE(b, 5, 1001)        // AID  (offset 5)
+	putU32LE(b, 9, 2002)        // GID  (offset 9)
+	putI16LE(b, 13, 200)        // speed (offset 13)
+	putU16LE(b, 15, 3)          // bodyState (offset 15)
+	putU16LE(b, 17, 4)          // healthState (offset 17)
+	putU32LE(b, 19, 0x00000020) // effectState (offset 19)
+	putU16LE(b, 23, 6)          // job (offset 23)
+	putU32LE(b, 27, 7)          // weapon (offset 27)
+	putU32LE(b, 31, 8)          // shield (offset 31) — NEW at pv>=20181121
+	// accessory at 35, moveStartTime at 37, accessory2 at 41, accessory3 at 43
+	// headpalette at 45, bodypalette at 47, headDir at 49, robe at 51
+	putU32LE(b, 53, 600) // GUID (offset 53)
+	putU16LE(b, 57, 5)   // GEmblemVer (offset 57)
+	// honor at 59, virtue at 61
+	b[65] = 1               // isPKModeON (offset 65)
+	b[66] = 0               // sex (offset 66)
+	b[67] = 0x19            // MoveData[0] (offset 67)
+	b[68] = 0x03            // MoveData[1]
+	b[69] = 0x28            // MoveData[2]
+	b[70] = 0x00            // MoveData[3]
+	b[71] = 0x00            // MoveData[4]
+	b[72] = 0x00            // MoveData[5]
+	b[73] = 2               // xSize (offset 73)
+	b[74] = 3               // ySize (offset 74)
+	putU16LE(b, 75, 88)     // clevel (offset 75)
+	copy(b[90:], "Raydric") // name at offset 90 (114-byte layout)
+	return b
+}
+
+// ─── ActorMoved_0x007B ────────────────────────────────────────────────────────
+//
 // Same struct (packet_unit_walking) at PACKETVER=20181121 (total=114 bytes).
 // 0x007B differs from 0x09DB in semantic field_mapping: no CharID.
 func TestActorMoved_0x007B_Golden_20181121(t *testing.T) {
-	data := makeActorMoved0x09DB_20181121()
+	data := makeActorMoved_114byte()
 	e := ActorMoved_0x007B(data, 20181121)
 
 	if e.GID != 2002 {
@@ -570,16 +609,16 @@ func BenchmarkActorExists_0x09FF(b *testing.B) {
 }
 
 func BenchmarkActorMoved_0x09DB(b *testing.B) {
-	data := makeActorMoved0x09DB_20181121()
+	data := makeActorMoved0x09DB_20181121() // 108-byte layout (pv 20131223-20150512)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_ = ActorMoved_0x09DB(data, 20181121)
+		_ = ActorMoved_0x09DB(data, 20140101) // use pv within valid range
 	}
 }
 
 func BenchmarkActorMoved_0x007B(b *testing.B) {
-	data := makeActorMoved0x09DB_20181121()
+	data := makeActorMoved_114byte() // 114-byte layout (pv>=20181121)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {

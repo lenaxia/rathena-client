@@ -104,9 +104,9 @@ func TestGap_0x09FF_Name_IsDecoded(t *testing.T) {
 
 // ─── Test 3: ActorMoved_0x09DB Name field ─────────────────────────────────────
 //
-// packet_unit_walking at PACKETVER >= 20181121 (total=114 bytes) has:
+// packet_unit_walking at PACKETVER 20131223-20150512 (0x09DB range, total=108 bytes) has:
 //
-//	name char[24] at offset 90 (GCC-verified at 20181121)
+//	name char[24] at offset 84 (GCC-verified at 20131223)
 //
 // SemanticDB actor_moved/0x09DB maps Name as a complex expression:
 //
@@ -114,19 +114,19 @@ func TestGap_0x09FF_Name_IsDecoded(t *testing.T) {
 //
 // This means Name is always "" in all branches.
 func TestActorMoved_0x09DB_Name_Decoded(t *testing.T) {
-	// packet_unit_walking at 20181121 = 114 bytes
-	// GCC layout (verified via struct_layout.sh dump):
+	// packet_unit_walking at 20131223 = 108 bytes (no shield/body fields)
+	// GCC layout (verified via preprocessor at PACKETVER=20131223):
 	//   offset 9  : GID uint32
-	//   offset 90 : name char[24]
-	b := make([]byte, 114)
+	//   offset 84 : name char[24]
+	b := make([]byte, 108)
 	binary.LittleEndian.PutUint16(b[0:], 0x09DB)
-	binary.LittleEndian.PutUint16(b[2:], 114)
+	binary.LittleEndian.PutUint16(b[2:], 108)
 	gapPutU32(b, 5, 111)                       // AID
 	gapPutU32(b, 9, 55555)                     // GID → ID
 	binary.LittleEndian.PutUint16(b[13:], 200) // speed
-	copy(b[90:], "Raydric")                    // name at offset 90
+	copy(b[84:], "Raydric")                    // name at offset 84 (108-byte layout)
 
-	e := ActorMoved_0x09DB(b, 20200401)
+	e := ActorMoved_0x09DB(b, 20140101) // 0x09DB covers pv 20131223-20150512 (v0.5.12)
 
 	// Regression test for Bug 14-B: SemanticDB had complex expression
 	// strings.TrimRight(string(packet.name), "\x00") which codegen skipped.

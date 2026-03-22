@@ -660,7 +660,7 @@ mappings:
           semantic: 'Null-terminated guild chat message, format: name : text'
 metadata:
     total_packets: 30
-    last_updated: "2026-03-21"
+    last_updated: "2026-03-22"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -788,7 +788,7 @@ semantic_actions:
               field_mapping: {}
             - packet_id: "0x09FE"
               packetver_range:
-                - 20181121
+                - 20150513
                 - null
               struct_name: packet_spawn_unit
               field_mapping: {}
@@ -854,7 +854,7 @@ semantic_actions:
               field_mapping: {}
             - packet_id: "0x09FF"
               packetver_range:
-                - 20181121
+                - 20150513
                 - null
               struct_name: packet_idle_unit
               field_mapping: {}
@@ -918,15 +918,9 @@ semantic_actions:
                 - 20080101
               struct_name: packet_unit_walking
               field_mapping: {}
-            - packet_id: "0x09DB"
-              packetver_range:
-                - 20181121
-                - null
-              struct_name: packet_unit_walking
-              field_mapping: {}
             - packet_id: "0x09FD"
               packetver_range:
-                - 20141022
+                - 20150513
                 - null
               struct_name: packet_unit_walking
               field_mapping: {}
@@ -952,6 +946,12 @@ semantic_actions:
               packetver_range:
                 - 20120221
                 - 20131222
+              struct_name: packet_unit_walking
+              field_mapping: {}
+            - packet_id: "0x09DB"
+              packetver_range:
+                - 20131223
+                - 20150512
               struct_name: packet_unit_walking
               field_mapping: {}
     actor_status_active:
@@ -6204,16 +6204,16 @@ semantic_actions:
         openkore_name: ""
         canonical_params: []
         implementations:
-            - packet_id: "0x00AA"
-              packetver_range:
-                - 20030000
-                - 20101122
-              struct_name: PACKET_ZC_REQ_WEAR_EQUIP_ACK
-              field_mapping: {}
             - packet_id: "0x0999"
               packetver_range:
-                - 20121107
+                - 20121205
                 - null
+              struct_name: PACKET_ZC_REQ_WEAR_EQUIP_ACK
+              field_mapping: {}
+            - packet_id: "0x00AA"
+              packetver_range:
+                - null
+                - 20121204
               struct_name: PACKET_ZC_REQ_WEAR_EQUIP_ACK
               field_mapping: {}
     zc_response_enchant:

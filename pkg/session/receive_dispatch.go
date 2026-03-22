@@ -245,12 +245,12 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x007B, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x007B(d, pv) }},
 		{id: 0x01DA, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x01DA(d, pv) }},
 		{id: 0x022C, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x022C(d, pv) }},
-		{id: 0x09DB, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x09DB(d, pv) }},
 		{id: 0x09FD, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x09FD(d, pv) }},
 		{id: 0x02EC, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x02EC(d, pv) }},
 		{id: 0x07F7, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x07F7(d, pv) }},
 		{id: 0x0856, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x0856(d, pv) }},
 		{id: 0x0914, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x0914(d, pv) }},
+		{id: 0x09DB, fn: func(d []byte, pv uint32) interface{} { return decode.ActorMoved_0x09DB(d, pv) }},
 	},
 	ActionActorStatusActive: {
 		{id: 0x0196, fn: func(d []byte, pv uint32) interface{} { return decode.ActorStatusActive_0x0196(d, pv) }},
@@ -991,8 +991,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x099A, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqTakeoffEquipAck_0x099A(d, pv) }},
 	},
 	ActionZcReqWearEquipAck: {
-		{id: 0x00AA, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqWearEquipAck_0x00AA(d, pv) }},
 		{id: 0x0999, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqWearEquipAck_0x0999(d, pv) }},
+		{id: 0x00AA, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReqWearEquipAck_0x00AA(d, pv) }},
 	},
 	ActionZcResponseEnchant: {
 		{id: 0x0B9F, fn: func(d []byte, pv uint32) interface{} { return decode.ZcResponseEnchant_0x0B9F(d, pv) }},

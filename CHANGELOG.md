@@ -5,6 +5,50 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.12] — 2026-03-22
+
+### Fixed
+
+- **Receive-direction packetver range gaps** — systematic audit found wrong
+  `packetver_min`/`packetver_max` values causing packets to be silently unhandled
+  at certain packetvers. All fixes sourced directly from `packets_struct.hpp`
+  enum definitions verified by GCC preprocessor:
+
+  **`actor_connected` / `actor_exists` — 33-month gap closed**
+  - `0x09FE` (`actor_connected`) `packetver_min`: `20181121` → `20150513`
+  - `0x09FF` (`actor_exists`) `packetver_min`: `20181121` → `20150513`
+  - Source: `spawn_unitType = 0x9fe` and `idle_unitType = 0x9ff` for
+    `PACKETVER >= 20150513` in `packets_struct.hpp`
+  - Impact: any server at `20150513 <= pv < 20181121` (including `pv=20170315`)
+    had actor spawn/idle packets silently dropped
+
+  **`actor_moved` — wrong range on `0x09DB`**
+  - `0x09DB` was `[20181121, null]` — completely wrong. Correct range is
+    `[20131223, 20150512]` (`unit_walkingType = 0x9db` for `PACKETVER < 20150513`)
+  - `0x09FD` `packetver_min`: `20141022` → `20150513`
+    (`unit_walkingType = 0x9fd` for `PACKETVER >= 20150513`)
+  - Source: `unit_walkingType` enum in `packets_struct.hpp`
+
+  **`zc_req_wear_equip_ack` — 2-year gap closed**
+  - `0x00AA` extended from `[null, 20101122]` to `[null, 20121204]`
+  - `0x0999` `packetver_min`: `20121107` → `20121205`
+  - Source: `PACKETVER_MAIN_NUM >= 20121205` condition in `packets_struct.hpp`
+    (the previous `20121107` was the RE boundary, not MAIN)
+
+### Tests updated
+
+- `internal/codegen/semantics/validate_test.go` — `actor_exists 0x09FF` expected
+  `pvMin` updated `20181121` → `20150513`
+- `internal/codegen/semantics/epic08_test.go` — `zc_req_wear_equip_ack` boundaries
+  updated to reflect MAIN boundary (`20121204`/`20121205`)
+- `pkg/decode/phase1_golden_test.go` — `makeActorMoved0x09DB_20181121` updated to
+  108-byte layout (pv=20131223, no shield/body fields); added `makeActorMoved_114byte`
+  for 0x007B golden test; benchmarks updated to use correct pvs
+- `pkg/decode/gaps_test.go` — `0x09DB` name test updated to 108-byte layout with
+  name at offset 84 (was offset 90 in 114-byte layout)
+
+---
+
 ## [v0.5.11] — 2026-03-21
 
 ### Fixed

@@ -53,18 +53,20 @@ func TestLoaderDeepValidation(t *testing.T) {
 		}
 	}
 
-	// actor_exists must contain 0x09FF with pvMin=20181121
+	// actor_exists must contain 0x09FF with pvMin=20150513
+	// (corrected in v0.5.12: was 20181121, the correct boundary from packets_struct.hpp
+	// is `idle_unitType = 0x9ff` for `PACKETVER >= 20150513`)
 	ae := db.Actions["actor_exists"]
 	if ae != nil {
 		found := false
 		for _, impl := range ae.Implementations {
-			if impl.PacketID == "0x09FF" && impl.StructName == "packet_idle_unit" && impl.PacketverMin == 20181121 {
+			if impl.PacketID == "0x09FF" && impl.StructName == "packet_idle_unit" && impl.PacketverMin == 20150513 {
 				found = true
 				break
 			}
 		}
 		if !found {
-			t.Errorf("actor_exists: missing 0x09FF/packet_idle_unit/pvMin=20181121")
+			t.Errorf("actor_exists: missing 0x09FF/packet_idle_unit/pvMin=20150513")
 		}
 	}
 

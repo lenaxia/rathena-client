@@ -139,49 +139,6 @@ func ActorMoved_0x022C(data []byte, packetver uint32) events.ActorMoved {
 	return e
 }
 
-// ActorMoved_0x09DB decodes a 0x09DB packet (struct packet_unit_walking).
-func ActorMoved_0x09DB(data []byte, packetver uint32) events.ActorMoved {
-	var e events.ActorMoved
-	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
-	e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
-	e.GID = leU32(data, 9)  // rAthena: GID (offset 9, size 4)
-	e.Speed = leI16(data, 13)  // rAthena: speed (offset 13, size 2)
-	e.BodyState = leI16(data, 15)  // rAthena: bodyState (offset 15, size 2)
-	e.HealthState = leI16(data, 17)  // rAthena: healthState (offset 17, size 2)
-	e.EffectState = leI32(data, 19)  // rAthena: effectState (offset 19, size 4)
-	e.Job = leI16(data, 23)  // rAthena: job (offset 23, size 2)
-	e.Head = leU16(data, 25)  // rAthena: head (offset 25, size 2)
-	e.Weapon = leU32(data, 27)  // rAthena: weapon (offset 27, size 4)
-	e.Shield = leU32(data, 31)  // rAthena: shield (offset 31, size 4)
-	e.Accessory = leU16(data, 35)  // rAthena: accessory (offset 35, size 2)
-	e.MoveStartTime = leU32(data, 37)  // rAthena: moveStartTime (offset 37, size 4)
-	e.Accessory2 = leU16(data, 41)  // rAthena: accessory2 (offset 41, size 2)
-	e.Accessory3 = leU16(data, 43)  // rAthena: accessory3 (offset 43, size 2)
-	e.Headpalette = leI16(data, 45)  // rAthena: headpalette (offset 45, size 2)
-	e.Bodypalette = leI16(data, 47)  // rAthena: bodypalette (offset 47, size 2)
-	e.HeadDir = leI16(data, 49)  // rAthena: headDir (offset 49, size 2)
-	e.Robe = leU16(data, 51)  // rAthena: robe (offset 51, size 2)
-	e.GUID = leU32(data, 53)  // rAthena: GUID (offset 53, size 4)
-	e.GEmblemVer = leI16(data, 57)  // rAthena: GEmblemVer (offset 57, size 2)
-	e.Honor = leI16(data, 59)  // rAthena: honor (offset 59, size 2)
-	e.Virtue = leI32(data, 61)  // rAthena: virtue (offset 61, size 4)
-	e.IsPKModeON = data[65]  // rAthena: isPKModeON (offset 65, size 1)
-	e.Sex = data[66]  // rAthena: sex (offset 66, size 1)
-	e.MoveData = [6]byte(data[67:73])  // rAthena: MoveData (offset 67, size 6)
-	e.XSize = data[73]  // rAthena: xSize (offset 73, size 1)
-	e.YSize = data[74]  // rAthena: ySize (offset 74, size 1)
-	e.Clevel = leI16(data, 75)  // rAthena: clevel (offset 75, size 2)
-	e.Font = leI16(data, 77)  // rAthena: font (offset 77, size 2)
-	e.MaxHP = leI32(data, 79)  // rAthena: maxHP (offset 79, size 4)
-	e.HP = leI32(data, 83)  // rAthena: HP (offset 83, size 4)
-	e.IsBoss = data[87]  // rAthena: isBoss (offset 87, size 1)
-	e.Body = leU16(data, 88)  // rAthena: body (offset 88, size 2)
-	e.Name = nullTermString(data[90:114])  // rAthena: name (offset 90, size 24)
-	return e
-}
-
 // ActorMoved_0x09FD decodes a 0x09FD packet (struct packet_unit_walking).
 func ActorMoved_0x09FD(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
@@ -222,7 +179,7 @@ func ActorMoved_0x09FD(data []byte, packetver uint32) events.ActorMoved {
 		e.IsBoss = data[87]  // rAthena: isBoss (offset 87, size 1)
 		e.Body = leU16(data, 88)  // rAthena: body (offset 88, size 2)
 		e.Name = nullTermString(data[90:114])  // rAthena: name (offset 90, size 24)
-	} else if packetver >= 20150513 {
+	} else {
 		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
@@ -258,41 +215,6 @@ func ActorMoved_0x09FD(data []byte, packetver uint32) events.ActorMoved {
 		e.IsBoss = data[83]  // rAthena: isBoss (offset 83, size 1)
 		e.Body = leU16(data, 84)  // rAthena: body (offset 84, size 2)
 		e.Name = nullTermString(data[86:110])  // rAthena: name (offset 86, size 24)
-	} else {
-		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
-		e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
-		e.GID = leU32(data, 9)  // rAthena: GID (offset 9, size 4)
-		e.Speed = leI16(data, 13)  // rAthena: speed (offset 13, size 2)
-		e.BodyState = leI16(data, 15)  // rAthena: bodyState (offset 15, size 2)
-		e.HealthState = leI16(data, 17)  // rAthena: healthState (offset 17, size 2)
-		e.EffectState = leI32(data, 19)  // rAthena: effectState (offset 19, size 4)
-		e.Job = leI16(data, 23)  // rAthena: job (offset 23, size 2)
-		e.Head = leU16(data, 25)  // rAthena: head (offset 25, size 2)
-		e.Weapon = leU32(data, 27)  // rAthena: weapon (offset 27, size 4)
-		e.Accessory = leU16(data, 31)  // rAthena: accessory (offset 31, size 2)
-		e.MoveStartTime = leU32(data, 33)  // rAthena: moveStartTime (offset 33, size 4)
-		e.Accessory2 = leU16(data, 37)  // rAthena: accessory2 (offset 37, size 2)
-		e.Accessory3 = leU16(data, 39)  // rAthena: accessory3 (offset 39, size 2)
-		e.Headpalette = leI16(data, 41)  // rAthena: headpalette (offset 41, size 2)
-		e.Bodypalette = leI16(data, 43)  // rAthena: bodypalette (offset 43, size 2)
-		e.HeadDir = leI16(data, 45)  // rAthena: headDir (offset 45, size 2)
-		e.Robe = leU16(data, 47)  // rAthena: robe (offset 47, size 2)
-		e.GUID = leU32(data, 49)  // rAthena: GUID (offset 49, size 4)
-		e.GEmblemVer = leI16(data, 53)  // rAthena: GEmblemVer (offset 53, size 2)
-		e.Honor = leI16(data, 55)  // rAthena: honor (offset 55, size 2)
-		e.Virtue = leI32(data, 57)  // rAthena: virtue (offset 57, size 4)
-		e.IsPKModeON = data[61]  // rAthena: isPKModeON (offset 61, size 1)
-		e.Sex = data[62]  // rAthena: sex (offset 62, size 1)
-		e.MoveData = [6]byte(data[63:69])  // rAthena: MoveData (offset 63, size 6)
-		e.XSize = data[69]  // rAthena: xSize (offset 69, size 1)
-		e.YSize = data[70]  // rAthena: ySize (offset 70, size 1)
-		e.Clevel = leI16(data, 71)  // rAthena: clevel (offset 71, size 2)
-		e.Font = leI16(data, 73)  // rAthena: font (offset 73, size 2)
-		e.MaxHP = leI32(data, 75)  // rAthena: maxHP (offset 75, size 4)
-		e.HP = leI32(data, 79)  // rAthena: HP (offset 79, size 4)
-		e.IsBoss = data[83]  // rAthena: isBoss (offset 83, size 1)
-		e.Name = nullTermString(data[84:108])  // rAthena: name (offset 84, size 24)
 	}
 	return e
 }
@@ -438,6 +360,47 @@ func ActorMoved_0x0914(data []byte, packetver uint32) events.ActorMoved {
 	e.MaxHP = leI32(data, 71)  // rAthena: maxHP (offset 71, size 4)
 	e.HP = leI32(data, 75)  // rAthena: HP (offset 75, size 4)
 	e.IsBoss = data[79]  // rAthena: isBoss (offset 79, size 1)
+	return e
+}
+
+// ActorMoved_0x09DB decodes a 0x09DB packet (struct packet_unit_walking).
+func ActorMoved_0x09DB(data []byte, packetver uint32) events.ActorMoved {
+	var e events.ActorMoved
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.Objecttype = data[4]  // rAthena: objecttype (offset 4, size 1)
+	e.AID = leU32(data, 5)  // rAthena: AID (offset 5, size 4)
+	e.GID = leU32(data, 9)  // rAthena: GID (offset 9, size 4)
+	e.Speed = leI16(data, 13)  // rAthena: speed (offset 13, size 2)
+	e.BodyState = leI16(data, 15)  // rAthena: bodyState (offset 15, size 2)
+	e.HealthState = leI16(data, 17)  // rAthena: healthState (offset 17, size 2)
+	e.EffectState = leI32(data, 19)  // rAthena: effectState (offset 19, size 4)
+	e.Job = leI16(data, 23)  // rAthena: job (offset 23, size 2)
+	e.Head = leU16(data, 25)  // rAthena: head (offset 25, size 2)
+	e.Weapon = leU32(data, 27)  // rAthena: weapon (offset 27, size 4)
+	e.Accessory = leU16(data, 31)  // rAthena: accessory (offset 31, size 2)
+	e.MoveStartTime = leU32(data, 33)  // rAthena: moveStartTime (offset 33, size 4)
+	e.Accessory2 = leU16(data, 37)  // rAthena: accessory2 (offset 37, size 2)
+	e.Accessory3 = leU16(data, 39)  // rAthena: accessory3 (offset 39, size 2)
+	e.Headpalette = leI16(data, 41)  // rAthena: headpalette (offset 41, size 2)
+	e.Bodypalette = leI16(data, 43)  // rAthena: bodypalette (offset 43, size 2)
+	e.HeadDir = leI16(data, 45)  // rAthena: headDir (offset 45, size 2)
+	e.Robe = leU16(data, 47)  // rAthena: robe (offset 47, size 2)
+	e.GUID = leU32(data, 49)  // rAthena: GUID (offset 49, size 4)
+	e.GEmblemVer = leI16(data, 53)  // rAthena: GEmblemVer (offset 53, size 2)
+	e.Honor = leI16(data, 55)  // rAthena: honor (offset 55, size 2)
+	e.Virtue = leI32(data, 57)  // rAthena: virtue (offset 57, size 4)
+	e.IsPKModeON = data[61]  // rAthena: isPKModeON (offset 61, size 1)
+	e.Sex = data[62]  // rAthena: sex (offset 62, size 1)
+	e.MoveData = [6]byte(data[63:69])  // rAthena: MoveData (offset 63, size 6)
+	e.XSize = data[69]  // rAthena: xSize (offset 69, size 1)
+	e.YSize = data[70]  // rAthena: ySize (offset 70, size 1)
+	e.Clevel = leI16(data, 71)  // rAthena: clevel (offset 71, size 2)
+	e.Font = leI16(data, 73)  // rAthena: font (offset 73, size 2)
+	e.MaxHP = leI32(data, 75)  // rAthena: maxHP (offset 75, size 4)
+	e.HP = leI32(data, 79)  // rAthena: HP (offset 79, size 4)
+	e.IsBoss = data[83]  // rAthena: isBoss (offset 83, size 1)
+	e.Name = nullTermString(data[84:108])  // rAthena: name (offset 84, size 24)
 	return e
 }
 

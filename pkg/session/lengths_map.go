@@ -1764,7 +1764,6 @@ func populateMapLengths(pv uint32, t *[65536]int16) {
 		t[0x09DD] = -1
 		t[0x09DE] = -1
 		t[0x09DF] = 7
-		t[0x09FD] = 108
 	}
 	if pv >= 20141008 {
 		t[0x09FB] = -1

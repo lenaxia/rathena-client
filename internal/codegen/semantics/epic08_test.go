@@ -286,9 +286,11 @@ func TestEPIC08_PacketverRangesCorrect(t *testing.T) {
 		{"exp", "0x07F6", 0, 20170829, "< 20170830"},
 		{"exp", "0x0ACC", 20170830, 0, ">= 20170830"},
 
-		// zc_req_wear_equip_ack: 0x00AA narrowed, 0x0999 added
-		{"zc_req_wear_equip_ack", "0x00AA", 0, 20101122, "< 20101123 (else)"},
-		{"zc_req_wear_equip_ack", "0x0999", 20121107, 0, "RE >= 20121107"},
+		// zc_req_wear_equip_ack: 0x00AA extended to cover 20101123-20121204, 0x0999 starts 20121205
+		// Corrected in v0.5.12: rAthena uses PACKETVER_MAIN_NUM >= 20121205 boundary,
+		// not RE >= 20121107. The 0x00AA range now covers [null, 20121204].
+		{"zc_req_wear_equip_ack", "0x00AA", 0, 20121204, "< 20121205 (MAIN)"},
+		{"zc_req_wear_equip_ack", "0x0999", 20121205, 0, "MAIN >= 20121205"},
 
 		// char_created: two ranges
 		{"char_created", "0x006D", 0, 20201006, "else (< 20201007)"},
