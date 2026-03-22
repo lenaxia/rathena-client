@@ -640,6 +640,173 @@ func TestGenerateReceiveDispatchFile_AllSendDirection(t *testing.T) {
 	}
 }
 
+func TestGenerateEncodeDirFilesWithShuffleCheck_DetectsOverlap(t *testing.T) {
+	// Regression test for worklog 0073/0074: a generated encoder that hardcodes
+	// a packet ID that appears in the shuffle map must be detected and rejected.
+	// Before the lint rule, bugs like drop_item (0x00A2) and look (0x009B) shipped
+	// silently with wrong wire IDs for shuffle-era packetvers (20130515–20180307).
+
+	db := &semantics.DB{
+		Actions: map[string]*semantics.Action{
+			"drop_item": {
+				Name: "drop_item",
+				Implementations: []semantics.Implementation{
+					{
+						PacketID:     "0x00A2",
+						PacketverMin: 20030000,
+						StructName:   "SYNTH_CZ_ITEM_THROW2",
+					},
+				},
+			},
+		},
+	}
+
+	vt := preprocess.VersionTable{
+		"SYNTH_CZ_ITEM_THROW2": []preprocess.VersionedLayout{
+			{
+				MinVer: 20030000,
+				Layout: &preprocess.StructLayout{
+					Name: "SYNTH_CZ_ITEM_THROW2", Available: true,
+					Fields: []preprocess.Field{
+						{Name: "PacketType", BaseType: "int16", Offset: 0, Size: 2},
+						{Name: "Index", BaseType: "uint16", Offset: 2, Size: 2},
+						{Name: "Amount", BaseType: "uint16", Offset: 4, Size: 2},
+					},
+					TotalSize: 6,
+				},
+			},
+		},
+	}
+
+	// 0x00A2 is in the shuffle map — any generated encoder hardcoding it must be flagged.
+	shuffleBaseIDs := map[uint16]bool{
+		0x00A2: true, // drop_item base ID — remapped in shuffle era
+		0x009B: true, // look base ID — remapped in shuffle era
+	}
+
+	_, _, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, shuffleBaseIDs, nil)
+	if err == nil {
+		t.Fatal("expected shuffle overlap error for drop_item 0x00A2, got nil")
+	}
+	if !strings.Contains(err.Error(), "0x00A2") {
+		t.Errorf("error should mention 0x00A2, got: %v", err)
+	}
+	if !strings.Contains(err.Error(), "drop_item") {
+		t.Errorf("error should mention drop_item, got: %v", err)
+	}
+	if !strings.Contains(err.Error(), "shuffledCtoSID") {
+		t.Errorf("error should mention shuffledCtoSID fix, got: %v", err)
+	}
+}
+
+func TestGenerateEncodeDirFilesWithShuffleCheck_AllowlistSuppresses(t *testing.T) {
+	// Allowlisted IDs must not produce a violation even if they appear in the shuffle map.
+	db := &semantics.DB{
+		Actions: map[string]*semantics.Action{
+			"drop_item": {
+				Name: "drop_item",
+				Implementations: []semantics.Implementation{
+					{PacketID: "0x00A2", PacketverMin: 20030000, StructName: "SYNTH_CZ_ITEM_THROW2"},
+				},
+			},
+		},
+	}
+	vt := preprocess.VersionTable{
+		"SYNTH_CZ_ITEM_THROW2": []preprocess.VersionedLayout{
+			{MinVer: 20030000, Layout: &preprocess.StructLayout{
+				Name: "SYNTH_CZ_ITEM_THROW2", Available: true,
+				Fields:    []preprocess.Field{{Name: "PacketType", BaseType: "int16", Offset: 0, Size: 2}},
+				TotalSize: 2,
+			}},
+		},
+	}
+	shuffleBaseIDs := map[uint16]bool{0x00A2: true}
+	allowlist := map[uint16]bool{0x00A2: true} // explicitly allowed
+
+	_, _, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, shuffleBaseIDs, allowlist)
+	if err != nil {
+		t.Fatalf("allowlisted ID should not produce error, got: %v", err)
+	}
+}
+
+func TestGenerateEncodeDirFilesWithShuffleCheck_StableIDPassesThrough(t *testing.T) {
+	// An encoder hardcoding a stable ID (not in shuffle map) must not be flagged.
+	db := &semantics.DB{
+		Actions: map[string]*semantics.Action{
+			"emote": {
+				Name: "emote",
+				Implementations: []semantics.Implementation{
+					{PacketID: "0x00BF", PacketverMin: 20030000, StructName: "SYNTH_CZ_REQ_EMOTION"},
+				},
+			},
+		},
+	}
+	vt := preprocess.VersionTable{
+		"SYNTH_CZ_REQ_EMOTION": []preprocess.VersionedLayout{
+			{MinVer: 20030000, Layout: &preprocess.StructLayout{
+				Name: "SYNTH_CZ_REQ_EMOTION", Available: true,
+				Fields:    []preprocess.Field{{Name: "PacketType", BaseType: "int16", Offset: 0, Size: 2}},
+				TotalSize: 2,
+			}},
+		},
+	}
+	shuffleBaseIDs := map[uint16]bool{0x00A2: true} // 0x00BF is NOT in the shuffle map
+
+	_, _, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, shuffleBaseIDs, nil)
+	if err != nil {
+		t.Fatalf("stable ID should not produce error, got: %v", err)
+	}
+}
+
+func TestGenerateEncodeDirFilesWithShuffleCheck_RealDB(t *testing.T) {
+	// End-to-end test: loads the real semantics DB and verifies no current action
+	// in the DB would generate a shuffle overlap (all known bugs have been fixed).
+	// This test is the permanent regression guard for worklog 0073/0074.
+	db, err := semantics.LoadFile("../../../semantics/mappings.yaml")
+	if err != nil {
+		t.Fatalf("LoadFile: %v", err)
+	}
+
+	// The known shuffle base IDs that were bugs — these have been fixed by hand-written
+	// encoders, so they no longer generate encoded files and should not trigger the check.
+	// If any of these reappear as generated encoders, the test will catch it.
+	//
+	// Note: 0x022D (homunculus_menu) and 0x0233 (homunculus_attack) are shuffled but
+	// homunculus/mercenary support is explicitly out of scope — excluded from the check.
+	knownShuffledIDs := map[uint16]bool{
+		0x00A2: true, // drop_item
+		0x009B: true, // look / change_dir
+		0x00F5: true, // move_from_storage
+		0x00F3: true, // move_to_storage
+		0x0116: true, // skill_use_location
+		0x009F: true, // pickup_item
+		0x0085: true, // move_to / character_move
+		0x0202: true, // friends_add (fixed in v0.5.9)
+	}
+	// Allowlist: IDs that appear in shuffle map but are explicitly out of scope.
+	allowlist := map[uint16]bool{
+		0x022D: true, // homunculus_menu — homunculus/mercenary out of scope
+		0x0233: true, // homunculus_attack — homunculus/mercenary out of scope
+	}
+
+	// Use an empty VersionTable — generates stubs with no fields, which still
+	// exercises the packetver/shuffle overlap detection path.
+	vt := make(preprocess.VersionTable)
+
+	_, skipped, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, knownShuffledIDs, allowlist)
+	if err != nil {
+		// Find the SHUFFLE_OVERLAP entries in skipped for a clear error message
+		var violations []string
+		for _, s := range skipped {
+			if strings.HasPrefix(s, "SHUFFLE_OVERLAP") {
+				violations = append(violations, s)
+			}
+		}
+		t.Errorf("shuffle overlap detected in real DB — worklog 0073/0074 regressions:\n%s",
+			strings.Join(violations, "\n"))
+	}
+}
+
 func TestGenerateReceiveDispatchFile_ReceiveDirection(t *testing.T) {
 	db := &semantics.DB{
 		Actions: map[string]*semantics.Action{

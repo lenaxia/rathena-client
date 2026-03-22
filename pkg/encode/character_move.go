@@ -7,12 +7,20 @@ import (
 )
 
 // EncodeCharacterMove encodes a 0x035F (SYNTH_CZ_REQUEST_MOVE2) packet for sending to the server.
+//
+// NOTE: This action only supports pv >= 20101124 (when 0x035F first appeared as
+// the WalkToXY wire ID). For full packetver coverage including pre-20101124 and the
+// shuffle era (20130515–20180307), use ActionMoveTo / send.MoveTo instead, which
+// uses the correctly-dispatched EncodeMoveTo (move_to.go).
+//
+// At pv=20200401 this encoder is correct: 0x035F is the stable post-shuffle wire ID
+// for clif_parse_WalkToXY (shuffledCtoSID(pv>20180307, 0x0085) == 0x035F).
 func EncodeCharacterMove(req send.CharacterMove, packetver uint32) [5]byte {
 	var p [5]byte
 	// Packet ID: 0x035F (little-endian)
 	p[0] = 0x5f
 	p[1] = 0x03
-	copy(p[2:], req.Dest[:])  // rAthena: dest
+	copy(p[2:], req.Dest[:]) // rAthena: dest
 	_ = packetver
 	return p
 }

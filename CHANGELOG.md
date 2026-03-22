@@ -5,6 +5,63 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.9] — 2026-03-21
+
+### Fixed
+
+- **`EncodeFriendsAdd` sent wrong wire ID for shuffle-era packetvers (20130515–20180307)** —
+  `0x0202` base ID appears in `clif_shuffle.hpp` and is remapped every weekly block
+  (e.g. `0x0962` at pv=20130515, `0x08AA` at pv=20180307). The encoder hardcoded `0x0202`
+  and ignored `packetver`. Now uses `shuffledCtoSID(pv, 0x0202)` for `pv >= 20130515`;
+  pre-shuffle and post-20180307 stable both return `0x0202`. (worklog 0074)
+
+### Added
+
+- **Codegen shuffle overlap lint rule** (`internal/codegen/gen/encode.go:GenerateEncodeDirFilesWithShuffleCheck`) —
+  the root cause of all send-encoder ID bugs in worklogs 0069–0074. When the codegen
+  runs, it now validates that no generated encoder hardcodes a packet ID that appears in
+  `clif_shuffle.hpp`. If a violation is found, the codegen **fails** with an actionable
+  error message rather than silently shipping wrong wire bytes.
+
+  This check would have caught `drop_item`, `look`, `move_from_storage`, `move_to_storage`,
+  `skill_use_location`, `pickup_item`, `item_use`, and `friends_add` before they shipped.
+
+  `main.go` wires the check into `genEncodeWithShuffleCheck` (called for step 8). Shuffle
+  base IDs are pre-built from `clif_shuffle.hpp` + `clif_packetdb.hpp` before encoding.
+  If `clif_shuffle.hpp` is unavailable, the check is skipped with a warning (non-fatal).
+
+### Tests
+
+- **`TestGenerateEncodeDirFilesWithShuffleCheck_DetectsOverlap`** — asserts that a
+  generated encoder for `drop_item 0x00A2` (a shuffled ID) is detected and rejected
+- **`TestGenerateEncodeDirFilesWithShuffleCheck_AllowlistSuppresses`** — asserts that
+  allowlisted IDs are not flagged
+- **`TestGenerateEncodeDirFilesWithShuffleCheck_StableIDPassesThrough`** — asserts that
+  stable IDs (not in shuffle map) pass through cleanly
+- **`TestGenerateEncodeDirFilesWithShuffleCheck_RealDB`** — end-to-end regression guard:
+  loads the real semantics DB and asserts no current action would generate a shuffle overlap.
+  Allowlists `0x022D` (homunculus_menu) and `0x0233` (homunculus_attack) as explicitly
+  out-of-scope (homunculus/mercenary not supported).
+- **`pkg/encode/friends_add_test.go`** (new, TDD) — covers all boundary transitions
+  including `pv=20130515` → `0x0962`, `pv=20130522` → `0x0362`, `pv=20180307` → `0x08AA`,
+  and post-shuffle `pv=20200401` → `0x0202`.
+
+### Documentation
+
+- **`pkg/encode/character_move.go`** — added limitation note: only supports
+  `pv >= 20101124`; callers needing full packetver coverage should use `ActionMoveTo`.
+- **`pkg/send/look.go`** — hand-written, adds field godoc for `HeadDir` (valid 0–2,
+  rAthena `headdir`, wire offset 2) and `Dir` (valid 0–7 clockwise from N, rAthena `dir`,
+  wire offset 4 after padding byte at offset 3).
+- **`semantics/mappings.yaml`** — `friends_add` 0x0202 bounded to `pv <= 20130514`;
+  `character_move` 0x035F bounded to `pv >= 20101124`.
+- **`docs/WORKLOG/0074`** — full validated analysis: confirmed decode layer has zero gaps
+  (the earlier "109 missing decoders" count was a false positive), confirmed `cz_party_join_req`/
+  `friends_remove`/`friends_reply` are NOT in shuffle map (no fix needed), documented
+  `character_move` as structural duplicate of `move_to` with a packetver scope limitation.
+
+---
+
 ## [v0.5.8] — 2026-03-21
 
 ### Fixed (worklog 0072 — `enter_world`)

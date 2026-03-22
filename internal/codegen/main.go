@@ -130,8 +130,22 @@ func run(cfg preprocess.Config, outDir, semanticsPath string) error {
 	// Step 8: Generate encode functions (pkg/encode/*.go).
 	// cleanGeneratedDir("pkg/encode") runs inside genEncode — it must complete
 	// before genShuffle writes shuffle_map.go, or the clean sweep would delete it.
+	//
+	// We pre-build the shuffle base IDs so genEncode can validate that no generated
+	// encoder hardcodes an ID that appears in the shuffle table (the root cause of
+	// the encoder ID bugs documented in worklogs 0069–0073).
+	log.Println("Building shuffle base IDs for encoder validation...")
+	shuffleBaseIDs, err := buildShuffleBaseIDs(cfg)
+	if err != nil {
+		// Non-fatal: if clif_shuffle.hpp is unavailable, skip the validation.
+		log.Printf("  WARNING: could not build shuffle base IDs (%v) — skipping shuffle overlap check", err)
+		shuffleBaseIDs = nil
+	} else {
+		log.Printf("  %d shuffle base IDs loaded for validation", len(shuffleBaseIDs))
+	}
+
 	log.Println("Generating encode functions...")
-	if err := genEncode(db, vt, outDir); err != nil {
+	if err := genEncodeWithShuffleCheck(db, vt, outDir, shuffleBaseIDs); err != nil {
 		return fmt.Errorf("encode: %w", err)
 	}
 
@@ -1262,21 +1276,62 @@ func genDecode(db *semantics.DB, vt preprocess.VersionTable, outDir string) erro
 }
 
 func genEncode(db *semantics.DB, vt preprocess.VersionTable, outDir string) error {
-	files, skipped, err := gen.GenerateEncodeDirFiles(db, vt)
-	if err != nil {
-		return err
-	}
+	return genEncodeWithShuffleCheck(db, vt, outDir, nil)
+}
+
+// genEncodeWithShuffleCheck generates encode files and validates that no generated
+// encoder hardcodes a packet ID that appears in the shuffle map.
+// shuffleBaseIDs may be nil to skip the check (e.g. when clif_shuffle.hpp is unavailable).
+func genEncodeWithShuffleCheck(db *semantics.DB, vt preprocess.VersionTable, outDir string, shuffleBaseIDs map[uint16]bool) error {
+	files, skipped, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, shuffleBaseIDs, nil)
 	encodeDir := filepath.Join(outDir, "pkg", "encode")
-	if err := cleanGeneratedDir(encodeDir); err != nil {
-		return err
+	if cleanErr := cleanGeneratedDir(encodeDir); cleanErr != nil {
+		return cleanErr
 	}
 	for filename, src := range files {
-		if err := writeFile(filepath.Join(encodeDir, filename), src); err != nil {
-			return err
+		if writeErr := writeFile(filepath.Join(encodeDir, filename), src); writeErr != nil {
+			return writeErr
 		}
 	}
 	log.Printf("  → pkg/encode/ (%d files, %d skipped)", len(files), len(skipped))
+	if err != nil {
+		// Shuffle overlap violations: fail the codegen run.
+		return fmt.Errorf("encoder shuffle overlap check failed — run was aborted to prevent shipping wrong wire IDs:\n%w", err)
+	}
 	return nil
+}
+
+// buildShuffleBaseIDs parses clif_shuffle.hpp and clif_packetdb.hpp to build the
+// set of C→S base packet IDs that appear in any shuffle block. These are the IDs
+// that any generated encoder must NOT hardcode (they must use shuffledCtoSID instead).
+func buildShuffleBaseIDs(cfg preprocess.Config) (map[uint16]bool, error) {
+	shuffleFile := filepath.Join(cfg.RathenaRoot, "src", "map", "clif_shuffle.hpp")
+	content, err := os.ReadFile(shuffleFile)
+	if err != nil {
+		return nil, fmt.Errorf("read clif_shuffle.hpp: %w", err)
+	}
+	sections, err := preprocess.ParseShuffle(string(content))
+	if err != nil {
+		return nil, fmt.Errorf("parse shuffle: %w", err)
+	}
+	packetdbPreprocessed, err := preprocess.Preprocess(cfg, preprocess.SourceClifPacketDB, 20180307)
+	if err != nil {
+		return nil, fmt.Errorf("preprocess packetdb: %w", err)
+	}
+	entries, err := preprocess.ParsePacketDB(packetdbPreprocessed)
+	if err != nil {
+		return nil, fmt.Errorf("parse packetdb: %w", err)
+	}
+	baseIDs := preprocess.HandlerBaseIDs(entries)
+	breakpoints := gen.BuildShuffleBreakpoints(sections, baseIDs)
+
+	result := make(map[uint16]bool)
+	for _, bp := range breakpoints {
+		for _, e := range bp.Entries {
+			result[e.BaseID] = true
+		}
+	}
+	return result, nil
 }
 
 func genActions(db *semantics.DB, outDir string) error {

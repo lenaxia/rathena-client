@@ -1334,7 +1334,7 @@ semantic_actions:
         implementations:
             - packet_id: "0x035F"
               packetver_range:
-                - null
+                - 20101124
                 - null
               struct_name: SYNTH_CZ_REQUEST_MOVE2
               field_mapping: {}
@@ -2667,7 +2667,7 @@ semantic_actions:
             - packet_id: "0x0202"
               packetver_range:
                 - null
-                - null
+                - 20130514
               struct_name: SYNTH_CZ_ADD_FRIENDS
               field_mapping: {}
     friends_remove:
