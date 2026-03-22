@@ -36,3 +36,8 @@ go.work.sum
 
 # Validation output
 validation/output/
+
+# Integration test / API check binaries built at repo root
+gokore_api_check
+new_api_check
+verify_new_api

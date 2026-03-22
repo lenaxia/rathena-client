@@ -5,6 +5,39 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.10] — 2026-03-21
+
+### Changed
+
+- **`pkg/encode/character_move.go`** — promoted from generated to hand-written so the
+  packetver scope limitation comment (`pv >= 20101124` only) survives future codegen runs.
+  Content is functionally identical; header changed from `// Code generated` to
+  `// Manually maintained`.
+
+### Confirmed no-fix-needed
+
+Deeper investigation of the three "accidentally-correct" encoders from worklog 0073/0074
+confirmed all three are actually fully correct:
+
+- **`cz_party_join_req` (0x02C4)** — `0x02C4` was reassigned from `clif_parse_UseSkillToId`
+  to `clif_parse_PartyInvite2` (party invite) at `pv >= 20111102`. Checking all weekly shuffle
+  blocks (20130515–20180307): `0x02C4` is never remapped — every block returns `baseID`.
+  Confirmed by OpenKore `RagexeRE_2018_11_21.pm`: `party_join_request_by_name 02C4`.
+- **`friends_remove` (0x0203)** — single stable entry, never shuffled. Correct.
+- **`friends_reply` (0x0208)** — stable at `pv >= 20040705` (14 bytes). Never shuffled.
+  Correct for all production servers.
+
+### Cleanup
+
+- **`.gitignore`** — added `gokore_api_check`, `new_api_check`, `verify_new_api` to ignore
+  integration test binaries built at repo root.
+- **`docs/WORKLOG/0068–0070, 0072`** — committed untracked original bug report worklogs
+  (historical record for fixes in v0.5.4–v0.5.8).
+- **`docs/WORKLOG/0074`** — addendum documenting the confirmed-correct findings for the
+  three "accidentally-correct" encoders.
+
+---
+
 ## [v0.5.9] — 2026-03-21
 
 ### Fixed

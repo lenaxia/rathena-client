@@ -125,8 +125,37 @@ in worklogs 0069–0073 — for any ID that appears in `clif_shuffle.hpp`. The c
 mechanism to detect this: it doesn't cross-reference the generated packet ID against the
 shuffle map.
 
-The fix is a validation check in `GenerateEncodeDirFiles` (or as a separate lint function)
-that:
+## Addendum — "3 Accidentally-Correct" Encoders Are Actually All Correct
+
+After deeper investigation (v0.5.10 follow-up), the three encoders previously classified as
+"accidentally correct for pv=20200401 but wrong for shuffle era" are in fact fully correct
+with no fix required:
+
+### `cz_party_join_req` (0x02C4)
+
+The earlier analysis concluded this was wrong because `0x02C4` was assigned to
+`clif_parse_UseSkillToId` in the `clif_packetdb.hpp` historical scan. This was a
+misidentification. The full timeline:
+
+- Pre-`pv >= 20111102`: `0x02C4` was indeed `clif_parse_UseSkillToId` (10-byte skill cast)
+- From `pv >= 20111102`: `0x02C4` was **reassigned** to `clif_parse_PartyInvite2` (26-byte party invite)
+- `0x02C4` IS in the shuffle map, but checking all weekly blocks 20130515–20180307 and the
+  stable post-20180307 block shows it is **never remapped** — all blocks return `baseID`
+
+OpenKore confirmation: `RagexeRE_2018_11_21.pm` explicitly sets `party_join_request_by_name 02C4`.
+
+**Status: correct, no fix needed.**
+
+### `friends_remove` (0x0203)
+
+Single stable entry in `clif_packetdb.hpp`. Not in `clif_shuffle.hpp`. Never reassigned.
+**Status: correct, no fix needed.**
+
+### `friends_reply` (0x0208)
+
+Two entries: `size=11` at baseline, `size=14` at `pv >= 20040705`. The encoder uses `[14]byte`
+which is correct for all production servers. Not shuffled.
+**Status: correct, no fix needed.**
 1. Parses `shuffle_map.go` to extract the set of base IDs that appear in any `case 0xNNNN`
 2. For any generated encoder that hardcodes a packet ID in that set, either:
    a. **Fail the codegen run with an error** (strict mode — recommended), OR
