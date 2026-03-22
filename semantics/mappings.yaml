@@ -1796,7 +1796,7 @@ semantic_actions:
         implementations:
             - packet_id: "0x02C4"
               packetver_range:
-                - null
+                - 20111102
                 - null
               struct_name: PACKET_CZ_PARTY_JOIN_REQ
               field_mapping: {}

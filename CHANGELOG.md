@@ -5,6 +5,52 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.11] — 2026-03-21
+
+### Fixed
+
+- **Codegen shuffle overlap lint rule now handles false positives correctly** — the
+  `genEncodeWithShuffleCheck` allowlist was previously empty, causing three false-positive
+  violations on every codegen run:
+  - `friends_add` (0x0202): hand-written encoder already uses `shuffledCtoSID` — allowlisted
+    by scanning hand-written files before `cleanGeneratedDir` runs
+  - `homunculus_menu` (0x022D): out-of-scope (homunculus/mercenary not supported) — explicit
+    exception added to allowlist
+  - `master_login` (0x0064): CA_ login-server packet that shares an ID with a map-server
+    shuffle entry by coincidence (different server, never shuffled) — explicit exception added
+
+  The lint rule now passes cleanly on every codegen run and correctly rejects only genuinely
+  broken generated encoders.
+
+- **`cz_party_join_req` semantics DB range corrected** — the implementation was `[null, null]`
+  implying `0x02C4` = party invite across all packetvers. In fact `0x02C4` was reassigned to
+  `clif_parse_PartyInvite2` (party invite, size=26) only from `pv >= 20111102`. Before that,
+  `0x02C4` was `clif_parse_UseSkillToId` (size=10). Tightened to `packetver_min=20111102`.
+  Cross-validated: `clif_shuffle.hpp` stable post-20180307 block confirms `0x02C4 → clif_parse_PartyInvite2 size=26`; OpenKore `RagexeRE_2018_11_21.pm` confirms `party_join_request_by_name 02C4`.
+
+- **`close_storage.go`** promoted to hand-written with a protocol-removal warning.
+  `clif_parse_CloseKafra` was removed from rAthena after `pv=20050110`. The encoder
+  still produces `0x00F7` but is clearly documented as legacy-only. The semantics DB
+  was already bounded to `pv <= 20050110` (v0.5.6).
+
+### Verified (no fix needed)
+
+- **`friends_add` (0x0202) shuffle era cross-validation** — all 152 weekly shuffle
+  blocks in `shuffle_map.go` cross-checked against OpenKore kRO modules for `friend_request`
+  (the OpenKore name for this packet). OpenKore explicitly defines `0x0962` at `pv=20130515`
+  and `0x0362` at `pv=20130522`, both matching `shuffledCtoSID(pv, 0x0202)`. Zero mismatches
+  across all verifiable weekly entries. The `friends_add` encoder is correct.
+
+- **`cz_party_join_req`, `friends_remove`, `friends_reply`** — all confirmed correct,
+  no fixes needed (see v0.5.10 for full analysis).
+
+### Cleanup
+
+- Deleted root-level integration test binaries (`gokore_api_check`, `new_api_check`,
+  `verify_new_api`) — these are now `.gitignored` since v0.5.10.
+
+---
+
 ## [v0.5.10] — 2026-03-21
 
 ### Changed

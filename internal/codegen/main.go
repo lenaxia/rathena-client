@@ -1283,8 +1283,29 @@ func genEncode(db *semantics.DB, vt preprocess.VersionTable, outDir string) erro
 // encoder hardcodes a packet ID that appears in the shuffle map.
 // shuffleBaseIDs may be nil to skip the check (e.g. when clif_shuffle.hpp is unavailable).
 func genEncodeWithShuffleCheck(db *semantics.DB, vt preprocess.VersionTable, outDir string, shuffleBaseIDs map[uint16]bool) error {
-	files, skipped, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, shuffleBaseIDs, nil)
 	encodeDir := filepath.Join(outDir, "pkg", "encode")
+
+	// Build the allowlist from hand-written encoders BEFORE cleaning the directory.
+	// Hand-written files (no "// Code generated" header) are already correct by
+	// definition — their IDs should not trigger the shuffle overlap check even if
+	// the ID appears in the shuffle map. This handles:
+	//   - friends_add (0x0202): hand-written dispatcher using shuffledCtoSID
+	//   - character_move (0x035F): hand-written with documented pv limitation
+	//
+	// Additional explicit exceptions:
+	//   - homunculus_menu (0x022D): out-of-scope (homunculus/mercenary not supported)
+	//   - master_login (0x0064): CA_ login-server packet; shares ID with map shuffle
+	//     entries by coincidence (different server, never shuffled on login server)
+	var allowlist map[uint16]bool
+	if shuffleBaseIDs != nil {
+		allowlist = buildHandWrittenAllowlist(encodeDir, db)
+		// Explicit exceptions: generated files whose IDs are false-positive shuffle overlaps
+		allowlist[0x022D] = true // homunculus_menu — homunculus/mercenary out of scope
+		allowlist[0x0064] = true // master_login — CA_ login server, never map-shuffled
+		log.Printf("  %d encoder IDs allowlisted from shuffle check", len(allowlist))
+	}
+
+	files, skipped, err := gen.GenerateEncodeDirFilesWithShuffleCheck(db, vt, shuffleBaseIDs, allowlist)
 	if cleanErr := cleanGeneratedDir(encodeDir); cleanErr != nil {
 		return cleanErr
 	}
@@ -1299,6 +1320,55 @@ func genEncodeWithShuffleCheck(db *semantics.DB, vt preprocess.VersionTable, out
 		return fmt.Errorf("encoder shuffle overlap check failed — run was aborted to prevent shipping wrong wire IDs:\n%w", err)
 	}
 	return nil
+}
+
+// buildHandWrittenAllowlist scans the encode directory for hand-written encoder files
+// (those without a "// Code generated" header) and returns the set of packet IDs
+// they hardcode. These IDs are excluded from the shuffle overlap check because the
+// hand-written files are already correct by definition.
+func buildHandWrittenAllowlist(encodeDir string, db *semantics.DB) map[uint16]bool {
+	allowlist := make(map[uint16]bool)
+	entries, err := os.ReadDir(encodeDir)
+	if err != nil {
+		return allowlist
+	}
+
+	// Build action-name → packet IDs map from DB
+	actionPacketIDs := make(map[string][]uint16)
+	for name, action := range db.Actions {
+		for _, impl := range action.Implementations {
+			if v, err2 := strconv.ParseUint(strings.TrimPrefix(impl.PacketID, "0x"), 16, 16); err2 == nil {
+				actionPacketIDs[name] = append(actionPacketIDs[name], uint16(v))
+			}
+		}
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".go") {
+			continue
+		}
+		path := filepath.Join(encodeDir, entry.Name())
+		content, err2 := os.ReadFile(path)
+		if err2 != nil {
+			continue
+		}
+		// Skip generated files — only allowlist hand-written ones
+		if strings.HasPrefix(string(content), "// Code generated") {
+			continue
+		}
+		// Extract the action name from the filename (strip .go suffix)
+		actionFile := strings.TrimSuffix(entry.Name(), ".go")
+		for _, pid := range actionPacketIDs[actionFile] {
+			allowlist[pid] = true
+		}
+		// Also extract any hardcoded 0xNNNN IDs directly from the file
+		for _, m := range regexp.MustCompile(`0x([0-9A-Fa-f]{4})`).FindAllStringSubmatch(string(content), -1) {
+			if v, err3 := strconv.ParseUint(m[1], 16, 16); err3 == nil {
+				allowlist[uint16(v)] = true
+			}
+		}
+	}
+	return allowlist
 }
 
 // buildShuffleBaseIDs parses clif_shuffle.hpp and clif_packetdb.hpp to build the
