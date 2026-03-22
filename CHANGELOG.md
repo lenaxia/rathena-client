@@ -5,6 +5,54 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.7] — 2026-03-21
+
+### Fixed
+
+- **`EncodePickupItem` sent wrong packet ID at `pv >= 20101124`** — the encoder
+  hardcoded `0x009F` and ignored `packetver`. At `pv >= 20101124`, `clif_parse_TakeItem`
+  is reassigned away from `0x009F` through a sequence of 7 explicit packet ID changes
+  before entering the shuffle era at `pv >= 20130515`. Sending `0x009F` caused an
+  immediate server disconnect on every item pickup attempt.
+
+  Fix: `pkg/encode/pickup_item.go` rewritten as a hand-written packetver dispatcher
+  following the `move_to.go` pattern (codegen cannot express the shuffle-era
+  `shuffledCtoSID(pv, 0x009F)` runtime call). Full packetver dispatch table:
+
+  | pv range | Wire ID | Source |
+  |---|---|---|
+  | < 20101124 | `0x009F` | `clif_packetdb.hpp:50` |
+  | >= 20101124 | `0x0362` | `clif_packetdb.hpp:1384` |
+  | >= 20111005 | `0x0815` | `clif_packetdb.hpp:1402` |
+  | >= 20120307 | `0x0865` | `clif_packetdb.hpp:1441` |
+  | >= 20120410 | `0x0938` | `clif_packetdb.hpp:1494` |
+  | >= 20120418 | `0x07E4` | `clif_packetdb.hpp:1560` |
+  | >= 20120702 | `0x089F` | `clif_packetdb.hpp:1587` |
+  | >= 20130320 | `0x0933` | `clif_packetdb.hpp:1631` |
+  | >= 20130515 | `shuffledCtoSID(pv, 0x009F)` | `clif_shuffle.hpp` |
+  | > 20180307 | `0x0362` (stable) | `clif_shuffle.hpp:4723+` |
+
+  Cross-validated against OpenKore kRO Send modules: 57 direct matches, 0 mismatches
+  across the full shuffle era. Production `pv=20200401` emits `0x0362` — confirmed
+  by both rAthena and OpenKore `RagexeRE_2018_11_21.pm`.
+  (worklog 0070/0071)
+
+- **`semantics/mappings.yaml` `pickup_item` action corrected** via MCP:
+  `0x009F` implementation upper-bounded to `pv <= 20101123`; `0x0362` implementation
+  added for `pv >= 20101124` with `struct SYNTH_CZ_ITEM_PICKUP2` (stable modern wire ID).
+
+### Tests
+
+- **`pkg/encode/pickup_item_test.go`** (new, TDD) — 24 tests covering all 7 explicit
+  boundary transitions (both sides), shuffle era entry (`pv=20130515 → 0x08A1`),
+  mid-shuffle weekly (`pv=20130522 → 0x095E`), post-shuffle stable (`pv=20200401 → 0x0362`),
+  wire length (6 bytes), ITID at `[2:6]`, zero ITID, and cross-packetver ITID
+  preservation. Red phase: 19 failures. Green phase: 24/24 pass.
+
+- **`BenchmarkEncodePickupItem`**: 151M ops/s, 8.4 ns/op, **0 allocs/op** ✓
+
+---
+
 ## [v0.5.6] — 2026-03-21
 
 ### Fixed

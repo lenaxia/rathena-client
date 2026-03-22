@@ -3369,8 +3369,14 @@ semantic_actions:
             - packet_id: "0x009F"
               packetver_range:
                 - null
-                - null
+                - 20101123
               struct_name: SYNTH_CZ_ITEM_PICKUP
+              field_mapping: {}
+            - packet_id: "0x0362"
+              packetver_range:
+                - 20101124
+                - null
+              struct_name: SYNTH_CZ_ITEM_PICKUP2
               field_mapping: {}
     pin_code_request:
         name: ""
