@@ -5,6 +5,54 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.6.1] — 2026-03-23
+
+### Breaking Changes
+
+- **`OnFailed` signature changed** — was `func(error)`, now `func(FailInfo)`.
+  `FailInfo{Phase AuthPhase, Err error}` identifies which auth phase (login/char/map) failed.
+
+- **`OnServerNotify` signature changed** — was `func(uint8)`, now `func(NotifyInfo)`.
+  `NotifyInfo{Phase AuthPhase, Code uint8}` tags the phase that received the ban notify.
+
+### Added
+
+- **`AuthPhase`** — new type (`PhaseLogin`, `PhaseChar`, `PhaseMap`) with `String()`.
+  Used in `FailInfo` and `NotifyInfo` to identify which auth stage triggered a callback.
+
+- **`CharacterInfoEntry.JobLevel int32`** — rAthena: `joblevel`; OpenKore: `lv_job`.
+  Offsets: 16 (pv<20170830), 24 (pv>=20170830). Required for skill point budget before map entry.
+
+- **`CharacterInfoEntry.Speed int16`** — rAthena: `speed`; OpenKore: `walkspeed`.
+  Offsets: 54 / 62 / 82 by breakpoint. Required for movement timing prediction.
+
+- **`IdentityInfo.MapDomain string`** — rAthena: `domain[128]` in `PACKET_HC_NOTIFY_ZONESVR`
+  (0x0AC5, pv >= 20170315). Format: `"hostname"` or `"hostname:port"` (OpenKore: `mapUrl`).
+  When non-empty, callers should prefer this over `MapIP`. Empty for pv < 20170315 (0x0081).
+
+- **`CharServerInfo.Users uint16`** — rAthena: `PACKET_AC_ACCEPT_LOGIN_sub.users`.
+  Present in both 32-byte and 160-byte sub-entry variants.
+  OpenKore: `users` field in `parse_account_server_info`. Enables population-based server selection.
+
+- **`SlotInfo`** — new struct `{Normal, Premium, Billing, Producible, Total uint8}`.
+  rAthena: `PACKET_HC_ACCEPT_ENTER2` (0x082D, pv >= 20130000), `packets.hpp:508–517`.
+  OpenKore: `$charSvrSet{normal_slot}`, `{billing_slot}`, etc. in `received_characters_slots_info`.
+
+- **`OnSlotInfo(func(SlotInfo))`** — new optional callback, fires when 0x082D is received
+  before the char list. Previously the 0x082D handler was a no-op.
+
+### Tests
+
+- `TestDecodeCharacterInfoEntry_JobLevelAndSpeed` — 5 breakpoints × sentinel values
+- `TestDecodeCharacterInfoEntry_B8_RealCapture_JobLevelSpeed` — 4 real captured characters
+- `TestConnect_OnIdentity_MapDomain` — domain present (0x0AC5) and empty (0x0081) subtests
+- `TestConnect_OnSlotInfo` — slot counts round-trip via 0x082D
+- Extended `TestConnect_OnCharServerList` with `Users` assertions
+- Extended `TestConnect_LoginRefused`, `TestConnect_CharServerRefused`, `TestConnect_MapRefused` with `FailInfo.Phase` assertions
+- Extended `TestConnect_ServerNotifyBan_Login` with `NotifyInfo.Phase` assertion
+
+---
+
 ## [v0.6.0] — 2026-03-23
 
 ### Breaking Changes
