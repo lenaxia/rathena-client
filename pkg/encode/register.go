@@ -229,6 +229,7 @@ import (
 //   zc_openstore
 //   zc_par_change_user
 //   zc_party_config
+//   zc_party_join_req
 //   zc_pc_purchase_itemlist_frommc
 //   zc_pc_purchase_myitemlist
 //   zc_pc_purchase_result

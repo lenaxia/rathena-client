@@ -60,34 +60,40 @@ func decodeCharacterInfoEntry(dst *events.CharacterInfoEntry, b []byte, pv uint3
 	dst.GID = leU32(b, 0) // rAthena: GID (offset 0, size 4)
 
 	if pv >= 20170830 {
-		dst.Exp = leI64(b, 4)     // rAthena: exp int64 (offset 4, size 8)
-		dst.JobExp = leI64(b, 16) // rAthena: jobexp int64 (offset 16, size 8)
+		dst.Exp = leI64(b, 4)       // rAthena: exp int64 (offset 4, size 8)
+		dst.JobExp = leI64(b, 16)   // rAthena: jobexp int64 (offset 16, size 8)
+		dst.JobLevel = leI32(b, 24) // rAthena: joblevel int32 (offset 24; OpenKore: lv_job)
 	} else {
 		dst.Exp = int64(leI32(b, 4))     // rAthena: exp int32 (offset 4, size 4)
 		dst.JobExp = int64(leI32(b, 12)) // rAthena: jobexp int32 (offset 12, size 4)
+		dst.JobLevel = leI32(b, 16)      // rAthena: joblevel int32 (offset 16; OpenKore: lv_job)
 	}
 
 	// hp/maxhp/sp/maxsp offsets depend on exp/jobexp width.
 	// Pre-20170830: jobpoint at 40, hp at 42.
 	// Post-20170830: jobpoint at 48, hp at 50 (exp+8, jobexp+8 = +8 total shift).
+	// speed(int16) immediately follows maxsp in all versions.
 	if pv >= 20220330 {
-		// hp/maxhp: int64 at +50; sp/maxsp: int64 at +66/+74
+		// hp/maxhp: int64 at +50; sp/maxsp: int64 at +66/+74; speed at +82
 		dst.HP = leI64(b, 50)    // rAthena: hp int64
 		dst.MaxHP = leI64(b, 58) // rAthena: maxhp int64
 		dst.SP = leI64(b, 66)    // rAthena: sp int64
 		dst.MaxSP = leI64(b, 74) // rAthena: maxsp int64
+		dst.Speed = leI16(b, 82) // rAthena: speed int16 (OpenKore: walkspeed)
 	} else if pv >= 20170830 {
-		// hp/maxhp: int32 at +50; sp/maxsp: int16 at +58/+60
+		// hp/maxhp: int32 at +50; sp/maxsp: int16 at +58/+60; speed at +62
 		dst.HP = int64(leI32(b, 50))    // rAthena: hp int32
 		dst.MaxHP = int64(leI32(b, 54)) // rAthena: maxhp int32
 		dst.SP = int64(leI16(b, 58))    // rAthena: sp int16
 		dst.MaxSP = int64(leI16(b, 60)) // rAthena: maxsp int16
+		dst.Speed = leI16(b, 62)        // rAthena: speed int16 (OpenKore: walkspeed)
 	} else {
-		// hp/maxhp: int32 at +42; sp/maxsp: int16 at +50/+52
+		// hp/maxhp: int32 at +42; sp/maxsp: int16 at +50/+52; speed at +54
 		dst.HP = int64(leI32(b, 42))    // rAthena: hp int32
 		dst.MaxHP = int64(leI32(b, 46)) // rAthena: maxhp int32
 		dst.SP = int64(leI16(b, 50))    // rAthena: sp int16
 		dst.MaxSP = int64(leI16(b, 52)) // rAthena: maxsp int16
+		dst.Speed = leI16(b, 54)        // rAthena: speed int16 (OpenKore: walkspeed)
 	}
 
 	// job and level offsets depend on whether body(int16) is present (pv >= 20141022).

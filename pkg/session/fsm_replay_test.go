@@ -81,8 +81,8 @@ func runReplayTest(
 		OnReady(func(s *MapSession, c net.Conn, _ ReadyInfo) {
 			readyCh <- readyResult{s, c}
 		}).
-		OnFailed(func(err error) {
-			t.Errorf("OnFailed: %v", err)
+		OnFailed(func(fi FailInfo) {
+			t.Errorf("OnFailed: phase=%s err=%v", fi.Phase, fi.Err)
 		})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

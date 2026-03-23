@@ -630,7 +630,100 @@ func TestDecodeCharacterInfoEntry_TooShort(t *testing.T) {
 	}
 }
 
-// hexToBytes converts a hex string (no spaces/separators) to []byte.
+// TestDecodeCharacterInfoEntry_JobLevelAndSpeed verifies that joblevel and speed
+// are decoded at the correct offsets across the three distinct layouts:
+//   - B0/B2/B5/B7 (pv < 20170830): joblevel at offset 16, speed at 54
+//   - B8 (pv >= 20170830):          joblevel at offset 24, speed at 62
+//   - B9 (pv >= 20220330):          joblevel at offset 24, speed at 82
+func TestDecodeCharacterInfoEntry_JobLevelAndSpeed(t *testing.T) {
+	cases := []struct {
+		label       string
+		pv          uint32
+		size        int
+		joblevelOff int
+		speedOff    int
+	}{
+		{"B0 pv=20030000", 20030000, 112, 16, 54},
+		{"B2 pv=20100803", 20100803, 132, 16, 54},
+		{"B7 pv=20141022", 20141022, 147, 16, 54},
+		{"B8 pv=20170830", 20170830, 155, 24, 62},
+		{"B9 pv=20220330", 20220330, 175, 24, 82},
+	}
+
+	for _, tc := range cases {
+		b := make([]byte, tc.size)
+		// Write sentinel values at the expected offsets.
+		// joblevel: int32 LE = 45
+		b[tc.joblevelOff] = 45
+		b[tc.joblevelOff+1] = 0
+		b[tc.joblevelOff+2] = 0
+		b[tc.joblevelOff+3] = 0
+		// speed: int16 LE = 150 (default walk speed in RO)
+		b[tc.speedOff] = 150
+		b[tc.speedOff+1] = 0
+
+		var got events.CharacterInfoEntry
+		n := decodeCharacterInfoEntry(&got, b, tc.pv)
+
+		if n != tc.size {
+			t.Errorf("%s: consumed %d, want %d", tc.label, n, tc.size)
+		}
+		if got.JobLevel != 45 {
+			t.Errorf("%s: JobLevel want 45, got %d", tc.label, got.JobLevel)
+		}
+		if got.Speed != 150 {
+			t.Errorf("%s: Speed want 150, got %d", tc.label, got.Speed)
+		}
+	}
+}
+
+// TestDecodeCharacterInfoEntry_B8_RealCapture_JobLevelSpeed cross-checks
+// JobLevel and Speed against the four real captured characters from DUMP17.
+// All four characters had default walk speed (150 = 0x96) and their joblevel
+// is visible in the raw hex at offset 24 of each 155-byte entry.
+func TestDecodeCharacterInfoEntry_B8_RealCapture_JobLevelSpeed(t *testing.T) {
+	pv := uint32(20200401)
+	cases := []struct {
+		name     string
+		raw      string
+		jobLevel int32
+		speed    int16
+	}{
+		{
+			// Almarc: joblevel at offset 24 = 3a000000 → LE int32 = 58
+			name: "Almarc", raw: "f14902008f4b02000000000040420f000e3d0000000000003a00000000000000000000000000000000000000000000009a026350010063500100a03ba03b9600df0f0c00000008007c009800000000003a01000003000200416c6d617263000000000000000000000000000000000000ffffffffffff000301007072745f66696c6430382e6761740000000000000000000000000000000000011e",
+			jobLevel: 58, speed: 150,
+		},
+		{
+			// Chrno Crusade: offset 24 = 01000000 → LE = 1
+			name: "Chrno Crusade", raw: "4b0200000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000300028000000280000000b000b0096000000020000000100010000000000000000000000000000004368726e6f204372757361646500000000000000000000000101010101010100010070726f6e746572612e676174000000000000000000000000000000000000000001",
+			jobLevel: 1, speed: 150,
+		},
+		{
+			// Beyond Faith: offset 24 = 46000000 → LE = 70
+			name: "Beyond Faith", raw: "1f4b02001200000000000000000000000e00000000000000460000000000000000000000000000000000000000000000f10f8a4300008a430000730873089600d90f020000000000c8001d010000000000000000000000004265796f6e642046616974680000000000000000000000000a0101010101020001007072745f73657762322e6761740000000000000000000000000000000000000000",
+			jobLevel: 70, speed: 150,
+		},
+		{
+			// Eclair: offset 24 = 46000000 → LE = 70
+			name: "Eclair", raw: "204b0200c00d0500000000000000000020cc0400000000004600000000000000000000000000000000000000000000003710564d0300564d0300426842689600dd0f030000000100c800650000000000000000000000000045636c616972000000000000000000000000000000000000ffffffffffff030001007072745f696e2e6761740000000000000000000000000000000000000000000001",
+			jobLevel: 70, speed: 150,
+		},
+	}
+
+	for _, tc := range cases {
+		raw := hexToBytes(t, tc.raw)
+		var got events.CharacterInfoEntry
+		decodeCharacterInfoEntry(&got, raw, pv)
+
+		if got.JobLevel != tc.jobLevel {
+			t.Errorf("%s: JobLevel want %d, got %d", tc.name, tc.jobLevel, got.JobLevel)
+		}
+		if got.Speed != tc.speed {
+			t.Errorf("%s: Speed want %d, got %d", tc.name, tc.speed, got.Speed)
+		}
+	}
+}
 func hexToBytes(t *testing.T, h string) []byte {
 	t.Helper()
 	if len(h)%2 != 0 {

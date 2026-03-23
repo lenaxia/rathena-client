@@ -72,10 +72,14 @@ func parseLoginAccept(data []byte, packetver uint32) (
 		ip := binary.BigEndian.Uint32(payload[0:4])
 		port := binary.LittleEndian.Uint16(payload[4:6])
 		name := fsmCStr(payload[6:26])
+		// users uint16 at offset 26; rAthena: PACKET_AC_ACCEPT_LOGIN_sub.users
+		// OpenKore: Receive.pm "users" field in parse_account_server_info
+		users := binary.LittleEndian.Uint16(payload[26:28])
 		servers = append(servers, CharServerInfo{
-			IP:   ip,
-			Port: port,
-			Name: name,
+			IP:    ip,
+			Port:  port,
+			Name:  name,
+			Users: users,
 		})
 		payload = payload[subSize:]
 	}

@@ -26,17 +26,19 @@ package events
 //
 // rAthena source: common/packets.hpp:31–105
 type CharacterInfoEntry struct {
-	GID     uint32 // rAthena: GID
-	Exp     int64  // rAthena: exp     (int32 pv<20170830, int64 pv>=20170830)
-	JobExp  int64  // rAthena: jobexp  (same breakpoint as exp)
-	HP      int64  // rAthena: hp      (int32 pv<20220330 MAIN, int64 pv>=20220330)
-	MaxHP   int64  // rAthena: maxhp   (same breakpoint as hp)
-	SP      int64  // rAthena: sp      (int16 pv<20220330 MAIN, int64 pv>=20220330)
-	MaxSP   int64  // rAthena: maxsp   (same breakpoint as sp)
-	Job     int16  // rAthena: job
-	Level   int16  // rAthena: level
-	Name    string // rAthena: name[24]
-	MapName string // rAthena: mapName[16] (present pv>=20100720, empty otherwise)
-	CharNum uint8  // rAthena: CharNum — slot index (0–8)
-	Sex     uint8  // rAthena: sex (present pv>=20141016, 0 otherwise)
+	GID      uint32 // rAthena: GID
+	Exp      int64  // rAthena: exp     (int32 pv<20170830, int64 pv>=20170830)
+	JobExp   int64  // rAthena: jobexp  (same breakpoint as exp)
+	HP       int64  // rAthena: hp      (int32 pv<20220330 MAIN, int64 pv>=20220330)
+	MaxHP    int64  // rAthena: maxhp   (same breakpoint as hp)
+	SP       int64  // rAthena: sp      (int16 pv<20220330 MAIN, int64 pv>=20220330)
+	MaxSP    int64  // rAthena: maxsp   (same breakpoint as sp)
+	JobLevel int32  // rAthena: joblevel (int32, always present; OpenKore: lv_job)
+	Speed    int16  // rAthena: speed   (int16, always present; OpenKore: walkspeed)
+	Job      int16  // rAthena: job
+	Level    int16  // rAthena: level
+	Name     string // rAthena: name[24]
+	MapName  string // rAthena: mapName[16] (present pv>=20100720, empty otherwise)
+	CharNum  uint8  // rAthena: CharNum — slot index (0–8)
+	Sex      uint8  // rAthena: sex (present pv>=20141016, 0 otherwise)
 }

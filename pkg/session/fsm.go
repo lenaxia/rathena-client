@@ -55,6 +55,7 @@ type Credentials struct {
 
 // CharServerInfo describes a character server entry parsed from the login
 // server's accept packet (0x0069 / 0x0AC4).
+// rAthena source: common/packets.hpp PACKET_AC_ACCEPT_LOGIN_sub
 type CharServerInfo struct {
 	// IP is the char server's IPv4 address in big-endian (network) byte order,
 	// as written by rAthena's htonl() call.
@@ -63,6 +64,10 @@ type CharServerInfo struct {
 	IP   uint32
 	Port uint16
 	Name string
+	// Users is the current player count on this char server.
+	// rAthena source: PACKET_AC_ACCEPT_LOGIN_sub.users (uint16)
+	// OpenKore: "users" field in parse_account_server_info
+	Users uint16
 }
 
 // CharacterInfo describes a character slot from the char server list.
@@ -81,9 +86,63 @@ type IdentityInfo struct {
 	MapName      string // map name without .gat suffix, from HC_NOTIFY_ZONESVR
 	MapIP        uint32 // map server IPv4 in host byte order (big-endian as sent by rAthena htonl)
 	MapPort      uint16 // map server port
+	// MapDomain is the optional CDN/proxy hostname from PACKET_HC_NOTIFY_ZONESVR.domain[128]
+	// (present only when pv >= 20170315, i.e. packet 0x0AC5). Format is either a plain
+	// hostname or "hostname:port". When non-empty, callers should prefer this over MapIP
+	// for the map server address. OpenKore calls this field "mapUrl".
+	// rAthena source: common/packets.hpp:297 char domain[128]
+	MapDomain string
 }
 
-// ReadyInfo carries the decoded ZC_ACCEPT_ENTER fields to the OnReady callback.
+// AuthPhase identifies which authentication phase triggered a failure or
+// server notification.
+type AuthPhase uint8
+
+const (
+	PhaseLogin AuthPhase = iota // 0x0069 / 0x0AC4 login server phase
+	PhaseChar                   // char server phase
+	PhaseMap                    // map server phase
+)
+
+func (p AuthPhase) String() string {
+	switch p {
+	case PhaseLogin:
+		return "login"
+	case PhaseChar:
+		return "char"
+	case PhaseMap:
+		return "map"
+	default:
+		return "unknown"
+	}
+}
+
+// FailInfo is passed to the OnFailed callback on any unrecoverable FSM error.
+type FailInfo struct {
+	Phase AuthPhase // which phase failed
+	Err   error     // underlying error
+}
+
+// NotifyInfo is passed to the OnServerNotify callback when SC_NOTIFY_BAN (0x0081)
+// is received. rAthena source: common/packets.hpp:311–313 PACKET_SC_NOTIFY_BAN.
+// OpenKore: Receive.pm "errors" sub — uses args->{type} directly to decide reconnect vs quit.
+type NotifyInfo struct {
+	Phase AuthPhase // which phase sent the notify
+	Code  uint8     // rAthena: PACKET_SC_NOTIFY_BAN.result
+}
+
+// SlotInfo carries the character slot quota from HC_ACCEPT_ENTER2 (0x082D).
+// Sent by the char server for PACKETVER >= 20130000 before the char list arrives.
+// rAthena source: common/packets.hpp:508–517 PACKET_HC_ACCEPT_ENTER2
+// OpenKore: Receive.pm $charSvrSet{normal_slot}, {premium_slot}, {billing_slot}, etc.
+type SlotInfo struct {
+	Normal     uint8 // rAthena: normal    — regular slot count
+	Premium    uint8 // rAthena: premium   — premium slot count
+	Billing    uint8 // rAthena: billing   — billing slot count
+	Producible uint8 // rAthena: producible — producible slot count
+	Total      uint8 // rAthena: total     — total slot count
+}
+
 // The FSM consumes the entry packet before handing off to goKore; these fields
 // let the caller read the initial position without re-parsing a consumed frame.
 type ReadyInfo struct {
@@ -103,10 +162,11 @@ type ConnectionFSM struct {
 
 	onCharServerList    func([]CharServerInfo) int
 	onCharList          func([]events.CharacterInfoEntry) uint8
+	onSlotInfo          func(SlotInfo)
 	onMapSessionCreated func(*MapSession)
 	onReady             func(*MapSession, net.Conn, ReadyInfo)
-	onFailed            func(error)
-	onServerNotify      func(uint8)
+	onFailed            func(FailInfo)
+	onServerNotify      func(NotifyInfo)
 	onIdentity          func(IdentityInfo)
 
 	// auth state — populated during Connect, cleared when Connect returns
@@ -140,6 +200,15 @@ func New(server ServerConfig, creds Credentials, dialer Dialer) *ConnectionFSM {
 // returns the index to connect to. If not registered: index 0 is used.
 func (f *ConnectionFSM) OnCharServerList(fn func([]CharServerInfo) int) *ConnectionFSM {
 	f.onCharServerList = fn
+	return f
+}
+
+// OnSlotInfo registers a callback invoked when HC_ACCEPT_ENTER2 (0x082D) is
+// received from the char server (PACKETVER >= 20130000). It carries slot quotas
+// (normal/premium/billing/producible/total) before the character list arrives.
+// rAthena source: common/packets.hpp:508–517 PACKET_HC_ACCEPT_ENTER2
+func (f *ConnectionFSM) OnSlotInfo(fn func(SlotInfo)) *ConnectionFSM {
+	f.onSlotInfo = fn
 	return f
 }
 
@@ -181,14 +250,17 @@ func (f *ConnectionFSM) OnReady(fn func(*MapSession, net.Conn, ReadyInfo)) *Conn
 }
 
 // OnFailed registers a callback invoked on any unrecoverable error.
-func (f *ConnectionFSM) OnFailed(fn func(error)) *ConnectionFSM {
+// The FailInfo carries the auth phase that failed and the underlying error.
+func (f *ConnectionFSM) OnFailed(fn func(FailInfo)) *ConnectionFSM {
 	f.onFailed = fn
 	return f
 }
 
 // OnServerNotify registers a callback invoked when 0x0081 SC_NOTIFY_BAN is
-// received during auth. The argument is the result/error code byte.
-func (f *ConnectionFSM) OnServerNotify(fn func(uint8)) *ConnectionFSM {
+// received from any server phase. The NotifyInfo carries the phase and the
+// numeric ban/disconnect code. rAthena source: common/packets.hpp:311–313.
+// OpenKore: Receive.pm "errors" sub — code meanings documented there.
+func (f *ConnectionFSM) OnServerNotify(fn func(NotifyInfo)) *ConnectionFSM {
 	f.onServerNotify = fn
 	return f
 }
@@ -220,7 +292,13 @@ func (f *ConnectionFSM) Connect(ctx context.Context) error {
 	err := f.connect(ctx)
 	if err != nil {
 		if f.onFailed != nil {
-			f.onFailed(err)
+			fi := FailInfo{Err: err, Phase: PhaseLogin} // default phase
+			var pe *phaseError
+			if errors.As(err, &pe) {
+				fi.Phase = pe.phase
+				fi.Err = pe.err
+			}
+			f.onFailed(fi)
 		}
 	}
 	return err
@@ -231,15 +309,25 @@ func (f *ConnectionFSM) stepTimeout() time.Duration {
 }
 
 // connect is the internal implementation of Connect (no OnFailed dispatch).
+// phaseError wraps an error with the AuthPhase that produced it.
+// Used internally so Connect can construct FailInfo without passing phase through every call.
+type phaseError struct {
+	phase AuthPhase
+	err   error
+}
+
+func (e *phaseError) Error() string { return e.err.Error() }
+func (e *phaseError) Unwrap() error { return e.err }
+
 func (f *ConnectionFSM) connect(ctx context.Context) error {
 	// ── Phase 1: Login server ────────────────────────────────────────────────
 
 	charServers, charIdx, err := f.runLoginPhase(ctx)
 	if err != nil {
-		return err
+		return &phaseError{phase: PhaseLogin, err: err}
 	}
 	if charIdx < 0 || charIdx >= len(charServers) {
-		return fmt.Errorf("fsm: char server index %d out of range (have %d)", charIdx, len(charServers))
+		return &phaseError{phase: PhaseLogin, err: fmt.Errorf("fsm: char server index %d out of range (have %d)", charIdx, len(charServers))}
 	}
 
 	chosen := charServers[charIdx]
@@ -251,12 +339,15 @@ func (f *ConnectionFSM) connect(ctx context.Context) error {
 
 	mapAddr, err := f.runCharPhase(ctx, charAddr)
 	if err != nil {
-		return err
+		return &phaseError{phase: PhaseChar, err: err}
 	}
 
 	// ── Phase 3: Map server ──────────────────────────────────────────────────
 
-	return f.runMapPhase(ctx, mapAddr)
+	if err := f.runMapPhase(ctx, mapAddr); err != nil {
+		return &phaseError{phase: PhaseMap, err: err}
+	}
+	return nil
 }
 
 // ── Login phase ──────────────────────────────────────────────────────────────
@@ -329,7 +420,7 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 			code = data[2]
 		}
 		if f.onServerNotify != nil {
-			f.onServerNotify(code)
+			f.onServerNotify(NotifyInfo{Phase: PhaseLogin, Code: code})
 		}
 		loginErr = fmt.Errorf("fsm: server notify ban (code=%d)", code)
 		done = true
@@ -353,12 +444,13 @@ func (f *ConnectionFSM) runLoginPhase(ctx context.Context) ([]CharServerInfo, in
 
 // charPhaseResult collects state during char auth.
 type charPhaseResult struct {
-	mapIP   uint32
-	mapPort uint16
-	charID  uint32
-	done    bool
-	err     error
-	mapName string
+	mapIP     uint32
+	mapPort   uint16
+	mapDomain string // from domain[128] in 0x0AC5 (pv >= 20170315); empty otherwise
+	charID    uint32
+	done      bool
+	err       error
+	mapName   string
 
 	// char list accumulation
 	rawChars      []byte // accumulated CHARACTER_INFO bytes
@@ -452,7 +544,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			code = data[2]
 		}
 		if f.onServerNotify != nil {
-			f.onServerNotify(code)
+			f.onServerNotify(NotifyInfo{Phase: PhaseChar, Code: code})
 		}
 		res.err = fmt.Errorf("fsm: char server notify ban (code=%d)", code)
 		res.done = true
@@ -482,15 +574,38 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			n = len(rawName)
 		}
 		res.mapName = strings.TrimSuffix(string(rawName[:n]), ".gat")
+		// domain[128] at bytes 28–155 (pv >= 20170315 only).
+		// rAthena: common/packets.hpp:297 char domain[128]
+		// OpenKore: XKoreProxy.pm:513 "mapUrl" — format "hostname" or "hostname:port"
+		if len(data) >= 28+128 {
+			rawDomain := data[28 : 28+128]
+			nd := bytes.IndexByte(rawDomain, 0)
+			if nd < 0 {
+				nd = 128
+			}
+			if nd > 0 {
+				res.mapDomain = string(rawDomain[:nd])
+			}
+		}
 		res.done = true
 	})
 
-	// 0x082D HC_ACCEPT_ENTER2 (slot info, PACKETVER >= 20130000) — store and stay
-	// struct: int16 + int16 packetLength + uint8 total + uint8 premium_start +
-	//         uint8 premium_end + char extension[20] + CHARACTER_INFO characters[]
-	// We do not parse CHARACTER_INFO here; just note we received it.
+	// 0x082D HC_ACCEPT_ENTER2 (slot info, PACKETVER >= 20130000)
+	// struct: int16 packetType + int16 packetLength + uint8 normal + uint8 premium +
+	//         uint8 billing + uint8 producible + uint8 total + char extension[20]
+	// Source: common/packets.hpp:508–517 PACKET_HC_ACCEPT_ENTER2
+	// OpenKore: Receive.pm $charSvrSet{normal_slot}, {premium_slot}, {billing_slot}, etc.
 	charSess.core.registerHandler(0x082D, func(data []byte, _ uint32) {
-		// Stay — char list will arrive later via 0x006B or paged via 0x09A0+0x099D
+		if len(data) >= 9 && f.onSlotInfo != nil {
+			f.onSlotInfo(SlotInfo{
+				Normal:     data[4], // rAthena: normal
+				Premium:    data[5], // rAthena: premium
+				Billing:    data[6], // rAthena: billing
+				Producible: data[7], // rAthena: producible
+				Total:      data[8], // rAthena: total
+			})
+		}
+		// Stay — char list arrives via 0x006B or paged via 0x09A0+0x099D
 	})
 
 	// 0x006B HC_ACCEPT_ENTER (char list)
@@ -599,6 +714,7 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			MapName:      res.mapName,
 			MapIP:        res.mapIP,
 			MapPort:      res.mapPort,
+			MapDomain:    res.mapDomain,
 		})
 	}
 
@@ -686,7 +802,7 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 			code = data[2]
 		}
 		if f.onServerNotify != nil {
-			f.onServerNotify(code)
+			f.onServerNotify(NotifyInfo{Phase: PhaseMap, Code: code})
 		}
 		res.err = fmt.Errorf("fsm: map server ban (code=%d)", code)
 		res.done = true

@@ -97,7 +97,8 @@ func buildLoginAcceptPre(sid1, aid, sid2 uint32, sex uint8, servers []CharServer
 		binary.BigEndian.PutUint32(pkt[off:], s.IP) // htonl — network byte order
 		binary.LittleEndian.PutUint16(pkt[off+4:], s.Port)
 		fsmCopyStr(pkt[off+6:off+26], s.Name)
-		// users(2)+type(2)+new_(2) at off+26:off+32 — zero
+		binary.LittleEndian.PutUint16(pkt[off+26:], s.Users) // rAthena: users
+		// type(2)+new_(2) at off+28:off+32 — zero
 		off += subSize
 	}
 	return pkt
@@ -123,7 +124,8 @@ func buildLoginAcceptPost(sid1, aid, sid2 uint32, sex uint8, servers []CharServe
 		binary.BigEndian.PutUint32(pkt[off:], s.IP) // htonl — network byte order
 		binary.LittleEndian.PutUint16(pkt[off+4:], s.Port)
 		fsmCopyStr(pkt[off+6:off+26], s.Name)
-		// unknown[128] — zero
+		binary.LittleEndian.PutUint16(pkt[off+26:], s.Users) // rAthena: users
+		// type(2)+new_(2)+unknown[128] — zero
 		off += subSize
 	}
 	return pkt
@@ -183,11 +185,24 @@ func buildHCNotifyZonesvrPre(cid, ip uint32, port uint16) []byte {
 // Source: common/packets.hpp PACKET_HC_NOTIFY_ZONESVR at PACKETVER=20180307
 // IP is written big-endian (network order) to match rAthena: char_clif.cpp:909 htonl().
 func buildHCNotifyZonesvrPost(cid, ip uint32, port uint16) []byte {
+	return buildHCNotifyZonesvrPostWithDomain(cid, ip, port, "")
+}
+
+// buildHCNotifyZonesvrPostWithDomain is the same as buildHCNotifyZonesvrPost but
+// also writes a null-terminated domain string into domain[128] at bytes 28–155.
+func buildHCNotifyZonesvrPostWithDomain(cid, ip uint32, port uint16, domain string) []byte {
 	pkt := make([]byte, 156)
 	binary.LittleEndian.PutUint16(pkt[0:2], 0x0AC5)
 	binary.LittleEndian.PutUint32(pkt[2:6], cid)
 	binary.BigEndian.PutUint32(pkt[22:26], ip) // htonl — network byte order
 	binary.LittleEndian.PutUint16(pkt[26:28], port)
+	if len(domain) > 0 {
+		n := len(domain)
+		if n > 127 {
+			n = 127
+		}
+		copy(pkt[28:28+128], []byte(domain)[:n]) // null-terminated by zero-init
+	}
 	return pkt
 }
 
@@ -221,17 +236,28 @@ func buildZCAcceptEnter(packetver uint32) []byte {
 	return pkt
 }
 
-// buildHC082D builds a 0x082D HC_ACCEPT_ENTER2 (slot info) packet.
-// struct: int16 + int16 packetLength + uint8 total + uint8 premium_start +
-//
-//	uint8 premium_end + char extension[20] + CHARACTER_INFO characters[]
-//
-// With no characters: 2+2+1+1+1+20+2 = 29 bytes (matches lengths_char.go t[0x082D]=29)
-// Source: common/packets.hpp PACKET_HC_ACCEPT_ENTER2
+// buildHC082D builds a 0x082D HC_ACCEPT_ENTER2 (slot info) packet with zeroed slot counts.
+// Source: common/packets.hpp:508–517 PACKET_HC_ACCEPT_ENTER2
 func buildHC082D() []byte {
+	return buildHC082DWithSlots(SlotInfo{})
+}
+
+// buildHC082DWithSlots builds a 0x082D packet with explicit slot counts.
+// struct: int16 packetType(2) + int16 packetLength(2) + uint8 normal(1) + uint8 premium(1) +
+//
+//	uint8 billing(1) + uint8 producible(1) + uint8 total(1) + char extension[20](20) = 29 bytes
+//
+// Source: common/packets.hpp:508–517 PACKET_HC_ACCEPT_ENTER2
+// OpenKore: Receive.pm $charSvrSet{normal_slot}, {billing_slot}, etc.
+func buildHC082DWithSlots(s SlotInfo) []byte {
 	pkt := make([]byte, 29)
 	binary.LittleEndian.PutUint16(pkt[0:2], 0x082D)
 	binary.LittleEndian.PutUint16(pkt[2:4], 29)
+	pkt[4] = s.Normal
+	pkt[5] = s.Premium
+	pkt[6] = s.Billing
+	pkt[7] = s.Producible
+	pkt[8] = s.Total
 	return pkt
 }
 
@@ -452,10 +478,13 @@ func TestConnect_LoginRefused(t *testing.T) {
 
 	failedCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript)).
-		OnFailed(func(err error) {
+		OnFailed(func(fi FailInfo) {
 			failedCalled = true
-			if !strings.Contains(err.Error(), "login refused") {
-				t.Errorf("unexpected error msg: %v", err)
+			if !strings.Contains(fi.Err.Error(), "login refused") {
+				t.Errorf("unexpected error msg: %v", fi.Err)
+			}
+			if fi.Phase != PhaseLogin {
+				t.Errorf("FailInfo.Phase = %s, want login", fi.Phase)
 			}
 		})
 
@@ -496,8 +525,11 @@ func TestConnect_CharServerRefused(t *testing.T) {
 
 	failedCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript)).
-		OnFailed(func(err error) {
+		OnFailed(func(fi FailInfo) {
 			failedCalled = true
+			if fi.Phase != PhaseChar {
+				t.Errorf("FailInfo.Phase = %s, want char", fi.Phase)
+			}
 		})
 
 	err := loginFSM.Connect(context.Background())
@@ -529,10 +561,12 @@ func TestConnect_ServerNotifyBan_Login(t *testing.T) {
 
 	var gotCode uint8
 	notifyCalled := false
+	var gotPhase AuthPhase
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript)).
-		OnServerNotify(func(code uint8) {
+		OnServerNotify(func(ni NotifyInfo) {
 			notifyCalled = true
-			gotCode = code
+			gotCode = ni.Code
+			gotPhase = ni.Phase
 		})
 
 	_ = loginFSM.Connect(context.Background())
@@ -542,6 +576,9 @@ func TestConnect_ServerNotifyBan_Login(t *testing.T) {
 	}
 	if gotCode != banCode {
 		t.Errorf("code=%d, want %d", gotCode, banCode)
+	}
+	if gotPhase != PhaseLogin {
+		t.Errorf("phase=%s, want login", gotPhase)
 	}
 }
 
@@ -560,7 +597,7 @@ func TestConnect_DialError(t *testing.T) {
 
 	failedCalled := false
 	loginFSM := New(server, creds, failDialer).
-		OnFailed(func(err error) {
+		OnFailed(func(fi FailInfo) {
 			failedCalled = true
 		})
 
@@ -585,8 +622,8 @@ func TestConnect_OnCharServerList(t *testing.T) {
 	const mapPort = uint16(5121)
 
 	charServers := []CharServerInfo{
-		{IP: 0x01020304, Port: 6121, Name: "Alpha"},
-		{IP: 0x05060708, Port: 6122, Name: "Beta"},
+		{IP: 0x01020304, Port: 6121, Name: "Alpha", Users: 42},
+		{IP: 0x05060708, Port: 6122, Name: "Beta", Users: 117},
 	}
 
 	loginScript := func(t *testing.T, conn net.Conn) {
@@ -641,13 +678,82 @@ func TestConnect_OnCharServerList(t *testing.T) {
 		t.Fatalf("OnCharServerList got %d servers, want 2", len(receivedServers))
 	}
 	if receivedServers[0].Name != "Alpha" {
-		t.Errorf("server[0]=%q, want Alpha", receivedServers[0].Name)
+		t.Errorf("server[0].Name=%q, want Alpha", receivedServers[0].Name)
+	}
+	if receivedServers[0].Users != 42 {
+		t.Errorf("server[0].Users=%d, want 42", receivedServers[0].Users)
 	}
 	if receivedServers[1].Name != "Beta" {
-		t.Errorf("server[1]=%q, want Beta", receivedServers[1].Name)
+		t.Errorf("server[1].Name=%q, want Beta", receivedServers[1].Name)
+	}
+	if receivedServers[1].Users != 117 {
+		t.Errorf("server[1].Users=%d, want 117", receivedServers[1].Users)
 	}
 	if !readyCalled {
 		t.Fatal("OnReady was not called")
+	}
+}
+
+// TestConnect_OnSlotInfo tests that OnSlotInfo fires with the correct slot counts
+// from HC_ACCEPT_ENTER2 (0x082D, pv >= 20130000).
+// rAthena source: common/packets.hpp:508–517 PACKET_HC_ACCEPT_ENTER2
+// OpenKore ref: Receive.pm $charSvrSet{normal_slot}, {billing_slot}, etc.
+func TestConnect_OnSlotInfo(t *testing.T) {
+	const pv = uint32(20180307)
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+	const charID = uint32(100001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+
+	wantSlots := SlotInfo{Normal: 3, Premium: 1, Billing: 2, Producible: 0, Total: 9}
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	loginScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 55)
+		mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+	}
+	charScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 17)
+		writeAccountIDEcho(t, conn, aid)
+		mustWrite(t, conn, buildHC082DWithSlots(wantSlots))
+		mustWrite(t, conn, buildCharEnterAccept(nil))
+		mustWrite(t, conn, buildHCCharlistNotify(1))
+		mustDrain(t, conn, 2)
+		mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+		mustDrain(t, conn, 3)
+		mustWrite(t, conn, buildHCNotifyZonesvrPost(charID, mapIP, mapPort))
+	}
+	mapScript := func(t *testing.T, conn net.Conn) {
+		mustDrain(t, conn, 19)
+		mustWrite(t, conn, buildZCAID(aid))
+		mustWrite(t, conn, buildZCAcceptEnter(pv))
+		mustDrain(t, conn, 2)
+		mustDrain(t, conn, 6)
+	}
+
+	server := ServerConfig{LoginAddr: "127.0.0.1:6900", Packetver: pv, StepTimeout: 5 * time.Second}
+	creds := Credentials{CharSlot: 0}
+
+	var gotSlots SlotInfo
+	slotInfoCalled := false
+
+	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+		OnSlotInfo(func(s SlotInfo) {
+			slotInfoCalled = true
+			gotSlots = s
+		}).
+		OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) { c.Close() })
+
+	if err := loginFSM.Connect(context.Background()); err != nil {
+		t.Fatalf("Connect: %v", err)
+	}
+	if !slotInfoCalled {
+		t.Fatal("OnSlotInfo was not called")
+	}
+	if gotSlots != wantSlots {
+		t.Errorf("SlotInfo = %+v, want %+v", gotSlots, wantSlots)
 	}
 }
 
@@ -852,8 +958,11 @@ func TestConnect_MapRefused(t *testing.T) {
 
 	failedCalled := false
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnFailed(func(err error) {
+		OnFailed(func(fi FailInfo) {
 			failedCalled = true
+			if fi.Phase != PhaseMap {
+				t.Errorf("FailInfo.Phase = %s, want map", fi.Phase)
+			}
 		})
 
 	err := loginFSM.Connect(context.Background())
@@ -1643,6 +1752,104 @@ func TestConnect_OnIdentity_ReceivesMapName(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestConnect_OnIdentity_MapDomain verifies that IdentityInfo.MapDomain is populated
+// from domain[128] in 0x0AC5 (pv >= 20170315) and empty for 0x0081 (pv < 20170315).
+// rAthena source: common/packets.hpp:297 char domain[128]
+// OpenKore ref: XKoreProxy.pm:513 "mapUrl" field, format "hostname" or "hostname:port"
+func TestConnect_OnIdentity_MapDomain(t *testing.T) {
+	const aid = uint32(2000001)
+	const sid1 = uint32(0x11111111)
+	const sid2 = uint32(0x22222222)
+	const charID = uint32(100001)
+	const mapIP = uint32(0x7F000001)
+	const mapPort = uint16(5121)
+
+	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
+
+	// Sub-test: domain present in 0x0AC5
+	t.Run("domain_present_0x0AC5", func(t *testing.T) {
+		const domain = "map01.example.com"
+		const pv = uint32(20180307)
+
+		loginScript := func(t *testing.T, conn net.Conn) {
+			mustDrain(t, conn, 55)
+			mustWrite(t, conn, buildLoginAcceptPost(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+		}
+		charScript := func(t *testing.T, conn net.Conn) {
+			mustDrain(t, conn, 17)
+			writeAccountIDEcho(t, conn, aid)
+			mustWrite(t, conn, buildHC082D())
+			mustWrite(t, conn, buildCharEnterAccept(nil))
+			mustWrite(t, conn, buildHCCharlistNotify(1))
+			mustDrain(t, conn, 2)
+			mustWrite(t, conn, buildHCAckCharinfoPerPage(nil))
+			mustDrain(t, conn, 3)
+			mustWrite(t, conn, buildHCNotifyZonesvrPostWithDomain(charID, mapIP, mapPort, domain))
+		}
+		mapScript := func(t *testing.T, conn net.Conn) {
+			mustDrain(t, conn, 19)
+			mustWrite(t, conn, buildZCAID(aid))
+			mustWrite(t, conn, buildZCAcceptEnter(pv))
+			mustDrain(t, conn, 2)
+			mustDrain(t, conn, 6)
+		}
+
+		server := ServerConfig{LoginAddr: "127.0.0.1:6900", Packetver: pv, StepTimeout: 5 * time.Second}
+		creds := Credentials{CharSlot: 0}
+
+		var gotDomain string
+		loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+			OnIdentity(func(info IdentityInfo) { gotDomain = info.MapDomain }).
+			OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) { c.Close() })
+
+		if err := loginFSM.Connect(context.Background()); err != nil {
+			t.Fatalf("Connect: %v", err)
+		}
+		if gotDomain != domain {
+			t.Errorf("MapDomain = %q, want %q", gotDomain, domain)
+		}
+	})
+
+	// Sub-test: domain empty when 0x0081 (pv < 20170315) — no domain field in struct
+	t.Run("domain_empty_0x0081", func(t *testing.T) {
+		const pv = uint32(20120000)
+
+		loginScript := func(t *testing.T, conn net.Conn) {
+			mustDrain(t, conn, 55)
+			mustWrite(t, conn, buildLoginAcceptPre(sid1, aid, sid2, 0, []CharServerInfo{charServer}))
+		}
+		charScript := func(t *testing.T, conn net.Conn) {
+			mustDrain(t, conn, 17)
+			writeAccountIDEcho(t, conn, aid)
+			mustWrite(t, conn, buildCharEnterAccept(nil))
+			mustDrain(t, conn, 3)
+			mustWrite(t, conn, buildHCNotifyZonesvrPre(charID, mapIP, mapPort))
+		}
+		mapScript := func(t *testing.T, conn net.Conn) {
+			mustDrain(t, conn, 19)
+			mustWrite(t, conn, buildZCAID(aid))
+			mustWrite(t, conn, buildZCAcceptEnter(pv))
+			mustDrain(t, conn, 2)
+			mustDrain(t, conn, 6)
+		}
+
+		server := ServerConfig{LoginAddr: "127.0.0.1:6900", Packetver: pv, StepTimeout: 5 * time.Second}
+		creds := Credentials{CharSlot: 0}
+
+		var gotDomain string
+		loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
+			OnIdentity(func(info IdentityInfo) { gotDomain = info.MapDomain }).
+			OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) { c.Close() })
+
+		if err := loginFSM.Connect(context.Background()); err != nil {
+			t.Fatalf("Connect: %v", err)
+		}
+		if gotDomain != "" {
+			t.Errorf("MapDomain = %q, want empty for 0x0081", gotDomain)
+		}
+	})
 }
 
 // TestConnect_OnMapSessionCreated_HandlersFire is the regression test for the
