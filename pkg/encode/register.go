@@ -2001,4 +2001,13 @@ func init() {
 			return b[:], nil
 		},
 	)
+	session.RegisterSendEncoder(session.ActionWhisper,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.Whisper)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			return EncodeWhisper(r, pv), nil
+		},
+	)
 }

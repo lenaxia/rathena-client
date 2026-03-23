@@ -5,6 +5,38 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.13] — 2026-03-23
+
+### Fixed
+
+- **`session.ActionWhisper` was missing** — `EncodeWhisper` and `send.Whisper` existed
+  but there was no `ActionWhisper` SemanticAction constant and no `RegisterSendEncoder`
+  call. Any goKore code calling `session.Send(..., session.ActionWhisper, ...)` failed
+  to compile. (goKore bug report 0799, worklog 0076)
+
+  Root cause: `actions.go` is fully generated from the semantics DB. The `whisper` action
+  had no DB entry at all — codegen emits no constant without one, regardless of whether
+  the encoder file exists.
+
+  Fix:
+  - Added `SYNTH_CZ_WISPER` 2-byte stub to `synthetic_structs.hpp` (same pattern as
+    `SYNTH_CZ_NOTIFY_ACTORINIT` — CZ_WISPER has no C struct in rAthena)
+  - Added `whisper` action to semantics DB via MCP with `0x0096` / `SYNTH_CZ_WISPER`
+  - Ran codegen: emits `ActionWhisper SemanticAction = 246` in `actions.go` and
+    `RegisterSendEncoder(ActionWhisper, ...)` in `register.go` using variable-length
+    `[]byte` path (since `EncodeWhisper` returns `[]byte`)
+
+  Note: `ActionWhisperSent` shifted from 246 → 247 as a result.
+
+### Tests
+
+- **`pkg/encode/whisper_test.go`** (new, TDD) — wire format, empty target, long target
+  truncation, and `TestActionWhisper_Registered` (the direct regression test: compile
+  fails if `session.ActionWhisper` is undefined). `BenchmarkEncodeWhisper`: 1 alloc/op,
+  54 ns/op (expected — single `make([]byte)` for variable-length output).
+
+---
+
 ## [v0.5.12] — 2026-03-22
 
 ### Fixed

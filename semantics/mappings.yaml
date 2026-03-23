@@ -660,7 +660,7 @@ mappings:
           semantic: 'Null-terminated guild chat message, format: name : text'
 metadata:
     total_packets: 30
-    last_updated: "2026-03-22"
+    last_updated: "2026-03-23"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -4079,6 +4079,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: SYNTH_CZ_REQ_WEAPONREFINE
+              field_mapping: {}
+    whisper:
+        name: whisper
+        description: Send a private message (whisper) to another player via CZ_WISPER (0x0096)
+        openkore_name: sendWhisper
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0096"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_WISPER
               field_mapping: {}
     whisper_sent:
         name: ""

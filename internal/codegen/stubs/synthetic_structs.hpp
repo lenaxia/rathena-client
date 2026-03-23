@@ -43,6 +43,17 @@ struct SYNTH_CZ_NOTIFY_ACTORINIT {
     int16 PacketType;
 } __attribute__((packed));
 
+// 0x0096 CZ_WISPER — Send a private message (whisper) to another player
+// parseable_packet(0x0096, -1, clif_parse_WisMessage, 2, 4, 28)
+// Variable-length: [packetType:2][packetLength:2][target:24][message:varlen+NUL]
+// No full C struct in rAthena (parsed manually via clif_process_message).
+// Stub present so codegen emits ActionWhisper constant and encoder registration.
+// The actual encoder (pkg/encode/whisper.go) is hand-written.
+// Length: 2 (stub — real packets are variable-length)
+struct SYNTH_CZ_WISPER {
+    int16 PacketType;
+} __attribute__((packed));
+
 // ============================================================================
 // CZ Packets — 6-byte variants
 // ============================================================================

@@ -185,6 +185,7 @@ import (
 //   use_card
 //   vending_list_req
 //   weapon_refine
+//   whisper
 //   zc_monolog_dialog
 
 // receiveEntry holds one packet-ID → decode-function mapping for a semantic action.
