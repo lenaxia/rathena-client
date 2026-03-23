@@ -5,6 +5,53 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.6.0] — 2026-03-23
+
+### Breaking Changes
+
+- **`ConnectionFSM.OnCharList` signature changed** — was `func([]byte) uint8`, now
+  `func([]events.CharacterInfoEntry) uint8`. Callers must update their callback.
+  No backwards-compat `OnCharListRaw` alias; migrate directly.
+
+### Added
+
+- **`events.CharacterInfoEntry`** — decoded form of one `CHARACTER_INFO` element
+  from char-server packets (`HC_ACCEPT_ENTER` 0x006B, `HC_ACK_CHARINFO_PER_PAGE`
+  0x099D / 0x0B72). All PACKETVER-conditional field widths normalised to widest form.
+
+  Fields: `GID uint32`, `Exp int64`, `JobExp int64`, `HP int64`, `MaxHP int64`,
+  `SP int64`, `MaxSP int64`, `Job int16`, `Level int16`, `Name string`,
+  `MapName string`, `CharNum uint8`, `Sex uint8`.
+
+  Source: `rAthena src/common/packets.hpp:31–105`. GCC-verified at 10 PACKETVER
+  snapshots (B0 112 B → B9 175 B). Cross-checked against real DUMP17 capture
+  (4 characters, pv=20200401).
+
+- **`decode.DecodeCharacterInfoList`** (exported) — decodes a `CHARACTER_INFO[]`
+  byte slice into `[]events.CharacterInfoEntry` at the given packetver. Handles all
+  10 PACKETVER breakpoints including the `exp`/`jobexp` int32→int64 widening at
+  20170830 and the `hp`/`sp` widening at 20220330 (MAIN).
+
+- **`IdentityInfo.MapIP uint32` and `IdentityInfo.MapPort uint16`** — map server
+  address previously parsed by the FSM from `HC_NOTIFY_ZONESVR` and silently
+  discarded. Now surfaced to `OnIdentity` callers.
+
+### Changed
+
+- **`events.ReceivedCharacters.Characters`** — type changed from `[]byte` to
+  `[]CharacterInfoEntry`. Same for `events.ReceivedCharactersPage.Characters`.
+  Decode functions for 0x006B, 0x099D, 0x0B72 updated accordingly.
+
+### Tests
+
+- **`pkg/decode/character_info_test.go`** (new, TDD, 13 tests) — covers B0/B2/B5/B7
+  (synthesised golden bytes from GCC-verified offsets), B8 (synthesised + 4 real
+  captured characters from DUMP17), B9 (widened hp/sp beyond old widths),
+  list decode, empty/partial-trailing/too-short edge cases,
+  null-terminated name and mapName.
+
+---
+
 ## [v0.5.15] — 2026-03-23
 
 ### Added
