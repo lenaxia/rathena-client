@@ -5,6 +5,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.15] — 2026-03-23
+
+### Added
+
+- **`ActionZcPartyJoinReq`** — new receive-direction semantic action for
+  `PACKET_ZC_PARTY_JOIN_REQ`. Server sends this when another player invites the
+  client to join their party. (goKore bug report 0807, worklog 0078)
+
+  Two packet IDs supported:
+  - `0x02C6` — modern (`pv >= 20110718`), `DEFINE_PACKET_HEADER(ZC_PARTY_JOIN_REQ, 0x02c6)`
+  - `0x00FE` — legacy (`pv < 20110718`), same struct layout
+
+  Generated artifacts: `pkg/events/zc_party_join_req.go` (`ZcPartyJoinReq{GRID []byte, GroupName string}`),
+  `pkg/decode/zc_party_join_req.go` (two decoder functions), dispatch entries in
+  `receive_dispatch.go`, `ActionZcPartyJoinReq SemanticAction = 396` in `actions.go`.
+
+  GCC-verified wire layout at pv=20200401 (`packets_struct.hpp:5082`):
+  `int16 PacketType` + `int GRID` (4B LE, party ID) + `char groupName[24]` = 30 bytes.
+
+  Note: `GRID` is `[]byte` in the Go event struct (standard codegen pattern for C `int`
+  fields). Callers use `binary.LittleEndian.Uint32(e.GRID[:4])` to extract the party ID.
+
+### Tests
+
+- **`pkg/decode/zc_party_join_req_test.go`** (new, TDD) — decodes both packet IDs,
+  verifies NUL-padding stripped from `GroupName`, `TestActionZcPartyJoinReq_Exists`
+  compile-time regression guard. `BenchmarkZcPartyJoinReq_0x02C6`: 0 allocs/op, 7 ns/op.
+
+---
+
 ## [v0.5.14] — 2026-03-23
 
 ### Fixed

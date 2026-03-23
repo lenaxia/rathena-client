@@ -5946,6 +5946,24 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_PARTY_CONFIG
               field_mapping: {}
+    zc_party_join_req:
+        name: zc_party_join_req
+        description: Server notifies client of a party invite from another player (ZC_PARTY_JOIN_REQ)
+        openkore_name: party_invite
+        canonical_params: []
+        implementations:
+            - packet_id: "0x02C6"
+              packetver_range:
+                - 20110718
+                - null
+              struct_name: PACKET_ZC_PARTY_JOIN_REQ
+              field_mapping: {}
+            - packet_id: "0x00FE"
+              packetver_range:
+                - null
+                - 20110717
+              struct_name: PACKET_ZC_PARTY_JOIN_REQ
+              field_mapping: {}
     zc_pc_purchase_itemlist_frommc:
         name: ""
         description: ""
