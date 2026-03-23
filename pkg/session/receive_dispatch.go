@@ -10,6 +10,7 @@ import (
 // (all implementations are send-direction or have empty PacketID/StructName)
 // and are therefore absent from receiveDispatch:
 //   auto_spell
+//   battle_chat
 //   ca_connect_info_changed
 //   ca_exe_hashcheck
 //   ca_login2
@@ -150,6 +151,7 @@ import (
 //   npc_talk_text
 //   npc_trade_quit
 //   party_change_option
+//   party_chat
 //   party_create
 //   party_invite
 //   party_kick
@@ -175,6 +177,7 @@ import (
 //   select_character
 //   select_egg
 //   send_emotion
+//   set_whisper_state
 //   shop_buy
 //   shop_sell
 //   skill_up

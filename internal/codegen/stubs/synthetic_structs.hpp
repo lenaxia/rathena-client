@@ -54,6 +54,40 @@ struct SYNTH_CZ_WISPER {
     int16 PacketType;
 } __attribute__((packed));
 
+// 0x02DB CZ_BATTLEFIELD_CHAT — Battle/Arena chat message
+// parseable_packet(0x02db, -1, clif_parse_BattleChat, 2, 4)
+// Variable-length: [packetType:2][packetLength:2]["Name : Message\0":varlen]
+// No full C struct in rAthena (parsed manually via clif_process_message).
+// Stub present so codegen emits ActionBattleChat constant and encoder registration.
+// Length: 2 (stub — real packets are variable-length)
+struct SYNTH_CZ_BATTLEFIELD_CHAT {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x0108 CZ_PARTY_MESSAGE — Party chat message
+// parseable_packet(0x0108, -1, clif_parse_PartyMessage, 2, 4)
+// Variable-length: [packetType:2][packetLength:2]["Name : Message\0":varlen]
+// No full C struct in rAthena (parsed manually via clif_process_message).
+// Stub present so codegen emits ActionPartyChat constant and encoder registration.
+// Length: 2 (stub — real packets are variable-length)
+struct SYNTH_CZ_PARTY_MESSAGE {
+    int16 PacketType;
+} __attribute__((packed));
+
+// 0x00CF CZ_SETTING_WHISPER_PC — Set ignore state for a specific character name
+// parseable_packet(0x00cf, 27, clif_parse_PMIgnore, 2, 26)
+// Wire: [packetType:2][nick:24][type:1]. Total: 27 bytes.
+// Distinct from PACKET_CZ_SETTING_WHISPER_STATE (0x00D0, 3 bytes) which bulk-sets state.
+// No named C struct for the 27-byte variant; stub required.
+// Stub present so codegen emits ActionSetWhisperState constant and encoder registration.
+// The actual encoder (pkg/encode/set_whisper_state.go) is hand-written.
+// Length: 27 (matches the fixed encoder return type [27]byte)
+struct SYNTH_CZ_SETTING_WHISPER_PC {
+    int16 PacketType;
+    char  nick[24];
+    int8_t type;
+} __attribute__((packed));
+
 // ============================================================================
 // CZ Packets — 6-byte variants
 // ============================================================================

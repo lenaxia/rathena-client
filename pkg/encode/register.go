@@ -317,6 +317,15 @@ func init() {
 			return b[:], nil
 		},
 	)
+	session.RegisterSendEncoder(session.ActionBattleChat,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.BattleChat)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			return EncodeBattleChat(r, pv), nil
+		},
+	)
 	session.RegisterSendEncoder(session.ActionCaConnectInfoChanged,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CaConnectInfoChanged)
@@ -1704,6 +1713,15 @@ func init() {
 			return b[:], nil
 		},
 	)
+	session.RegisterSendEncoder(session.ActionPartyChat,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.PartyChat)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			return EncodePartyChat(r, pv), nil
+		},
+	)
 	session.RegisterSendEncoder(session.ActionPartyCreate,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.PartyCreate)
@@ -1890,6 +1908,16 @@ func init() {
 				return nil, session.ErrWrongSendType{}
 			}
 			b := EncodeSendEmotion(r, pv)
+			return b[:], nil
+		},
+	)
+	session.RegisterSendEncoder(session.ActionSetWhisperState,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.SetWhisperState)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			b := EncodeSetWhisperState(r, pv)
 			return b[:], nil
 		},
 	)

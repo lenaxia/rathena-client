@@ -1116,6 +1116,18 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_ACK_BANKING_WITHDRAW
               field_mapping: {}
+    battle_chat:
+        name: battle_chat
+        description: Send a battle/arena chat message (CZ_BATTLEFIELD_CHAT / 0x02DB)
+        openkore_name: ""
+        canonical_params: []
+        implementations:
+            - packet_id: "0x02DB"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_BATTLEFIELD_CHAT
+              field_mapping: {}
     ca_connect_info_changed:
         name: ""
         description: ""
@@ -3300,6 +3312,18 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_CHANGE_GROUPEXPOPTION
               field_mapping: {}
+    party_chat:
+        name: party_chat
+        description: Send a party chat message (CZ_PARTY_MESSAGE / 0x0108)
+        openkore_name: ""
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0108"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_PARTY_MESSAGE
+              field_mapping: {}
     party_create:
         name: ""
         description: ""
@@ -3737,6 +3761,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: SYNTH_CZ_SEND_MBMC_CASH
+              field_mapping: {}
+    set_whisper_state:
+        name: set_whisper_state
+        description: Set ignore state for a specific character name (CZ_SETTING_WHISPER_PC / 0x00CF)
+        openkore_name: ""
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00CF"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_SETTING_WHISPER_PC
               field_mapping: {}
     shop_buy:
         name: ""

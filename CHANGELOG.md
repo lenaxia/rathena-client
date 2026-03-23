@@ -5,6 +5,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.5.14] — 2026-03-23
+
+### Fixed
+
+- **`ActionBattleChat`, `ActionPartyChat`, `ActionSetWhisperState` missing** — three
+  hand-written send encoders existed but had no semantics DB entries, so codegen never
+  emitted SemanticAction constants or `RegisterSendEncoder` calls. Same root cause as
+  `ActionWhisper` (v0.5.13 / worklog 0076). (worklog 0077)
+
+  | Encoder | Packet | Wire |
+  |---|---|---|
+  | `EncodeBattleChat` | `CZ_BATTLEFIELD_CHAT` `0x02DB` (variable-length) | rAthena `clif_packetdb.hpp:921` |
+  | `EncodePartyChat` | `CZ_PARTY_MESSAGE` `0x0108` (variable-length) | rAthena `clif_packetdb.hpp:108` |
+  | `EncodeSetWhisperState` | `CZ_SETTING_WHISPER_PC` `0x00CF` (fixed 27 bytes) | rAthena `clif_packetdb.hpp:78` |
+
+  All three are stable IDs — not in `clif_shuffle.hpp`. Fix: SYNTH stubs added to
+  `synthetic_structs.hpp`, three actions added to semantics DB via MCP, codegen
+  regenerated. `ActionSetWhisperState` correctly uses the fixed-array `b[:]` registration
+  path (codegen detects `[27]byte` return via AST scan).
+
+  Note on `set_whisper_state`: `0x00CF` (`clif_parse_PMIgnore`, nick-specific ignore, 27 bytes)
+  is distinct from `0x00D0` (`PACKET_CZ_SETTING_WHISPER_STATE`, 3-byte bulk state setter).
+
+### Tests
+
+- **`pkg/encode/chat_actions_test.go`** (new, TDD) — wire format and
+  `TestActionXxx_Registered` compile-time regression tests for all three actions.
+  `BenchmarkEncodeSetWhisperState`: 0.2 ns/op, 0 allocs/op ✓
+
+---
+
 ## [v0.5.13] — 2026-03-23
 
 ### Fixed
