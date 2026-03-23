@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/lenaxia/rathena-client/pkg/events"
 )
 
 // ── Test helpers ──────────────────────────────────────────────────────────────
@@ -649,7 +651,7 @@ func TestConnect_OnCharServerList(t *testing.T) {
 	}
 }
 
-// TestConnect_OnCharList tests that OnCharList fires with the raw char bytes.
+// TestConnect_OnCharList tests that OnCharList fires with parsed CharacterInfoEntry slice.
 func TestConnect_OnCharList(t *testing.T) {
 	const pv = uint32(20120000) // pre-20130000: char list arrives directly in 0x006B
 	const aid = uint32(2000001)
@@ -659,7 +661,14 @@ func TestConnect_OnCharList(t *testing.T) {
 	const mapIP = uint32(0x7F000001)
 	const mapPort = uint16(5121)
 
-	rawChars := []byte{0x01, 0x02, 0x03, 0x04} // dummy char bytes
+	// Build a valid 144-byte CHARACTER_INFO entry at pv=20120000 (B5 layout: pv>=20111025).
+	// name="TestChar" at offset 78, CharNum=0 at offset 108, job=1 at offset 56, level=10 at offset 62.
+	charEntry := make([]byte, 144)
+	charEntry[56] = 1                           // job lo (offset 56)
+	charEntry[57] = 0                           // job hi
+	charEntry[62] = 10                          // level lo (offset 62)
+	charEntry[63] = 0                           // level hi
+	copy(charEntry[78:102], []byte("TestChar")) // name[24] at offset 78
 
 	charServer := CharServerInfo{IP: 0x7F000001, Port: 6121, Name: "CS"}
 
@@ -670,7 +679,7 @@ func TestConnect_OnCharList(t *testing.T) {
 	charScript := func(t *testing.T, conn net.Conn) {
 		mustDrain(t, conn, 17)
 		writeAccountIDEcho(t, conn, aid)
-		mustWrite(t, conn, buildCharEnterAccept(rawChars))
+		mustWrite(t, conn, buildCharEnterAccept(charEntry))
 		mustDrain(t, conn, 3)
 		mustWrite(t, conn, buildHCNotifyZonesvrPre(charID, mapIP, mapPort))
 	}
@@ -689,13 +698,13 @@ func TestConnect_OnCharList(t *testing.T) {
 	}
 	creds := Credentials{CharSlot: 0}
 
-	var gotRawChars []byte
+	var gotEntries []events.CharacterInfoEntry
 	charListCalled := false
 
 	loginFSM := New(server, creds, scriptedDialer(t, loginScript, charScript, mapScript)).
-		OnCharList(func(raw []byte) uint8 {
+		OnCharList(func(entries []events.CharacterInfoEntry) uint8 {
 			charListCalled = true
-			gotRawChars = append([]byte(nil), raw...)
+			gotEntries = entries
 			return 0
 		}).
 		OnReady(func(_ *MapSession, c net.Conn, _ ReadyInfo) {
@@ -709,8 +718,17 @@ func TestConnect_OnCharList(t *testing.T) {
 	if !charListCalled {
 		t.Fatal("OnCharList was not called")
 	}
-	if string(gotRawChars) != string(rawChars) {
-		t.Errorf("raw chars = %v, want %v", gotRawChars, rawChars)
+	if len(gotEntries) != 1 {
+		t.Fatalf("OnCharList: want 1 entry, got %d", len(gotEntries))
+	}
+	if gotEntries[0].Job != 1 {
+		t.Errorf("entry[0].Job: want 1, got %d", gotEntries[0].Job)
+	}
+	if gotEntries[0].Level != 10 {
+		t.Errorf("entry[0].Level: want 10, got %d", gotEntries[0].Level)
+	}
+	if gotEntries[0].Name != "TestChar" {
+		t.Errorf("entry[0].Name: want %q, got %q", "TestChar", gotEntries[0].Name)
 	}
 }
 

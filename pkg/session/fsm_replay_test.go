@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/lenaxia/rathena-client/pkg/decode"
+	"github.com/lenaxia/rathena-client/pkg/events"
 )
 
 // testFixturePath returns the path to a fixture file in the package's testdata dir.
@@ -73,7 +74,7 @@ func runReplayTest(
 
 	f := New(server, creds, ss.Dialer()).
 		OnCharServerList(func(_ []CharServerInfo) int { return 0 }).
-		OnCharList(func(_ []byte) uint8 { return 0 }).
+		OnCharList(func(_ []events.CharacterInfoEntry) uint8 { return 0 }).
 		OnMapSessionCreated(func(s *MapSession) {
 			setupHandlers(s)
 		}).

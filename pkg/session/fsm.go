@@ -24,6 +24,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lenaxia/rathena-client/pkg/decode"
+	"github.com/lenaxia/rathena-client/pkg/events"
 	"github.com/lenaxia/rathena-client/pkg/packing"
 )
 
@@ -64,12 +66,9 @@ type CharServerInfo struct {
 }
 
 // CharacterInfo describes a character slot from the char server list.
-// The raw bytes are passed to callers via RawChars because the CHARACTER_INFO
-// struct layout varies by PACKETVER; goKore parses with its own codec.
-type CharacterInfo struct {
-	// Slot is the character's slot index.
-	Slot uint8
-}
+// Deprecated: replaced by events.CharacterInfoEntry. Retained as an alias
+// to avoid breaking callers until a clean-up pass removes all references.
+// Use events.CharacterInfoEntry directly.
 
 // IdentityInfo contains the player's identity after char selection completes.
 // Passed to OnIdentity callback after the zone server response (0x0081/0x0AC5)
@@ -80,6 +79,8 @@ type IdentityInfo struct {
 	SelectedSlot uint8
 	Sex          uint8
 	MapName      string // map name without .gat suffix, from HC_NOTIFY_ZONESVR
+	MapIP        uint32 // map server IPv4 in host byte order (big-endian as sent by rAthena htonl)
+	MapPort      uint16 // map server port
 }
 
 // ReadyInfo carries the decoded ZC_ACCEPT_ENTER fields to the OnReady callback.
@@ -101,7 +102,7 @@ type ConnectionFSM struct {
 	dialer Dialer
 
 	onCharServerList    func([]CharServerInfo) int
-	onCharList          func([]byte) uint8
+	onCharList          func([]events.CharacterInfoEntry) uint8
 	onMapSessionCreated func(*MapSession)
 	onReady             func(*MapSession, net.Conn, ReadyInfo)
 	onFailed            func(error)
@@ -143,14 +144,9 @@ func (f *ConnectionFSM) OnCharServerList(fn func([]CharServerInfo) int) *Connect
 }
 
 // OnCharList registers a callback invoked when the full char list has been
-// assembled. Receives raw CHARACTER_INFO bytes (variable struct size per
-// PACKETVER); returns the slot number to select. If not registered:
-// Credentials.CharSlot is used.
-//
-// Note: HLD §4 originally specified func([]events.CharacterInfo) uint8 but
-// the CHARACTER_INFO decoder is a generated SKIP stub in Phase 1. The current
-// []byte signature is a documented Phase 1 deviation; see HLD §4.
-func (f *ConnectionFSM) OnCharList(fn func([]byte) uint8) *ConnectionFSM {
+// assembled. Receives the parsed CHARACTER_INFO entries; returns the slot number
+// to select. If not registered: Credentials.CharSlot is used.
+func (f *ConnectionFSM) OnCharList(fn func([]events.CharacterInfoEntry) uint8) *ConnectionFSM {
 	f.onCharList = fn
 	return f
 }
@@ -601,16 +597,20 @@ func (f *ConnectionFSM) runCharPhase(ctx context.Context, charAddr string) (stri
 			SelectedSlot: res.selectedSlot,
 			Sex:          f.sex,
 			MapName:      res.mapName,
+			MapIP:        res.mapIP,
+			MapPort:      res.mapPort,
 		})
 	}
 
 	return mapAddr, nil
 }
 
-// pickCharSlot calls OnCharList if registered, else uses Credentials.CharSlot.
+// pickCharSlot decodes rawChars into []events.CharacterInfoEntry, calls OnCharList
+// if registered, else returns Credentials.CharSlot.
 func (f *ConnectionFSM) pickCharSlot(rawChars []byte) uint8 {
 	if f.onCharList != nil {
-		return f.onCharList(rawChars)
+		entries := decode.DecodeCharacterInfoList(rawChars, f.server.Packetver)
+		return f.onCharList(entries)
 	}
 	return f.creds.CharSlot
 }
