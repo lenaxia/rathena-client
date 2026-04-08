@@ -49,9 +49,10 @@ func buildCharInfoB0(gid uint32, exp, money, jobexp int32, job, level int16, nam
 
 // buildCharInfoB2 builds a 132-byte CHARACTER_INFO entry for pv >= 20100803.
 // Adds mapName[16] and DelRevDate after bIsChangedCharName.
-func buildCharInfoB2(gid uint32, job, level int16, name, mapName string, charNum uint8) []byte {
+func buildCharInfoB2(gid uint32, money int32, job, level int16, name, mapName string, charNum uint8) []byte {
 	b := make([]byte, 132)
 	binary.LittleEndian.PutUint32(b[0:], gid)
+	binary.LittleEndian.PutUint32(b[8:], uint32(money))
 	binary.LittleEndian.PutUint32(b[42:], 800)  // hp
 	binary.LittleEndian.PutUint32(b[46:], 1000) // maxhp
 	binary.LittleEndian.PutUint16(b[50:], 200)  // sp
@@ -67,9 +68,10 @@ func buildCharInfoB2(gid uint32, job, level int16, name, mapName string, charNum
 }
 
 // buildCharInfoB5 builds a 144-byte CHARACTER_INFO entry for pv >= 20111025.
-func buildCharInfoB5(gid uint32, job, level int16, name, mapName string, charNum uint8) []byte {
+func buildCharInfoB5(gid uint32, money int32, job, level int16, name, mapName string, charNum uint8) []byte {
 	b := make([]byte, 144)
 	binary.LittleEndian.PutUint32(b[0:], gid)
+	binary.LittleEndian.PutUint32(b[8:], uint32(money))
 	binary.LittleEndian.PutUint32(b[42:], 1200)
 	binary.LittleEndian.PutUint32(b[46:], 1500)
 	binary.LittleEndian.PutUint16(b[50:], 300)
@@ -90,9 +92,10 @@ func buildCharInfoB5(gid uint32, job, level int16, name, mapName string, charNum
 // buildCharInfoB7 builds a 147-byte CHARACTER_INFO entry for pv >= 20141022.
 // body(int16) inserted after head; sex appended.
 // Field offsets shift by 2 after head compared to B5.
-func buildCharInfoB7(gid uint32, job, level int16, name, mapName string, charNum, sex uint8) []byte {
+func buildCharInfoB7(gid uint32, money int32, job, level int16, name, mapName string, charNum, sex uint8) []byte {
 	b := make([]byte, 147)
 	binary.LittleEndian.PutUint32(b[0:], gid)
+	binary.LittleEndian.PutUint32(b[8:], uint32(money))
 	// hp offset=42 maxhp=46 sp=50 maxsp=52 speed=54 job=56 head=58
 	// body=60 weapon=62 level=64
 	binary.LittleEndian.PutUint32(b[42:], 2000)
@@ -116,11 +119,11 @@ func buildCharInfoB7(gid uint32, job, level int16, name, mapName string, charNum
 
 // buildCharInfoB8 builds a 155-byte CHARACTER_INFO entry for pv >= 20170830.
 // exp/jobexp widened to int64; body present; sex appended.
-func buildCharInfoB8(gid uint32, exp, jobexp int64, job, level int16, name, mapName string, charNum, sex uint8) []byte {
+func buildCharInfoB8(gid uint32, exp, jobexp int64, money int32, job, level int16, name, mapName string, charNum, sex uint8) []byte {
 	b := make([]byte, 155)
 	binary.LittleEndian.PutUint32(b[0:], gid)
 	binary.LittleEndian.PutUint64(b[4:], uint64(exp))
-	// money offset=12
+	binary.LittleEndian.PutUint32(b[12:], uint32(money)) // rAthena: money int32 (offset 12, size 4)
 	binary.LittleEndian.PutUint64(b[16:], uint64(jobexp))
 	// joblevel offset=24 ... jobpoint=48
 	// hp=50 maxhp=54 sp=58 maxsp=60 speed=62 job=64 head=66 body=68 weapon=70 level=72
@@ -140,10 +143,11 @@ func buildCharInfoB8(gid uint32, exp, jobexp int64, job, level int16, name, mapN
 
 // buildCharInfoB9 builds a 175-byte CHARACTER_INFO entry for pv >= 20220330 (MAIN).
 // hp/maxhp/sp/maxsp widened to int64 on top of B8.
-func buildCharInfoB9(gid uint32, exp, jobexp int64, hp, maxhp, sp, maxsp int64, job, level int16, name, mapName string, charNum, sex uint8) []byte {
+func buildCharInfoB9(gid uint32, exp, jobexp int64, money int32, hp, maxhp, sp, maxsp int64, job, level int16, name, mapName string, charNum, sex uint8) []byte {
 	b := make([]byte, 175)
 	binary.LittleEndian.PutUint32(b[0:], gid)
 	binary.LittleEndian.PutUint64(b[4:], uint64(exp))
+	binary.LittleEndian.PutUint32(b[12:], uint32(money)) // rAthena: money int32 (offset 12, size 4)
 	binary.LittleEndian.PutUint64(b[16:], uint64(jobexp))
 	// hp=50 maxhp=58 sp=66 maxsp=74 speed=82 job=84 head=86 body=88 weapon=90 level=92
 	binary.LittleEndian.PutUint64(b[50:], uint64(hp))
@@ -177,6 +181,9 @@ func TestDecodeCharacterInfoEntry_B0_Baseline(t *testing.T) {
 	}
 	if got.Exp != 9999 {
 		t.Errorf("Exp: want 9999, got %d", got.Exp)
+	}
+	if got.Money != 50000 {
+		t.Errorf("Money: want 50000, got %d", got.Money)
 	}
 	if got.JobExp != 1234 {
 		t.Errorf("JobExp: want 1234, got %d", got.JobExp)
@@ -219,7 +226,7 @@ func TestDecodeCharacterInfoEntry_B0_Baseline(t *testing.T) {
 // mapName[16] and DelRevDate added after bIsChangedCharName.
 func TestDecodeCharacterInfoEntry_B2_MapName(t *testing.T) {
 	pv := uint32(20100803)
-	raw := buildCharInfoB2(99, 1, 10, "Swordsman", "prontera.gat", 1)
+	raw := buildCharInfoB2(99, 25000, 1, 10, "Swordsman", "prontera.gat", 1)
 
 	var got events.CharacterInfoEntry
 	n := decodeCharacterInfoEntry(&got, raw, pv)
@@ -229,6 +236,9 @@ func TestDecodeCharacterInfoEntry_B2_MapName(t *testing.T) {
 	}
 	if got.GID != 99 {
 		t.Errorf("GID: want 99, got %d", got.GID)
+	}
+	if got.Money != 25000 {
+		t.Errorf("Money: want 25000, got %d", got.Money)
 	}
 	if got.Name != "Swordsman" {
 		t.Errorf("Name: want %q, got %q", "Swordsman", got.Name)
@@ -255,7 +265,7 @@ func TestDecodeCharacterInfoEntry_B2_MapName(t *testing.T) {
 // robePalette, chr_slot_changeCnt, chr_name_changeCnt present. Still no body/sex.
 func TestDecodeCharacterInfoEntry_B5_RobePalette(t *testing.T) {
 	pv := uint32(20111025)
-	raw := buildCharInfoB5(777, 4, 99, "Archer", "pay_fild04.gat", 2)
+	raw := buildCharInfoB5(777, 12345, 4, 99, "Archer", "pay_fild04.gat", 2)
 
 	var got events.CharacterInfoEntry
 	n := decodeCharacterInfoEntry(&got, raw, pv)
@@ -265,6 +275,9 @@ func TestDecodeCharacterInfoEntry_B5_RobePalette(t *testing.T) {
 	}
 	if got.GID != 777 {
 		t.Errorf("GID: want 777, got %d", got.GID)
+	}
+	if got.Money != 12345 {
+		t.Errorf("Money: want 12345, got %d", got.Money)
 	}
 	if got.Job != 4 {
 		t.Errorf("Job: want 4, got %d", got.Job)
@@ -291,7 +304,7 @@ func TestDecodeCharacterInfoEntry_B5_RobePalette(t *testing.T) {
 // sex appended at end.
 func TestDecodeCharacterInfoEntry_B7_BodyAndSex(t *testing.T) {
 	pv := uint32(20141022)
-	raw := buildCharInfoB7(55555, 7, 150, "Wizard", "gef_fild01.gat", 0, 1)
+	raw := buildCharInfoB7(55555, 67890, 7, 150, "Wizard", "gef_fild01.gat", 0, 1)
 
 	var got events.CharacterInfoEntry
 	n := decodeCharacterInfoEntry(&got, raw, pv)
@@ -301,6 +314,9 @@ func TestDecodeCharacterInfoEntry_B7_BodyAndSex(t *testing.T) {
 	}
 	if got.GID != 55555 {
 		t.Errorf("GID: want 55555, got %d", got.GID)
+	}
+	if got.Money != 67890 {
+		t.Errorf("Money: want 67890, got %d", got.Money)
 	}
 	if got.Job != 7 {
 		t.Errorf("Job: want 7, got %d", got.Job)
@@ -329,7 +345,7 @@ func TestDecodeCharacterInfoEntry_B8_ExpWidened(t *testing.T) {
 	pv := uint32(20170830)
 	bigExp := int64(3_000_000_000)    // > int32 max (2,147,483,647)
 	bigJobExp := int64(1_500_000_000) // just under int32 max for contrast
-	raw := buildCharInfoB8(200001, bigExp, bigJobExp, 4054, 175, "HighPriest", "abbey02.gat", 1, 0)
+	raw := buildCharInfoB8(200001, bigExp, bigJobExp, 500000, 4054, 175, "HighPriest", "abbey02.gat", 1, 0)
 
 	var got events.CharacterInfoEntry
 	n := decodeCharacterInfoEntry(&got, raw, pv)
@@ -342,6 +358,9 @@ func TestDecodeCharacterInfoEntry_B8_ExpWidened(t *testing.T) {
 	}
 	if got.Exp != bigExp {
 		t.Errorf("Exp: want %d, got %d", bigExp, got.Exp)
+	}
+	if got.Money != 500000 {
+		t.Errorf("Money: want 500000, got %d", got.Money)
 	}
 	if got.JobExp != bigJobExp {
 		t.Errorf("JobExp: want %d, got %d", bigJobExp, got.JobExp)
@@ -388,6 +407,7 @@ func TestDecodeCharacterInfoEntry_B8_RealCapture(t *testing.T) {
 		sex     uint8
 		mapName string
 		exp     int64
+		money   int32
 		hp      int64
 		maxHP   int64
 	}{
@@ -401,6 +421,7 @@ func TestDecodeCharacterInfoEntry_B8_RealCapture(t *testing.T) {
 			sex:     0x1e, // 30 — server-side value from rAthena (not 0/1 client sex)
 			mapName: "prt_fild08.gat",
 			exp:     150415,
+			money:   1000000,
 			hp:      86115,
 			maxHP:   86115,
 		},
@@ -414,6 +435,7 @@ func TestDecodeCharacterInfoEntry_B8_RealCapture(t *testing.T) {
 			sex:     1,
 			mapName: "prontera.gat",
 			exp:     0,
+			money:   0,
 			hp:      40,
 			maxHP:   40,
 		},
@@ -427,6 +449,7 @@ func TestDecodeCharacterInfoEntry_B8_RealCapture(t *testing.T) {
 			sex:     0,
 			mapName: "prt_sewb2.gat",
 			exp:     18,
+			money:   0,
 			hp:      17290,
 			maxHP:   17290,
 		},
@@ -440,6 +463,7 @@ func TestDecodeCharacterInfoEntry_B8_RealCapture(t *testing.T) {
 			sex:     1,
 			mapName: "prt_in.gat",
 			exp:     331200,
+			money:   0,
 			hp:      216406,
 			maxHP:   216406,
 		},
@@ -481,6 +505,9 @@ func TestDecodeCharacterInfoEntry_B8_RealCapture(t *testing.T) {
 		if got.Exp != tc.exp {
 			t.Errorf("%q: Exp want %d got %d", tc.name, tc.exp, got.Exp)
 		}
+		if got.Money != tc.money {
+			t.Errorf("%q: Money want %d got %d", tc.name, tc.money, got.Money)
+		}
 		if got.HP != tc.hp {
 			t.Errorf("%q: HP want %d got %d", tc.name, tc.hp, got.HP)
 		}
@@ -497,7 +524,7 @@ func TestDecodeCharacterInfoEntry_B9_HPWidened(t *testing.T) {
 	pv := uint32(20220330)
 	bigHP := int64(5_000_000_000) // > int32 max
 	bigSP := int64(2_000_000_000) // > int16 max (32767)
-	raw := buildCharInfoB9(300001, 9_000_000_000, 4_000_000_000, bigHP, bigHP, bigSP, bigSP, 4096, 175, "RuneKnight", "moc_fild16.gat", 0, 0)
+	raw := buildCharInfoB9(300001, 9_000_000_000, 4_000_000_000, 750000, bigHP, bigHP, bigSP, bigSP, 4096, 175, "RuneKnight", "moc_fild16.gat", 0, 0)
 
 	var got events.CharacterInfoEntry
 	n := decodeCharacterInfoEntry(&got, raw, pv)
@@ -507,6 +534,9 @@ func TestDecodeCharacterInfoEntry_B9_HPWidened(t *testing.T) {
 	}
 	if got.GID != 300001 {
 		t.Errorf("GID: want 300001, got %d", got.GID)
+	}
+	if got.Money != 750000 {
+		t.Errorf("Money: want 750000, got %d", got.Money)
 	}
 	if got.HP != bigHP {
 		t.Errorf("HP: want %d, got %d", bigHP, got.HP)
@@ -539,9 +569,9 @@ func TestDecodeCharacterInfoEntry_B9_HPWidened(t *testing.T) {
 func TestDecodeCharacterInfoList_MultipleEntries(t *testing.T) {
 	pv := uint32(20200401) // B8, 155 bytes/entry
 
-	e0 := buildCharInfoB8(1, 100, 50, 0, 1, "Alpha", "prontera.gat", 0, 0)
-	e1 := buildCharInfoB8(2, 200, 75, 1, 20, "Beta", "geffen.gat", 1, 1)
-	e2 := buildCharInfoB8(3, 300, 25, 7, 50, "Gamma", "moc_fild01.gat", 2, 0)
+	e0 := buildCharInfoB8(1, 100, 50, 0, 0, 1, "Alpha", "prontera.gat", 0, 0)
+	e1 := buildCharInfoB8(2, 200, 75, 0, 1, 20, "Beta", "geffen.gat", 1, 1)
+	e2 := buildCharInfoB8(3, 300, 25, 0, 7, 50, "Gamma", "moc_fild01.gat", 2, 0)
 
 	buf := append(append(e0, e1...), e2...)
 	entries := decodeCharacterInfoList(buf, pv)
@@ -572,7 +602,7 @@ func TestDecodeCharacterInfoList_Empty(t *testing.T) {
 // shorter than one entry are silently ignored.
 func TestDecodeCharacterInfoList_PartialTrailingBytes(t *testing.T) {
 	pv := uint32(20200401) // 155 bytes/entry
-	e0 := buildCharInfoB8(1, 0, 0, 0, 1, "Solo", "prontera.gat", 0, 0)
+	e0 := buildCharInfoB8(1, 0, 0, 0, 0, 1, "Solo", "prontera.gat", 0, 0)
 	// Append 10 garbage bytes — less than one entry
 	buf := append(e0, make([]byte, 10)...)
 
@@ -589,7 +619,7 @@ func TestDecodeCharacterInfoList_PartialTrailingBytes(t *testing.T) {
 // than 24 bytes with null padding decodes correctly without trailing nulls.
 func TestDecodeCharacterInfoEntry_NameNullTerminated(t *testing.T) {
 	pv := uint32(20200401)
-	raw := buildCharInfoB8(1, 0, 0, 0, 1, "Hi", "prontera.gat", 0, 0)
+	raw := buildCharInfoB8(1, 0, 0, 0, 0, 1, "Hi", "prontera.gat", 0, 0)
 
 	var got events.CharacterInfoEntry
 	decodeCharacterInfoEntry(&got, raw, pv)
@@ -603,7 +633,7 @@ func TestDecodeCharacterInfoEntry_NameNullTerminated(t *testing.T) {
 // ".gat" suffix and null padding decodes to the full null-terminated string.
 func TestDecodeCharacterInfoEntry_MapNameNullTerminated(t *testing.T) {
 	pv := uint32(20200401)
-	raw := buildCharInfoB8(1, 0, 0, 0, 1, "X", "gef_fild07.gat", 0, 0)
+	raw := buildCharInfoB8(1, 0, 0, 0, 0, 1, "X", "gef_fild07.gat", 0, 0)
 
 	var got events.CharacterInfoEntry
 	decodeCharacterInfoEntry(&got, raw, pv)

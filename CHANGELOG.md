@@ -5,6 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.6.2] — 2026-04-07
+
+### Fixed
+
+- **`CharacterInfoEntry.Money` never populated** — `decodeCharacterInfoEntry` skipped
+  the `money` field in both PACKETVER branches. For `pv >= 20170830` the field sits at
+  offset 12 (int32, between `exp` int64 and `jobexp` int64); for `pv < 20170830` it sits
+  at offset 8 (int32, between `exp` int32 and `jobexp` int32). The decoder now reads it
+  correctly in both cases. Real-capture test confirms `Almarc.Money = 1,000,000`.
+  Source: `rAthena src/common/packets.hpp:38`.
+
+---
+
 ## [v0.6.1] — 2026-03-23
 
 ### Breaking Changes

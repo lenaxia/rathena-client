@@ -28,6 +28,7 @@ package events
 type CharacterInfoEntry struct {
 	GID      uint32 // rAthena: GID
 	Exp      int64  // rAthena: exp     (int32 pv<20170830, int64 pv>=20170830)
+	Money    int32  // rAthena: money   (zeny, int32, always present)
 	JobExp   int64  // rAthena: jobexp  (same breakpoint as exp)
 	HP       int64  // rAthena: hp      (int32 pv<20220330 MAIN, int64 pv>=20220330)
 	MaxHP    int64  // rAthena: maxhp   (same breakpoint as hp)

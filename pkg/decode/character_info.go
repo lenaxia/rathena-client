@@ -61,10 +61,12 @@ func decodeCharacterInfoEntry(dst *events.CharacterInfoEntry, b []byte, pv uint3
 
 	if pv >= 20170830 {
 		dst.Exp = leI64(b, 4)       // rAthena: exp int64 (offset 4, size 8)
+		dst.Money = leI32(b, 12)    // rAthena: money int32 (offset 12, size 4)
 		dst.JobExp = leI64(b, 16)   // rAthena: jobexp int64 (offset 16, size 8)
 		dst.JobLevel = leI32(b, 24) // rAthena: joblevel int32 (offset 24; OpenKore: lv_job)
 	} else {
 		dst.Exp = int64(leI32(b, 4))     // rAthena: exp int32 (offset 4, size 4)
+		dst.Money = leI32(b, 8)          // rAthena: money int32 (offset 8, size 4)
 		dst.JobExp = int64(leI32(b, 12)) // rAthena: jobexp int32 (offset 12, size 4)
 		dst.JobLevel = leI32(b, 16)      // rAthena: joblevel int32 (offset 16; OpenKore: lv_job)
 	}
