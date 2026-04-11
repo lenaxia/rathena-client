@@ -5,6 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.6.4] — 2026-04-11
+
+### Fixed
+
+- **Map entry timeout for `pv ∈ [20141016, 20141021]`** — `ZC_ACCEPT_ENTER` handler
+  was registered for `0x0A18` when the condition used `>= 20141016`, but
+  `src/map/packets.hpp:554` defines the `0x0A18` era as `>= 20141022 && < 20160330`.
+  For those six packetvers rAthena sends `0x02EB`; with the wrong registration
+  `onMapEnter` never fired and the FSM timed out waiting for map entry.
+  Fixed by extracting `zcAcceptEnterID(packetver)` which mirrors the exact
+  `packets.hpp` condition. Source: `src/map/packets.hpp:545-575`.
+
+---
+
 ## [v0.6.3] — 2026-04-11
 
 ### Fixed

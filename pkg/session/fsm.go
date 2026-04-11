@@ -855,14 +855,11 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 	}
 
 	// Register the appropriate ZC_ACCEPT_ENTER packet ID based on packetver.
-	// Source: packets.hpp #if PACKETVER conditions
-	if f.server.Packetver >= 20141016 && f.server.Packetver < 20160330 {
-		mapSess.core.registerHandler(0x0A18, onMapEnter) // ZC_ACCEPT_ENTER3
-	} else if f.server.Packetver >= 20080102 {
-		mapSess.core.registerHandler(0x02EB, onMapEnter) // ZC_ACCEPT_ENTER2
-	} else {
-		mapSess.core.registerHandler(0x0073, onMapEnter) // ZC_ACCEPT_ENTER (original)
-	}
+	// Source: src/map/packets.hpp:545-575
+	//   PACKETVER < 20080102                                    → 0x0073  ZC_ACCEPT_ENTER  (11 bytes)
+	//   PACKETVER < 20141022 || PACKETVER >= 20160330           → 0x02EB  ZC_ACCEPT_ENTER2 (13 bytes)
+	//   else (>= 20141022 && < 20160330)                        → 0x0A18  ZC_ACCEPT_ENTER3 (14 bytes)
+	mapSess.core.registerHandler(zcAcceptEnterID(f.server.Packetver), onMapEnter)
 
 	// Fire OnMapSessionCreated after FSM auth handlers are registered but before
 	// feedUntil processes any bytes. This is the correct place for callers to
@@ -1010,6 +1007,25 @@ func fsmEncodeRequestCharacterPage() [2]byte {
 	p[0] = 0xa1
 	p[1] = 0x09
 	return p
+}
+
+// zcAcceptEnterID returns the packet ID rAthena uses for ZC_ACCEPT_ENTER at
+// the given packetver.
+//
+// Source: src/map/packets.hpp:545-575
+//
+//	PACKETVER < 20080102                          → 0x0073  ZC_ACCEPT_ENTER  (11 bytes)
+//	PACKETVER < 20141022 || PACKETVER >= 20160330 → 0x02EB  ZC_ACCEPT_ENTER2 (13 bytes)
+//	else (>= 20141022 && < 20160330)              → 0x0A18  ZC_ACCEPT_ENTER3 (14 bytes)
+func zcAcceptEnterID(packetver uint32) uint16 {
+	switch {
+	case packetver >= 20141022 && packetver < 20160330:
+		return 0x0A18
+	case packetver >= 20080102:
+		return 0x02EB
+	default:
+		return 0x0073
+	}
 }
 
 // fsmEncodeMapLogin encodes 0x0436 CZ_ENTER / CZ_ENTER2.
