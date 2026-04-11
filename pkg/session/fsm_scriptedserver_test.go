@@ -139,7 +139,12 @@ func (s *ScriptedServer) Dialer() Dialer {
 //
 // Phase 0 (login): CA_LOGIN = 55 bytes (packetver 20200401, 0x0064 variant)
 // Phase 1 (char):  CH_ENTER = 17 bytes (0x0065)
-// Phase 2 (map):   CZ_ENTER = 19 bytes (0x0436)
+// Phase 2 (map):   CZ_ENTER = 19 bytes (0x0436, packetver 20200401)
+//
+// NOTE: CZ_ENTER is 23 bytes for packetver in [20211103,20211118] or >= 20220330
+// (clif_shuffle.hpp:4745). Existing fixtures use packetver 20200401 (19 bytes).
+// If a fixture with a 23-byte packetver is added, servePhase must read 23 bytes
+// here or the net.Pipe handshake will deadlock. See fsm_map_login_test.go.
 var initialCSSize = [3]int{55, 17, 19}
 
 // servePhase writes phaseData to conn in random-sized chunks while concurrently

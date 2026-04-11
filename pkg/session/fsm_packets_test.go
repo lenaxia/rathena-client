@@ -199,7 +199,7 @@ func TestEncodeRequestCharacterPage_FieldLayout(t *testing.T) {
 
 // ── EncodeMapLogin (0x0436 CZ_ENTER2) ────────────────────────────────────────
 //
-// SYNTH_CZ_ENTER layout from clif.cpp:10641:
+// 19-byte layout (clif_shuffle.hpp:4747, default):
 //
 //	int16  packetType   (0x0436)   offset 0,  size 2
 //	uint32 AID                     offset 2,  size 4
@@ -208,6 +208,17 @@ func TestEncodeRequestCharacterPage_FieldLayout(t *testing.T) {
 //	uint32 clientTime  (0)         offset 14, size 4
 //	uint8  Sex                     offset 18, size 1
 //	total = 19 bytes
+//
+// 23-byte layout (clif_shuffle.hpp:4745, RE [20211103,20211118] or MAIN >= 20220330):
+//
+//	int16  packetType   (0x0436)   offset 0,  size 2
+//	uint32 AID                     offset 2,  size 4
+//	uint32 GID                     offset 6,  size 4
+//	int32  AuthCode                offset 10, size 4
+//	uint32 clientTime  (0)         offset 14, size 4
+//	uint32 tick        (0)         offset 18, size 4
+//	uint8  Sex                     offset 22, size 1
+//	total = 23 bytes
 
 func TestEncodeMapLogin_FieldLayout(t *testing.T) {
 	const aid = uint32(2000003)
@@ -239,6 +250,44 @@ func TestEncodeMapLogin_FieldLayout(t *testing.T) {
 	}
 	if pkt[18] != sex {
 		t.Errorf("Sex=%d want %d", pkt[18], sex)
+	}
+}
+
+func TestEncodeMapLogin_FieldLayout_23byte(t *testing.T) {
+	const aid = uint32(2000003)
+	const cid = uint32(150001)
+	sid1 := int32(-559038737) // == int32(0xDEADBEEF)
+	const sex = uint8(1)
+
+	// Test both 23-byte windows: RE [20211103,20211118] and MAIN >= 20220330.
+	for _, pv := range []uint32{20211103, 20220330} {
+		pkt := encode.EncodeMapLogin(send.MapLogin{
+			AID: aid, GID: cid, AuthCode: sid1, ClientTime: 0, Sex: sex,
+		}, pv)
+		if len(pkt) != 23 {
+			t.Fatalf("pv=%d len=%d want 23", pv, len(pkt))
+		}
+		if id := binary.LittleEndian.Uint16(pkt[0:2]); id != 0x0436 {
+			t.Errorf("pv=%d packetType=%#04x want 0x0436", pv, id)
+		}
+		if got := binary.LittleEndian.Uint32(pkt[2:6]); got != aid {
+			t.Errorf("pv=%d AID=%d want %d", pv, got, aid)
+		}
+		if got := binary.LittleEndian.Uint32(pkt[6:10]); got != cid {
+			t.Errorf("pv=%d GID=%d want %d", pv, got, cid)
+		}
+		if got := int32(binary.LittleEndian.Uint32(pkt[10:14])); got != sid1 {
+			t.Errorf("pv=%d AuthCode=%#x want %#x", pv, got, sid1)
+		}
+		if got := binary.LittleEndian.Uint32(pkt[14:18]); got != 0 {
+			t.Errorf("pv=%d clientTime=%d want 0", pv, got)
+		}
+		if got := binary.LittleEndian.Uint32(pkt[18:22]); got != 0 {
+			t.Errorf("pv=%d tick=%d want 0", pv, got)
+		}
+		if pkt[22] != sex {
+			t.Errorf("pv=%d Sex=%d want %d", pv, pkt[22], sex)
+		}
 	}
 }
 

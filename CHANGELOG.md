@@ -5,6 +5,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.6.3] — 2026-04-11
+
+### Fixed
+
+- **Map login disconnected immediately on RE `[20211103, 20211118]` and MAIN `>= 20220330`** —
+  `fsmEncodeMapLogin` always sent a 19-byte `0x0436` packet regardless of packetver.
+  For `PACKETVER_RE_NUM >= 20211103` or `PACKETVER_MAIN_NUM >= 20220330`, rAthena registers
+  `0x0436` at 23 bytes (`sex` at offset 22, extra 4-byte `tick` field at offset 18).
+  `clif_parse_WantToConnection_sub` (`clif.cpp:10625`) performs a strict length check and
+  calls `set_eof(fd)` on mismatch, disconnecting every bot immediately on map entry.
+  Both `fsmEncodeMapLogin` (`pkg/session/fsm.go`) and `EncodeMapLogin` (`pkg/encode/map_login.go`)
+  now emit 23 bytes for the affected packetver windows and 19 bytes otherwise.
+  Source: `clif_shuffle.hpp:4744-4747`, GCC-verified at all boundary points.
+
+---
+
 ## [v0.6.2] — 2026-04-07
 
 ### Fixed

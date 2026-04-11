@@ -1572,8 +1572,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeMapLogin(r, pv)
-			return b[:], nil
+			return EncodeMapLogin(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionMarketPurchase,

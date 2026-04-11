@@ -756,11 +756,9 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		mapSess.enableObfuscation(k0, k1, k2)
 	}
 
-	// Send 0x0436 CZ_ENTER
-	// struct: int16 + uint32 AID + uint32 CID + uint32 login_id1 + uint32 clientTick + uint8 sex
-	// Source: clif.cpp:10641 CZ_ENTER2
-	enterArr := fsmEncodeMapLogin(f.accountID, f.charID, f.sessionID1, f.sex)
-	enterPkt := enterArr[:]
+	// Send 0x0436 CZ_ENTER / CZ_ENTER2
+	// Source: clif_shuffle.hpp > 20180307 block; length depends on PACKETVER_RE_NUM >= 20211103.
+	enterPkt := fsmEncodeMapLogin(f.accountID, f.charID, f.sessionID1, f.sex, f.server.Packetver)
 	fsmEncodePacketID(mapSess, enterPkt)
 	if err := writeDeadline(conn, enterPkt, f.stepTimeout()); err != nil {
 		return fmt.Errorf("fsm: send map enter: %w", err)
@@ -1014,17 +1012,52 @@ func fsmEncodeRequestCharacterPage() [2]byte {
 	return p
 }
 
-// fsmEncodeMapLogin encodes 0x0436 CZ_ENTER2 (19 bytes).
-// Source: clif.cpp:10641; GCC-verified = 19 bytes.
-func fsmEncodeMapLogin(aid, gid, authCode uint32, sex uint8) [19]byte {
-	var p [19]byte
+// fsmEncodeMapLogin encodes 0x0436 CZ_ENTER / CZ_ENTER2.
+//
+// The wire length depends on packetver:
+//
+//   - 19 bytes (sex at offset 18) in all other cases:
+//     id(2) + AID(4) + GID(4) + AuthCode(4) + clientTime(4) + sex(1)
+//     Source: clif_shuffle.hpp:4747
+//     parseable_packet( 0x0436, 19, clif_parse_WantToConnection, 2, 6, 10, 14, 18 )
+//
+//   - 23 bytes (sex at offset 22) when:
+//     PACKETVER_RE_NUM >= 20211103  → packetver in [20211103, 20211118]
+//     PACKETVER_MAIN_NUM >= 20220330 → packetver >= 20220330 (outside RE window)
+//     id(2) + AID(4) + GID(4) + AuthCode(4) + clientTime(4) + tick(4) + sex(1)
+//     Source: clif_shuffle.hpp:4744-4745
+//     #if PACKETVER_RE_NUM >= 20211103 || PACKETVER_MAIN_NUM >= 20220330
+//     parseable_packet( 0x0436, 23, clif_parse_WantToConnection, 2, 6, 10, 14, 22 )
+//
+// rAthena config/packets.hpp line 22: PACKETVER_RE is defined (→ PACKETVER_RE_NUM=PACKETVER) when
+// (PACKETVER > 20151104 && PACKETVER < 20180704) || (PACKETVER >= 20200902 && PACKETVER <= 20211118).
+// For PACKETVER outside that range, PACKETVER_MAIN_NUM=PACKETVER.
+// GCC-verified boundaries: 20211103→23B, 20211118→23B, 20211119→19B, 20220329→19B, 20220330→23B.
+func fsmEncodeMapLogin(aid, gid, authCode uint32, sex uint8, packetver uint32) []byte {
+	// 23-byte variant: PACKETVER_RE_NUM >= 20211103 || PACKETVER_MAIN_NUM >= 20220330
+	// Source: clif_shuffle.hpp:4744-4745
+	if (packetver >= 20211103 && packetver <= 20211118) || packetver >= 20220330 {
+		p := make([]byte, 23)
+		p[0] = 0x36
+		p[1] = 0x04
+		binary.LittleEndian.PutUint32(p[2:], aid)       // rAthena: AID        (pos[0]=2)
+		binary.LittleEndian.PutUint32(p[6:], gid)       // rAthena: GID        (pos[1]=6)
+		binary.LittleEndian.PutUint32(p[10:], authCode) // rAthena: AuthCode   (pos[2]=10)
+		// p[14:18] clientTime = 0                       // rAthena: clientTick (pos[3]=14)
+		// p[18:22] tick = 0                             // extra field
+		p[22] = sex // rAthena: sex        (pos[4]=22)
+		return p
+	}
+	// 19-byte variant: default
+	// Source: clif_shuffle.hpp:4747
+	p := make([]byte, 19)
 	p[0] = 0x36
 	p[1] = 0x04
-	binary.LittleEndian.PutUint32(p[2:], aid)       // rAthena: AID
-	binary.LittleEndian.PutUint32(p[6:], gid)       // rAthena: GID
-	binary.LittleEndian.PutUint32(p[10:], authCode) // rAthena: AuthCode (login_id1)
-	// p[14:18] clientTime = 0
-	p[18] = sex // rAthena: sex
+	binary.LittleEndian.PutUint32(p[2:], aid)       // rAthena: AID        (pos[0]=2)
+	binary.LittleEndian.PutUint32(p[6:], gid)       // rAthena: GID        (pos[1]=6)
+	binary.LittleEndian.PutUint32(p[10:], authCode) // rAthena: AuthCode   (pos[2]=10)
+	// p[14:18] clientTime = 0                       // rAthena: clientTick (pos[3]=14)
+	p[18] = sex // rAthena: sex        (pos[4]=18)
 	return p
 }
 
