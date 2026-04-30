@@ -20,6 +20,7 @@ import (
 //   ca_login_pcbang
 //   ca_req_hash
 //   ca_sso_login_req
+//   cancel_lockon
 //   catch_pet
 //   change_cart
 //   char_create

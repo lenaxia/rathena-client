@@ -658,9 +658,25 @@ mappings:
           rathena_type: char[]
           openkore_name: message
           semantic: 'Null-terminated guild chat message, format: name : text'
+    - packet_id: "0x0118"
+      direction: send
+      rathena_struct: SYNTH_CZ_CANCEL_LOCKON
+      openkore_name: stopattack
+      semantic_category: combat
+      description: Stop attacking / cancel target lock-on (CZ_CANCEL_LOCKON). Sent when combat ends (target dies, target switches, attack give-up). 2-byte header-only packet. Server handler clif_parse_StopAttack calls unit_stop_attack(sd) which clears ud->target, preventing stale target references in the attack timer callback.
+      confidence: 90
+      validated_by: clif_packetdb.hpp:115 parseable_packet(0x0118,2,clif_parse_StopAttack,0); clif.cpp:12577
+      validated_date: "2026-04-30"
+      fields:
+        - position: 0
+          rathena_name: PacketType
+          rathena_type: int16
+          openkore_name: PacketType
+          semantic: Packet ID header (0x0118)
+          omit_from_openkore: true
 metadata:
-    total_packets: 30
-    last_updated: "2026-03-23"
+    total_packets: 31
+    last_updated: "2026-04-30"
     maintainer: ""
     source_references:
         rathena_version: ""
@@ -1235,6 +1251,18 @@ semantic_actions:
                 - null
                 - null
               struct_name: PACKET_CA_SSO_LOGIN_REQ
+              field_mapping: {}
+    cancel_lockon:
+        name: cancel_lockon
+        description: Stop attacking / cancel target lock-on. Sent when combat ends (target dies, target switches, attack give-up). Server handler unit_stop_attack clears ud->target and ud.state.attack_continue, preventing stale target references in subsequent unit_attacktimer callbacks. Without this, rAthena can SIGSEGV when the attack timer fires with a target that was just removed from map (map_id2bl returns null). Matches OpenKore sendAttackStop (src/Network/Send/kRO/Sakexe_0.pm:494).
+        openkore_name: sendAttackStop
+        canonical_params: []
+        implementations:
+            - packet_id: "0x0118"
+              packetver_range:
+                - null
+                - null
+              struct_name: SYNTH_CZ_CANCEL_LOCKON
               field_mapping: {}
     cast_cancelled:
         name: ""

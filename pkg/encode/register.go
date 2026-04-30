@@ -416,6 +416,16 @@ func init() {
 			return EncodeCaSsoLoginReq(r, pv), nil
 		},
 	)
+	session.RegisterSendEncoder(session.ActionCancelLockon,
+		func(req interface{}, pv uint32) ([]byte, error) {
+			r, ok := req.(send.CancelLockon)
+			if !ok {
+				return nil, session.ErrWrongSendType{}
+			}
+			b := EncodeCancelLockon(r, pv)
+			return b[:], nil
+		},
+	)
 	session.RegisterSendEncoder(session.ActionCatchPet,
 		func(req interface{}, pv uint32) ([]byte, error) {
 			r, ok := req.(send.CatchPet)

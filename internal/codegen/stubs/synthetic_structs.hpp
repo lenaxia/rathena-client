@@ -43,6 +43,17 @@ struct SYNTH_CZ_NOTIFY_ACTORINIT {
     int16 PacketType;
 } __attribute__((packed));
 
+// 0x0118 CZ_CANCEL_LOCKON — Stop attacking / cancel target lock-on
+// parseable_packet(0x0118, 2, clif_parse_StopAttack, 0)
+// Source: clif_packetdb.hpp:115
+// Server handler (clif.cpp:12577): unit_stop_attack(sd) + sd->ud.state.attack_continue = 0
+// No C struct in rAthena (no payload — the packet is 2 bytes of header and nothing else).
+// Stub present so codegen emits ActionCancelLockon constant and encoder registration.
+// Length: 2
+struct SYNTH_CZ_CANCEL_LOCKON {
+    int16 PacketType;
+} __attribute__((packed));
+
 // 0x0096 CZ_WISPER — Send a private message (whisper) to another player
 // parseable_packet(0x0096, -1, clif_parse_WisMessage, 2, 4, 28)
 // Variable-length: [packetType:2][packetLength:2][target:24][message:varlen+NUL]
