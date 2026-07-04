@@ -436,6 +436,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionSkillCast: {
 		{id: 0x07FB, fn: func(d []byte, pv uint32) interface{} { return decode.SkillCast_0x07FB(d, pv) }},
+		{id: 0x0B1A, fn: func(d []byte, pv uint32) interface{} { return decode.SkillCast_0x0B1A(d, pv) }},
 	},
 	ActionSkillDelete: {
 		{id: 0x0441, fn: func(d []byte, pv uint32) interface{} { return decode.SkillDelete_0x0441(d, pv) }},
