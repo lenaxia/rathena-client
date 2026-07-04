@@ -92,7 +92,7 @@ jobs:
             exit 0
           fi
           if gh api "repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments" \
-               --paginate -q '.[].body' | grep -qF "$MARKER"; then
+               --paginate -q '.[].body' | grep -qE "^${MARKER}"; then
             echo "Command reference already present in thread #${ISSUE_NUMBER}; skipping."
             exit 0
           fi
