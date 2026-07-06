@@ -305,6 +305,10 @@ PASS
 ok      github.com/lenaxia/rathena-client/pkg/encode    0.005s
 ```
 
+> **Note**: A later iteration added `TestEncodeRepairItem_NarrowingMatchesRathenaTruncation`
+> (6 subtests) in response to AI review feedback — see "v0.6.8 Shipped Lifecycle"
+> at the end of this log. Final count: 11 tests + 3 benchmarks.
+
 ## Benchmark
 
 ```
@@ -463,7 +467,10 @@ low-level escape hatch.
 | `pkg/send/repair_item.go` | Reimplemented as manually-maintained. New field types: `ItemId uint32`, `Card [4]uint32`, added `Grade uint8`. |
 | `pkg/encode/repair_item.go` | Reimplemented as manually-maintained. Three-way PACKETVER branch; returns `[]byte` of 15/25/26 bytes. |
 | `pkg/encode/register.go` | Wrapper updated — `EncodeRepairItem` now returns `[]byte` directly (no array slicing). |
-| `pkg/encode/repair_item_test.go` | NEW — 10 tests + 3 benchmarks, golden bytes hand-synthesized from GCC-verified rAthena struct layouts. |
+| `pkg/encode/repair_item_test.go` | NEW — 11 tests + 3 benchmarks, golden bytes hand-synthesized from GCC-verified rAthena struct layouts. (10 initial; +1 from review iteration.) |
+| `.github/workflows/ci.yml` | Drive-by: added `BattleChat`, `PartyChat`, `Whisper`, `RepairItem` to the 0-allocs benchmark allowlist. CI had been failing on `main` since 2026-07-04 because three legitimate variable-length encoders weren't allowlisted. |
+| `CHANGELOG.md` | Added `[v0.6.8]` entry with breaking-change callout for `send.RepairItem` field types. |
+| `README-LLM.md` | Updated "Last Updated" stamp to reference worklog 0086 / issue #7. |
 
 No production-code outside `pkg/encode` and `pkg/send` was modified.
 `send.RepairItem` is not referenced by any other production code in this
@@ -482,3 +489,96 @@ not used by goKore's Go code yet (verified via grep in `gokore/`).
 - `rathena/src/map/clif.cpp:13265-13287` (clif_parse_RepairItem dispatcher)
 - Empirical C-compiler sizeof/offsetof verification of all three wire layouts
 - GCC preprocessor output at 7 PACKETVERs spanning all three regimes
+
+---
+
+## v0.6.8 Shipped Lifecycle
+
+This section documents events after the initial fix write-up above, up to and
+including the v0.6.8 release. Added as an addendum so the original TDD/GCC
+narrative stays intact.
+
+### Drive-by: CI benchmark allowlist fix
+
+While preparing the PR, I discovered CI had been **failing on every `main` push
+since 2026-07-04** (4 commits, 2 days). Root cause: the 0-allocs/op benchmark
+check in `.github/workflows/ci.yml` had an allowlist that predated several
+variable-length encoders. The allowlist covered `GuildChat`, `NpcTalkText`,
+`ShopBuy`, `ShopSell`, `PublicChat` but was missing:
+
+- `BenchmarkEncodeBattleChat` — `EncodeBattleChat` returns `[]byte`, 1 alloc/op
+- `BenchmarkEncodePartyChat` — `EncodePartyChat` returns `[]byte`, 1 alloc/op
+- `BenchmarkEncodeWhisper` — `EncodeWhisper` returns `[]byte`, 1 alloc/op
+
+All three legitimately allocate 1/op: Go's escape analysis cannot stack-allocate
+the returned slice when the length depends on runtime input (text length). This
+is the same pattern documented in v0.5.13 / v0.5.14 of the CHANGELOG.
+
+Reproduced locally with the exact CI grep before fixing:
+
+```
+$ go test -bench=. -benchmem ./pkg/... | grep -P "\s[1-9]\d* allocs/op" | \
+    grep -vP "<old allowlist>"
+BenchmarkEncodeWhisper-8    ...    48 B/op    1 allocs/op   ← unallowlisted
+BenchmarkEncodeBattleChat-8 ...    24 B/op    1 allocs/op   ← unallowlisted
+BenchmarkEncodePartyChat-8  ...    24 B/op    1 allocs/op   ← unallowlisted
+```
+
+Fix: extended the allowlist regex in `ci.yml` to cover
+`(BattleChat|PartyChat|Whisper|RepairItem)` and clarified the comment to make
+the allowlist a forcing function (new variable-length encoder benchmarks must
+be added here or CI fails loudly — desired behavior). Without this fix, the
+PR's own CI would have failed on the new `BenchmarkEncodeRepairItem_*` tests.
+
+Verified post-fix by running the exact CI grep locally: zero unexpected
+non-zero-alloc lines. CI `Test` check passed on the PR after this fix.
+
+### PR #8 — review and iteration
+
+- **PR opened**: `fix/issue-7-encode-repair-item-packetver` → `main`, with
+  comprehensive body citing rAthena file:line for every claim and the boundary
+  reconciliation reasoning.
+- **CI `Test` check**: passed first try (build, test, race, 0-goroutine
+  invariant, benchmark allowlist with the drive-by fix).
+- **AI PR review #1** (OpenCode workflow `.github/workflows/pr-review.yml`,
+  run 28770981093, ~11 min): independently cloned `rathena/rathena`, traced
+  every byte write against the actual C structs, **verdict APPROVE**.
+  - One non-blocking suggestion: add `TestEncodeRepairItem_NarrowingMatchesRathenaTruncation`
+    to confirm uint32→uint16 narrowing matches C's `uint32_t→uint16_t` truncation
+    for boundary values like `0xFFFF0000` and `0x0000FFFF`.
+  - One out-of-scope pre-existing note: `pkg/send` missing package-level doc
+    comment (Rule 11). Reviewer explicitly said "not a blocker for this fix,
+    worth a follow-up cleanup PR" — deferred.
+- **Iteration (commit 2)**: added the suggested test (6 subtests covering
+  `0x0000FFFF`, `0xFFFF0000`, `0xDEADBEEF`, `0x12345678`, `0x00000000`,
+  `0xFFFF0001` across both `itemId` and `card[0]` truncation paths). All pass.
+- **AI PR review #2** (run 28771516925): re-verified, **verdict APPROVE**
+  again, noting the iteration was "good response to the prior review's
+  non-blocking suggestion" and that the narrowing truncation was now
+  "well-covered after commit 2".
+- **Merge state**: `CLEAN` (both checks SUCCESS, mergeable).
+- **Merged** via squash merge as `659f7f5` on 2026-07-06T06:22:28Z.
+- **Issue #7 auto-closed** as COMPLETED via the `Fixes #7` trailer in the
+  squash-merge commit body.
+
+### Release v0.6.8
+
+- Annotated tag `v0.6.8` created on merge commit `659f7f5` and pushed.
+- Push triggered `.github/workflows/release.yml` (run 28772199573): ran
+  build / test / race detector, then created the GitHub release via
+  `softprops/action-gh-release@v2`.
+- Release published 2026-07-06T06:25:31Z at
+  https://github.com/lenaxia/rathena-client/releases/tag/v0.6.8
+  (not draft, not prerelease).
+
+### Outcome
+
+| Item | State |
+|---|---|
+| Issue #7 | CLOSED (COMPLETED) |
+| PR #8 | MERGED (`659f7f5`) |
+| Release v0.6.8 | PUBLISHED |
+| CI on `main` | Fixed (was failing since 2026-07-04) |
+| Tests | 11 repair_item tests + 3 benchmarks, all pass |
+| Architecture invariants | All hold (0 goroutines in `pkg/`, 0 external deps, no reflection in encode path) |
+| Known follow-ups (non-blocking) | (1) `semantics/mappings.yaml` cleanup for `repair_item` via MCP; (2) codegen Part 5 cross-check pass (README line 534); (3) `pkg/send` package doc comment (reviewer note); (4) CHANGELOG gap v0.6.5–v0.6.7 (reviewer note) |
