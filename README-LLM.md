@@ -1213,7 +1213,7 @@ NEXT=$(printf "%04d" $(($(ls -1 [0-9][0-9][0-9][0-9]_*.md 2>/dev/null | sed 's/_
 
 ---
 
-**Last Updated**: 2026-03-20 (Phases 0–8 complete; 65 work logs; goKore integration complete; feature parity achieved)
+**Last Updated**: 2026-07-06 (Phases 0–8 complete; 87 work logs; goKore integration complete; feature parity achieved; issue #7 EncodeRepairItem PACKETVER-conditional layout fixed — worklog 0086)
 **Design Authority**: `docs/DESIGN/HLD.md` (Draft v9)
 **Ground Truth**: GCC preprocessor output against `~/personal/rathena/src/`
 **Packet Cross-Reference**: `semantics/mappings.yaml` via `gokore-semantics` MCP (306 known errors — verify against GCC before trusting)

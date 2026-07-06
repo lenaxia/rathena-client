@@ -42,8 +42,12 @@ jobs:
           # Only fixed-size packet encode/decode benchmarks must be 0 allocs.
           # Variable-length encoders ([]byte return), trace callbacks, and
           # inventory list decoders legitimately allocate — exclude them.
+          # The allowlist below covers every current variable-length encoder
+          # that has a benchmark. When adding a new variable-length encoder
+          # benchmark, add its name here too (or the check will fail loudly,
+          # which is the desired forcing function).
           if grep -P "\s[1-9]\d* allocs/op" bench.txt | grep -vP \
-            "BenchmarkDecode(Normal|Equip)Items|BenchmarkEncode(GuildChat|NpcTalkText|ShopBuy|ShopSell|PublicChat)|BenchmarkRegisterAndFeed|BenchmarkFeed_With(TraceFunc|NilTrace)|BenchmarkSend_With(TraceFunc|NilTrace)"; then
+            "BenchmarkDecode(Normal|Equip)Items|BenchmarkEncode(BattleChat|PartyChat|Whisper|RepairItem|GuildChat|NpcTalkText|ShopBuy|ShopSell|PublicChat)|BenchmarkRegisterAndFeed|BenchmarkFeed_With(TraceFunc|NilTrace)|BenchmarkSend_With(TraceFunc|NilTrace)"; then
             echo "FAIL: unexpected non-zero allocs found in benchmarks"
             exit 1
           fi
