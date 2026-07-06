@@ -8,7 +8,7 @@ Rules:
 3. Follow TDD: write tests FIRST (Rule 1). Run `go build ./...`, `go test ./...`, `go test -race ./...`, `grep -r "^\s*go " pkg/` (must be empty), and `go test -bench=. -benchmem ./pkg/...` — zero failures required.
 4. No `interface{}`, `any`, or reflection in any decode/encode path. Public API stays packet-ID agnostic (no `uint16` packet ID in exported signatures). (Rule 8)
 5. Never add a goroutine in `pkg/` (Rule 3) or an external dependency to `go.mod` (Rule 5).
-6. rAthena is the ONLY source of truth for packet structure (Rule 6). Access the semantic DB via the `gokore-semantics` MCP server only — never grep or edit `semantics/mappings.yaml` directly — and verify against rAthena via the GCC preprocessor before trusting it (Rule 9).
+6. rAthena is the ONLY source of truth for packet structure (Rule 6). There is no pre-existing rAthena checkout in this environment — if the issue touches ANY packet struct/field/size/PACKETVER, clone the authority first: `git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena`, then cross-reference field names, C types, order, sizes, and `#if PACKETVER` conditionals against `/tmp/rathena/src/map/packets_struct.hpp` (primary), `packets.hpp`, and `common/packets.hpp`. Access the semantic DB via the `gokore-semantics` MCP server only — never grep or edit `semantics/mappings.yaml` directly (Rule 9). If rathena-client/DB/intuition disagrees with rAthena source, rAthena wins.
 7. Never perform destructive git operations (`git checkout .`, `git reset --hard`, `git clean -fd`). (Rule 2)
 8. If the request is ambiguous, state assumptions with a confidence level and ask for clarification rather than guessing (Rule 10).
 9. Create a work log in `docs/WORKLOG/` when done (Rule 0).

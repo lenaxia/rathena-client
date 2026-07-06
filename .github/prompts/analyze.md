@@ -9,6 +9,7 @@ Rules:
 4. If you find bugs or design flaws, describe them precisely with reproduction steps or code references.
 5. Do not create branches, PRs, or make any file changes.
 6. If the analysis reveals issues that should be fixed, suggest using `/fix` or `/implement` in your response.
+7. For packet-structure analysis, clone rAthena and ground every claim in source: `git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena`, then cite specific structs in `/tmp/rathena/src/map/packets_struct.hpp` (primary), `packets.hpp`, or `common/packets.hpp`. Never analyze packet behaviour from memory — read the actual rAthena source (Rule 12).
 
 Output format:
 ## Analysis

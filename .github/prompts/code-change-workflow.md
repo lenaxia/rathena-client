@@ -2,7 +2,11 @@
 
 Every code change MUST follow this review-iterate-approve cycle without exception:
 
-1. **Read README-LLM.md** — all 13 critical rules (Rules 0–12) apply. Read `docs/DESIGN/HLD.md` for the relevant section and the existing generated decode/encode code in `pkg/` before implementing. Verify any packet-structure claim against rAthena via the GCC preprocessor (`validation/`) before coding (Rules 6, 9).
+1. **Read README-LLM.md + clone rAthena** — all 13 critical rules (Rules 0–12) apply. Read `docs/DESIGN/HLD.md` for the relevant section and the existing generated decode/encode code in `pkg/` before implementing. If the change touches ANY packet struct, field, size, or PACKETVER branch, clone the authority and cross-reference before coding (Rules 6, 9, 12):
+   ```bash
+   git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena
+   ```
+   Cross-reference field names, C types, order, sizes, and `#if PACKETVER` conditionals against `/tmp/rathena/src/map/packets_struct.hpp` (primary), `packets.hpp`, and `common/packets.hpp`; confirm `clif.cpp` send/receive sites. If anything in rathena-client disagrees with rAthena source, **rAthena wins** — never ship an incompatible change.
 2. **Branch:** Create a feature branch (`feat/`, `fix/`, `test/`, `security/`, or `docs/` prefix). Never commit to main.
 3. **TDD:** Write tests first. Run them — they must fail. Write minimal code to pass. Run them — they must pass. Refactor.
 4. **PR:** Open a pull request with a clear description. Reference the triggering issue or comment.

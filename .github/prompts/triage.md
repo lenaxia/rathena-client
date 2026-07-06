@@ -8,6 +8,7 @@ Rules:
 3. Analyze the issue thoroughly before posting.
 4. Do not create branches or PRs unless the fix is obvious, non-controversial, and you are confident in the solution.
 5. If the issue is ambiguous, state assumptions with a confidence level and ask for clarification rather than guessing (Rule 10).
+6. If the issue touches packet structure, note in the assessment that any fix MUST be cross-referenced against rAthena (`https://github.com/rathena/rathena`; primary header `src/map/packets_struct.hpp`) before implementation — flag this so the implementer knows compatibility verification is required.
 
 Output format:
 ## Triage Assessment

@@ -18,6 +18,35 @@ Key directories:
 
 Architecture is a single synchronous transformation layer: **caller → session (framer + FSM + dispatcher) → generated decode/encode**. The library owns NO goroutines and NO concurrency — `session.Feed()` is synchronous and the caller owns threading. The public API is packet-ID agnostic: callers register handlers and send by **semantic action** (`session.RegisterSemanticHandler`, `session.Send(ms, conn, session.ActionXxx, send.Xxx{...})`), never by `uint16` packet ID. Handlers/decoders NEVER touch raw bytes directly — generated decode functions do the byte reads. rAthena is the ONLY source of truth for packet structure, field names, and field types; the semantic DB is a starting point that must be verified against rAthena via the GCC preprocessor before trusting it.
 
+---
+
+## Cross-referencing rAthena (MANDATORY for any packet-structure work)
+
+rAthena (`https://github.com/rathena/rathena`) is the ONLY source of truth for packet structure, field names, field types, field order, and sizes (README-LLM.md Rule 6). This workflow environment has **no pre-existing rAthena checkout**, so for any task that touches a packet struct, field, size, or PACKETVER branch you MUST clone it first:
+
+```bash
+git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena
+```
+
+Then cross-reference every field/name/type/size/offset claim against the authoritative headers (in local dev these live at `~/personal/rathena`, i.e. `RATHENA_ROOT`):
+
+- `/tmp/rathena/src/map/packets_struct.hpp` — packet struct definitions (**PRIMARY**)
+- `/tmp/rathena/src/map/packets.hpp` — packet ID / length declarations
+- `/tmp/rathena/src/common/packets.hpp` — shared packet types
+- `/tmp/rathena/src/map/clif.cpp` — packet send/receive sites (confirms real field usage)
+
+For each struct, read the source and confirm the rathena-client decode/encode matches rAthena exactly: field names (e.g. `AID`, `GID`, `speed`), C types (`uint16`, `int32`, `uint8[3]`), order, and total size. Trace `#if PACKETVER` / `#if PACKETVER_MAIN_NUM` conditionals manually to confirm the layout for the target PACKETVER. If the GCC preprocessor is available, use it for ground truth:
+
+```bash
+g++ -E -P -DPACKETVER=YYYYMMDD -DPACKETVER_MAIN_NUM=YYYYMMDD \
+    -I /tmp/rathena/src -I /tmp/rathena/src/map -I /tmp/rathena/src/common \
+    /tmp/rathena/src/map/packets_struct.hpp 2>/dev/null | grep -A 30 "struct <name> "
+```
+
+**Compatibility with rAthena is the whole point.** If rathena-client code, the semantic DB, OpenKore, or your own intuition disagrees with rAthena source, **rAthena wins** — never ship a packet change that is not backed by a cited rAthena file reference (Rule 12). Do not invent, assume, or recall packet structure from memory.
+
+---
+
 **Before doing anything else: read README-LLM.md at the repo root.** It contains the 13 critical rules (Rules 0–12: mandatory work logs, TDD, no destructive git ops, zero goroutines in `pkg/`, zero heap allocations in the decode hot path, no external runtime dependencies, rAthena as source of truth, HLD/semantic-DB authority, type safety with no `interface{}`/reflection in the hot path, semantic DB via MCP only, ask before deciding, no comments in code, no unverified claims), the full architecture overview, and the development workflow. Every response must be consistent with it.
 
 ---

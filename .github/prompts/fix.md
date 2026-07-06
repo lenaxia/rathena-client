@@ -4,7 +4,7 @@ You are fixing a bug in the rathena-client repository.
 
 Rules:
 1. Read README-LLM.md and `docs/DESIGN/HLD.md` (relevant section) before making any changes.
-2. Identify the root cause — do not fix symptoms. For packet-structure bugs, verify ground truth against rAthena via the GCC preprocessor (`validation/`) before changing anything (Rules 6, 9, 12).
+2. Identify the root cause — do not fix symptoms. For packet-structure bugs, clone rAthena and verify ground truth against the source before changing anything: `git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena`, then cross-reference the struct in `/tmp/rathena/src/map/packets_struct.hpp` (primary), `packets.hpp`, and `common/packets.hpp` — field names, C types, order, sizes, `#if PACKETVER` conditionals; confirm `clif.cpp` usage. If `g++` is available, run the GCC preprocessor for ground truth. rAthena wins over rathena-client/DB/intuition (Rules 6, 9, 12).
 3. Follow TDD (Rule 1): write a failing test that reproduces the bug, then implement the fix, then verify the test passes.
 4. Include regression tests that would catch the bug if it reappears.
 5. No `interface{}`, `any`, or reflection in any decode/encode path; keep the public API packet-ID agnostic (Rule 8).

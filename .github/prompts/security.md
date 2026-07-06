@@ -12,6 +12,7 @@ Rules:
    - **Concurrency:** Are there goroutines spawned inside `pkg/`? That is forbidden (Rule 3) and at 1000 consumers multiplies 1000×. The library must remain a pure synchronous transformation.
    - **Credentials:** Do login/char/map credentials flow through the library? Verify usernames/passwords are never logged unredacted.
    - **Semantic DB / rAthena:** Is any code grepping or editing `semantics/mappings.yaml` directly instead of using the `gokore-semantics` MCP server? That bypasses validation. (Rule 9)
+   - **Packet length authority:** Are decode length / field-size assumptions cross-referenced against rAthena? Clone `https://github.com/rathena/rathena` (`git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena`) and check the declared length in `/tmp/rathena/src/map/packets.hpp` and the struct in `/tmp/rathena/src/map/packets_struct.hpp`. A decoder that trusts a different length than rAthena declares is an out-of-bounds read waiting to happen.
    - **Secrets:** Are there hardcoded secrets, API keys, or credentials in the diff?
    - **External dependencies:** Has a `require` entry been added to `go.mod`? That is forbidden (Rule 5) and expands the attack/dependency surface.
 2. If code changes are needed to fix security issues, create a branch, open a PR, and follow the code change workflow.

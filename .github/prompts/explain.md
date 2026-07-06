@@ -8,3 +8,4 @@ Rules:
 3. Be clear and specific — reference files, functions, types, packet IDs, and data flows. Do NOT reference line numbers (they drift). For any packet-structure claim, cite the rAthena source (Rule 12).
 4. If the explanation reveals issues, note them but do not fix them. Suggest `/fix` or `/analyze` for follow-up.
 5. Do not create branches, PRs, or make any file changes.
+6. For any packet-structure explanation, clone rAthena and ground field/type/order claims in source: `git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena`, then reference the actual struct in `/tmp/rathena/src/map/packets_struct.hpp` (primary), `packets.hpp`, or `common/packets.hpp` — never describe packet layout from memory (Rule 12).

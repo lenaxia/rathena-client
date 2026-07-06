@@ -53,7 +53,13 @@ No `go` statement may appear anywhere in any `pkg/` file. Ever. The library owns
 ### 6. rAthena is the Only Source of Truth — README-LLM.md Rules 6, 9
 
 - rAthena source (`packets_struct.hpp`, `packets.hpp`, `common/packets.hpp`) is the PRIMARY and ONLY authority for packet structure, field names, field types, field order, and sizes. Use rAthena field names (e.g. `AID`, `GID`, `speed`) on wire structs.
-- The semantic DB (`semantics/mappings.yaml`) is ONLY a starting point. Access it via the `gokore-semantics` MCP server ONLY — NEVER grep or edit `mappings.yaml` directly. The DB has known errors; verify every claim against rAthena via the GCC preprocessor before trusting it.
+- The semantic DB (`semantics/mappings.yaml`) is ONLY a starting point. Access it via the `gokore-semantics` MCP server ONLY — NEVER grep or edit `mappings.yaml` directly. The DB has known errors; verify every claim against rAthena source before trusting it.
+
+**Clone rAthena before any packet-structure work.** This workflow has no pre-existing rAthena checkout:
+```bash
+git clone --depth 1 https://github.com/rathena/rathena.git /tmp/rathena
+```
+Cross-reference field names, C types, order, sizes, and `#if PACKETVER` conditionals against `/tmp/rathena/src/map/packets_struct.hpp` (primary), `packets.hpp`, and `common/packets.hpp`; confirm `clif.cpp` send/receive sites for real field usage. If the GCC preprocessor is available, run it (`g++ -E -P -DPACKETVER=… -I /tmp/rathena/src …`) to resolve conditionals to ground truth. **If anything in rathena-client, the DB, OpenKore, or your memory disagrees with rAthena source, rAthena wins.** Never ship a packet change without a cited rAthena file reference (Rule 12) — compatibility with rAthena is non-negotiable.
 
 ### 7. Type Safety in the Hot Path — README-LLM.md Rule 8
 
