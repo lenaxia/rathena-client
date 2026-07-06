@@ -277,6 +277,49 @@ func TestEncodeRepairItem_ItemIdNarrowing(t *testing.T) {
 	}
 }
 
+// TestEncodeRepairItem_NarrowingMatchesRathenaTruncation confirms the
+// uint32→uint16 narrowing on the narrow wire layout matches C's
+// `uint32_t → uint16_t` truncation semantics (low 16 bits retained, high 16
+// bits discarded) for boundary values. rAthena writes EQUIPSLOTINFO.card and
+// REPAIRITEM_INFO1.itemId as `uint16` at pv < 20181121 — a uint32 source
+// value gets truncated the same way a C cast would.
+//
+// Test cases pick values where the high and low 16 bits differ, so a
+// wrong-endian or wrong-mask truncation would be caught.
+func TestEncodeRepairItem_NarrowingMatchesRathenaTruncation(t *testing.T) {
+	cases := []struct {
+		name   string
+		input  uint32
+		wantLo byte // expected low byte of truncated uint16 (LE wire)
+		wantHi byte // expected high byte of truncated uint16 (LE wire)
+	}{
+		{"low bits only", 0x0000FFFF, 0xFF, 0xFF},
+		{"high bits only truncates to zero", 0xFFFF0000, 0x00, 0x00},
+		{"mixed bits keep low half", 0xDEADBEEF, 0xEF, 0xBE},
+		{"mixed bits keep low half 2", 0x12345678, 0x78, 0x56},
+		{"zero", 0x00000000, 0x00, 0x00},
+		{"max uint16 in low half", 0xFFFF0001, 0x01, 0x00},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			// itemId truncation at offset [4..5].
+			req := send.RepairItem{ItemId: tc.input}
+			p := encode.EncodeRepairItem(req, 20180307)
+			if p[4] != tc.wantLo || p[5] != tc.wantHi {
+				t.Errorf("itemId narrow: input=0x%08X got [%02X %02X], want [%02X %02X]",
+					tc.input, p[4], p[5], tc.wantLo, tc.wantHi)
+			}
+			// card[0] truncation at offset [7..8] (same semantics).
+			req = send.RepairItem{Card: [4]uint32{tc.input, 0, 0, 0}}
+			p = encode.EncodeRepairItem(req, 20180307)
+			if p[7] != tc.wantLo || p[8] != tc.wantHi {
+				t.Errorf("card[0] narrow: input=0x%08X got [%02X %02X], want [%02X %02X]",
+					tc.input, p[7], p[8], tc.wantLo, tc.wantHi)
+			}
+		})
+	}
+}
+
 // TestEncodeRepairItem_Boundaries verifies the two critical boundaries:
 //
 //	20181120 → 15 bytes (narrow), 20181121 → 25 bytes (wide)
