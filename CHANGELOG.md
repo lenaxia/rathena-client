@@ -5,6 +5,96 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.6.8] — 2026-07-06
+
+### Fixed
+
+- **`EncodeRepairItem` emitted wrong wire layout at `PACKETVER >= 20181121`** — the
+  encoder was a codegen artifact that discarded `packetver` (`_ = packetver`) and
+  always emitted a fixed `[15]byte` packet with `uint16 itemId` and `uint16[4]` card
+  slot. At production packetvers (`20200401`), rAthena expects `uint32 itemId` and
+  `uint32[4]` card slot (25 bytes for `0x01FD`, or 26 bytes + new packet ID `0x0B66`
+  for `PACKET_CZ_REQ_ITEMREPAIR2`). Sending 15 bytes was rejected by the server (or
+  worse, tripped the anti-exploit guard in `clif_parse_RepairItem`). (GitHub issue #7,
+  worklog 0086)
+
+  The encoder now branches on PACKETVER across three regimes, all verified by GCC
+  preprocessor output and empirical `sizeof`/`offsetof` against the actual rAthena
+  structs:
+
+  | PACKETVER range | Packet ID | Bytes | Layout |
+  |---|---|---|---|
+  | `< 20181121` | `0x01FD` | 15 | narrow: `uint16` itemId, `uint16[4]` card |
+  | `20181121 ≤ pv < 20191224` | `0x01FD` | 25 | wide: `uint32` itemId, `uint32[4]` card |
+  | `≥ 20191224` | `0x0B66` | 26 | REPAIR2: slot before refine, `grade` appended |
+
+  PACKETVER boundary reconciliation: the `clif_packetdb.hpp` registration (the binding
+  contract for which packet IDs the server accepts) gates `0x0B66` at `>= 20191224`,
+  matching the struct definition. The `clif.cpp` dispatcher's `>= 20200916` cast
+  boundary only affects an internal pointer cast and does not affect wire correctness
+  (the server only reads `p->item.index` at offset 2 in both structs).
+
+  Sources: `src/map/packets_struct.hpp:410-416` (EQUIPSLOTINFO),
+  `src/map/packets_struct.hpp:2901-2948` (REPAIRITEM_INFO1/2, PACKET_CZ_REQ_ITEMREPAIR1/2),
+  `src/map/clif_packetdb.hpp:256,1975-1978` (packetdb registrations),
+  `src/map/clif.cpp:13265-13287` (clif_parse_RepairItem dispatcher).
+
+- **CI benchmark allowlist incomplete (pre-existing failure on main)** — the
+  0-allocs/op benchmark check in `.github/workflows/ci.yml` was missing
+  `BenchmarkEncodeBattleChat`, `BenchmarkEncodePartyChat`, and `BenchmarkEncodeWhisper`
+  from its allowlist of legitimately-allocating variable-length encoders. These three
+  encoders return `[]byte` and allocate 1/op on the CI runner (Go's escape analysis
+  cannot keep the slice on the stack when the length depends on runtime input). CI had
+  been failing on every `main` push since 2026-07-04 because of this. Added
+  `BattleChat`, `PartyChat`, `Whisper`, and `RepairItem` (new in this release) to the
+  allowlist and clarified the comment.
+
+### Changed (breaking)
+
+- **`send.RepairItem` struct field types changed** to accommodate all three wire
+  layouts. Update any struct literals:
+
+  ```go
+  // Before
+  type RepairItem struct {
+      Index  int16
+      ItemId uint16
+      Refine uint8
+      Card   []byte
+  }
+
+  // After
+  type RepairItem struct {
+      Index  int16
+      ItemId uint32   // narrowed to uint16 on wire at pv < 20181121
+      Refine uint8
+      Card   [4]uint32 // narrowed to uint16[4] on wire at pv < 20181121
+      Grade  uint8     // REPAIR2 only (pv >= 20191224); ignored earlier
+  }
+  ```
+
+  `Card` is now a typed `[4]uint32` array (was untyped `[]byte`). `Grade` is new
+  (only emitted on the REPAIR2 wire layout). No production code in this repo or
+  goKore references `send.RepairItem` yet, so the blast radius is zero today.
+
+### Tests
+
+- **`pkg/encode/repair_item_test.go`** (new, TDD) — 10 tests + 3 benchmarks covering:
+  - All three wire layouts at boundary packetvers (20180307, 20181120, 20181121,
+    20190000, 20191223, 20191224, 20200401, 20200916)
+  - Hand-synthesized golden bytes for narrow (15B), wide (25B), and REPAIR2 (26B)
+  - REPAIR2 field order (slot before refine, grade appended) — the critical layout
+    difference from REPAIR1
+  - Card and itemId uint32→uint16 truncation on narrow wire
+  - Adjacent-day boundary tests (20181120→20181121, 20191223→20191224)
+  - `index` field survives at offset [2..3] in all three layouts (the only field
+    the server dispatcher reads)
+
+  Benchmarks: 24–33 ns/op, 1 alloc/op (variable-length `[]byte` return — same pattern
+  as `EncodeBattleChat`, `EncodeWhisper`).
+
+---
+
 ## [v0.6.4] — 2026-04-11
 
 ### Fixed

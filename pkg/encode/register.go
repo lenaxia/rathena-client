@@ -1837,8 +1837,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeRepairItem(r, pv)
-			return b[:], nil
+			return EncodeRepairItem(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionRequestBuySellList,
