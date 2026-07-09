@@ -15,7 +15,8 @@
               after map entry" gate never fires, so the bot's first
               `RequestMove` after map entry races with `sd->prev` being set and
               is silently dropped by rAthena's `clif_parse` guard at
-              `src/map/clif.cpp:25773`.
+              `src/map/clif.cpp:25784` (issue #9 cited `25773`; current rAthena
+              master has drifted to `25784`).
 **Reference**: GitHub issue #9 —
   "zc_notify_mapproperty2: missing 0x099B dispatch at PACKETVER >= 20121010
    (currently only 0x01D6 registered)"
@@ -289,8 +290,9 @@ codegen runs don't clobber it.
   emitter; separate function).
 - `rathena/src/map/clif.cpp:10811-10844` — `clif_parse_LoadEndAck` —
   `map_addblock(sd)` then `clif_map_property(sd, ...)`.
-- `rathena/src/map/clif.cpp:25773` — silent-drop rule when
+- `rathena/src/map/clif.cpp:25784` — silent-drop rule when
   `sd->prev == nullptr` (the rule that drops goKore's first `RequestMove`).
+  Issue #9 cited `25773`; current rAthena master has drifted to `25784`.
 - `rathena/src/map/packets.hpp:966-970` — `PACKET_ZC_NOTIFY_MAPPROPERTY2`
   (the `0x01D6` struct; 4 bytes).
 - `rathena/src/map/clif_packetdb.hpp:1600-1645` — `#if PACKETVER >= 20130320`

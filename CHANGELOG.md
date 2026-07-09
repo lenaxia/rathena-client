@@ -51,7 +51,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Sources: `src/map/clif.cpp:6868-6903` (`clif_map_property` — both layouts),
   `src/map/clif.cpp:10811-10844` (`clif_parse_LoadEndAck` — where `map_addblock` and
   the subsequent `clif_map_property` call live),
-  `src/map/clif.cpp:25773` (silent-drop rule when `sd->prev == nullptr`),
+  `src/map/clif.cpp:25784` (silent-drop rule when `sd->prev == nullptr`),
   `src/map/packets.hpp:966-970` (`PACKET_ZC_NOTIFY_MAPPROPERTY2`, the 0x01D6 struct).
 
 ### Changed (breaking)
