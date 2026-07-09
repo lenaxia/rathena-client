@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- **`ActionZcNotifyMapproperty2` never fired at `PACKETVER >= 20121010`** — at modern
+- **`ActionZcNotifyMapproperty2` never fired at production packetvers** — at modern
   packetvers rAthena emits the map-property packet as `0x099B` (`ZC_MAPPROPERTY_R2`,
   8-byte layout: `type` + `flags` bitfield) via `clif_map_property()`, not `0x01D6`
   (`ZC_NOTIFY_MAPPROPERTY2`, 4-byte layout) via `clif_map_type()`. rathena-client's
@@ -19,6 +19,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   handler. Downstream consumers gating on `ActionZcNotifyMapproperty2` (e.g. goKore's
   "server is ready after map entry" signal — `sd->prev` becomes set immediately before
   `clif_map_property` is emitted) never received the event. (GitHub issue #9)
+
+  **Boundary nuance:** the source-level `#if PACKETVER >= 20121010` in
+  `clif.cpp:6873` (which controls which `cmd` rAthena compiles in) is *not* the
+  wire-effective boundary. The packetdb registration
+  (`clif_packetdb.hpp:1600-1645`, `#if PACKETVER >= 20130320`) is what governs
+  when `0x099B` actually appears on the wire. In the `20121010 ≤ pv < 20130320`
+  gap, `clif_map_property()` calls `clif_send(buf, packet_len(0x99b), ...)` but
+  `packet_len` returns 0 — a zero-length no-op. The dispatch entry is therefore
+  dead (but harmless) in the gap. The mapping registers the implementation at
+  `pv >= 20121010` (matching the source-level boundary); the test exercises it
+  at `pv=20200401` (well past the wire-effective boundary).
 
   The mapping now declares both variants with packetver bounds:
 
@@ -59,6 +70,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   issue #9 reproduction — feeding an 8-byte `0x099B` frame at `pv=20200401` fires the
   handler once with `Type=1`/`Flags=0x467` and leaves `UnhandledPackets=0`, and (c) a
   regression guard that `0x01D6` still fires and leaves `Flags=0`.
+- Added `pkg/decode/zc_notify_mapproperty2_test.go` with zero-value edge cases,
+  packetver-agnostic decoder checks, and `BenchmarkZcNotifyMapproperty2_0x099B` /
+  `BenchmarkZcNotifyMapproperty2_0x01D6` verifying 0 allocs/op on the decode hot path
+  (Rule 1). Locally: 0.37 ns/op, 0 allocs/op for `_0x099B`; 0.36 ns/op, 0 allocs/op for
+  `_0x01D6`.
 
 ---
 

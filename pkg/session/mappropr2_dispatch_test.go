@@ -1,19 +1,31 @@
 // Package session — dispatch coverage test for the 0x099B variant of
 // ZC_MAPPROPERTY_R2 (ActionZcNotifyMapproperty2).
 //
-// Reproduces issue #9: at PACKETVER >= 20121010 rAthena emits the map-property
-// packet as 0x099B with an 8-byte layout (type + flags bitfield), not 0x01D6
-// with the 4-byte layout. Before this fix the packet arrived on the wire, was
-// framed correctly (lengths_map.go already registered t[0x099B] = 8 inside the
-// pv >= 20121212 block), but no semantic handler fired because receiveDispatch
+// Reproduces issue #9: at PACKETVER >= 20121010 rAthena's clif_map_property()
+// source code is compiled to emit the map-property packet as 0x099B with an
+// 8-byte layout (type + flags bitfield), not 0x01D6 with the 4-byte layout.
+// Before this fix the packet arrived on the wire at production packetvers,
+// was framed correctly, but no semantic handler fired because receiveDispatch
 // only knew about 0x01D6.
+//
+// PACKETVER boundary note: the dispatch entry is registered at pv >= 20121010
+// (matching the source-level #if in clif.cpp:6873), but the wire-effective
+// boundary — the first PACKETVER at which rAthena actually emits 0x099B on
+// the wire — is pv >= 20130320. This is because clif_packetdb.hpp:1600-1645
+// registers packet(0x099b,8) inside #if PACKETVER >= 20130320; at earlier
+// packetvers (20121010..20130319) clif_map_property() still calls
+// clif_send(buf, packet_len(0x99b), ...) but packet_len returns 0, so the
+// server emits a zero-length no-op send. The dispatch entry is therefore dead
+// (but harmless) in the 20121010..20130319 gap; this test exercises it at
+// pv=20200401, which is well past the wire-effective boundary.
 //
 // After the fix, 0x099B routes to ActionZcNotifyMapproperty2 (alongside
 // 0x01D6) and the handler fires with Type decoded from offset 2 and Flags
 // decoded from offset 4. The 0x01D6 variant still fires and leaves Flags at
 // the zero value (the 4-byte layout has no flags bitfield).
 //
-// rAthena reference: src/map/clif.cpp:6871-6903 (clif_map_property).
+// rAthena reference: src/map/clif.cpp:6871-6903 (clif_map_property),
+// src/map/clif_packetdb.hpp:1600-1645 (0x099b length registration).
 package session
 
 import (
@@ -67,7 +79,8 @@ func TestZcNotifyMapproperty2_0x099B_FiresAt_20200401(t *testing.T) {
 	s := NewMapSession(pv)
 
 	// Prerequisite: the framer must already know 0x099B = 8 at this pv.
-	// This entry comes from clif_packetdb.hpp packet(0x099b,8).
+	// This entry comes from clif_packetdb.hpp packet(0x099b,8) gated at
+	// PACKETVER >= 20130320. At pv=20200401 the entry is present.
 	if got := s.core.lengths[0x099B]; got != 8 {
 		t.Fatalf("prerequisite failed: lengths[0x099B] = %d at pv=%d, want 8 (lengths_map.go gap?)", got, pv)
 	}

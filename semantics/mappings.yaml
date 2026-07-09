@@ -5786,9 +5786,18 @@ semantic_actions:
               struct_name: PACKET_ZC_NOTIFY_MAPPROPERTY2
               field_mapping: {}
             # PACKETVER >= 20121010 — ZC_MAPPROPERTY_R2 (0x099B, 8 bytes).
-            # Emitted by clif_map_property() (rathena src/map/clif.cpp:6871).
-            # Carries the property enum plus a 4-byte flags bitfield (PvP/GvG/Siege...).
-            # No C struct in rAthena — layout lives in SYNTH_ZC_MAPPROPERTY_R2.
+            # Source-level boundary: clif_map_property() compiles to emit 0x099B
+            # at PACKETVER >= 20121010 (rathena src/map/clif.cpp:6873).
+            #
+            # Wire-effective boundary: pv >= 20130320. clif_packetdb.hpp:1600-1645
+            # registers packet(0x099b,8) inside #if PACKETVER >= 20130320; at
+            # 20121010..20130319 clif_send() is called with packet_len=0 (a
+            # zero-length no-op), so 0x099B never appears on the wire in that
+            # gap. The dispatch entry generated from this mapping is dead but
+            # harmless in the gap (no incoming frame to dispatch).
+            #
+            # No C struct in rAthena — clif_map_property builds the packet with
+            # raw WBUFW/WBUFL calls. Layout lives in SYNTH_ZC_MAPPROPERTY_R2.
             # See issue #9.
             - packet_id: "0x099B"
               packetver_range:
