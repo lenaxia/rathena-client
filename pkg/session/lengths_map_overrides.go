@@ -47,4 +47,15 @@ func applyMapLengthOverrides(pv uint32, t *[65536]int16) {
 	if pv >= 20181121 {
 		t[0x0ADD] = 24
 	}
+
+	// 0x099B ZC_MAPPROPERTY_R2 — clif_map_property (clif.cpp:6871-6903).
+	// rAthena sends 0x099B with an 8-byte buffer for PACKETVER >= 20121010
+	// (clif.cpp:6873-6875: cmd + property + flags), but clif_packetdb.hpp registers
+	// packet(0x099b,8) only under #if PACKETVER >= 20130320 (clif_packetdb.hpp:1600,1642).
+	// The generated lengths_map.go copies that guard, so the [20121010, 20130320)
+	// window has lengths[0x099B] = 0 and the framer would treat 0x099B as unknown.
+	// This override closes the rAthena-side packet_db/codegen grouping gap.
+	if pv >= 20121010 && pv < 20130320 {
+		t[0x099B] = 8
+	}
 }

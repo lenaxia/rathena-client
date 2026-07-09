@@ -873,6 +873,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcNotifyMapproperty2: {
 		{id: 0x01D6, fn: func(d []byte, pv uint32) interface{} { return decode.ZcNotifyMapproperty2_0x01D6(d, pv) }},
+		{id: 0x099B, fn: func(d []byte, pv uint32) interface{} { return decode.ZcNotifyMapproperty2_0x099B(d, pv) }},
+		{id: 0x0199, fn: func(d []byte, pv uint32) interface{} { return decode.ZcNotifyMapproperty2_0x0199(d, pv) }},
 	},
 	ActionZcNotifyMemberinfoToGroupm: {
 		{id: 0x0ABD, fn: func(d []byte, pv uint32) interface{} { return decode.ZcNotifyMemberinfoToGroupm_0x0ABD(d, pv) }},
