@@ -12,3 +12,12 @@ func ZcNotifyMapproperty2_0x01D6(data []byte, packetver uint32) events.ZcNotifyM
 	return e
 }
 
+// ZcNotifyMapproperty2_0x099B decodes a 0x099B packet (struct SYNTH_ZC_MAPPROPERTY_R2).
+func ZcNotifyMapproperty2_0x099B(data []byte, packetver uint32) events.ZcNotifyMapproperty2 {
+	var e events.ZcNotifyMapproperty2
+	_ = packetver
+	e.Type = leI16(data, 2)  // rAthena: type (offset 2, size 2)
+	e.Flags = leU32(data, 4)  // rAthena: flags (offset 4, size 4)
+	return e
+}
+

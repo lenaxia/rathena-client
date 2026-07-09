@@ -917,3 +917,25 @@ struct SYNTH_ZC_MAIL_RECEIVE {
     uint32 mailId;       // mail ID
     uint16 fail;         // 0=success, nonzero=failure
 } __attribute__((packed));
+
+// 0x099B ZC_MAPPROPERTY_R2 (map property + flags bitfield, 8 bytes)
+// Source: rAthena src/map/clif.cpp:6871-6903 clif_map_property() (PACKETVER >= 20121010)
+//         clif_packetdb.hpp:1642 packet(0x099b,8) //maptypeproperty2
+// Wire layout (raw WBUFW/WBUFL — no C struct in rAthena):
+//   WBUFW(buf,0) = 0x099B (cmd)
+//   WBUFW(buf,2) = property        (enum map_property: MAPPROPERTY_FREEPVPZONE, etc.)
+//   WBUFL(buf,4) = flags bitfield  (bit0=PARTY bit1=GUILD bit2=SIEGE bit3=USE_SIMPLE_EFFECT
+//                                    bit4=DISABLE_LOCKON bit5=COUNT_PK bit6=NO_PARTY_FORMATION
+//                                    bit7=BATTLEFIELD bit8=DISABLE_COSTUMEITEM
+//                                    bit9=USECART bit10=SUNMOONSTAR_MIRACLE)
+// Note: this packet is a DIFFERENT action from ZC_NOTIFY_MAPPROPERTY2 (0x01D6, 4 bytes),
+// which is emitted by clif_map_type() (clif.cpp:6907) and only carries `type`.
+// OpenKore names 0x099B "map_property3" (ServerType0.pm:589).
+// rathena-client dispatches both under ActionZcNotifyMapproperty2 for downstream
+// consumers that treat any map-property packet as a "map ready" signal — see issue #9.
+// The Flags field is always 0 when decoded from the 0x01D6 variant.
+struct SYNTH_ZC_MAPPROPERTY_R2 {
+    int16  packetType;   // = 0x099B
+    int16  type;         // map_property enum (offset 2, size 2)
+    uint32 flags;        // PvP/GvG/Siege/etc. bitfield (offset 4, size 4)
+} __attribute__((packed));
