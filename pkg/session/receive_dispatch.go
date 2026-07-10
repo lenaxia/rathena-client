@@ -769,6 +769,11 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionZcGuildEmblemImg: {
 		{id: 0x0152, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildEmblemImg_0x0152(d, pv) }},
 	},
+	ActionZcGroupList: {
+		{id: 0x00FB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x00FB(d, pv) }},
+		{id: 0x0A44, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x0A44(d, pv) }},
+		{id: 0x0AE5, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x0AE5(d, pv) }},
+	},
 	ActionZcGuildInfo: {
 		{id: 0x0A84, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildInfo_0x0A84(d, pv) }},
 		{id: 0x01B6, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildInfo_0x01B6(d, pv) }},

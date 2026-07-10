@@ -9,72 +9,60 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- **`cmd/semantics-tool` — MCP server + CLI for editing `semantics/mappings.yaml`**
-  (worklog 0088). Migrates the goKore `gokore-semantics` MCP server into
-  rathena-client and adapts it to the rathena-client `semantic_actions:`
-  schema. Exposes 14 tools (8 read-only, 6 mutating) over JSON-RPC stdio for
-  AI clients, plus a 14-subcommand CLI for humans. Round-trips the YAML
-  byte-identically when no mutations are applied (enforced by
-  `TestProductionMappings_RoundTripByteIdentical`); mutations produce minimal
-  diffs that match the surrounding formatting. This unblocks the README Rule
-  9 "use the MCP server, never edit mappings.yaml directly" workflow, which
-  had been aspirational — every prior mappings.yaml change was a hand-edit.
+- **`ActionZcGroupList` / `ZC_GROUP_LIST` decode (issue #13, worklog 0089)**.
+  The packet a rAthena server sends to a client to deliver the full party
+  roster when the client joins an existing party (rAthena
+  `src/map/party.cpp:676`, `party_member_added` → `clif_party_info`).
+  Without this packet decoded, pre-existing party members remain invisible
+  to the joining client — they do not trigger per-member spawn packets
+  (`ZC_NOTIFY_MEMBERINFO_TO_GROUPM`), they only appear in this roster.
 
-  Read-only tools: `list_actions`, `get_action`, `list_implementations`,
-  `get_implementation`, `search_actions`, `validate`, `stats`, `export`.
-  Mutating tools: `create_action`, `update_action`, `delete_action`,
-  `add_implementation`, `update_implementation`, `delete_implementation`.
+  Three wire IDs cover three PACKETVER-conditional SUB layouts, all
+  dispatched under `ActionZcGroupList`:
 
-- **`internal/semanticsdb/` — editor layer** over `semantics/mappings.yaml`
-  with load/mutate/save and structural validation. Built on `gopkg.in/yaml.v3`
-  using a `yaml.Node` tree that preserves source formatting (comments, quote
-  style, key order) for unchanged content.
+  | PACKETVER range | Packet ID | SUB size | Fields added |
+  |---|---|---|---|
+  | `< 20170524` (MAIN) | `0x00FB` | 46 | AID + playerName + mapName + leader + offline |
+  | `20170524 ≤ pv < 20171207` | `0x0A44` | 50 | + class_ + baseLevel |
+  | `≥ 20171207` (production) | `0x0AE5` | 54 | + GID after AID |
 
-### Changed (breaking — policy)
+  The third variant (`0x0AE5`) is the wire ID at production packetver
+  `20200401`; the original issue #13 mentioned only the first two. The
+  production-target decoder is `ZcGroupList_0x0AE5`.
 
-- **README Rule 5 reworded**: was "No External Runtime Dependencies (repo-wide,
-  `go.mod` must have zero `require` entries)". Now scopes zero-deps to `pkg/`
-  only. `internal/` and `cmd/` developer tooling may use stdlib plus
-  `gopkg.in/yaml.v3`. The original "embeddable with no transitive dependency
-  surprises" property is preserved for `pkg/` because Go's module graph
-  excludes `internal/`/`cmd/` deps from the importer's closure.
+  rAthena encodes the leader/offline bytes inverted relative to the
+  intuitive bool (`clif.cpp:7892-7893`: leader byte 0 = leader,
+  offline byte 0 = online). The decoder flips both back to intuitive Go
+  bool field values.
 
-  `go.mod` now contains `require gopkg.in/yaml.v3 v3.0.1`. Consumers of
-  `pkg/` are unaffected.
+  **Allocation note**: each decoder calls `make([]ZcGroupListMember, n)`
+  — one heap alloc per packet, unavoidable for a variable-count roster.
+  Documented exception to the 0-alloc decode hot-path contract, matching
+  the inventory list events (worklog 0066).
+  `BenchmarkZcGroupList_0x0AE5`: 347 ns/op, 1 allocs/op.
 
 ### Changed (non-breaking)
 
-- **`internal/codegen/semantics/loader.go` rewritten** on `gopkg.in/yaml.v3`.
-  327 lines of hand-rolled `bufio.Scanner` indent-counting parsing replaced
-  with ~200 lines of yaml.v3 decode plus a `tolerantRange` custom unmarshaler
-  that preserves null positions in `packetver_range:` sequences (yaml.v3
-  skips null items when decoding into `[]int` directly) and accepts both
-  bare integers and quoted strings (mappings.yaml is inconsistent on this;
-  worklog-0087 used quoted strings like `"20121009"`). All 6 existing tests
-  in `internal/codegen/semantics/*_test.go` pass unchanged.
-
-### Fixed
-
-- **Deleted empty duplicate action `received_character_ID_and_Map`** from
-  `semantics/mappings.yaml`. Pre-existing validation finding surfaced by the
-  new `validate` tool: a stub entry with capital letters (a leftover from
-  worklog 0009's case-collision fix) existed alongside the canonical
-  lowercase `received_character_id_and_map`. Both had `implementations: []`
-  so neither was wired to anything; the duplicate is removed. 6 lines deleted.
+- `pkg/session/actions.go`: new constant `ActionZcGroupList SemanticAction
+  = 464`. Appended at the next free ID (not slotted alphabetically) to
+  avoid renumbering existing constants. `maxSemanticAction` bumped.
+- `pkg/session/receive_dispatch.go`: three new entries under
+  `ActionZcGroupList` for `0x00FB`, `0x0A44`, `0x0AE5`.
+- `semantics/mappings.yaml`: new `zc_group_list` action with three
+  packetver-bounded implementations. **Added via the in-repo
+  `cmd/semantics-tool` CLI** (worklog 0088) — first Rule 9 DB edit done
+  through the MCP/CLI tooling rather than a hand-edit.
 
 ### Tests
 
-- `internal/semanticsdb/db_test.go` — 16 tests covering load, list, get,
-  create/delete/update action, add/update/delete impl, validation (min>max,
-  duplicate detection, bad action name), search, statistics, and production
-  round-trip.
-- `internal/semanticsdb/roundtrip_test.go` — strongest guarantee: no-op
-  `Save` produces zero bytes of change to production mappings.yaml.
-- `cmd/semantics-tool/cli/cli_test.go` — 11 CLI end-to-end tests including
-  the flow-style regression test.
-- `cmd/semantics-tool/mcp/server_test.go` — 7 MCP JSON-RPC integration tests
-  via subprocess (initialize, tools/list, stats, create_action,
-  add_implementation, validate, error paths).
+- `pkg/decode/zc_group_list_test.go` — 6 golden tests covering all three
+  layouts, empty roster, packetLen propagation, partial-trailing-member
+  edge case. Plus 2 benchmarks (1 allocs/op each, documented exception).
+- `pkg/session/zc_group_list_dispatch_test.go` — 4 end-to-end dispatch
+  tests including the exact issue #13 reproduction (0x0AE5 frame at
+  `pv=20200401` fires the handler once, leaves `UnhandledPackets() == 0`),
+  the legacy 0x00FB variant, and a compile-time regression guard for the
+  new `ActionZcGroupList` constant.
 
 ---
 
