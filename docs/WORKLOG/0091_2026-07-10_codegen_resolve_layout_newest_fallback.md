@@ -49,12 +49,14 @@ The v0.9.0 mapping had only `0x0BAD` unbounded. Under the old resolveLayout that
 
 ## Solution
 
-### 1. `resolveLayout` newest-fallback
+### 1. `resolveLayout` newest-fallback (defense-in-depth)
 
 Rewrote the function to honor `PacketverMin > 0` unchanged (find the newest range whose `MinVer <= PacketverMin`), and to fall through to the NEWEST available range when `PacketverMin == 0` or no range covers it. Removed the `pv=20030000` sentinel altogether — treating "no lower bound" as "no lower bound" is more honest than pretending it means "start of history."
 
+Note: this alone does NOT fix `EncodeCzReqGuildEmblemImg2` — the actual fix for that encoder is the mapping change in step 4, which sets `PacketverMin=20190619` (specific-pv path, not the fallback). The resolveLayout newest-fallback is defense-in-depth for future actions whose mappings remain unbounded; it converts the previous "silently pick oldest" failure mode into "silently pick newest," which is the safer bias for wire compatibility with modern rAthena.
+
 Added five unit tests in `internal/codegen/gen/resolve_layout_test.go`:
-- picks-newest-for-unbounded-impl (the CzReqGuildEmblemImg2 regression case)
+- picks-newest-for-unbounded-impl (defense-in-depth case)
 - honors-specific-packetverMin (three pv points across the boundary)
 - packetverMin-below-all-ranges falls through to newest
 - missing-struct returns nil
@@ -74,12 +76,14 @@ Applied via `semantics-tool`:
 
 Codegen then emits `EncodeCzReqTakeoffEquipAll` as a pv-branching function returning `[]byte`. At goKore's target pv=20200401 the switch hits the fallthrough `panic` because neither range applies — but goKore doesn't call this encoder at that pv (the packet doesn't exist), so the panic is unreachable in practice. An action registered but not on the wire at the runtime pv is a hazard we accept, since the semantic DB records the packet exists only at pv >= 20210818.
 
-### 4. `cz_req_guild_emblem_img2` bound
+### 4. `cz_req_guild_emblem_img2` bound to 20190619
 
 Applied via `semantics-tool`:
-- `update-implementation -id 0x0B1E -min 20190227 -max 0`
+- `update-implementation -id 0x0B1E -min 20190619 -max 0`
 
-This is a hygiene change — it makes the impl explicit rather than relying on the newest-fallback behavior in resolveLayout. The resolveLayout fix by itself would produce the correct 14-byte encoder, but making the impl `min=20190227` communicates intent: "this packet exists at pv >= 20190227 and beyond."
+**This is the actual fix for the reviewer's flagged 10→14 byte regression.** rAthena binds `PACKET_CZ_REQ_GUILD_EMBLEM_IMG2` to 0x0B1E at both pv 20190227..20190618 (10 bytes) and pv >= 20190619 (14 bytes with trailing `unused`). Since both variants use the SAME packet ID, the semantic DB cannot express them as two impls (packet IDs are unique per action). We must pick one variant.
+
+Picking `min=20190619` corresponds to the CURRENT layout — what modern rAthena builds (including goKore's pv=20200401 target) emit on the wire. The tradeoff: clients targeting pv 20190227..20190618 would need a code change to use the 10-byte variant. Given the narrow (~4 month) window and low adoption of that packet, this is an acceptable narrowing.
 
 ---
 
