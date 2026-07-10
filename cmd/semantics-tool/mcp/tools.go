@@ -71,12 +71,12 @@ func ToolDefinitions() []MCPTool {
 			Description: "Substring search (case-insensitive) across action name, openkore_name, description, struct_name, packet_id. Empty fields match anything.",
 			InputSchema: schema(
 				map[string]any{
-					"name":         prop("Substring of action name."),
+					"name":          prop("Substring of action name."),
 					"openkore_name": prop("Substring of openkore_name."),
-					"description":  prop("Substring of description."),
-					"struct_name":  prop("Substring of rAthena struct name on any implementation."),
-					"packet_id":    prop("Exact packet_id (e.g. \"0x00FB\")."),
-					"limit":        propInt("Max results (0 = unlimited)."),
+					"description":   prop("Substring of description."),
+					"struct_name":   prop("Substring of rAthena struct name on any implementation."),
+					"packet_id":     prop("Exact packet_id (e.g. \"0x00FB\")."),
+					"limit":         propInt("Max results (0 = unlimited)."),
 				},
 				nil,
 			),
@@ -128,6 +128,17 @@ func ToolDefinitions() []MCPTool {
 			InputSchema: schema(
 				map[string]any{"action_name": prop("Name of the action to delete.")},
 				[]string{"action_name"},
+			),
+		},
+		{
+			Name:        "rename_action",
+			Description: "Rename a semantic action. Preserves document position, implementations, and metadata. The inner name: field is updated only if it currently mirrors the old key.",
+			InputSchema: schema(
+				map[string]any{
+					"old_name": prop("Current name of the action."),
+					"new_name": prop("New name for the action (lowercase_snake_case)."),
+				},
+				[]string{"old_name", "new_name"},
 			),
 		},
 		{
@@ -205,9 +216,9 @@ func dispatchTool(db *semanticsdb.DB, name string, args map[string]any) (any, er
 			return nil, fmt.Errorf("action %q not found", actionName)
 		}
 		return map[string]any{
-			"action_name":    actionName,
+			"action_name":     actionName,
 			"implementations": toJSONableImpls(a.Implementations),
-			"count":          len(a.Implementations),
+			"count":           len(a.Implementations),
 		}, nil
 
 	case "get_implementation":
@@ -266,9 +277,9 @@ func dispatchTool(db *semanticsdb.DB, name string, args map[string]any) (any, er
 	case "stats":
 		s := db.Statistics()
 		return map[string]any{
-			"action_count":        s.ActionCount,
+			"action_count":         s.ActionCount,
 			"implementation_count": s.ImplementationCount,
-			"actions_with_impls":  s.ActionsWithImpls,
+			"actions_with_impls":   s.ActionsWithImpls,
 		}, nil
 
 	case "export":
@@ -336,6 +347,25 @@ func dispatchTool(db *semanticsdb.DB, name string, args map[string]any) (any, er
 			"message":     fmt.Sprintf("Deleted action %q", actionName),
 		}, nil
 
+	case "rename_action":
+		oldName, err := reqStr(args, "old_name")
+		if err != nil {
+			return nil, err
+		}
+		newName, err := reqStr(args, "new_name")
+		if err != nil {
+			return nil, err
+		}
+		if err := db.RenameAction(oldName, newName); err != nil {
+			return nil, err
+		}
+		return map[string]any{
+			"success":  true,
+			"old_name": oldName,
+			"new_name": newName,
+			"message":  fmt.Sprintf("Renamed action %q → %q", oldName, newName),
+		}, nil
+
 	case "add_implementation":
 		actionName, err := reqStr(args, "action_name")
 		if err != nil {
@@ -350,10 +380,10 @@ func dispatchTool(db *semanticsdb.DB, name string, args map[string]any) (any, er
 			return nil, err
 		}
 		impl := semanticsdb.Implementation{
-			PacketID:       packetID,
-			StructName:     structName,
-			PacketverMin:   optInt(args, "packetver_min", 0),
-			PacketverMax:   optInt(args, "packetver_max", 0),
+			PacketID:     packetID,
+			StructName:   structName,
+			PacketverMin: optInt(args, "packetver_min", 0),
+			PacketverMax: optInt(args, "packetver_max", 0),
 		}
 		if err := db.AddImplementation(actionName, impl); err != nil {
 			return nil, err
@@ -427,11 +457,11 @@ func dispatchTool(db *semanticsdb.DB, name string, args map[string]any) (any, er
 // for the packetver bounds so that null and 0 are distinguishable in the
 // output (null = unbounded, 0 = explicit zero).
 type jsonableImpl struct {
-	PacketID       string            `json:"packet_id"`
-	StructName     string            `json:"struct_name"`
-	PacketverMin   *int              `json:"packetver_min"`
-	PacketverMax   *int              `json:"packetver_max"`
-	FieldMapping   map[string]string `json:"field_mapping,omitempty"`
+	PacketID     string            `json:"packet_id"`
+	StructName   string            `json:"struct_name"`
+	PacketverMin *int              `json:"packetver_min"`
+	PacketverMax *int              `json:"packetver_max"`
+	FieldMapping map[string]string `json:"field_mapping,omitempty"`
 }
 
 type jsonableAction struct {
@@ -443,10 +473,10 @@ type jsonableAction struct {
 
 func toJSONableAction(a semanticsdb.Action) map[string]any {
 	return map[string]any{
-		"name":             a.Name,
-		"description":      a.Description,
-		"openkore_name":    a.OpenkoreName,
-		"implementations":  toJSONableImpls(a.Implementations),
+		"name":                 a.Name,
+		"description":          a.Description,
+		"openkore_name":        a.OpenkoreName,
+		"implementations":      toJSONableImpls(a.Implementations),
 		"implementation_count": len(a.Implementations),
 	}
 }

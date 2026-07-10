@@ -172,7 +172,7 @@ func TestMCP_Initialize(t *testing.T) {
 	}
 }
 
-func TestMCP_ToolsList_ReturnsAll14Tools(t *testing.T) {
+func TestMCP_ToolsList_ReturnsAll15Tools(t *testing.T) {
 	p := writeSample(t)
 	resps := runSession(t, p, []map[string]any{
 		req(1, "initialize", map[string]any{}),
@@ -183,8 +183,8 @@ func TestMCP_ToolsList_ReturnsAll14Tools(t *testing.T) {
 	}
 	result := resps[1]["result"].(map[string]any)
 	tools := result["tools"].([]any)
-	if len(tools) != 14 {
-		t.Errorf("expected 14 tools, got %d", len(tools))
+	if len(tools) != 15 {
+		t.Errorf("expected 15 tools, got %d", len(tools))
 	}
 }
 
@@ -233,6 +233,40 @@ func TestMCP_CreateAction_AndListActions(t *testing.T) {
 	text := result["content"].([]any)[0].(map[string]any)["text"].(string)
 	if !strings.Contains(text, "zc_group_list") {
 		t.Errorf("list_actions missing zc_group_list: %s", text)
+	}
+}
+
+func TestMCP_RenameAction(t *testing.T) {
+	p := writeSample(t)
+	resps := runSession(t, p, []map[string]any{
+		req(1, "initialize", map[string]any{}),
+		req(2, "tools/call", map[string]any{
+			"name": "rename_action",
+			"arguments": map[string]any{
+				"old_name": "actor_died_or_disappeared",
+				"new_name": "actor_gone",
+			},
+		}),
+		req(3, "tools/call", map[string]any{
+			"name": "get_action",
+			"arguments": map[string]any{
+				"action_name": "actor_gone",
+			},
+		}),
+	})
+	if len(resps) != 3 {
+		t.Fatalf("expected 3 responses, got %d", len(resps))
+	}
+	if resps[1]["error"] != nil {
+		t.Fatalf("rename_action error: %v", resps[1]["error"])
+	}
+	if resps[2]["error"] != nil {
+		t.Fatalf("get_action (new name) error: %v", resps[2]["error"])
+	}
+	result := resps[2]["result"].(map[string]any)
+	text := result["content"].([]any)[0].(map[string]any)["text"].(string)
+	if !strings.Contains(text, "0x0080") {
+		t.Errorf("renamed action missing its implementation: %s", text)
 	}
 }
 

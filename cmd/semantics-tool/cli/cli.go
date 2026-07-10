@@ -15,6 +15,7 @@
 //	semantics-tool create-action <name> [--description X] [--openkore X]
 //	semantics-tool update-action <name> [--description X] [--openkore X]
 //	semantics-tool delete-action <name>
+//	semantics-tool rename-action <oldName> <newName>
 //	semantics-tool add-implementation <action> -id 0xXXXX -struct NAME [-min N] [-max N]
 //	semantics-tool update-implementation <action> -id 0xXXXX [-struct NAME] [-min N] [-max N]
 //	semantics-tool delete-implementation <action> -id 0xXXXX
@@ -224,6 +225,23 @@ func Run(args []string, out io.Writer) error {
 			return nil
 		})
 
+	case "rename-action":
+		return withDB(mappingsPath, true, out, func(db *semanticsdb.DB) error {
+			oldName, err := positional(rest, 0, "old action name")
+			if err != nil {
+				return err
+			}
+			newName, err := positional(rest, 1, "new action name")
+			if err != nil {
+				return err
+			}
+			if err := db.RenameAction(oldName, newName); err != nil {
+				return err
+			}
+			fmt.Fprintf(out, "✓ Renamed action %q → %q\n", oldName, newName)
+			return nil
+		})
+
 	case "add-implementation":
 		fs := flag.NewFlagSet("add-implementation", flag.ContinueOnError)
 		fs.SetOutput(out)
@@ -386,6 +404,7 @@ Mutating commands:
   create-action <name> [-description X] [-openkore X]
   update-action <name> [-description X] [-openkore X]
   delete-action <name>
+  rename-action <oldName> <newName>
   add-implementation <action> -id 0xXXXX -struct NAME [-min N] [-max N]
   update-implementation <action> -id 0xXXXX [-struct NAME] [-min N] [-max N]
   delete-implementation <action> -id 0xXXXX
