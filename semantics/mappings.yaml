@@ -1027,6 +1027,12 @@ semantic_actions:
             - packet_id: "0x0A96"
               packetver_range:
                 - 20161026
+                - 20200915
+              struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
+              field_mapping: {}
+            - packet_id: "0x0B42"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
               field_mapping: {}
@@ -3154,9 +3160,9 @@ semantic_actions:
                 - null
               struct_name: packet_monster_hp
               field_mapping: {}
-    monster_ranged_attack:
+    attack_failure_for_distance:
         name: ""
-        description: ""
+        description: Attack failure notification when target is out of range (clif_movetoattack, clif.cpp:8171-8188). Client should walk to (TargetXPos, TargetYPos) and retry. Sent for players/mercenaries — not a monster attack (OpenKore name is misleading).
         openkore_name: monster_ranged_attack
         canonical_params: []
         implementations:
@@ -3847,6 +3853,12 @@ semantic_actions:
             - packet_id: "0x07FB"
               packetver_range:
                 - null
+                - null
+              struct_name: PACKET_ZC_USESKILL_ACK
+              field_mapping: {}
+            - packet_id: "0x0B1A"
+              packetver_range:
+                - 20181212
                 - null
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping: {}
