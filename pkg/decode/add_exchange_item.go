@@ -49,19 +49,7 @@ func AddExchangeItem_0x0A09(data []byte, packetver uint32) events.AddExchangeIte
 // AddExchangeItem_0x0A96 decodes a 0x0A96 packet (struct PACKET_ZC_ADD_EXCHANGE_ITEM).
 func AddExchangeItem_0x0A96(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
-	if packetver >= 20200902 {
-		e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
-		e.ItemType = data[6]  // rAthena: itemType (offset 6, size 1)
-		e.Amount = leI32(data, 7)  // rAthena: amount (offset 7, size 4)
-		e.Identified = data[11]  // rAthena: identified (offset 11, size 1)
-		e.Damaged = data[12]  // rAthena: damaged (offset 12, size 1)
-		e.Slot = data[13:]  // rAthena: slot (offset 13, size 16)
-		e.Option_data = data[29:54]  // rAthena: option_data (offset 29, size 25)
-		e.Location = leU32(data, 54)  // rAthena: location (offset 54, size 4)
-		e.Look = leU16(data, 58)  // rAthena: look (offset 58, size 2)
-		e.Refine = data[60]  // rAthena: refine (offset 60, size 1)
-		e.Grade = data[61]  // rAthena: grade (offset 61, size 1)
-	} else if packetver >= 20181121 {
+	if packetver >= 20181121 {
 		e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
 		e.ItemType = data[6]  // rAthena: itemType (offset 6, size 1)
 		e.Amount = leI32(data, 7)  // rAthena: amount (offset 7, size 4)

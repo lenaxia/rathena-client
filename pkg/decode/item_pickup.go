@@ -24,24 +24,7 @@ func ItemPickup_0x00A0(data []byte, packetver uint32) events.ItemPickup {
 // ItemPickup_0x0A37 decodes a 0x0A37 packet (struct PACKET_ZC_ITEM_PICKUP_ACK).
 func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
-	if packetver >= 20200902 {
-		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
-		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
-		e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)
-		e.IsIdentified = data[10]  // rAthena: IsIdentified (offset 10, size 1)
-		e.IsDamaged = data[11]  // rAthena: IsDamaged (offset 11, size 1)
-		e.Slot = data[12:]  // rAthena: slot (offset 12, size 16)
-		e.Location = leU32(data, 28)  // rAthena: location (offset 28, size 4)
-		e.Type = data[32]  // rAthena: type (offset 32, size 1)
-		e.Result = data[33]  // rAthena: result (offset 33, size 1)
-		e.HireExpireDate = leI32(data, 34)  // rAthena: HireExpireDate (offset 34, size 4)
-		e.BindOnEquipType = leU16(data, 38)  // rAthena: bindOnEquipType (offset 38, size 2)
-		e.Option_data = data[40:65]  // rAthena: option_data (offset 40, size 25)
-		e.Favorite = data[65]  // rAthena: favorite (offset 65, size 1)
-		e.Look = leU16(data, 66)  // rAthena: look (offset 66, size 2)
-		e.RefiningLevel = data[68]  // rAthena: refiningLevel (offset 68, size 1)
-		e.Grade = data[69]  // rAthena: grade (offset 69, size 1)
-	} else if packetver >= 20181121 {
+	if packetver >= 20181121 {
 		e.Index = leU16(data, 2)  // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
 		e.Nameid = leU32(data, 6)  // rAthena: nameid (offset 6, size 4)

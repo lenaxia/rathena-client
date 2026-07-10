@@ -7,17 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcItemPickupParty_0x02B8 decodes a 0x02B8 packet (struct PACKET_ZC_ITEM_PICKUP_PARTY).
 func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickupParty {
 	var e events.ZcItemPickupParty
-	if packetver >= 20200902 {
-		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-		e.ItemId = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
-		e.Identified = data[10]  // rAthena: identified (offset 10, size 1)
-		e.Damaged = data[11]  // rAthena: damaged (offset 11, size 1)
-		e.Slot = data[12:]  // rAthena: slot (offset 12, size 16)
-		e.Location = leU16(data, 28)  // rAthena: location (offset 28, size 2)
-		e.ItemType = data[30]  // rAthena: itemType (offset 30, size 1)
-		e.Refine = data[31]  // rAthena: refine (offset 31, size 1)
-		e.Grade = data[32]  // rAthena: grade (offset 32, size 1)
-	} else if packetver >= 20181121 {
+	if packetver >= 20181121 {
 		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
 		e.ItemId = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
 		e.Identified = data[10]  // rAthena: identified (offset 10, size 1)
@@ -36,6 +26,22 @@ func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickup
 		e.Location = leU16(data, 19)  // rAthena: location (offset 19, size 2)
 		e.ItemType = data[21]  // rAthena: itemType (offset 21, size 1)
 	}
+	return e
+}
+
+// ZcItemPickupParty_0x0B67 decodes a 0x0B67 packet (struct PACKET_ZC_ITEM_PICKUP_PARTY).
+func ZcItemPickupParty_0x0B67(data []byte, packetver uint32) events.ZcItemPickupParty {
+	var e events.ZcItemPickupParty
+	_ = packetver
+	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
+	e.ItemId = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
+	e.Identified = data[10]  // rAthena: identified (offset 10, size 1)
+	e.Damaged = data[11]  // rAthena: damaged (offset 11, size 1)
+	e.Slot = data[12:]  // rAthena: slot (offset 12, size 16)
+	e.Location = leU16(data, 28)  // rAthena: location (offset 28, size 2)
+	e.ItemType = data[30]  // rAthena: itemType (offset 30, size 1)
+	e.Refine = data[31]  // rAthena: refine (offset 31, size 1)
+	e.Grade = data[32]  // rAthena: grade (offset 32, size 1)
 	return e
 }
 

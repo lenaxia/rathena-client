@@ -14,3 +14,13 @@ func ZcPcPurchaseMyitemlist_0x0136(data []byte, packetver uint32) events.ZcPcPur
 	return e
 }
 
+// ZcPcPurchaseMyitemlist_0x0B40 decodes a 0x0B40 packet (struct PACKET_ZC_PC_PURCHASE_MYITEMLIST).
+func ZcPcPurchaseMyitemlist_0x0B40(data []byte, packetver uint32) events.ZcPcPurchaseMyitemlist {
+	var e events.ZcPcPurchaseMyitemlist
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
+	e.Items = data[8:]  // rAthena: items (offset 8, size 0)
+	return e
+}
+

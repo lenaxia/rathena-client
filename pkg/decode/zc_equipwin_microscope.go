@@ -118,3 +118,23 @@ func ZcEquipwinMicroscope_0x0B03(data []byte, packetver uint32) events.ZcEquipwi
 	return e
 }
 
+// ZcEquipwinMicroscope_0x0B37 decodes a 0x0B37 packet (struct PACKET_ZC_EQUIPWIN_MICROSCOPE).
+func ZcEquipwinMicroscope_0x0B37(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
+	var e events.ZcEquipwinMicroscope
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
+	e.CharacterName = nullTermString(data[4:28])  // rAthena: characterName (offset 4, size 24)
+	e.Job = leI16(data, 28)  // rAthena: job (offset 28, size 2)
+	e.Head = leI16(data, 30)  // rAthena: head (offset 30, size 2)
+	e.Accessory = leI16(data, 32)  // rAthena: accessory (offset 32, size 2)
+	e.Accessory2 = leI16(data, 34)  // rAthena: accessory2 (offset 34, size 2)
+	e.Accessory3 = leI16(data, 36)  // rAthena: accessory3 (offset 36, size 2)
+	e.Robe = leI16(data, 38)  // rAthena: robe (offset 38, size 2)
+	e.Headpalette = leI16(data, 40)  // rAthena: headpalette (offset 40, size 2)
+	e.Bodypalette = leI16(data, 42)  // rAthena: bodypalette (offset 42, size 2)
+	e.Body2 = leI16(data, 44)  // rAthena: body2 (offset 44, size 2)
+	e.Sex = data[46]  // rAthena: sex (offset 46, size 1)
+	e.List = data[47:]  // rAthena: list (offset 47, size 0)
+	return e
+}
+

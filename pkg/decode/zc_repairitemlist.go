@@ -7,13 +7,18 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcRepairitemlist_0x01FC decodes a 0x01FC packet (struct PACKET_ZC_REPAIRITEMLIST).
 func ZcRepairitemlist_0x01FC(data []byte, packetver uint32) events.ZcRepairitemlist {
 	var e events.ZcRepairitemlist
-	if packetver >= 20200902 {
-		e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-		e.Items = data[4:]  // rAthena: items (offset 4, size 0)
-	} else {
-		e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-		e.Items = data[4:]  // rAthena: items (offset 4, size 0)
-	}
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Items = data[4:]  // rAthena: items (offset 4, size 0)
+	return e
+}
+
+// ZcRepairitemlist_0x0B65 decodes a 0x0B65 packet (struct PACKET_ZC_REPAIRITEMLIST).
+func ZcRepairitemlist_0x0B65(data []byte, packetver uint32) events.ZcRepairitemlist {
+	var e events.ZcRepairitemlist
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.Items = data[4:]  // rAthena: items (offset 4, size 0)
 	return e
 }
 

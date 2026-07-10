@@ -489,6 +489,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcAckAddItemRodex: {
 		{id: 0x0A05, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckAddItemRodex_0x0A05(d, pv) }},
+		{id: 0x0B3F, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckAddItemRodex_0x0B3F(d, pv) }},
 	},
 	ActionZcAckAdditemToCart: {
 		{id: 0x012C, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckAdditemToCart_0x012C(d, pv) }},
@@ -561,6 +562,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcAckReadRodex: {
 		{id: 0x09EB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckReadRodex_0x09EB(d, pv) }},
+		{id: 0x0B63, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckReadRodex_0x0B63(d, pv) }},
 	},
 	ActionZcAckRememberWarppoint: {
 		{id: 0x011E, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckRememberWarppoint_0x011E(d, pv) }},
@@ -588,9 +590,11 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcAddItemToCart: {
 		{id: 0x0124, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAddItemToCart_0x0124(d, pv) }},
+		{id: 0x0B45, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAddItemToCart_0x0B45(d, pv) }},
 	},
 	ActionZcAddItemToStore: {
 		{id: 0x00F4, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAddItemToStore_0x00F4(d, pv) }},
+		{id: 0x0B44, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAddItemToStore_0x0B44(d, pv) }},
 	},
 	ActionZcAdventurerAgencyJoinReq: {
 		{id: 0x0AE7, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAdventurerAgencyJoinReq_0x0AE7(d, pv) }},
@@ -645,6 +649,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcChangeItemOption: {
 		{id: 0x0AB9, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangeItemOption_0x0AB9(d, pv) }},
+		{id: 0x0B43, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangeItemOption_0x0B43(d, pv) }},
 	},
 	ActionZcChangestatePet: {
 		{id: 0x01A4, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangestatePet_0x01A4(d, pv) }},
@@ -738,6 +743,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x0997, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0997(d, pv) }},
 		{id: 0x0A2D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0A2D(d, pv) }},
 		{id: 0x0B03, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0B03(d, pv) }},
+		{id: 0x0B37, fn: func(d []byte, pv uint32) interface{} { return decode.ZcEquipwinMicroscope_0x0B37(d, pv) }},
 	},
 	ActionZcExchangeitemUndo: {
 		{id: 0x00F1, fn: func(d []byte, pv uint32) interface{} { return decode.ZcExchangeitemUndo_0x00F1(d, pv) }},
@@ -809,6 +815,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcItemPickupParty: {
 		{id: 0x02B8, fn: func(d []byte, pv uint32) interface{} { return decode.ZcItemPickupParty_0x02B8(d, pv) }},
+		{id: 0x0B67, fn: func(d []byte, pv uint32) interface{} { return decode.ZcItemPickupParty_0x0B67(d, pv) }},
 	},
 	ActionZcItemReformAck: {
 		{id: 0x0B92, fn: func(d []byte, pv uint32) interface{} { return decode.ZcItemReformAck_0x0B92(d, pv) }},
@@ -934,9 +941,11 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcPcPurchaseItemlistFrommc: {
 		{id: 0x0133, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseItemlistFrommc_0x0133(d, pv) }},
+		{id: 0x0B3D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseItemlistFrommc_0x0B3D(d, pv) }},
 	},
 	ActionZcPcPurchaseMyitemlist: {
 		{id: 0x0136, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseMyitemlist_0x0136(d, pv) }},
+		{id: 0x0B40, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseMyitemlist_0x0B40(d, pv) }},
 	},
 	ActionZcPcPurchaseResult: {
 		{id: 0x00CA, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseResult_0x00CA(d, pv) }},
@@ -985,6 +994,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcRepairitemlist: {
 		{id: 0x01FC, fn: func(d []byte, pv uint32) interface{} { return decode.ZcRepairitemlist_0x01FC(d, pv) }},
+		{id: 0x0B65, fn: func(d []byte, pv uint32) interface{} { return decode.ZcRepairitemlist_0x0B65(d, pv) }},
 	},
 	ActionZcReputeInfo: {
 		{id: 0x0B8D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcReputeInfo_0x0B8D(d, pv) }},
@@ -1036,6 +1046,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcSearchStoreInfoAck: {
 		{id: 0x0836, fn: func(d []byte, pv uint32) interface{} { return decode.ZcSearchStoreInfoAck_0x0836(d, pv) }},
+		{id: 0x0B64, fn: func(d []byte, pv uint32) interface{} { return decode.ZcSearchStoreInfoAck_0x0B64(d, pv) }},
 	},
 	ActionZcSearchStoreInfoFailed: {
 		{id: 0x0837, fn: func(d []byte, pv uint32) interface{} { return decode.ZcSearchStoreInfoFailed_0x0837(d, pv) }},

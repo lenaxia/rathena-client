@@ -10,5 +10,4 @@ type ZcSkillinfoUpdate2 struct {
 	Sp uint16
 	Range2 uint16
 	UpFlag uint8
-	Level2 uint16
 }

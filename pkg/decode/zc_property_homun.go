@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcPropertyHomun_0x022E decodes a 0x022E packet (struct PACKET_ZC_PROPERTY_HOMUN).
 func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomun {
 	var e events.ZcPropertyHomun
-	if packetver >= 20220216 {
+	if packetver >= 20210303 {
 		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
