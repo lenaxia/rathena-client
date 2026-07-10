@@ -284,14 +284,11 @@ func buildActionNode(name, description, openkoreName string, impls []Implementat
 
 // buildImplNode constructs the YAML node tree for one implementation.
 //
-// Output layout (matching mappings.yaml style):
-//
-//   - packet_id: "0x00FB"
-//     packetver_range:
-//   - null
-//   - null
-//     struct_name: PACKET_ZC_GROUP_LIST
-//     field_mapping: {}
+// The emitted mapping node has keys packet_id (double-quoted string,
+// e.g. "0x00FB"), packetver_range (a 2-element sequence of nullable ints
+// for [min, max]), struct_name (bare identifier), and field_mapping
+// (empty inline "{}" mapping unless field mappings are present). See
+// TestAddImplementation_AppendsToAction for a round-trip example.
 func buildImplNode(impl Implementation) *yaml.Node {
 	mapping := &yaml.Node{Kind: yaml.MappingNode, Tag: "!!map"}
 	// First key is packet_id (list-item key, on the same line as "- ").
