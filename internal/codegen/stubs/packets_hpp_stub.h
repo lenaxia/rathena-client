@@ -21,6 +21,15 @@
 #define DATABASE_HPP
 #define YAML_HPP
 
+// Block config/packets.hpp — it auto-#defines PACKETVER_RE at pv > 20151104
+// (with special windows for 20180704–20200902 and 20200902–20211118) which
+// activates the RE-branch struct guards in packets_struct.hpp. Our codegen
+// models MAIN-branch semantics (see internal/codegen/semantics/epic08_test.go
+// commentary: "rAthena uses PACKETVER_MAIN_NUM boundary, not RE") so we skip
+// config/packets.hpp entirely and rely on the -DPACKETVER_MAIN_NUM=<pv>
+// command-line flag set by preprocess/runner.go.
+#define CONFIG_PACKETS_HPP
+
 // Block the ryml headers
 #define RYML_SINGLE_HPP_DEFINE_FUNCTIONS
 #define _RYML_HPP_
