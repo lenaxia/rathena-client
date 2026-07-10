@@ -76,6 +76,69 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   via subprocess (initialize, tools/list, stats, create_action,
   add_implementation, validate, error paths).
 
+### Added (further)
+
+- **`ActionZcGroupList` / `ZC_GROUP_LIST` decode (issue #13, worklog 0089)**.
+  The packet a rAthena server sends to a client to deliver the full party
+  roster when the client joins an existing party (rAthena
+  `src/map/party.cpp:676`, `party_member_added` → `clif_party_info`).
+  Without this packet decoded, pre-existing party members remain invisible
+  to the joining client — they do not trigger per-member spawn packets
+  (`ZC_NOTIFY_MEMBERINFO_TO_GROUPM`), they only appear in this roster.
+
+  Three wire IDs cover three PACKETVER-conditional SUB layouts, all
+  dispatched under `ActionZcGroupList`:
+
+  | PACKETVER range | Packet ID | SUB size | Fields added |
+  |---|---|---|---|
+  | `< 20170524` (MAIN) | `0x00FB` | 46 | AID + playerName + mapName + leader + offline |
+  | `20170524 ≤ pv < 20171207` | `0x0A44` | 50 | + class_ + baseLevel |
+  | `≥ 20171207` (production) | `0x0AE5` | 54 | + GID after AID |
+
+  The third variant (`0x0AE5`) is the wire ID at production packetver
+  `20200401`; the original issue #13 mentioned only the first two. The
+  production-target decoder is `ZcGroupList_0x0AE5`.
+
+  rAthena encodes the leader/offline bytes inverted relative to the
+  intuitive bool (`clif.cpp:7892-7893`: leader byte 0 = leader,
+  offline byte 0 = online). The decoder flips both back to intuitive Go
+  bool field values.
+
+  **Allocation note**: each decoder calls `make([]ZcGroupListMember, n)`
+  — one heap alloc per packet, unavoidable for a variable-count roster.
+  Documented exception to the 0-alloc decode hot-path contract, matching
+  the inventory list events (worklog 0066).
+  `BenchmarkZcGroupList_0x0AE5`: 347 ns/op, 1 allocs/op.
+
+### Changed (non-breaking, further)
+
+- `pkg/session/actions.go`: new constant `ActionZcGroupList SemanticAction
+  = 464`. Appended at the next free ID (not slotted alphabetically) to
+  avoid renumbering existing constants. `maxSemanticAction` bumped.
+- `pkg/session/receive_dispatch.go`: three new entries under
+  `ActionZcGroupList` for `0x00FB`, `0x0A44`, `0x0AE5`.
+- `semantics/mappings.yaml`: new `zc_group_list` action with three
+  packetver-bounded implementations. **Added via the in-repo
+  `cmd/semantics-tool` CLI** (worklog 0088) — first Rule 9 DB edit done
+  through the MCP/CLI tooling rather than a hand-edit.
+- `.github/workflows/ci.yml`: `BenchmarkZcGroupList` added to the
+  benchmark allocs allowlist (variable-length roster — 1 alloc/op
+  documented exception, same class as `BenchmarkDecode(Normal|Equip)Items`).
+
+### Tests (further)
+
+- `pkg/decode/zc_group_list_test.go` — 7 golden tests covering all three
+  layouts, empty roster, packetLen propagation, partial-trailing-member
+  edge case, and a truncated-header robustness test (3 sub-tests × 3
+  decoders = 9 cases asserting no panic on malformed frames). Plus 2
+  benchmarks (1 allocs/op each, documented exception).
+- `pkg/session/zc_group_list_dispatch_test.go` — 5 end-to-end dispatch
+  tests including the exact issue #13 reproduction (0x0AE5 frame at
+  `pv=20200401` fires the handler once, leaves `UnhandledPackets() == 0`),
+  the legacy 0x00FB variant, the mid-layout 0x0A44 variant, the dispatch
+  entry-count guard, and a compile-time regression guard for the new
+  `ActionZcGroupList` constant.
+
 ---
 
 ## [v0.7.0] — 2026-07-09

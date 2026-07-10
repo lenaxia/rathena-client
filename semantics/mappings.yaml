@@ -6849,4 +6849,28 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_WAIT_DIALOG
               field_mapping: {}
+    zc_group_list:
+        name: zc_group_list
+        description: Server sends the full party roster when a player joins an existing party (ZC_GROUP_LIST / partyinfo)
+        openkore_name: party_users
+        canonical_params: []
+        implementations:
+            - packet_id: "0x00FB"
+              packetver_range:
+                - null
+                - 20170501
+              struct_name: PACKET_ZC_GROUP_LIST
+              field_mapping: {}
+            - packet_id: "0x0A44"
+              packetver_range:
+                - 20170502
+                - 20171206
+              struct_name: PACKET_ZC_GROUP_LIST
+              field_mapping: {}
+            - packet_id: "0x0AE5"
+              packetver_range:
+                - 20171207
+                - null
+              struct_name: PACKET_ZC_GROUP_LIST
+              field_mapping: {}
 version: ""

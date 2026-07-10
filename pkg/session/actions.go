@@ -473,10 +473,15 @@ const (
 	ActionZcUseskillAck SemanticAction = 461
 	ActionZcViewCamerainfo SemanticAction = 462
 	ActionZcWaitDialog SemanticAction = 463
+	// ActionZcGroupList is appended at the next free ID rather than slotted
+	// alphabetically — inserting in the middle would renumber every
+	// subsequent constant and break consumers. Same pattern as
+	// ActionZcPartyJoinReq (worklog 0078). See issue #13.
+	ActionZcGroupList SemanticAction = 464
 
 	// maxSemanticAction is the highest assigned SemanticAction value.
 	// Used to size the sendRegistry array in semantic.go.
-	maxSemanticAction SemanticAction = ActionZcWaitDialog
+	maxSemanticAction SemanticAction = ActionZcGroupList
 )
 
 // String returns the constant name for known SemanticAction values
@@ -1411,6 +1416,8 @@ func (a SemanticAction) String() string {
 		return "ActionZcViewCamerainfo"
 	case ActionZcWaitDialog:
 		return "ActionZcWaitDialog"
+	case ActionZcGroupList:
+		return "ActionZcGroupList"
 	}
 	return fmt.Sprintf("SemanticAction(%d)", uint16(a))
 }
