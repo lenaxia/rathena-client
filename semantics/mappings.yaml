@@ -3550,12 +3550,6 @@ semantic_actions:
                 - null
               struct_name: SYNTH_CZ_REQ_DISCONNECT
               field_mapping: {}
-    received_character_ID_and_Map:
-        name: ""
-        description: ""
-        openkore_name: ""
-        canonical_params: []
-        implementations: []
     received_character_id_and_map:
         name: ""
         description: ""
