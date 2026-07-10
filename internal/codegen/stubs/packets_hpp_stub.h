@@ -58,6 +58,14 @@
 #define MAX_STORAGE 600
 #define MAX_ITEM_RDM_OPT 5
 
+// MAX_ITEM_OPTIONS is defined inside src/map/packets.hpp (and #undef'd at
+// its bottom). packets_struct.hpp references it (e.g. in
+// `PACKET_ZC_ADD_EXCHANGE_ITEM::option_data[MAX_ITEM_OPTIONS]`) but does not
+// include packets.hpp, so the macro is undefined when we preprocess
+// packets_struct.hpp directly. Define it here so array sizes resolve
+// correctly regardless of which source is being preprocessed.
+#define MAX_ITEM_OPTIONS MAX_ITEM_RDM_OPT
+
 #define MAP_NAME_LENGTH (11 + 1)
 #define MAP_NAME_LENGTH_EXT (MAP_NAME_LENGTH + 4)
 #define NAME_LENGTH (23 + 1)

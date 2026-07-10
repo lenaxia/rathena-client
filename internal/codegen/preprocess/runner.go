@@ -44,6 +44,15 @@ func Preprocess(cfg Config, src Source, packetver uint32) (string, error) {
 
 	switch src {
 	case SourcePacketsStruct:
+		// packets_struct.hpp uses macros defined in packets.hpp / map.hpp
+		// (e.g. MAX_ITEM_OPTIONS, MESSAGE_SIZE) — include the same stub as
+		// SourcePackets so those macros resolve and arrays size correctly.
+		// Without this, e.g. `ItemOptions option_data[MAX_ITEM_OPTIONS]`
+		// parses as a flex-array (size 0), which mis-aligns downstream
+		// fields in structs like PACKET_ZC_ADD_EXCHANGE_ITEM.
+		if cfg.PacketsHPPStub != "" {
+			args = append(args, "-include"+cfg.PacketsHPPStub)
+		}
 		args = append(args, cfg.RathenaRoot+"/src/map/packets_struct.hpp")
 	case SourcePackets:
 		args = append(args, "-include"+cfg.PacketsHPPStub)
