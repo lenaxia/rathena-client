@@ -117,17 +117,28 @@ go build -gcflags="-m" 2>&1 | grep "does not escape"  # CI escape analysis
 
 If you change a decode function and a benchmark suddenly shows allocs, the event struct is escaping — fix the generated code.
 
-### 5. No External Runtime Dependencies (MANDATORY)
+### 5. `pkg/` Has Zero External Dependencies (MANDATORY)
 
-**`go.mod` must have zero `require` entries. Keep it that way.**
+**The library surface that consumers import (`pkg/...`) must have zero external dependencies.** Internal developer tooling (`internal/...`, `cmd/...`) may use the standard library plus `gopkg.in/yaml.v3`.
 
 ```
 module github.com/lenaxia/rathena-client
 go 1.24.0
-// NO require block — zero external deps
+
+require gopkg.in/yaml.v3 v3.0.1
+// yaml.v3 is used ONLY by internal/semanticsdb, internal/codegen, and
+// cmd/semantics-tool. No file under pkg/ may import it.
 ```
 
-This library must be embeddable with no transitive dependency surprises. Use only the Go standard library.
+**Rationale:** the original repo-wide zero-deps rule conflated two concerns:
+1. The library surface (`pkg/`) must be embeddable with no transitive dependency surprises — this is preserved because consumers only import `pkg/`, and Go's module graph excludes `internal/`/`cmd/` deps from the importer's closure when those packages aren't imported.
+2. The developer tooling (`internal/codegen`, `internal/semanticsdb`, `cmd/semantics-tool`) needs to parse and write the `semantics/mappings.yaml` catalog — hand-rolling YAML I/O for that (327 lines of indent-counting `bufio.Scanner` parsing in the old `loader.go`, plus a matching hand-written emitter) was fragile and format-coupled. `gopkg.in/yaml.v3` is a stable, audited, pure-Go single-dependency library that solves this correctly.
+
+**Enforcement:**
+- `pkg/` files must import only stdlib and `github.com/lenaxia/rathena-client/...` self-imports.
+- `internal/` and `cmd/` files may additionally import `gopkg.in/yaml.v3`.
+- Any new external dependency in `internal/` or `cmd/` requires an explicit case in the work log and a maintainer sign-off — do not silently widen the allowlist.
+- CI gate (recommended follow-up): `go list -deps github.com/lenaxia/rathena-client/pkg/...` should produce only stdlib + self paths.
 
 ### 6. rAthena is the ONLY Source of Truth for Packet Structure (CRITICAL)
 

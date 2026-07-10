@@ -5,6 +5,79 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **`cmd/semantics-tool` — MCP server + CLI for editing `semantics/mappings.yaml`**
+  (worklog 0088). Migrates the goKore `gokore-semantics` MCP server into
+  rathena-client and adapts it to the rathena-client `semantic_actions:`
+  schema. Exposes 14 tools (8 read-only, 6 mutating) over JSON-RPC stdio for
+  AI clients, plus a 14-subcommand CLI for humans. Round-trips the YAML
+  byte-identically when no mutations are applied (enforced by
+  `TestProductionMappings_RoundTripByteIdentical`); mutations produce minimal
+  diffs that match the surrounding formatting. This unblocks the README Rule
+  9 "use the MCP server, never edit mappings.yaml directly" workflow, which
+  had been aspirational — every prior mappings.yaml change was a hand-edit.
+
+  Read-only tools: `list_actions`, `get_action`, `list_implementations`,
+  `get_implementation`, `search_actions`, `validate`, `stats`, `export`.
+  Mutating tools: `create_action`, `update_action`, `delete_action`,
+  `add_implementation`, `update_implementation`, `delete_implementation`.
+
+- **`internal/semanticsdb/` — editor layer** over `semantics/mappings.yaml`
+  with load/mutate/save and structural validation. Built on `gopkg.in/yaml.v3`
+  using a `yaml.Node` tree that preserves source formatting (comments, quote
+  style, key order) for unchanged content.
+
+### Changed (breaking — policy)
+
+- **README Rule 5 reworded**: was "No External Runtime Dependencies (repo-wide,
+  `go.mod` must have zero `require` entries)". Now scopes zero-deps to `pkg/`
+  only. `internal/` and `cmd/` developer tooling may use stdlib plus
+  `gopkg.in/yaml.v3`. The original "embeddable with no transitive dependency
+  surprises" property is preserved for `pkg/` because Go's module graph
+  excludes `internal/`/`cmd/` deps from the importer's closure.
+
+  `go.mod` now contains `require gopkg.in/yaml.v3 v3.0.1`. Consumers of
+  `pkg/` are unaffected.
+
+### Changed (non-breaking)
+
+- **`internal/codegen/semantics/loader.go` rewritten** on `gopkg.in/yaml.v3`.
+  327 lines of hand-rolled `bufio.Scanner` indent-counting parsing replaced
+  with ~200 lines of yaml.v3 decode plus a `tolerantRange` custom unmarshaler
+  that preserves null positions in `packetver_range:` sequences (yaml.v3
+  skips null items when decoding into `[]int` directly) and accepts both
+  bare integers and quoted strings (mappings.yaml is inconsistent on this;
+  worklog-0087 used quoted strings like `"20121009"`). All 6 existing tests
+  in `internal/codegen/semantics/*_test.go` pass unchanged.
+
+### Fixed
+
+- **Deleted empty duplicate action `received_character_ID_and_Map`** from
+  `semantics/mappings.yaml`. Pre-existing validation finding surfaced by the
+  new `validate` tool: a stub entry with capital letters (a leftover from
+  worklog 0009's case-collision fix) existed alongside the canonical
+  lowercase `received_character_id_and_map`. Both had `implementations: []`
+  so neither was wired to anything; the duplicate is removed. 6 lines deleted.
+
+### Tests
+
+- `internal/semanticsdb/db_test.go` — 16 tests covering load, list, get,
+  create/delete/update action, add/update/delete impl, validation (min>max,
+  duplicate detection, bad action name), search, statistics, and production
+  round-trip.
+- `internal/semanticsdb/roundtrip_test.go` — strongest guarantee: no-op
+  `Save` produces zero bytes of change to production mappings.yaml.
+- `cmd/semantics-tool/cli/cli_test.go` — 11 CLI end-to-end tests including
+  the flow-style regression test.
+- `cmd/semantics-tool/mcp/server_test.go` — 7 MCP JSON-RPC integration tests
+  via subprocess (initialize, tools/list, stats, create_action,
+  add_implementation, validate, error paths).
+
+---
+
 ## [v0.7.0] — 2026-07-09
 
 ### Fixed

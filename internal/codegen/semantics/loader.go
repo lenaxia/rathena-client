@@ -1,22 +1,29 @@
 // Package semantics loads semantics/mappings.yaml into Go structs.
-// The file contains only a semantic_actions section — groupings of packet IDs
-// under named actions with their rAthena struct names. All field derivation is
-// done directly from the rAthena VersionTable; there are no canonical_params or
-// field_mapping expressions.
+//
+// The file has a top-level `semantic_actions:` section that groups packet IDs
+// under named actions, each with its rAthena struct name and optional
+// packetver bounds. All field derivation is done directly from the rAthena
+// VersionTable; there are no canonical_params or field_mapping expressions in
+// the consumed schema.
+//
+// This loader uses gopkg.in/yaml.v3. The previous hand-rolled parser (327
+// lines of indent-counting bufio.Scanner logic) was deleted in the Rule 5
+// scope change that permits yaml.v3 in internal/ developer tooling.
 package semantics
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Implementation is one packet ID variant for a semantic action.
 type Implementation struct {
-	PacketID     string // e.g. "0x009F"
-	PacketverMin int    // e.g. 20030000
-	PacketverMax int    // 0 = no upper bound
+	PacketID     string // e.g. "0x009F" (normalised uppercase hex)
+	PacketverMin int    // e.g. 20030000; 0 means "no lower bound"
+	PacketverMax int    // 0 means "no upper bound"
 	StructName   string // rAthena struct name, e.g. PACKET_ZC_NOTIFY_VANISH
 }
 
@@ -31,140 +38,102 @@ type DB struct {
 	Actions map[string]*Action
 }
 
-// LoadFile reads the mappings.yaml file at path and returns the semantic DB.
-func LoadFile(path string) (*DB, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("open %s: %w", path, err)
-	}
-	defer f.Close()
+// rawAction / rawImpl mirror the on-disk YAML shape so yaml.v3 can decode
+// directly. The decoding layer translates these into the exported API types
+// and applies the same normalisation rules the hand-parser used:
+//   - packet_id is normalised to "0xABCD" (uppercase hex)
+//   - packetver_range[0] (min) of null/absent defaults to 20030000
+//   - packetver_range[1] (max) of null/absent stays 0 (= no upper bound)
+//
+// tolerantRange is a custom slice unmarshaler that preserves null positions
+// (yaml.v3 skips null items when decoding into []int with a per-item
+// UnmarshalYAML hook) and accepts both bare integers (20030000) and quoted
+// strings ("20121009") — mappings.yaml is inconsistent on this and the
+// previous hand-parser silently accepted both by extracting digits from any
+// token.
+type tolerantRange []int
 
-	var lines []string
-	scanner := bufio.NewScanner(f)
-	scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+func (r *tolerantRange) UnmarshalYAML(value *yaml.Node) error {
+	if value.Kind != yaml.SequenceNode {
+		return fmt.Errorf("packetver_range: expected sequence, got %s", value.Tag)
 	}
-	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("scan %s: %w", path, err)
+	out := make([]int, 0, len(value.Content))
+	for _, item := range value.Content {
+		if item.Tag == "!!null" {
+			out = append(out, 0)
+			continue
+		}
+		var n int
+		if err := item.Decode(&n); err == nil {
+			out = append(out, n)
+			continue
+		}
+		var s string
+		if err := item.Decode(&s); err != nil {
+			return fmt.Errorf("packetver_range entry: %w", err)
+		}
+		var parsed int
+		if _, err := fmt.Sscanf(strings.TrimSpace(s), "%d", &parsed); err != nil {
+			return fmt.Errorf("packetver_range entry %q: %w", s, err)
+		}
+		out = append(out, parsed)
 	}
-	return parse(lines)
+	*r = out
+	return nil
 }
 
-// parse extracts the semantic_actions section and builds a DB.
-//
-// Expected indentation:
-//
-//	0  spaces — "semantic_actions:"
-//	4  spaces — action name key  (e.g. "    actor_exists:")
-//	8  spaces — "implementations:"
-//	12 spaces — list item        (e.g. "            - packet_id: ...")
-//	14 spaces — continuation     (struct_name, packetver_min, packetver_max)
-func parse(lines []string) (*DB, error) {
-	start := -1
-	for i, l := range lines {
-		if strings.TrimSpace(l) == "semantic_actions:" {
-			start = i + 1
-			break
-		}
-	}
-	if start < 0 {
-		return nil, fmt.Errorf("semantic_actions: section not found")
-	}
+type rawImpl struct {
+	PacketID       string        `yaml:"packet_id"`
+	StructName     string        `yaml:"struct_name"`
+	PacketverRange tolerantRange `yaml:"packetver_range"`
+}
 
-	db := &DB{Actions: make(map[string]*Action)}
+type rawAction struct {
+	Name            string    `yaml:"name"`
+	Description     string    `yaml:"description"`
+	OpenkoreName    string    `yaml:"openkore_name"`
+	Implementations []rawImpl `yaml:"implementations"`
+}
 
-	var curAction *Action
-	var curImpl *Implementation
-	inImpls := false
-	inPacketverRange := false
-	packetverRangeIdx := 0
+type rawFile struct {
+	SemanticActions map[string]rawAction `yaml:"semantic_actions"`
+}
 
-	for i := start; i < len(lines); i++ {
-		raw := lines[i]
-
-		// Stop at next top-level key (no leading space).
-		if len(raw) > 0 && raw[0] != ' ' && raw[0] != '\t' {
-			break
-		}
-
-		trimmed := strings.TrimSpace(raw)
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
-			continue
-		}
-
-		indent := countIndent(raw)
-
-		// Handle packetver_range list items at indent 16 (new MCP format).
-		// Format:
-		//   packetver_range:   (indent 14)
-		//     - null           (indent 16, item 0 = min)
-		//     - null           (indent 16, item 1 = max)
-		if inPacketverRange && indent == 16 && strings.HasPrefix(trimmed, "- ") && curImpl != nil {
-			val := strings.TrimPrefix(trimmed, "- ")
-			val = strings.TrimSpace(val)
-			if val != "null" && val != "" {
-				switch packetverRangeIdx {
-				case 0:
-					parseIntInto(val, &curImpl.PacketverMin)
-				case 1:
-					parseIntInto(val, &curImpl.PacketverMax)
-				}
-			}
-			packetverRangeIdx++
-			continue
-		}
-
-		// Leaving the packetver_range block when indent drops back to 14 or below.
-		if inPacketverRange && indent <= 14 {
-			inPacketverRange = false
-			// Apply default packetver_min if still zero (null in YAML).
-			if curImpl != nil && curImpl.PacketverMin == 0 {
-				curImpl.PacketverMin = 20030000
-			}
-		}
-
-		switch {
-		case indent == 4 && strings.HasSuffix(trimmed, ":"):
-			// New action name.
-			name := unquote(strings.TrimSuffix(trimmed, ":"))
-			curAction = &Action{Name: name}
-			db.Actions[name] = curAction
-			inImpls = false
-			curImpl = nil
-
-		case indent == 8:
-			if trimmed == "implementations:" {
-				inImpls = true
-			}
-
-		case indent == 12 && inImpls && strings.HasPrefix(trimmed, "- "):
-			// Start of a new implementation entry.
-			curImpl = &Implementation{}
-			if curAction != nil {
-				curAction.Implementations = append(curAction.Implementations, *curImpl)
-				curImpl = &curAction.Implementations[len(curAction.Implementations)-1]
-			}
-			rest := strings.TrimPrefix(trimmed, "- ")
-			k, v := splitKV(rest)
-			setImplField(curImpl, k, v)
-
-		case indent == 14 && curImpl != nil:
-			k, v := splitKV(trimmed)
-			if k == "packetver_range" {
-				inPacketverRange = true
-				packetverRangeIdx = 0
-			} else {
-				setImplField(curImpl, k, v)
-			}
-		}
+// LoadFile reads the mappings.yaml file at path and returns the semantic DB.
+func LoadFile(path string) (*DB, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %w", path, err)
 	}
 
-	// Apply default packetver_min for any trailing impl that ended in a null range.
-	if inPacketverRange && curImpl != nil && curImpl.PacketverMin == 0 {
-		curImpl.PacketverMin = 20030000
+	var raw rawFile
+	dec := yaml.NewDecoder(strings.NewReader(string(data)))
+	dec.KnownFields(false)
+	if err := dec.Decode(&raw); err != nil {
+		return nil, fmt.Errorf("decode %s: %w", path, err)
 	}
 
+	db := &DB{Actions: make(map[string]*Action, len(raw.SemanticActions))}
+	for name, ra := range raw.SemanticActions {
+		action := &Action{Name: name}
+		for _, ri := range ra.Implementations {
+			impl := Implementation{
+				PacketID:   normPacketID(ri.PacketID),
+				StructName: ri.StructName,
+			}
+			if len(ri.PacketverRange) >= 1 {
+				impl.PacketverMin = ri.PacketverRange[0]
+			}
+			if len(ri.PacketverRange) >= 2 {
+				impl.PacketverMax = ri.PacketverRange[1]
+			}
+			if impl.PacketverMin == 0 {
+				impl.PacketverMin = 20030000
+			}
+			action.Implementations = append(action.Implementations, impl)
+		}
+		db.Actions[name] = action
+	}
 	return db, nil
 }
 
@@ -187,7 +156,6 @@ type PacketMapping struct {
 // SYNTH_ZC_* and SYNTH_HC_* are also treated as receive. packet_* lowercase
 // structs represent receive packets by convention.
 //
-// Unlike the previous behaviour, this no longer deduplicates by packet_id.
 // The same packet ID may appear multiple times if different actions define
 // versioned implementations for it (e.g. 0x0092 pre- and post-20170315).
 // The join pass in main.go is responsible for resolving conflicts.
@@ -197,12 +165,7 @@ func LoadMappings(path string) ([]PacketMapping, error) {
 		return nil, err
 	}
 
-	// Deduplicate by (packet_id, struct_name) — the same struct at the same ID
-	// from two different actions is redundant, but different structs at the same
-	// ID across packetver ranges are intentional and must both be emitted.
-	type deduKey struct {
-		id, structName string
-	}
+	type deduKey struct{ id, structName string }
 	seen := make(map[deduKey]bool)
 	var results []PacketMapping
 
@@ -217,7 +180,7 @@ func LoadMappings(path string) ([]PacketMapping, error) {
 			}
 			seen[key] = true
 			results = append(results, PacketMapping{
-				PacketID:      normPacketID(impl.PacketID),
+				PacketID:      impl.PacketID,
 				Direction:     inferDirection(impl.StructName),
 				RathenaStruct: impl.StructName,
 				PacketverMin:  impl.PacketverMin,
@@ -225,7 +188,6 @@ func LoadMappings(path string) ([]PacketMapping, error) {
 			})
 		}
 	}
-
 	return results, nil
 }
 
@@ -240,81 +202,10 @@ func inferDirection(structName string) string {
 			return "receive"
 		}
 	}
-	// lowercase packet_* structs (packet_idle_unit, packet_unit_walking, etc.)
 	if strings.HasPrefix(structName, "packet_") {
 		return "receive"
 	}
 	return "send"
-}
-
-// --- helpers ---
-
-func countIndent(s string) int {
-	n := 0
-	for _, c := range s {
-		if c == ' ' {
-			n++
-		} else if c == '\t' {
-			n += 4
-		} else {
-			break
-		}
-	}
-	return n
-}
-
-// splitKV splits "key: value" → ("key", "value").
-func splitKV(s string) (key, val string) {
-	idx := strings.Index(s, ":")
-	if idx < 0 {
-		return strings.TrimSpace(s), ""
-	}
-	key = strings.TrimSpace(s[:idx])
-	val = strings.TrimSpace(s[idx+1:])
-	key = unquote(key)
-	val = unquote(val)
-	return
-}
-
-// unquote strips surrounding single or double quotes.
-func unquote(s string) string {
-	s = strings.TrimSpace(s)
-	if len(s) >= 2 {
-		if (s[0] == '\'' && s[len(s)-1] == '\'') ||
-			(s[0] == '"' && s[len(s)-1] == '"') {
-			s = s[1 : len(s)-1]
-		}
-	}
-	return s
-}
-
-func setImplField(impl *Implementation, k, v string) {
-	switch k {
-	case "packet_id":
-		lower := strings.ToLower(v)
-		if strings.HasPrefix(lower, "0x") {
-			impl.PacketID = "0x" + strings.ToUpper(lower[2:])
-		} else {
-			impl.PacketID = "0x" + strings.ToUpper(lower)
-		}
-	case "struct_name":
-		impl.StructName = v
-	case "packetver_min":
-		parseIntInto(v, &impl.PacketverMin)
-	case "packetver_max":
-		parseIntInto(v, &impl.PacketverMax)
-	}
-}
-
-func parseIntInto(s string, dst *int) {
-	s = strings.TrimSpace(s)
-	n := 0
-	for _, c := range s {
-		if c >= '0' && c <= '9' {
-			n = n*10 + int(c-'0')
-		}
-	}
-	*dst = n
 }
 
 // normPacketID normalises a packet ID to "0xABCD" form (uppercase hex digits).
