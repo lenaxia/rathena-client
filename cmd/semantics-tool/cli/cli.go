@@ -189,14 +189,9 @@ func Run(args []string, out io.Writer) error {
 		fs.SetOutput(out)
 		desc := fs.String("description", "", "new description (omit to leave unchanged)")
 		openkore := fs.String("openkore", "", "new openkore_name (omit to leave unchanged)")
-		descSet := false
-		openkoreSet := false
-		fs.Func("set-description", "internal hook (unused)", func(string) error { descSet = true; return nil })
 		if err := fs.Parse(rest); err != nil {
 			return err
 		}
-		_ = descSet
-		_ = openkoreSet
 		name, err := positional(fs.Args(), 0, "action name")
 		if err != nil {
 			return err

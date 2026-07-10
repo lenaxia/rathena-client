@@ -12,6 +12,7 @@
 package semantics
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -107,7 +108,7 @@ func LoadFile(path string) (*DB, error) {
 	}
 
 	var raw rawFile
-	dec := yaml.NewDecoder(strings.NewReader(string(data)))
+	dec := yaml.NewDecoder(bytes.NewReader(data))
 	dec.KnownFields(false)
 	if err := dec.Decode(&raw); err != nil {
 		return nil, fmt.Errorf("decode %s: %w", path, err)

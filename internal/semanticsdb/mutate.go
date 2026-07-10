@@ -146,9 +146,6 @@ func (d *DB) DeleteImplementation(actionName, packetID string) error {
 	}
 	want := normPacketID(packetID)
 	seq := getImplsSeq(node)
-	if seq == nil || seq.Kind != yaml.SequenceNode {
-		return fmt.Errorf("%w: %s on action %s", ErrImplNotFound, want, actionName)
-	}
 	idx, found := findImplIndex(node, want)
 	if !found {
 		return fmt.Errorf("%w: %s on action %s", ErrImplNotFound, want, actionName)
@@ -262,7 +259,11 @@ func buildActionNode(name, description, openkoreName string, impls []Implementat
 func buildImplNode(impl Implementation) *yaml.Node {
 	mapping := &yaml.Node{Kind: yaml.MappingNode, Tag: "!!map"}
 	// First key is packet_id (list-item key, on the same line as "- ").
-	addMappingKV(mapping, "packet_id", quotePacketID(impl.PacketID))
+	// The packet_id value is emitted with DoubleQuotedStyle so the output
+	// is "0x00FB" rather than the bare 0x00FB yaml.v3 would otherwise
+	// produce — matches the quoting convention used throughout the
+	// existing mappings.yaml and keeps diffs minimal.
+	addMappingQuotedKV(mapping, "packet_id", impl.PacketID)
 
 	// packetver_range as a 2-element sequence (null for unbounded bounds).
 	rangeSeq := &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq"}
@@ -287,9 +288,6 @@ func buildImplNode(impl Implementation) *yaml.Node {
 	}
 	addMappingKey(mapping, "field_mapping", fmNode)
 
-	// Preserve canonical field order: packet_id, packetver_range,
-	// struct_name, field_mapping. We added them in that order above so no
-	// reordering needed.
 	return mapping
 }
 
@@ -306,21 +304,22 @@ func rangeValueNode(v int) *yaml.Node {
 	}
 }
 
-// quotePacketID emits a quoted-scalar node for a packet ID, preserving the
-// "0xABCD" quoting convention of the existing mappings.yaml. yaml.v3 would
-// otherwise emit 0x00FB as a bare scalar, which round-trips fine but changes
-// the on-disk representation; quoting keeps diffs minimal.
-func quotePacketID(id string) string {
-	// stored as the visible string value; tag !!str + Style DoubleQuotedStyle
-	// makes the encoder emit it quoted.
-	return id
-}
-
 // addMappingKV appends a (key, scalar-string-value) pair to a mapping node.
 func addMappingKV(m *yaml.Node, key, value string) {
 	m.Content = append(m.Content,
 		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: key},
 		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: value},
+	)
+}
+
+// addMappingQuotedKV appends a (key, double-quoted-string-value) pair. Used
+// for packet_id so the output matches the existing mappings.yaml convention
+// of writing packet IDs as "0xABCD" rather than bare scalars (which yaml.v3
+// would otherwise emit unquoted).
+func addMappingQuotedKV(m *yaml.Node, key, value string) {
+	m.Content = append(m.Content,
+		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: key},
+		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: value, Style: yaml.DoubleQuotedStyle},
 	)
 }
 

@@ -154,22 +154,27 @@ func (d *DB) validateCrossActionConflicts() []ValidationError {
 }
 
 // rangesOverlap reports whether [aMin, aMax] overlaps [bMin, bMax]. Zero
-// means "unbounded" on that side.
+// means "unbounded" on that side. Packetver values are positive YYYYMMDD
+// integers, so 0 is below any real value and can be used as the lower
+// sentinel; the upper sentinel uses a large int to model "infinity".
 func rangesOverlap(aMin, aMax, bMin, bMax int) bool {
-	lo := func(v int) int {
-		if v == 0 {
-			return 0
-		}
-		return v
+	const inf = 1 << 62
+	aLo := aMin
+	if aMin == 0 {
+		aLo = 0
 	}
-	hi := func(v int) int {
-		if v == 0 {
-			return 1 << 62
-		}
-		return v
+	aHi := aMax
+	if aMax == 0 {
+		aHi = inf
 	}
-	aLo, aHi := lo(aMin), hi(aMax)
-	bLo, bHi := lo(bMin), hi(bMax)
+	bLo := bMin
+	if bMin == 0 {
+		bLo = 0
+	}
+	bHi := bMax
+	if bMax == 0 {
+		bHi = inf
+	}
 	return aLo <= bHi && bLo <= aHi
 }
 

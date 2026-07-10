@@ -433,27 +433,121 @@ func TestValidate_CatchesMinGtMax(t *testing.T) {
 }
 
 func TestValidate_CatchesDuplicateImplInAction(t *testing.T) {
-	p := writeSample(t)
-	db, _ := semanticsdb.Load(p)
-	if err := db.CreateAction("dup", "", ""); err != nil {
+	// Two implementations with the same packet_id within one action.
+	// AddImplementation rejects this at the API level, so we craft a YAML
+	// file with the duplicate already present (simulating a hand-edit or
+	// historical drift) and verify Validate catches it on load.
+	crafted := strings.Replace(sampleYAML,
+		"              struct_name: PACKET_ZC_NOTIFY_VANISH\n              field_mapping: {}\n",
+		"              struct_name: PACKET_ZC_NOTIFY_VANISH\n              field_mapping: {}\n"+
+			"            - packet_id: \"0x0080\"\n"+
+			"              packetver_range:\n"+
+			"                - null\n"+
+			"                - null\n"+
+			"              struct_name: PACKET_ZC_NOTIFY_VANISH_DUPE\n"+
+			"              field_mapping: {}\n",
+		1)
+	dir := t.TempDir()
+	cp := filepath.Join(dir, "mappings.yaml")
+	if err := os.WriteFile(cp, []byte(crafted), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	// Force-add two impls with the same packet_id (bypass the duplicate check
-	// in AddImplementation by editing the tree directly via two distinct
-	// calls — actually AddImplementation rejects dups, so use CreateAction
-	// with a pre-built list by saving once and reloading, then raw add).
-	_ = db.AddImplementation("dup", semanticsdb.Implementation{
-		PacketID: "0x1234", StructName: "X",
-	})
-	// Second one — we expect AddImplementation to refuse, so manually
-	// re-add via the lower-level API path. The validator must catch this
-	// if it ever happens in the YAML.
-	//
-	// Inject the duplicate by hand at the YAML node level.
+	db, err := semanticsdb.Load(cp)
+	if err != nil {
+		t.Fatalf("Load crafted: %v", err)
+	}
 	errs := db.Validate()
-	// Should still be clean — the duplicate-add was rejected above.
-	if errs != nil {
-		t.Errorf("unexpected validation errors: %v", errs)
+	found := false
+	for _, e := range errs {
+		if strings.Contains(e.Message, "duplicate implementation") {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected a 'duplicate implementation' error, got: %v", errs)
+	}
+}
+
+func TestValidate_CatchesCrossActionConflict(t *testing.T) {
+	// Two distinct actions share the same packet_id with overlapping
+	// packetver ranges. Validate must flag this.
+	crafted := strings.Replace(sampleYAML,
+		"    actor_died_or_disappeared:",
+		"    conflict_a:\n        implementations:\n"+
+			"            - packet_id: \"0x0080\"\n"+
+			"              packetver_range:\n"+
+			"                - 20030000\n"+
+			"                - 20050101\n"+
+			"              struct_name: PACKET_A\n"+
+			"              field_mapping: {}\n"+
+			"    conflict_b:\n        implementations:\n"+
+			"            - packet_id: \"0x0080\"\n"+
+			"              packetver_range:\n"+
+			"                - 20040101\n"+
+			"                - 20060101\n"+
+			"              struct_name: PACKET_B\n"+
+			"              field_mapping: {}\n"+
+			"    actor_died_or_disappeared:",
+		1)
+	dir := t.TempDir()
+	cp := filepath.Join(dir, "mappings.yaml")
+	if err := os.WriteFile(cp, []byte(crafted), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	db, err := semanticsdb.Load(cp)
+	if err != nil {
+		t.Fatalf("Load crafted: %v", err)
+	}
+	errs := db.Validate()
+	found := false
+	for _, e := range errs {
+		if strings.Contains(e.Message, "used by both action") {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected a cross-action conflict error, got: %v", errs)
+	}
+}
+
+func TestValidate_NoFalsePositiveOnDisjointRanges(t *testing.T) {
+	// Two actions share the same packet_id with disjoint packetver ranges.
+	// This is legitimate (e.g. the same wire ID reassigned over time) and
+	// must NOT be flagged as a conflict.
+	//
+	// Use packet_id 0x9999 — not used by any action in sampleYAML — so the
+	// only entries to compare are the two we add.
+	crafted := strings.Replace(sampleYAML,
+		"    actor_died_or_disappeared:",
+		"    disjoint_a:\n        implementations:\n"+
+			"            - packet_id: \"0x9999\"\n"+
+			"              packetver_range:\n"+
+			"                - null\n"+
+			"                - 20050101\n"+
+			"              struct_name: PACKET_A\n"+
+			"              field_mapping: {}\n"+
+			"    disjoint_b:\n        implementations:\n"+
+			"            - packet_id: \"0x9999\"\n"+
+			"              packetver_range:\n"+
+			"                - 20050102\n"+
+			"                - null\n"+
+			"              struct_name: PACKET_B\n"+
+			"              field_mapping: {}\n"+
+			"    actor_died_or_disappeared:",
+		1)
+	dir := t.TempDir()
+	cp := filepath.Join(dir, "mappings.yaml")
+	if err := os.WriteFile(cp, []byte(crafted), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	db, err := semanticsdb.Load(cp)
+	if err != nil {
+		t.Fatalf("Load crafted: %v", err)
+	}
+	for _, e := range db.Validate() {
+		if strings.Contains(e.Message, "used by both action") {
+			t.Errorf("false-positive cross-action conflict for disjoint ranges: %v", e)
+		}
 	}
 }
 
@@ -540,11 +634,4 @@ func TestProductionMappings_LoadAndValidate(t *testing.T) {
 	if s.ActionCount < 200 {
 		t.Errorf("expected >= 200 actions in production DB, got %d", s.ActionCount)
 	}
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

@@ -16,7 +16,7 @@ It is **not** a game client, bot, or application. It is a **pure protocol librar
 
 Primary consumer: **goKore** (`~/personal/goKore`) — the bot framework that imports this library as its network layer.
 
-**NOTE:** ALWAYS USE THE SEMANTICDB MCP SERVER (`gokore-semantics`) TO ACCESS THE SEMANTICDB. NEVER GREP OR DIRECTLY MODIFY `semantics/mappings.yaml`. IF YOU NEED SPECIFIC FUNCTIONALITY, SPIN UP A SUBTASK TO ADD IT TO THE MCP SERVER THEN NOTIFY THE USER.
+**NOTE:** ALWAYS USE THE SEMANTICDB MCP SERVER TO ACCESS THE SEMANTICDB. NEVER GREP OR DIRECTLY MODIFY `semantics/mappings.yaml`. IF YOU NEED SPECIFIC FUNCTIONALITY, USE THE IN-REPO `cmd/semantics-tool` (MCP MODE: `semantics-tool serve --file semantics/mappings.yaml`, OR CLI MODE: `semantics-tool <command> --file semantics/mappings.yaml`) THEN NOTIFY THE USER.
 
 ### External References
 
@@ -210,7 +210,26 @@ Reflection was a bug surface and performance cost in goKore v1. Direct byte read
 
 ### 9. Semantic DB via MCP Server Only — But Verify Before Trusting (CRITICAL)
 
-**ALWAYS use the `gokore-semantics` MCP server to READ and WRITE the semantic DB. NEVER edit `semantics/mappings.yaml` directly.**
+**ALWAYS use the in-repo `cmd/semantics-tool` MCP server to READ and WRITE the semantic DB. NEVER edit `semantics/mappings.yaml` directly.**
+
+The server lives in this repo (worklog 0088). Launch it with:
+
+```bash
+# MCP mode (for AI clients)
+semantics-tool serve --file semantics/mappings.yaml
+
+# CLI mode (for humans / shell scripts)
+semantics-tool <command> --file semantics/mappings.yaml
+# Examples:
+#   semantics-tool list-actions --file semantics/mappings.yaml
+#   semantics-tool get-action actor_died_or_disappeared --file semantics/mappings.yaml
+#   semantics-tool create-action --file semantics/mappings.yaml -description "..." zc_new_action
+#   semantics-tool validate --file semantics/mappings.yaml
+```
+
+Tools exposed (14 total — see `cmd/semantics-tool/mcp/tools.go`):
+- Read-only: `list_actions`, `get_action`, `list_implementations`, `get_implementation`, `search_actions`, `validate`, `stats`, `export`
+- Mutating: `create_action`, `update_action`, `delete_action`, `add_implementation`, `update_implementation`, `delete_implementation`
 
 **However: the DB contains known errors and must not be trusted without GCC verification.**
 
