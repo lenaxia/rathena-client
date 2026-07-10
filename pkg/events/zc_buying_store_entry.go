@@ -4,6 +4,6 @@ package events
 
 // ZcBuyingStoreEntry is the event emitted for the zc_buying_store_entry action.
 type ZcBuyingStoreEntry struct {
-	MakerAID uint32
+	MakerAID  uint32
 	StoreName string
 }

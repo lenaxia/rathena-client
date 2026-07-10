@@ -8,13 +8,13 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckReadRodex_0x09EB(data []byte, packetver uint32) events.ZcAckReadRodex {
 	var e events.ZcAckReadRodex
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.Opentype = int8(data[4])  // rAthena: opentype (offset 4, size 1)
-	e.MailID = leI64(data, 5)  // rAthena: MailID (offset 5, size 8)
-	e.TextcontentsLength = leI16(data, 13)  // rAthena: TextcontentsLength (offset 13, size 2)
-	e.Zeny = leI64(data, 15)  // rAthena: zeny (offset 15, size 8)
-	e.ItemCnt = int8(data[23])  // rAthena: ItemCnt (offset 23, size 1)
-	e.Textcontent = nullTermString(data[24:])  // rAthena: Textcontent (offset 24, size 0)
+	e.PacketLength = leI16(data, 2)           // rAthena: PacketLength (offset 2, size 2)
+	e.Opentype = int8(data[4])                // rAthena: opentype (offset 4, size 1)
+	e.MailID = leI64(data, 5)                 // rAthena: MailID (offset 5, size 8)
+	e.TextcontentsLength = leI16(data, 13)    // rAthena: TextcontentsLength (offset 13, size 2)
+	e.Zeny = leI64(data, 15)                  // rAthena: zeny (offset 15, size 8)
+	e.ItemCnt = int8(data[23])                // rAthena: ItemCnt (offset 23, size 1)
+	e.Textcontent = nullTermString(data[24:]) // rAthena: Textcontent (offset 24, size 0)
 	return e
 }
 
@@ -22,13 +22,12 @@ func ZcAckReadRodex_0x09EB(data []byte, packetver uint32) events.ZcAckReadRodex 
 func ZcAckReadRodex_0x0B63(data []byte, packetver uint32) events.ZcAckReadRodex {
 	var e events.ZcAckReadRodex
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.Opentype = int8(data[4])  // rAthena: opentype (offset 4, size 1)
-	e.MailID = leI64(data, 5)  // rAthena: MailID (offset 5, size 8)
-	e.TextcontentsLength = leI16(data, 13)  // rAthena: TextcontentsLength (offset 13, size 2)
-	e.Zeny = leI64(data, 15)  // rAthena: zeny (offset 15, size 8)
-	e.ItemCnt = int8(data[23])  // rAthena: ItemCnt (offset 23, size 1)
-	e.Textcontent = nullTermString(data[24:])  // rAthena: Textcontent (offset 24, size 0)
+	e.PacketLength = leI16(data, 2)           // rAthena: PacketLength (offset 2, size 2)
+	e.Opentype = int8(data[4])                // rAthena: opentype (offset 4, size 1)
+	e.MailID = leI64(data, 5)                 // rAthena: MailID (offset 5, size 8)
+	e.TextcontentsLength = leI16(data, 13)    // rAthena: TextcontentsLength (offset 13, size 2)
+	e.Zeny = leI64(data, 15)                  // rAthena: zeny (offset 15, size 8)
+	e.ItemCnt = int8(data[23])                // rAthena: ItemCnt (offset 23, size 1)
+	e.Textcontent = nullTermString(data[24:]) // rAthena: Textcontent (offset 24, size 0)
 	return e
 }
-

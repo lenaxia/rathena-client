@@ -4,6 +4,6 @@ package events
 
 // ZcPartyJoinReq is the event emitted for the zc_party_join_req action.
 type ZcPartyJoinReq struct {
-	GRID []byte
+	GRID      []byte
 	GroupName string
 }

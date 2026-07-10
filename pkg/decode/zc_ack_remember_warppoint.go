@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckRememberWarppoint_0x011E(data []byte, packetver uint32) events.ZcAckRememberWarppoint {
 	var e events.ZcAckRememberWarppoint
 	_ = packetver
-	e.Type = data[2]  // rAthena: type (offset 2, size 1)
+	e.Type = data[2] // rAthena: type (offset 2, size 1)
 	return e
 }
-

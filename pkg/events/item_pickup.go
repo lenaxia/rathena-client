@@ -4,20 +4,20 @@ package events
 
 // ItemPickup is the event emitted for the item_pickup action.
 type ItemPickup struct {
-	Index uint16
-	Count uint16
-	Nameid uint32
-	IsIdentified uint8
-	IsDamaged uint8
-	RefiningLevel uint8
-	Slot []byte
-	Location uint32
-	Type uint8
-	Result uint8
-	HireExpireDate int32
+	Index           uint16
+	Count           uint16
+	Nameid          uint32
+	IsIdentified    uint8
+	IsDamaged       uint8
+	RefiningLevel   uint8
+	Slot            []byte
+	Location        uint32
+	Type            uint8
+	Result          uint8
+	HireExpireDate  int32
 	BindOnEquipType uint16
-	Option_data []byte
-	Favorite uint8
-	Look uint16
-	Grade uint8
+	Option_data     []byte
+	Favorite        uint8
+	Look            uint16
+	Grade           uint8
 }

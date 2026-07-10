@@ -5,5 +5,5 @@ package send
 // StatusUp is the request struct for the status_up action.
 type StatusUp struct {
 	StatusType uint16
-	Amount uint8
+	Amount     uint8
 }

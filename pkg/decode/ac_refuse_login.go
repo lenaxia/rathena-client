@@ -8,12 +8,11 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AcRefuseLogin_0x006A(data []byte, packetver uint32) events.AcRefuseLogin {
 	var e events.AcRefuseLogin
 	if packetver >= 20120000 {
-		e.Error = leU32(data, 2)  // rAthena: error (offset 2, size 4)
-		e.Unblock_time = nullTermString(data[6:26])  // rAthena: unblock_time (offset 6, size 20)
+		e.Error = leU32(data, 2)                    // rAthena: error (offset 2, size 4)
+		e.Unblock_time = nullTermString(data[6:26]) // rAthena: unblock_time (offset 6, size 20)
 	} else {
-		e.Error = uint32(data[2])  // rAthena: error (offset 2, size 1)
-		e.Unblock_time = nullTermString(data[3:23])  // rAthena: unblock_time (offset 3, size 20)
+		e.Error = uint32(data[2])                   // rAthena: error (offset 2, size 1)
+		e.Unblock_time = nullTermString(data[3:23]) // rAthena: unblock_time (offset 3, size 20)
 	}
 	return e
 }
-

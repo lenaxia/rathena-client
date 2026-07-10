@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPcSellItemlist_0x00C7(data []byte, packetver uint32) events.ZcPcSellItemlist {
 	var e events.ZcPcSellItemlist
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Items = data[4:]  // rAthena: items (offset 4, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Items = data[4:]              // rAthena: items (offset 4, size 0)
 	return e
 }
-

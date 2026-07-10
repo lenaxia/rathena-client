@@ -12,7 +12,7 @@ func EncodeCzReqJoinGuild2(req send.CzReqJoinGuild2, packetver uint32) [26]byte 
 	// Packet ID: 0x0916 (little-endian)
 	p[0] = 0x16
 	p[1] = 0x09
-	copy(p[2:26], req.Name)  // rAthena: name
+	copy(p[2:26], req.Name) // rAthena: name
 	_ = packetver
 	return p
 }

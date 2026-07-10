@@ -12,7 +12,7 @@ func EncodePetMenu(req send.PetMenu, packetver uint32) [3]byte {
 	// Packet ID: 0x01A1 (little-endian)
 	p[0] = 0xa1
 	p[1] = 0x01
-	p[2] = req.Action  // rAthena: action
+	p[2] = req.Action // rAthena: action
 	_ = packetver
 	return p
 }

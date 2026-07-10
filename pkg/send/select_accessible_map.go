@@ -4,6 +4,6 @@ package send
 
 // SelectAccessibleMap is the request struct for the select_accessible_map action.
 type SelectAccessibleMap struct {
-	Slot int8
+	Slot      int8
 	Mapnumber int8
 }

@@ -12,7 +12,7 @@ func EncodeSendEmotion(req send.SendEmotion, packetver uint32) [6]byte {
 	// Packet ID: 0x01A9 (little-endian)
 	p[0] = 0xa9
 	p[1] = 0x01
-	leU32Put(p[2:], req.TargetId)  // rAthena: targetId
+	leU32Put(p[2:], req.TargetId) // rAthena: targetId
 	_ = packetver
 	return p
 }

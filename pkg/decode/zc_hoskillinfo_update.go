@@ -8,11 +8,10 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcHoskillinfoUpdate_0x0239(data []byte, packetver uint32) events.ZcHoskillinfoUpdate {
 	var e events.ZcHoskillinfoUpdate
 	_ = packetver
-	e.Skill_id = leU16(data, 2)  // rAthena: skill_id (offset 2, size 2)
-	e.Level = leI16(data, 4)  // rAthena: Level (offset 4, size 2)
-	e.SP = leI16(data, 6)  // rAthena: SP (offset 6, size 2)
-	e.AttackRange = leI16(data, 8)  // rAthena: AttackRange (offset 8, size 2)
-	e.Upgradable = data[10:]  // rAthena: upgradable (offset 10, size 1)
+	e.Skill_id = leU16(data, 2)    // rAthena: skill_id (offset 2, size 2)
+	e.Level = leI16(data, 4)       // rAthena: Level (offset 4, size 2)
+	e.SP = leI16(data, 6)          // rAthena: SP (offset 6, size 2)
+	e.AttackRange = leI16(data, 8) // rAthena: AttackRange (offset 8, size 2)
+	e.Upgradable = data[10:]       // rAthena: upgradable (offset 10, size 1)
 	return e
 }
-

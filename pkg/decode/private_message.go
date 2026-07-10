@@ -8,21 +8,20 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PrivateMessage_0x0097(data []byte, packetver uint32) events.PrivateMessage {
 	var e events.PrivateMessage
 	if packetver >= 20131204 {
-		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.SenderGID = leU32(data, 4)  // rAthena: senderGID (offset 4, size 4)
-		e.Sender = nullTermString(data[8:32])  // rAthena: sender (offset 8, size 24)
-		e.IsAdmin = int32(int8(data[32]))  // rAthena: isAdmin (offset 32, size 1)
-		e.Message = nullTermString(data[33:])  // rAthena: message (offset 33, size 0)
+		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
+		e.SenderGID = leU32(data, 4)          // rAthena: senderGID (offset 4, size 4)
+		e.Sender = nullTermString(data[8:32]) // rAthena: sender (offset 8, size 24)
+		e.IsAdmin = int32(int8(data[32]))     // rAthena: isAdmin (offset 32, size 1)
+		e.Message = nullTermString(data[33:]) // rAthena: message (offset 33, size 0)
 	} else if packetver >= 20091104 {
-		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.Sender = nullTermString(data[4:28])  // rAthena: sender (offset 4, size 24)
-		e.IsAdmin = leI32(data, 28)  // rAthena: isAdmin (offset 28, size 4)
-		e.Message = nullTermString(data[32:])  // rAthena: message (offset 32, size 0)
+		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
+		e.Sender = nullTermString(data[4:28]) // rAthena: sender (offset 4, size 24)
+		e.IsAdmin = leI32(data, 28)           // rAthena: isAdmin (offset 28, size 4)
+		e.Message = nullTermString(data[32:]) // rAthena: message (offset 32, size 0)
 	} else {
-		e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-		e.Sender = nullTermString(data[4:28])  // rAthena: sender (offset 4, size 24)
-		e.Message = nullTermString(data[28:])  // rAthena: message (offset 28, size 0)
+		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
+		e.Sender = nullTermString(data[4:28]) // rAthena: sender (offset 4, size 24)
+		e.Message = nullTermString(data[28:]) // rAthena: message (offset 28, size 0)
 	}
 	return e
 }
-

@@ -4,7 +4,7 @@ package events
 
 // ZcChangeGuild is the event emitted for the zc_change_guild action.
 type ZcChangeGuild struct {
-	AID uint32
-	Guild_id int32
+	AID       uint32
+	Guild_id  int32
 	Emblem_id uint32
 }

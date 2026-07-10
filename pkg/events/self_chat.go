@@ -5,5 +5,5 @@ package events
 // SelfChat is the event emitted for the self_chat action.
 type SelfChat struct {
 	PacketLength int16
-	Message string
+	Message      string
 }

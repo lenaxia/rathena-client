@@ -12,9 +12,9 @@ func EncodeCzReqCashBargainSaleItemInfo(req send.CzReqCashBargainSaleItemInfo, p
 	// Packet ID: 0x09AC (little-endian)
 	p[0] = 0xac
 	p[1] = 0x09
-	leU16Put(p[2:], uint16(req.PacketLength))  // rAthena: packetLength
-	leU32Put(p[4:], req.AID)  // rAthena: AID
-	leU16Put(p[8:], req.ItemId)  // rAthena: itemId
+	leU16Put(p[2:], uint16(req.PacketLength)) // rAthena: packetLength
+	leU32Put(p[4:], req.AID)                  // rAthena: AID
+	leU16Put(p[8:], req.ItemId)               // rAthena: itemId
 	_ = packetver
 	return p
 }

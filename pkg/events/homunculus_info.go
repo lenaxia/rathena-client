@@ -4,8 +4,8 @@ package events
 
 // HomunculusInfo is the event emitted for the homunculus_info action.
 type HomunculusInfo struct {
-	Type uint8
+	Type  uint8
 	State uint8
-	Gid uint32
-	Data uint32
+	Gid   uint32
+	Data  uint32
 }

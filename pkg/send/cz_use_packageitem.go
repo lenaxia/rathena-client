@@ -4,8 +4,8 @@ package send
 
 // CzUsePackageitem is the request struct for the cz_use_packageitem action.
 type CzUsePackageitem struct {
-	Index uint16
-	AID uint32
-	ItemID uint32
+	Index    uint16
+	AID      uint32
+	ItemID   uint32
 	BoxIndex uint32
 }

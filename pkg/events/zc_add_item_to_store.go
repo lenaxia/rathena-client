@@ -4,14 +4,14 @@ package events
 
 // ZcAddItemToStore is the event emitted for the zc_add_item_to_store action.
 type ZcAddItemToStore struct {
-	Index int16
-	Amount int32
-	ItemId uint32
-	ItemType uint8
-	Identified uint8
-	Damaged uint8
-	Refine uint8
-	Slot []byte
+	Index       int16
+	Amount      int32
+	ItemId      uint32
+	ItemType    uint8
+	Identified  uint8
+	Damaged     uint8
+	Refine      uint8
+	Slot        []byte
 	Option_data []byte
-	Grade uint8
+	Grade       uint8
 }

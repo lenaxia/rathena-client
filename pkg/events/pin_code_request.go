@@ -4,9 +4,9 @@ package events
 
 // PinCodeRequest is the event emitted for the pin_code_request action.
 type PinCodeRequest struct {
-	Seed uint32
-	AID uint32
+	Seed   uint32
+	AID    uint32
 	Result uint16
-	Flag uint16
-	Key uint32
+	Flag   uint16
+	Key    uint32
 }

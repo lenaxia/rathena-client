@@ -12,8 +12,8 @@ func EncodeNpcContact(req send.NpcContact, packetver uint32) [7]byte {
 	// Packet ID: 0x0090 (little-endian)
 	p[0] = 0x90
 	p[1] = 0x00
-	leU32Put(p[2:], req.AID)  // rAthena: AID
-	p[6] = req.Type  // rAthena: type
+	leU32Put(p[2:], req.AID) // rAthena: AID
+	p[6] = req.Type          // rAthena: type
 	_ = packetver
 	return p
 }

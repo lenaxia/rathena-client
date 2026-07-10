@@ -12,8 +12,8 @@ func EncodeShopSell(req send.ShopSell, packetver uint32) []byte {
 	// Packet ID: 0x00C9 (little-endian)
 	p[0] = 0xc9
 	p[1] = 0x00
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	copy(p[4:], req.SellList)  // rAthena: sellList
+	leU16Put(p[2:], uint16(len(p))) // rAthena: packetLength (computed)
+	copy(p[4:], req.SellList)       // rAthena: sellList
 	_ = packetver
 	return p
 }

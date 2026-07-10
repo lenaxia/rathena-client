@@ -4,14 +4,14 @@ package events
 
 // ActorAction is the event emitted for the actor_action action.
 type ActorAction struct {
-	SrcID int32
-	TargetID int32
+	SrcID      int32
+	TargetID   int32
 	ServerTick int32
-	SrcSpeed int32
-	DmgSpeed int32
-	Damage int32
-	Div uint16
-	Type uint8
-	Damage2 int32
+	SrcSpeed   int32
+	DmgSpeed   int32
+	Damage     int32
+	Div        uint16
+	Type       uint8
+	Damage2    int32
 	IsSPDamage int8
 }

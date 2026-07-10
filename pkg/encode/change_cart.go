@@ -12,7 +12,7 @@ func EncodeChangeCart(req send.ChangeCart, packetver uint32) [4]byte {
 	// Packet ID: 0x01AF (little-endian)
 	p[0] = 0xaf
 	p[1] = 0x01
-	leU16Put(p[2:], req.Num)  // rAthena: num
+	leU16Put(p[2:], req.Num) // rAthena: num
 	_ = packetver
 	return p
 }

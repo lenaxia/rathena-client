@@ -5,5 +5,5 @@ package events
 // ZcGuildNotice is the event emitted for the zc_guild_notice action.
 type ZcGuildNotice struct {
 	Subject string
-	Notice string
+	Notice  string
 }

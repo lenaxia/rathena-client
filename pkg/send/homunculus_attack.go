@@ -5,6 +5,6 @@ package send
 // HomunculusAttack is the request struct for the homunculus_attack action.
 type HomunculusAttack struct {
 	TargetId uint32
-	HomId uint32
-	Action uint8
+	HomId    uint32
+	Action   uint8
 }

@@ -5,5 +5,5 @@ package send
 // CzUploadMacroDetectorCaptcha is the request struct for the cz_upload_macro_detector_captcha action.
 type CzUploadMacroDetectorCaptcha struct {
 	CaptchaKey string
-	ImageData string
+	ImageData  string
 }

@@ -8,12 +8,12 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSkillinfoUpdate2_0x07E1(data []byte, packetver uint32) events.ZcSkillinfoUpdate2 {
 	var e events.ZcSkillinfoUpdate2
 	_ = packetver
-	e.Id = leU16(data, 2)  // rAthena: id (offset 2, size 2)
-	e.Inf = leI32(data, 4)  // rAthena: inf (offset 4, size 4)
-	e.Level = leU16(data, 8)  // rAthena: level (offset 8, size 2)
-	e.Sp = leU16(data, 10)  // rAthena: sp (offset 10, size 2)
-	e.Range2 = leU16(data, 12)  // rAthena: range2 (offset 12, size 2)
-	e.UpFlag = data[14]  // rAthena: upFlag (offset 14, size 1)
+	e.Id = leU16(data, 2)      // rAthena: id (offset 2, size 2)
+	e.Inf = leI32(data, 4)     // rAthena: inf (offset 4, size 4)
+	e.Level = leU16(data, 8)   // rAthena: level (offset 8, size 2)
+	e.Sp = leU16(data, 10)     // rAthena: sp (offset 10, size 2)
+	e.Range2 = leU16(data, 12) // rAthena: range2 (offset 12, size 2)
+	e.UpFlag = data[14]        // rAthena: upFlag (offset 14, size 1)
 	return e
 }
 
@@ -21,12 +21,11 @@ func ZcSkillinfoUpdate2_0x07E1(data []byte, packetver uint32) events.ZcSkillinfo
 func ZcSkillinfoUpdate2_0x0B33(data []byte, packetver uint32) events.ZcSkillinfoUpdate2 {
 	var e events.ZcSkillinfoUpdate2
 	_ = packetver
-	e.Id = leU16(data, 2)  // rAthena: id (offset 2, size 2)
-	e.Inf = leI32(data, 4)  // rAthena: inf (offset 4, size 4)
-	e.Level = leU16(data, 8)  // rAthena: level (offset 8, size 2)
-	e.Sp = leU16(data, 10)  // rAthena: sp (offset 10, size 2)
-	e.Range2 = leU16(data, 12)  // rAthena: range2 (offset 12, size 2)
-	e.UpFlag = data[14]  // rAthena: upFlag (offset 14, size 1)
+	e.Id = leU16(data, 2)      // rAthena: id (offset 2, size 2)
+	e.Inf = leI32(data, 4)     // rAthena: inf (offset 4, size 4)
+	e.Level = leU16(data, 8)   // rAthena: level (offset 8, size 2)
+	e.Sp = leU16(data, 10)     // rAthena: sp (offset 10, size 2)
+	e.Range2 = leU16(data, 12) // rAthena: range2 (offset 12, size 2)
+	e.UpFlag = data[14]        // rAthena: upFlag (offset 14, size 1)
 	return e
 }
-

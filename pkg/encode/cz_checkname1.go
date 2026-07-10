@@ -12,7 +12,7 @@ func EncodeCzCheckname1(req send.CzCheckname1, packetver uint32) [26]byte {
 	// Packet ID: 0x0A13 (little-endian)
 	p[0] = 0x13
 	p[1] = 0x0a
-	copy(p[2:26], req.Name)  // rAthena: Name
+	copy(p[2:26], req.Name) // rAthena: Name
 	_ = packetver
 	return p
 }

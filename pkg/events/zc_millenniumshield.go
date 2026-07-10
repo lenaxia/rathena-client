@@ -4,7 +4,7 @@ package events
 
 // ZcMillenniumshield is the event emitted for the zc_millenniumshield action.
 type ZcMillenniumshield struct {
-	Aid uint32
-	Num int16
+	Aid   uint32
+	Num   int16
 	State int16
 }

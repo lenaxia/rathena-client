@@ -8,16 +8,16 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillUse_0x01DE(data []byte, packetver uint32) events.SkillUse {
 	var e events.SkillUse
 	_ = packetver
-	e.SKID = leU16(data, 2)  // rAthena: SKID (offset 2, size 2)
-	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
-	e.TargetID = leU32(data, 8)  // rAthena: targetID (offset 8, size 4)
+	e.SKID = leU16(data, 2)        // rAthena: SKID (offset 2, size 2)
+	e.AID = leU32(data, 4)         // rAthena: AID (offset 4, size 4)
+	e.TargetID = leU32(data, 8)    // rAthena: targetID (offset 8, size 4)
 	e.StartTime = leU32(data, 12)  // rAthena: startTime (offset 12, size 4)
-	e.AttackMT = leI32(data, 16)  // rAthena: attackMT (offset 16, size 4)
-	e.AttackedMT = leI32(data, 20)  // rAthena: attackedMT (offset 20, size 4)
-	e.Damage = leI32(data, 24)  // rAthena: damage (offset 24, size 4)
-	e.Level = leI16(data, 28)  // rAthena: level (offset 28, size 2)
-	e.Count = leI16(data, 30)  // rAthena: count (offset 30, size 2)
-	e.Action = int8(data[32])  // rAthena: action (offset 32, size 1)
+	e.AttackMT = leI32(data, 16)   // rAthena: attackMT (offset 16, size 4)
+	e.AttackedMT = leI32(data, 20) // rAthena: attackedMT (offset 20, size 4)
+	e.Damage = leI32(data, 24)     // rAthena: damage (offset 24, size 4)
+	e.Level = leI16(data, 28)      // rAthena: level (offset 28, size 2)
+	e.Count = leI16(data, 30)      // rAthena: count (offset 30, size 2)
+	e.Action = int8(data[32])      // rAthena: action (offset 32, size 1)
 	return e
 }
 
@@ -25,16 +25,15 @@ func SkillUse_0x01DE(data []byte, packetver uint32) events.SkillUse {
 func SkillUse_0x0114(data []byte, packetver uint32) events.SkillUse {
 	var e events.SkillUse
 	_ = packetver
-	e.SKID = leU16(data, 2)  // rAthena: SKID (offset 2, size 2)
-	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
-	e.TargetID = leU32(data, 8)  // rAthena: targetID (offset 8, size 4)
+	e.SKID = leU16(data, 2)        // rAthena: SKID (offset 2, size 2)
+	e.AID = leU32(data, 4)         // rAthena: AID (offset 4, size 4)
+	e.TargetID = leU32(data, 8)    // rAthena: targetID (offset 8, size 4)
 	e.StartTime = leU32(data, 12)  // rAthena: startTime (offset 12, size 4)
-	e.AttackMT = leI32(data, 16)  // rAthena: attackMT (offset 16, size 4)
-	e.AttackedMT = leI32(data, 20)  // rAthena: attackedMT (offset 20, size 4)
-	e.Damage = leI32(data, 24)  // rAthena: damage (offset 24, size 4)
-	e.Level = leI16(data, 28)  // rAthena: level (offset 28, size 2)
-	e.Count = leI16(data, 30)  // rAthena: count (offset 30, size 2)
-	e.Action = int8(data[32])  // rAthena: action (offset 32, size 1)
+	e.AttackMT = leI32(data, 16)   // rAthena: attackMT (offset 16, size 4)
+	e.AttackedMT = leI32(data, 20) // rAthena: attackedMT (offset 20, size 4)
+	e.Damage = leI32(data, 24)     // rAthena: damage (offset 24, size 4)
+	e.Level = leI16(data, 28)      // rAthena: level (offset 28, size 2)
+	e.Count = leI16(data, 30)      // rAthena: count (offset 30, size 2)
+	e.Action = int8(data[32])      // rAthena: action (offset 32, size 1)
 	return e
 }
-

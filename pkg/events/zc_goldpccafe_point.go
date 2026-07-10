@@ -4,8 +4,8 @@ package events
 
 // ZcGoldpccafePoint is the event emitted for the zc_goldpccafe_point action.
 type ZcGoldpccafePoint struct {
-	IsActive int8
-	Mode int8
-	Point int32
+	IsActive   int8
+	Mode       int8
+	Point      int32
 	PlayedTime int32
 }

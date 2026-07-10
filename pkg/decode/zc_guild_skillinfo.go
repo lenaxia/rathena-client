@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGuildSkillinfo_0x0162(data []byte, packetver uint32) events.ZcGuildSkillinfo {
 	var e events.ZcGuildSkillinfo
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.SkillPoint = leI16(data, 4)  // rAthena: skillPoint (offset 4, size 2)
-	e.SkillInfo = data[6:]  // rAthena: skillInfo (offset 6, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
+	e.SkillPoint = leI16(data, 4)   // rAthena: skillPoint (offset 4, size 2)
+	e.SkillInfo = data[6:]          // rAthena: skillInfo (offset 6, size 0)
 	return e
 }
-

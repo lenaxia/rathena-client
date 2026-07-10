@@ -4,15 +4,15 @@ package events
 
 // AddExchangeItem is the event emitted for the add_exchange_item action.
 type AddExchangeItem struct {
-	Amount int32
-	ItemId uint32
-	Identified uint8
-	Damaged uint8
-	Refine uint8
-	Slot []byte
-	ItemType uint8
+	Amount      int32
+	ItemId      uint32
+	Identified  uint8
+	Damaged     uint8
+	Refine      uint8
+	Slot        []byte
+	ItemType    uint8
 	Option_data []byte
-	Location uint32
-	Look uint16
-	Grade uint8
+	Location    uint32
+	Look        uint16
+	Grade       uint8
 }

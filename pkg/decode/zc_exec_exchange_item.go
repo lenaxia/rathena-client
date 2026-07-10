@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcExecExchangeItem_0x00F0(data []byte, packetver uint32) events.ZcExecExchangeItem {
 	var e events.ZcExecExchangeItem
 	_ = packetver
-	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }
-

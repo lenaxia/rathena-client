@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcRefiningMaterialList_0x0AA2(data []byte, packetver uint32) events.ZcRefiningMaterialList {
 	var e events.ZcRefiningMaterialList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.ItemIndex = leI16(data, 4)  // rAthena: itemIndex (offset 4, size 2)
-	e.BlacksmithBlessing = int8(data[6])  // rAthena: blacksmithBlessing (offset 6, size 1)
-	e.Req = data[7:]  // rAthena: req (offset 7, size 0)
+	e.PacketLength = leI16(data, 2)      // rAthena: packetLength (offset 2, size 2)
+	e.ItemIndex = leI16(data, 4)         // rAthena: itemIndex (offset 4, size 2)
+	e.BlacksmithBlessing = int8(data[6]) // rAthena: blacksmithBlessing (offset 6, size 1)
+	e.Req = data[7:]                     // rAthena: req (offset 7, size 0)
 	return e
 }
-

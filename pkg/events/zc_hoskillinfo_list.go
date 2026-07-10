@@ -5,5 +5,5 @@ package events
 // ZcHoskillinfoList is the event emitted for the zc_hoskillinfo_list action.
 type ZcHoskillinfoList struct {
 	PacketLength int16
-	Skills []byte
+	Skills       []byte
 }

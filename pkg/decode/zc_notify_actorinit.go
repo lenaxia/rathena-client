@@ -10,4 +10,3 @@ func ZcNotifyActorinit_0x0B1B(data []byte, packetver uint32) events.ZcNotifyActo
 	_ = packetver
 	return e
 }
-

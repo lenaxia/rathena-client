@@ -4,11 +4,11 @@ package events
 
 // ZcAckReqnameall is the event emitted for the zc_ack_reqnameall action.
 type ZcAckReqnameall struct {
-	Packet_id uint16
-	Gid int32
-	Name string
-	Party_name string
-	Guild_name string
+	Packet_id     uint16
+	Gid           int32
+	Name          string
+	Party_name    string
+	Guild_name    string
 	Position_name string
-	Title_id int32
+	Title_id      int32
 }

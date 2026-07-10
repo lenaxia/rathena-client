@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyStoreitemCountinfo_0x00F2(data []byte, packetver uint32) events.ZcNotifyStoreitemCountinfo {
 	var e events.ZcNotifyStoreitemCountinfo
 	_ = packetver
-	e.Amount = leU16(data, 2)  // rAthena: amount (offset 2, size 2)
-	e.Max_amount = leU16(data, 4)  // rAthena: max_amount (offset 4, size 2)
+	e.Amount = leU16(data, 2)     // rAthena: amount (offset 2, size 2)
+	e.Max_amount = leU16(data, 4) // rAthena: max_amount (offset 4, size 2)
 	return e
 }
-

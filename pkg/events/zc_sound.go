@@ -5,7 +5,7 @@ package events
 // ZcSound is the event emitted for the zc_sound action.
 type ZcSound struct {
 	Name string
-	Act uint8
+	Act  uint8
 	Term uint32
-	AID uint32
+	AID  uint32
 }

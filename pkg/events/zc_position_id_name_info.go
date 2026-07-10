@@ -5,6 +5,6 @@ package events
 // ZcPositionIdNameInfo is the event emitted for the zc_position_id_name_info action.
 type ZcPositionIdNameInfo struct {
 	PacketLength int16
-	PositionID []byte
-	PosName string
+	PositionID   []byte
+	PosName      string
 }

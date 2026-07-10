@@ -4,9 +4,9 @@ package events
 
 // ZcAdventurerAgencyJoinReq is the event emitted for the zc_adventurer_agency_join_req action.
 type ZcAdventurerAgencyJoinReq struct {
-	GRID []byte
-	AID []byte
+	GRID      []byte
+	AID       []byte
 	GroupName string
-	Level int16
-	Job int16
+	Level     int16
+	Job       int16
 }

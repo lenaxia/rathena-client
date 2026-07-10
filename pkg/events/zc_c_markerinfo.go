@@ -4,7 +4,7 @@ package events
 
 // ZcCMarkerinfo is the event emitted for the zc_c_markerinfo action.
 type ZcCMarkerinfo struct {
-	AID uint32
+	AID  uint32
 	XPos int16
 	YPos int16
 }

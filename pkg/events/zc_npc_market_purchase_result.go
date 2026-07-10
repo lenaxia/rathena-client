@@ -5,6 +5,6 @@ package events
 // ZcNpcMarketPurchaseResult is the event emitted for the zc_npc_market_purchase_result action.
 type ZcNpcMarketPurchaseResult struct {
 	PacketLength int16
-	Result uint16
-	List []byte
+	Result       uint16
+	List         []byte
 }

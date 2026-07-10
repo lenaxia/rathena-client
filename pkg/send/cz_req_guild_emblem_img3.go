@@ -4,6 +4,6 @@ package send
 
 // CzReqGuildEmblemImg3 is the request struct for the cz_req_guild_emblem_img3 action.
 type CzReqGuildEmblemImg3 struct {
-	Guild_id int32
+	Guild_id  int32
 	Emblem_id int32
 }

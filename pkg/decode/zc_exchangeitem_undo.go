@@ -10,4 +10,3 @@ func ZcExchangeitemUndo_0x00F1(data []byte, packetver uint32) events.ZcExchangei
 	_ = packetver
 	return e
 }
-

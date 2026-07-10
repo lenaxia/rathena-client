@@ -12,7 +12,7 @@ func EncodeCzRodexReturn(req send.CzRodexReturn, packetver uint32) [6]byte {
 	// Packet ID: 0x0B98 (little-endian)
 	p[0] = 0x98
 	p[1] = 0x0b
-	leU32Put(p[2:], req.MsgId)  // rAthena: msgId
+	leU32Put(p[2:], req.MsgId) // rAthena: msgId
 	_ = packetver
 	return p
 }

@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcReqJoinGuild_0x016A(data []byte, packetver uint32) events.ZcReqJoinGuild {
 	var e events.ZcReqJoinGuild
 	_ = packetver
-	e.Guild_id = leU32(data, 2)  // rAthena: guild_id (offset 2, size 4)
-	e.Guild_name = nullTermString(data[6:30])  // rAthena: guild_name (offset 6, size 24)
+	e.Guild_id = leU32(data, 2)               // rAthena: guild_id (offset 2, size 4)
+	e.Guild_name = nullTermString(data[6:30]) // rAthena: guild_name (offset 6, size 24)
 	return e
 }
-

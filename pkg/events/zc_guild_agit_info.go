@@ -5,5 +5,5 @@ package events
 // ZcGuildAgitInfo is the event emitted for the zc_guild_agit_info action.
 type ZcGuildAgitInfo struct {
 	PacketLength int16
-	Castle_list []byte
+	Castle_list  []byte
 }

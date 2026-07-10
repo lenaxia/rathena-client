@@ -12,7 +12,7 @@ func EncodeCzClientVersion(req send.CzClientVersion, packetver uint32) [6]byte {
 	// Packet ID: 0x044A (little-endian)
 	p[0] = 0x4a
 	p[1] = 0x04
-	leU32Put(p[2:], req.ClientVersion)  // rAthena: clientVersion
+	leU32Put(p[2:], req.ClientVersion) // rAthena: clientVersion
 	_ = packetver
 	return p
 }

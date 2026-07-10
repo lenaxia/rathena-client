@@ -5,6 +5,6 @@ package events
 // ZcReqAckAgitInvestment is the event emitted for the zc_req_ack_agit_investment action.
 type ZcReqAckAgitInvestment struct {
 	Castle_id int8
-	Economy int32
-	Defense int32
+	Economy   int32
+	Defense   int32
 }

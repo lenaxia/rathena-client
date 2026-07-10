@@ -5,5 +5,5 @@ package events
 // MailReceive is the event emitted for the mail_receive action.
 type MailReceive struct {
 	MailId uint32
-	Fail uint16
+	Fail   uint16
 }

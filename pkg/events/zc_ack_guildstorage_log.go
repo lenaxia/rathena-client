@@ -5,7 +5,7 @@ package events
 // ZcAckGuildstorageLog is the event emitted for the zc_ack_guildstorage_log action.
 type ZcAckGuildstorageLog struct {
 	PacketLength int16
-	Result uint16
-	Amount uint16
-	Items []byte
+	Result       uint16
+	Amount       uint16
+	Items        []byte
 }

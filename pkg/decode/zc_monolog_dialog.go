@@ -3,4 +3,3 @@
 package decode
 
 // SKIP ZcMonologDialog_0x0BA9: struct PACKET_ZC_MONOLOG_DIALOG not found in VersionTable
-

@@ -4,6 +4,6 @@ package send
 
 // HomunculusMenu is the request struct for the homunculus_menu action.
 type HomunculusMenu struct {
-	HomId uint16
+	HomId  uint16
 	Action uint8
 }

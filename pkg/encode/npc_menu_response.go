@@ -12,8 +12,8 @@ func EncodeNpcMenuResponse(req send.NpcMenuResponse, packetver uint32) [7]byte {
 	// Packet ID: 0x00B8 (little-endian)
 	p[0] = 0xb8
 	p[1] = 0x00
-	leU32Put(p[2:], req.NpcID)  // rAthena: NpcID
-	p[6] = req.Select  // rAthena: select
+	leU32Put(p[2:], req.NpcID) // rAthena: NpcID
+	p[6] = req.Select          // rAthena: select
 	_ = packetver
 	return p
 }

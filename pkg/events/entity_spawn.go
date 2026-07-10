@@ -4,25 +4,25 @@ package events
 
 // EntitySpawn is the event emitted for the entity_spawn action.
 type EntitySpawn struct {
-	GID uint32
-	Speed int16
-	BodyState int16
+	GID         uint32
+	Speed       int16
+	BodyState   int16
 	HealthState int16
 	EffectState int16
-	Head uint16
-	Weapon uint16
-	Accessory uint16
-	Job int16
-	Shield uint16
-	Accessory2 uint16
-	Accessory3 uint16
+	Head        uint16
+	Weapon      uint16
+	Accessory   uint16
+	Job         int16
+	Shield      uint16
+	Accessory2  uint16
+	Accessory3  uint16
 	Headpalette int16
 	Bodypalette int16
-	HeadDir int16
-	IsPKModeON uint8
-	Sex uint8
-	PosDir [3]byte
-	XSize uint8
-	YSize uint8
-	Objecttype uint8
+	HeadDir     int16
+	IsPKModeON  uint8
+	Sex         uint8
+	PosDir      [3]byte
+	XSize       uint8
+	YSize       uint8
+	Objecttype  uint8
 }

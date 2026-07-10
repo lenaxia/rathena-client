@@ -4,7 +4,7 @@ package events
 
 // ZcNotifyHpToGroupm is the event emitted for the zc_notify_hp_to_groupm action.
 type ZcNotifyHpToGroupm struct {
-	AID uint32
-	Hp int16
+	AID   uint32
+	Hp    int16
 	Maxhp int16
 }

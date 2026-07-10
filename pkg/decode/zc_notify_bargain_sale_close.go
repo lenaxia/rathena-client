@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyBargainSaleClose_0x09B3(data []byte, packetver uint32) events.ZcNotifyBargainSaleClose {
 	var e events.ZcNotifyBargainSaleClose
 	if packetver >= 20181121 {
-		e.ItemId = leU32(data, 2)  // rAthena: itemId (offset 2, size 4)
+		e.ItemId = leU32(data, 2) // rAthena: itemId (offset 2, size 4)
 	} else {
-		e.ItemId = uint32(leU16(data, 2))  // rAthena: itemId (offset 2, size 2)
+		e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 	}
 	return e
 }
-

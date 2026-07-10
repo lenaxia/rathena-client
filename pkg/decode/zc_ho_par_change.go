@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcHoParChange_0x07DB(data []byte, packetver uint32) events.ZcHoParChange {
 	var e events.ZcHoParChange
 	_ = packetver
-	e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
-	e.Value = uint64(leU32(data, 4))  // rAthena: value (offset 4, size 4)
+	e.Type = leU16(data, 2)          // rAthena: type (offset 2, size 2)
+	e.Value = uint64(leU32(data, 4)) // rAthena: value (offset 4, size 4)
 	return e
 }
-

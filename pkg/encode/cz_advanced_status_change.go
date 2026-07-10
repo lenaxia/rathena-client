@@ -12,8 +12,8 @@ func EncodeCzAdvancedStatusChange(req send.CzAdvancedStatusChange, packetver uin
 	// Packet ID: 0x0B24 (little-endian)
 	p[0] = 0x24
 	p[1] = 0x0b
-	leU16Put(p[2:], uint16(req.Type))  // rAthena: type
-	leU16Put(p[4:], uint16(req.Amount))  // rAthena: amount
+	leU16Put(p[2:], uint16(req.Type))   // rAthena: type
+	leU16Put(p[4:], uint16(req.Amount)) // rAthena: amount
 	_ = packetver
 	return p
 }

@@ -12,7 +12,7 @@ func EncodeCzReqItemrepair2(req send.CzReqItemrepair2, packetver uint32) [26]byt
 	// Packet ID: 0x0B66 (little-endian)
 	p[0] = 0x66
 	p[1] = 0x0b
-	copy(p[2:], req.Item)  // rAthena: item
+	copy(p[2:], req.Item) // rAthena: item
 	_ = packetver
 	return p
 }

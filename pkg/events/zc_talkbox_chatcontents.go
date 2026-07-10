@@ -4,6 +4,6 @@ package events
 
 // ZcTalkboxChatcontents is the event emitted for the zc_talkbox_chatcontents action.
 type ZcTalkboxChatcontents struct {
-	Aid uint32
+	Aid     uint32
 	Message string
 }

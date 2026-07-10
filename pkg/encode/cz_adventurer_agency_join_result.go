@@ -12,9 +12,9 @@ func EncodeCzAdventurerAgencyJoinResult(req send.CzAdventurerAgencyJoinResult, p
 	// Packet ID: 0x0AF8 (little-endian)
 	p[0] = 0xf8
 	p[1] = 0x0a
-	copy(p[2:], req.GRID)  // rAthena: GRID
-	copy(p[6:], req.AID)  // rAthena: AID
-	p[10] = uint8(req.Result)  // rAthena: result
+	copy(p[2:], req.GRID)     // rAthena: GRID
+	copy(p[6:], req.AID)      // rAthena: AID
+	p[10] = uint8(req.Result) // rAthena: result
 	_ = packetver
 	return p
 }

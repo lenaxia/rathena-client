@@ -4,6 +4,6 @@ package events
 
 // SkillPostDelay is the event emitted for the skill_post_delay action.
 type SkillPostDelay struct {
-	SKID uint16
+	SKID    uint16
 	DelayTM uint32
 }

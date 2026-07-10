@@ -4,11 +4,11 @@ package events
 
 // ZcClaninfo is the event emitted for the zc_claninfo action.
 type ZcClaninfo struct {
-	PacketLength int16
-	ClanID uint32
-	ClanName string
-	MasterName string
-	Map string
-	AllyCount uint8
+	PacketLength    int16
+	ClanID          uint32
+	ClanName        string
+	MasterName      string
+	Map             string
+	AllyCount       uint8
 	AntagonistCount uint8
 }

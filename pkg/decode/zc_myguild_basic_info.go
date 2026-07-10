@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcMyguildBasicInfo_0x014C(data []byte, packetver uint32) events.ZcMyguildBasicInfo {
 	var e events.ZcMyguildBasicInfo
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.RgInfo = data[4:]  // rAthena: rgInfo (offset 4, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
+	e.RgInfo = data[4:]             // rAthena: rgInfo (offset 4, size 0)
 	return e
 }
-

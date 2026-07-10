@@ -8,8 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func StatUpdate_0x00B0(data []byte, packetver uint32) events.StatUpdate {
 	var e events.StatUpdate
 	_ = packetver
-	e.VarID = leU16(data, 2)  // rAthena: varID (offset 2, size 2)
-	e.Count = leI32(data, 4)  // rAthena: count (offset 4, size 4)
+	e.VarID = leU16(data, 2) // rAthena: varID (offset 2, size 2)
+	e.Count = leI32(data, 4) // rAthena: count (offset 4, size 4)
 	return e
 }
 
@@ -18,7 +18,7 @@ func StatUpdate_0x00B1(data []byte, packetver uint32) events.StatUpdate {
 	var e events.StatUpdate
 	_ = packetver
 	e.VarID = leU16(data, 2)  // rAthena: varID (offset 2, size 2)
-	e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
+	e.Amount = leI32(data, 4) // rAthena: amount (offset 4, size 4)
 	return e
 }
 
@@ -26,8 +26,8 @@ func StatUpdate_0x00B1(data []byte, packetver uint32) events.StatUpdate {
 func StatUpdate_0x00BE(data []byte, packetver uint32) events.StatUpdate {
 	var e events.StatUpdate
 	_ = packetver
-	e.StatusID = leU16(data, 2)  // rAthena: statusID (offset 2, size 2)
-	e.Value = uint32(data[4])  // rAthena: value (offset 4, size 1)
+	e.StatusID = leU16(data, 2) // rAthena: statusID (offset 2, size 2)
+	e.Value = uint32(data[4])   // rAthena: value (offset 4, size 1)
 	return e
 }
 
@@ -38,7 +38,6 @@ func StatUpdate_0x02A2(data []byte, packetver uint32) events.StatUpdate {
 	var e events.StatUpdate
 	_ = packetver
 	e.Type = leI16(data, 2)  // rAthena: type (offset 2, size 2)
-	e.Value = leU32(data, 4)  // rAthena: value (offset 4, size 4)
+	e.Value = leU32(data, 4) // rAthena: value (offset 4, size 4)
 	return e
 }
-

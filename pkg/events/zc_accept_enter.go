@@ -5,9 +5,9 @@ package events
 // ZcAcceptEnter is the event emitted for the zc_accept_enter action.
 type ZcAcceptEnter struct {
 	StartTime uint32
-	PosDir [3]byte
-	XSize uint8
-	YSize uint8
-	Font uint16
-	Sex uint8
+	PosDir    [3]byte
+	XSize     uint8
+	YSize     uint8
+	Font      uint16
+	Sex       uint8
 }

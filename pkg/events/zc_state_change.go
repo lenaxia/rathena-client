@@ -4,9 +4,9 @@ package events
 
 // ZcStateChange is the event emitted for the zc_state_change action.
 type ZcStateChange struct {
-	AID uint32
-	BodyState int16
+	AID         uint32
+	BodyState   int16
 	HealthState int16
 	EffectState int32
-	IsPKModeON int8
+	IsPKModeON  int8
 }

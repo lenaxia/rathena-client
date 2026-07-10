@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorDiedOrDisappeared_0x0080(data []byte, packetver uint32) events.ActorDiedOrDisappeared {
 	var e events.ActorDiedOrDisappeared
 	_ = packetver
-	e.Gid = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
-	e.Type = data[6]  // rAthena: type (offset 6, size 1)
+	e.Gid = leU32(data, 2) // rAthena: gid (offset 2, size 4)
+	e.Type = data[6]       // rAthena: type (offset 6, size 1)
 	return e
 }
-

@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ChatMessage_0x008D(data []byte, packetver uint32) events.ChatMessage {
 	var e events.ChatMessage
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.GID = leU32(data, 4)  // rAthena: GID (offset 4, size 4)
-	e.Message = nullTermString(data[8:])  // rAthena: Message (offset 8, size 0)
+	e.PacketLength = leI16(data, 2)      // rAthena: PacketLength (offset 2, size 2)
+	e.GID = leU32(data, 4)               // rAthena: GID (offset 4, size 4)
+	e.Message = nullTermString(data[8:]) // rAthena: Message (offset 8, size 0)
 	return e
 }
-

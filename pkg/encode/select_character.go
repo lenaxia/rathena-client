@@ -12,7 +12,7 @@ func EncodeSelectCharacter(req send.SelectCharacter, packetver uint32) [3]byte {
 	// Packet ID: 0x0066 (little-endian)
 	p[0] = 0x66
 	p[1] = 0x00
-	p[2] = req.Slot  // rAthena: slot
+	p[2] = req.Slot // rAthena: slot
 	_ = packetver
 	return p
 }

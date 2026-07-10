@@ -9,12 +9,11 @@ func ZcSeCashshopOpen_0x0845(data []byte, packetver uint32) events.ZcSeCashshopO
 	var e events.ZcSeCashshopOpen
 	if packetver >= 20140730 {
 		e.CashPoints = leU32(data, 2)  // rAthena: cashPoints (offset 2, size 4)
-		e.KafraPoints = leU32(data, 6)  // rAthena: kafraPoints (offset 6, size 4)
-		e.Tab = leU32(data, 10)  // rAthena: tab (offset 10, size 4)
+		e.KafraPoints = leU32(data, 6) // rAthena: kafraPoints (offset 6, size 4)
+		e.Tab = leU32(data, 10)        // rAthena: tab (offset 10, size 4)
 	} else {
 		e.CashPoints = leU32(data, 2)  // rAthena: cashPoints (offset 2, size 4)
-		e.KafraPoints = leU32(data, 6)  // rAthena: kafraPoints (offset 6, size 4)
+		e.KafraPoints = leU32(data, 6) // rAthena: kafraPoints (offset 6, size 4)
 	}
 	return e
 }
-

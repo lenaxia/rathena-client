@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSpecialpopup_0x0BBE(data []byte, packetver uint32) events.ZcSpecialpopup {
 	var e events.ZcSpecialpopup
 	_ = packetver
-	e.PpId = leI32(data, 2)  // rAthena: ppId (offset 2, size 4)
+	e.PpId = leI32(data, 2) // rAthena: ppId (offset 2, size 4)
 	return e
 }
-

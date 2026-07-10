@@ -12,7 +12,7 @@ func EncodePartyCreate(req send.PartyCreate, packetver uint32) [26]byte {
 	// Packet ID: 0x00F9 (little-endian)
 	p[0] = 0xf9
 	p[1] = 0x00
-	copy(p[2:26], req.Name)  // rAthena: name
+	copy(p[2:26], req.Name) // rAthena: name
 	_ = packetver
 	return p
 }

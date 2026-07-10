@@ -12,7 +12,7 @@ func EncodePartyChangeOption(req send.PartyChangeOption, packetver uint32) [6]by
 	// Packet ID: 0x0102 (little-endian)
 	p[0] = 0x02
 	p[1] = 0x01
-	leU32Put(p[2:], req.Option)  // rAthena: option
+	leU32Put(p[2:], req.Option) // rAthena: option
 	_ = packetver
 	return p
 }

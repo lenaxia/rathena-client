@@ -4,7 +4,7 @@ package events
 
 // ZcStopmove is the event emitted for the zc_stopmove action.
 type ZcStopmove struct {
-	AID uint32
+	AID  uint32
 	XPos uint16
 	YPos uint16
 }

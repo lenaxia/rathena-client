@@ -10,4 +10,3 @@ func ZcCancelExchangeItem_0x00EE(data []byte, packetver uint32) events.ZcCancelE
 	_ = packetver
 	return e
 }
-

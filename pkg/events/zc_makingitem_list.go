@@ -5,6 +5,6 @@ package events
 // ZcMakingitemList is the event emitted for the zc_makingitem_list action.
 type ZcMakingitemList struct {
 	PacketLength int16
-	MakeItem uint16
-	Items []byte
+	MakeItem     uint16
+	Items        []byte
 }

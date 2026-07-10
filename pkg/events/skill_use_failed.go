@@ -5,8 +5,8 @@ package events
 // SkillUseFailed is the event emitted for the skill_use_failed action.
 type SkillUseFailed struct {
 	SkillId uint16
-	Btype int32
-	ItemId uint32
-	Flag uint8
-	Cause uint8
+	Btype   int32
+	ItemId  uint32
+	Flag    uint8
+	Cause   uint8
 }

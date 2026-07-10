@@ -5,8 +5,8 @@ package events
 // ZcSearchStoreInfoAck is the event emitted for the zc_search_store_info_ack action.
 type ZcSearchStoreInfoAck struct {
 	PacketLength int16
-	FirstPage uint8
-	NextPage uint8
-	UsesCount uint8
-	Items []byte
+	FirstPage    uint8
+	NextPage     uint8
+	UsesCount    uint8
+	Items        []byte
 }

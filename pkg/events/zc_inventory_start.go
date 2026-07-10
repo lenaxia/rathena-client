@@ -5,6 +5,6 @@ package events
 // ZcInventoryStart is the event emitted for the zc_inventory_start action.
 type ZcInventoryStart struct {
 	PacketLength int16
-	InvType uint8
-	Name string
+	InvType      uint8
+	Name         string
 }

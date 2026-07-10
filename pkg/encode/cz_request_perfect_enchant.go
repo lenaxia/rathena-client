@@ -13,8 +13,8 @@ func EncodeCzRequestPerfectEnchant(req send.CzRequestPerfectEnchant, packetver u
 	p[0] = 0x9c
 	p[1] = 0x0b
 	// req.Enchant_group: unhandled type int64 for rAthena: enchant_group
-	leU16Put(p[10:], uint16(req.Index))  // rAthena: index
-	leU32Put(p[12:], req.ITID)  // rAthena: ITID
+	leU16Put(p[10:], uint16(req.Index)) // rAthena: index
+	leU32Put(p[12:], req.ITID)          // rAthena: ITID
 	_ = packetver
 	return p
 }

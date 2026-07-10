@@ -4,6 +4,6 @@ package send
 
 // NpcContact is the request struct for the npc_contact action.
 type NpcContact struct {
-	AID uint32
+	AID  uint32
 	Type uint8
 }

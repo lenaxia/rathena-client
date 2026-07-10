@@ -12,7 +12,7 @@ func EncodeWeaponRefine(req send.WeaponRefine, packetver uint32) [6]byte {
 	// Packet ID: 0x0222 (little-endian)
 	p[0] = 0x22
 	p[1] = 0x02
-	leU32Put(p[2:], req.Index)  // rAthena: index
+	leU32Put(p[2:], req.Index) // rAthena: index
 	_ = packetver
 	return p
 }

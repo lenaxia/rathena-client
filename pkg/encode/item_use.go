@@ -11,15 +11,17 @@ func EncodeItemUse(req send.ItemUse, packetver uint32) [8]byte {
 	switch {
 	case packetver >= 20080910: // 0x0439
 		var p [8]byte
-		p[0] = 0x39; p[1] = 0x04
-	leU16Put(		p[2:], req.Index)  // rAthena: index
-	leU32Put(		p[4:], req.AID)  // rAthena: AID
+		p[0] = 0x39
+		p[1] = 0x04
+		leU16Put(p[2:], req.Index) // rAthena: index
+		leU32Put(p[4:], req.AID)   // rAthena: AID
 		return p
 	case packetver >= 20030000: // 0x00A7
 		var p [8]byte
-		p[0] = 0xa7; p[1] = 0x00
-	leU16Put(		p[2:], req.Index)  // rAthena: index
-	leU32Put(		p[4:], req.AID)  // rAthena: AID
+		p[0] = 0xa7
+		p[1] = 0x00
+		leU16Put(p[2:], req.Index) // rAthena: index
+		leU32Put(p[4:], req.AID)   // rAthena: AID
 		return p
 	}
 	panic("EncodeItemUse: no matching packetver implementation — unimplemented")

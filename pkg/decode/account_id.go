@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AccountId_0x0283(data []byte, packetver uint32) events.AccountId {
 	var e events.AccountId
 	_ = packetver
-	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
+	e.AID = leU32(data, 2) // rAthena: AID (offset 2, size 4)
 	return e
 }
-

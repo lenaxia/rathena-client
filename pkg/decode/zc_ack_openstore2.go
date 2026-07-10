@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckOpenstore2_0x0A28(data []byte, packetver uint32) events.ZcAckOpenstore2 {
 	var e events.ZcAckOpenstore2
 	_ = packetver
-	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }
-

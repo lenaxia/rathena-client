@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcOpenEditdlg_0x0142(data []byte, packetver uint32) events.ZcOpenEditdlg {
 	var e events.ZcOpenEditdlg
 	_ = packetver
-	e.NpcId = leU32(data, 2)  // rAthena: npcId (offset 2, size 4)
+	e.NpcId = leU32(data, 2) // rAthena: npcId (offset 2, size 4)
 	return e
 }
-

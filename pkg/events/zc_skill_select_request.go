@@ -5,6 +5,6 @@ package events
 // ZcSkillSelectRequest is the event emitted for the zc_skill_select_request action.
 type ZcSkillSelectRequest struct {
 	PacketLength int16
-	Flag int32
-	SkillIds []byte
+	Flag         int32
+	SkillIds     []byte
 }

@@ -5,5 +5,5 @@ package events
 // WhisperSent is the event emitted for the whisper_sent action.
 type WhisperSent struct {
 	Result uint8
-	CID uint32
+	CID    uint32
 }

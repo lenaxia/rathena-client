@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func DealFinalize_0x00EC(data []byte, packetver uint32) events.DealFinalize {
 	var e events.DealFinalize
 	_ = packetver
-	e.Who = data[2]  // rAthena: who (offset 2, size 1)
+	e.Who = data[2] // rAthena: who (offset 2, size 1)
 	return e
 }
-

@@ -5,7 +5,7 @@ package events
 // ZcUpdateCardslot is the event emitted for the zc_update_cardslot action.
 type ZcUpdateCardslot struct {
 	WearState int16
-	CardSlot int16
-	ItemId int32
+	CardSlot  int16
+	ItemId    int32
 	EquipFlag int8
 }

@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckRandomCombineItem_0x0A50(data []byte, packetver uint32) events.ZcAckRandomCombineItem {
 	var e events.ZcAckRandomCombineItem
 	_ = packetver
-	e.Result = leI16(data, 2)  // rAthena: result (offset 2, size 2)
+	e.Result = leI16(data, 2) // rAthena: result (offset 2, size 2)
 	return e
 }
-

@@ -4,8 +4,8 @@ package send
 
 // CzViewCamerainfo is the request struct for the cz_view_camerainfo action.
 type CzViewCamerainfo struct {
-	Action int8
-	Range []byte
+	Action   int8
+	Range    []byte
 	Rotation []byte
 	Latitude []byte
 }

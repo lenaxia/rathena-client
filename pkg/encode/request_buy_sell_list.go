@@ -12,8 +12,8 @@ func EncodeRequestBuySellList(req send.RequestBuySellList, packetver uint32) [7]
 	// Packet ID: 0x00C5 (little-endian)
 	p[0] = 0xc5
 	p[1] = 0x00
-	leU32Put(p[2:], req.GID)  // rAthena: GID
-	p[6] = req.Type  // rAthena: type
+	leU32Put(p[2:], req.GID) // rAthena: GID
+	p[6] = req.Type          // rAthena: type
 	_ = packetver
 	return p
 }

@@ -4,6 +4,6 @@ package events
 
 // ZcAutospelllist is the event emitted for the zc_autospelllist action.
 type ZcAutospelllist struct {
-	Skills []byte
+	Skills       []byte
 	PacketLength int16
 }

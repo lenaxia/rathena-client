@@ -4,6 +4,6 @@ package send
 
 // CzReqRandomUpgradeItem is the request struct for the cz_req_random_upgrade_item action.
 type CzReqRandomUpgradeItem struct {
-	ItemId uint16
-	Index uint16
+	ItemId uint32
+	Index  uint16
 }

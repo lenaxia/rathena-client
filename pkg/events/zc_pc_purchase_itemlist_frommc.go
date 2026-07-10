@@ -5,7 +5,7 @@ package events
 // ZcPcPurchaseItemlistFrommc is the event emitted for the zc_pc_purchase_itemlist_frommc action.
 type ZcPcPurchaseItemlistFrommc struct {
 	PacketLength int16
-	AID uint32
-	Items []byte
-	VenderId uint32
+	AID          uint32
+	Items        []byte
+	VenderId     uint32
 }

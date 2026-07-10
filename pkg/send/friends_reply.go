@@ -4,7 +4,7 @@ package send
 
 // FriendsReply is the request struct for the friends_reply action.
 type FriendsReply struct {
-	AID uint32
-	CID uint32
+	AID   uint32
+	CID   uint32
 	Reply uint32
 }

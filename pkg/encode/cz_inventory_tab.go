@@ -12,8 +12,8 @@ func EncodeCzInventoryTab(req send.CzInventoryTab, packetver uint32) [5]byte {
 	// Packet ID: 0x0907 (little-endian)
 	p[0] = 0x07
 	p[1] = 0x09
-	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
-	copy(p[4:], req.Favorite)  // rAthena: favorite
+	leU16Put(p[2:], uint16(req.Index)) // rAthena: index
+	copy(p[4:], req.Favorite)          // rAthena: favorite
 	_ = packetver
 	return p
 }

@@ -12,7 +12,7 @@ func EncodeCaExeHashcheck(req send.CaExeHashcheck, packetver uint32) [18]byte {
 	// Packet ID: 0x0204 (little-endian)
 	p[0] = 0x04
 	p[1] = 0x02
-	copy(p[2:18], req.Hash)  // rAthena: hash
+	copy(p[2:18], req.Hash) // rAthena: hash
 	_ = packetver
 	return p
 }

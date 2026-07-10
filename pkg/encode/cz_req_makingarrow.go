@@ -12,7 +12,7 @@ func EncodeCzReqMakingarrow(req send.CzReqMakingarrow, packetver uint32) [4]byte
 	// Packet ID: 0x01AE (little-endian)
 	p[0] = 0xae
 	p[1] = 0x01
-	leU16Put(p[2:], req.ItemId)  // rAthena: itemId
+	leU16Put(p[2:], req.ItemId) // rAthena: itemId
 	_ = packetver
 	return p
 }

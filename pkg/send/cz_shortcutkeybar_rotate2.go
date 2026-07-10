@@ -4,6 +4,6 @@ package send
 
 // CzShortcutkeybarRotate2 is the request struct for the cz_shortcutkeybar_rotate2 action.
 type CzShortcutkeybarRotate2 struct {
-	Tab uint16
+	Tab      uint16
 	Rowshift uint8
 }

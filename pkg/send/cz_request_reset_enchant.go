@@ -5,5 +5,5 @@ package send
 // CzRequestResetEnchant is the request struct for the cz_request_reset_enchant action.
 type CzRequestResetEnchant struct {
 	Enchant_group int64
-	Index int16
+	Index         int16
 }

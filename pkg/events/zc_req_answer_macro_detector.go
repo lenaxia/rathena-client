@@ -5,5 +5,5 @@ package events
 // ZcReqAnswerMacroDetector is the event emitted for the zc_req_answer_macro_detector action.
 type ZcReqAnswerMacroDetector struct {
 	RetryCount uint8
-	Timeout []byte
+	Timeout    []byte
 }

@@ -5,5 +5,5 @@ package events
 // ZcEquipitemDamaged is the event emitted for the zc_equipitem_damaged action.
 type ZcEquipitemDamaged struct {
 	EquipLocation uint16
-	GID uint32
+	GID           uint32
 }

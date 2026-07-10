@@ -5,6 +5,6 @@ package events
 // ZcApplyMacroDetectorCaptcha is the event emitted for the zc_apply_macro_detector_captcha action.
 type ZcApplyMacroDetectorCaptcha struct {
 	PacketLength int16
-	CaptchaKey string
-	ImageData string
+	CaptchaKey   string
+	ImageData    string
 }

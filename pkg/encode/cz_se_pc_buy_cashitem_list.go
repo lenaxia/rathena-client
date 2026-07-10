@@ -13,9 +13,9 @@ func EncodeCzSePcBuyCashitemList(req send.CzSePcBuyCashitemList, packetver uint3
 	p[0] = 0x48
 	p[1] = 0x08
 	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	leU16Put(p[4:], req.Count)  // rAthena: count
-	leU32Put(p[6:], req.KafraPoints)  // rAthena: kafraPoints
-	copy(p[10:], req.Items)  // rAthena: items
+	leU16Put(p[4:], req.Count)       // rAthena: count
+	leU32Put(p[6:], req.KafraPoints) // rAthena: kafraPoints
+	copy(p[10:], req.Items)          // rAthena: items
 	_ = packetver
 	return p
 }

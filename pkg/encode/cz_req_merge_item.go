@@ -12,8 +12,8 @@ func EncodeCzReqMergeItem(req send.CzReqMergeItem, packetver uint32) []byte {
 	// Packet ID: 0x096E (little-endian)
 	p[0] = 0x6e
 	p[1] = 0x09
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	copy(p[4:], req.Indices)  // rAthena: indices
+	leU16Put(p[2:], uint16(len(p))) // rAthena: packetLength (computed)
+	copy(p[4:], req.Indices)        // rAthena: indices
 	_ = packetver
 	return p
 }

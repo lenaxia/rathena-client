@@ -9,8 +9,7 @@ func ZcStopmove_0x0088(data []byte, packetver uint32) events.ZcStopmove {
 	var e events.ZcStopmove
 	_ = packetver
 	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-	e.XPos = leU16(data, 6)  // rAthena: xPos (offset 6, size 2)
-	e.YPos = leU16(data, 8)  // rAthena: yPos (offset 8, size 2)
+	e.XPos = leU16(data, 6) // rAthena: xPos (offset 6, size 2)
+	e.YPos = leU16(data, 8) // rAthena: yPos (offset 8, size 2)
 	return e
 }
-

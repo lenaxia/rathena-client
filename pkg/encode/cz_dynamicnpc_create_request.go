@@ -12,7 +12,7 @@ func EncodeCzDynamicnpcCreateRequest(req send.CzDynamicnpcCreateRequest, packetv
 	// Packet ID: 0x0A16 (little-endian)
 	p[0] = 0x16
 	p[1] = 0x0a
-	copy(p[2:26], req.Name)  // rAthena: name
+	copy(p[2:26], req.Name) // rAthena: name
 	_ = packetver
 	return p
 }

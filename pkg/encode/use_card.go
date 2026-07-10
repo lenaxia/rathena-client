@@ -12,7 +12,7 @@ func EncodeUseCard(req send.UseCard, packetver uint32) [4]byte {
 	// Packet ID: 0x017A (little-endian)
 	p[0] = 0x7a
 	p[1] = 0x01
-	leU16Put(p[2:], req.Index)  // rAthena: index
+	leU16Put(p[2:], req.Index) // rAthena: index
 	_ = packetver
 	return p
 }

@@ -1145,8 +1145,7 @@ func init() {
 			if !ok {
 				return nil, session.ErrWrongSendType{}
 			}
-			b := EncodeCzReqTakeoffEquipAll(r, pv)
-			return b[:], nil
+			return EncodeCzReqTakeoffEquipAll(r, pv), nil
 		},
 	)
 	session.RegisterSendEncoder(session.ActionCzReqUploadMacroDetector,

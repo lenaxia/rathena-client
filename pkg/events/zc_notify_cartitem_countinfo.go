@@ -4,8 +4,8 @@ package events
 
 // ZcNotifyCartitemCountinfo is the event emitted for the zc_notify_cartitem_countinfo action.
 type ZcNotifyCartitemCountinfo struct {
-	CurCount int16
-	MaxCount int16
+	CurCount  int16
+	MaxCount  int16
 	CurWeight int32
 	MaxWeight int32
 }

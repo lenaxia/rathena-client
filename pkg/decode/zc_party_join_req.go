@@ -8,8 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPartyJoinReq_0x02C6(data []byte, packetver uint32) events.ZcPartyJoinReq {
 	var e events.ZcPartyJoinReq
 	_ = packetver
-	e.GRID = data[2:]  // rAthena: GRID (offset 2, size 4)
-	e.GroupName = nullTermString(data[6:30])  // rAthena: groupName (offset 6, size 24)
+	e.GRID = data[2:]                        // rAthena: GRID (offset 2, size 4)
+	e.GroupName = nullTermString(data[6:30]) // rAthena: groupName (offset 6, size 24)
 	return e
 }
 
@@ -17,8 +17,7 @@ func ZcPartyJoinReq_0x02C6(data []byte, packetver uint32) events.ZcPartyJoinReq 
 func ZcPartyJoinReq_0x00FE(data []byte, packetver uint32) events.ZcPartyJoinReq {
 	var e events.ZcPartyJoinReq
 	_ = packetver
-	e.GRID = data[2:]  // rAthena: GRID (offset 2, size 4)
-	e.GroupName = nullTermString(data[6:30])  // rAthena: groupName (offset 6, size 24)
+	e.GRID = data[2:]                        // rAthena: GRID (offset 2, size 4)
+	e.GroupName = nullTermString(data[6:30]) // rAthena: groupName (offset 6, size 24)
 	return e
 }
-

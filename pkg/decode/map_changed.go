@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func MapChanged_0x0091(data []byte, packetver uint32) events.MapChanged {
 	var e events.MapChanged
 	_ = packetver
-	e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
-	e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
-	e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
+	e.MapName = nullTermString(data[2:18]) // rAthena: mapName (offset 2, size 16)
+	e.XPos = leU16(data, 18)               // rAthena: xPos (offset 18, size 2)
+	e.YPos = leU16(data, 20)               // rAthena: yPos (offset 20, size 2)
 	return e
 }
 
@@ -19,17 +19,17 @@ func MapChanged_0x0AC7(data []byte, packetver uint32) events.MapChanged {
 	var e events.MapChanged
 	if packetver >= 20170315 {
 		e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
-		e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
-		e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
-		e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
-		e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
-		e.Domain = nullTermString(data[28:156])  // rAthena: domain (offset 28, size 128)
+		e.XPos = leU16(data, 18)                // rAthena: xPos (offset 18, size 2)
+		e.YPos = leU16(data, 20)                // rAthena: yPos (offset 20, size 2)
+		e.Ip = leU32(data, 22)                  // rAthena: ip (offset 22, size 4)
+		e.Port = leU16(data, 26)                // rAthena: port (offset 26, size 2)
+		e.Domain = nullTermString(data[28:156]) // rAthena: domain (offset 28, size 128)
 	} else {
-		e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
-		e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
-		e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
-		e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
-		e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+		e.MapName = nullTermString(data[2:18]) // rAthena: mapName (offset 2, size 16)
+		e.XPos = leU16(data, 18)               // rAthena: xPos (offset 18, size 2)
+		e.YPos = leU16(data, 20)               // rAthena: yPos (offset 20, size 2)
+		e.Ip = leU32(data, 22)                 // rAthena: ip (offset 22, size 4)
+		e.Port = leU16(data, 26)               // rAthena: port (offset 26, size 2)
 	}
 	return e
 }
@@ -38,11 +38,10 @@ func MapChanged_0x0AC7(data []byte, packetver uint32) events.MapChanged {
 func MapChanged_0x0092(data []byte, packetver uint32) events.MapChanged {
 	var e events.MapChanged
 	_ = packetver
-	e.MapName = nullTermString(data[2:18])  // rAthena: mapName (offset 2, size 16)
-	e.XPos = leU16(data, 18)  // rAthena: xPos (offset 18, size 2)
-	e.YPos = leU16(data, 20)  // rAthena: yPos (offset 20, size 2)
-	e.Ip = leU32(data, 22)  // rAthena: ip (offset 22, size 4)
-	e.Port = leU16(data, 26)  // rAthena: port (offset 26, size 2)
+	e.MapName = nullTermString(data[2:18]) // rAthena: mapName (offset 2, size 16)
+	e.XPos = leU16(data, 18)               // rAthena: xPos (offset 18, size 2)
+	e.YPos = leU16(data, 20)               // rAthena: yPos (offset 20, size 2)
+	e.Ip = leU32(data, 22)                 // rAthena: ip (offset 22, size 4)
+	e.Port = leU16(data, 26)               // rAthena: port (offset 26, size 2)
 	return e
 }
-

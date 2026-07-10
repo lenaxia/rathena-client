@@ -5,5 +5,5 @@ package send
 // CzJoinGuild is the request struct for the cz_join_guild action.
 type CzJoinGuild struct {
 	Guild_id uint32
-	Answer int32
+	Answer   int32
 }

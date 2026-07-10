@@ -4,8 +4,8 @@ package events
 
 // ZcGradeEnchantBroadcastResult is the event emitted for the zc_grade_enchant_broadcast_result action.
 type ZcGradeEnchantBroadcastResult struct {
-	Name string
+	Name   string
 	ItemId uint32
-	Grade int16
+	Grade  int16
 	Status int8
 }

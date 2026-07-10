@@ -4,6 +4,6 @@ package send
 
 // GetItemFromCart is the request struct for the get_item_from_cart action.
 type GetItemFromCart struct {
-	Index uint16
+	Index  uint16
 	Amount int32
 }

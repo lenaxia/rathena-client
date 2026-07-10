@@ -4,10 +4,10 @@ package events
 
 // AttackFailureForDistance is the event emitted for the attack_failure_for_distance action.
 type AttackFailureForDistance struct {
-	TargetAID uint32
-	TargetXPos int16
-	TargetYPos int16
-	XPos int16
-	YPos int16
+	TargetAID       uint32
+	TargetXPos      int16
+	TargetYPos      int16
+	XPos            int16
+	YPos            int16
 	CurrentAttRange int16
 }

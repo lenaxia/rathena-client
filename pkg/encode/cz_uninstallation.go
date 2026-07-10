@@ -12,7 +12,7 @@ func EncodeCzUninstallation(req send.CzUninstallation, packetver uint32) [3]byte
 	// Packet ID: 0x0B35 (little-endian)
 	p[0] = 0x35
 	p[1] = 0x0b
-	p[2] = req.InstallationKind  // rAthena: InstallationKind
+	p[2] = req.InstallationKind // rAthena: InstallationKind
 	_ = packetver
 	return p
 }

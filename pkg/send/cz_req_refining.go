@@ -4,7 +4,7 @@ package send
 
 // CzReqRefining is the request struct for the cz_req_refining action.
 type CzReqRefining struct {
-	Index int16
-	ItemId uint16
+	Index              int16
+	ItemId             uint32
 	BlacksmithBlessing int8
 }

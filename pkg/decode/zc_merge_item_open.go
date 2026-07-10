@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcMergeItemOpen_0x096D(data []byte, packetver uint32) events.ZcMergeItemOpen {
 	var e events.ZcMergeItemOpen
 	_ = packetver
-	e.PacketLen = leU16(data, 2)  // rAthena: packetLen (offset 2, size 2)
-	e.Items = data[4:]  // rAthena: items (offset 4, size 0)
+	e.PacketLen = leU16(data, 2) // rAthena: packetLen (offset 2, size 2)
+	e.Items = data[4:]           // rAthena: items (offset 4, size 0)
 	return e
 }
-

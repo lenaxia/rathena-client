@@ -12,8 +12,8 @@ func EncodeCzShortcutKeyChange1(req send.CzShortcutKeyChange1, packetver uint32)
 	// Packet ID: 0x02BA (little-endian)
 	p[0] = 0xba
 	p[1] = 0x02
-	leU16Put(p[2:], req.Index)  // rAthena: index
-	copy(p[4:], req.Hotkey)  // rAthena: hotkey
+	leU16Put(p[2:], req.Index) // rAthena: index
+	copy(p[4:], req.Hotkey)    // rAthena: hotkey
 	_ = packetver
 	return p
 }

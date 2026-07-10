@@ -17,4 +17,3 @@ func CharCreated_0x0B6F(data []byte, packetver uint32) events.CharCreated {
 	_ = packetver
 	return e
 }
-

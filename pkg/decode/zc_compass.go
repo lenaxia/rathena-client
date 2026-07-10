@@ -9,11 +9,10 @@ func ZcCompass_0x0144(data []byte, packetver uint32) events.ZcCompass {
 	var e events.ZcCompass
 	_ = packetver
 	e.NpcId = leU32(data, 2)  // rAthena: npcId (offset 2, size 4)
-	e.Type = leU32(data, 6)  // rAthena: type (offset 6, size 4)
+	e.Type = leU32(data, 6)   // rAthena: type (offset 6, size 4)
 	e.XPos = leU32(data, 10)  // rAthena: xPos (offset 10, size 4)
 	e.YPos = leU32(data, 14)  // rAthena: yPos (offset 14, size 4)
-	e.Id = data[18]  // rAthena: id (offset 18, size 1)
-	e.Color = leU32(data, 19)  // rAthena: color (offset 19, size 4)
+	e.Id = data[18]           // rAthena: id (offset 18, size 1)
+	e.Color = leU32(data, 19) // rAthena: color (offset 19, size 4)
 	return e
 }
-

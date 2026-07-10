@@ -5,6 +5,6 @@ package send
 // CzRequestUpgradeEnchant is the request struct for the cz_request_upgrade_enchant action.
 type CzRequestUpgradeEnchant struct {
 	Enchant_group int64
-	Index int16
-	Slot int16
+	Index         int16
+	Slot          int16
 }

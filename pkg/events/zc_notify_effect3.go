@@ -4,7 +4,7 @@ package events
 
 // ZcNotifyEffect3 is the event emitted for the zc_notify_effect3 action.
 type ZcNotifyEffect3 struct {
-	Aid uint32
+	Aid      uint32
 	EffectId uint32
-	Num uint64
+	Num      uint64
 }

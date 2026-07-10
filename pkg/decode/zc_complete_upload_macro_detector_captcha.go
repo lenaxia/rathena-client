@@ -10,4 +10,3 @@ func ZcCompleteUploadMacroDetectorCaptcha_0x0A55(data []byte, packetver uint32) 
 	_ = packetver
 	return e
 }
-

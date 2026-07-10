@@ -4,11 +4,11 @@ package events
 
 // ZcAckReadRodex is the event emitted for the zc_ack_read_rodex action.
 type ZcAckReadRodex struct {
-	PacketLength int16
-	Opentype int8
-	MailID int64
+	PacketLength       int16
+	Opentype           int8
+	MailID             int64
 	TextcontentsLength int16
-	Zeny int64
-	ItemCnt int8
-	Textcontent string
+	Zeny               int64
+	ItemCnt            int8
+	Textcontent        string
 }

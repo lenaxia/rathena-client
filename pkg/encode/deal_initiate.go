@@ -12,7 +12,7 @@ func EncodeDealInitiate(req send.DealInitiate, packetver uint32) [6]byte {
 	// Packet ID: 0x00E4 (little-endian)
 	p[0] = 0xe4
 	p[1] = 0x00
-	leU32Put(p[2:], req.TargetAID)  // rAthena: targetAID
+	leU32Put(p[2:], req.TargetAID) // rAthena: targetAID
 	_ = packetver
 	return p
 }

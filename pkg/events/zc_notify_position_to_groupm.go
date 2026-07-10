@@ -4,7 +4,7 @@ package events
 
 // ZcNotifyPositionToGroupm is the event emitted for the zc_notify_position_to_groupm action.
 type ZcNotifyPositionToGroupm struct {
-	AID []byte
+	AID  []byte
 	XPos int16
 	YPos int16
 }

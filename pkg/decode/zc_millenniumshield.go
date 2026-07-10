@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcMillenniumshield_0x0440(data []byte, packetver uint32) events.ZcMillenniumshield {
 	var e events.ZcMillenniumshield
 	_ = packetver
-	e.Aid = leU32(data, 2)  // rAthena: aid (offset 2, size 4)
-	e.Num = leI16(data, 6)  // rAthena: num (offset 6, size 2)
-	e.State = leI16(data, 8)  // rAthena: state (offset 8, size 2)
+	e.Aid = leU32(data, 2)   // rAthena: aid (offset 2, size 4)
+	e.Num = leI16(data, 6)   // rAthena: num (offset 6, size 2)
+	e.State = leI16(data, 8) // rAthena: state (offset 8, size 2)
 	return e
 }
-

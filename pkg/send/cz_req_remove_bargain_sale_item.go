@@ -4,6 +4,6 @@ package send
 
 // CzReqRemoveBargainSaleItem is the request struct for the cz_req_remove_bargain_sale_item action.
 type CzReqRemoveBargainSaleItem struct {
-	AID uint32
+	AID    uint32
 	ItemId uint16
 }

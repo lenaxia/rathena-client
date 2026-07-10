@@ -8,7 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillAdd_0x0111(data []byte, packetver uint32) events.SkillAdd {
 	var e events.SkillAdd
 	_ = packetver
-	e.Skill = data[2:]  // rAthena: skill (offset 2, size 37)
+	e.Skill = data[2:] // rAthena: skill (offset 2, size 37)
 	return e
 }
 
@@ -16,7 +16,6 @@ func SkillAdd_0x0111(data []byte, packetver uint32) events.SkillAdd {
 func SkillAdd_0x0B31(data []byte, packetver uint32) events.SkillAdd {
 	var e events.SkillAdd
 	_ = packetver
-	e.Skill = data[2:]  // rAthena: skill (offset 2, size 37)
+	e.Skill = data[2:] // rAthena: skill (offset 2, size 37)
 	return e
 }
-

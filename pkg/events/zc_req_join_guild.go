@@ -4,6 +4,6 @@ package events
 
 // ZcReqJoinGuild is the event emitted for the zc_req_join_guild action.
 type ZcReqJoinGuild struct {
-	Guild_id uint32
+	Guild_id   uint32
 	Guild_name string
 }

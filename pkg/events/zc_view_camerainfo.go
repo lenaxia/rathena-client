@@ -4,8 +4,8 @@ package events
 
 // ZcViewCamerainfo is the event emitted for the zc_view_camerainfo action.
 type ZcViewCamerainfo struct {
-	Action int8
-	Range []byte
+	Action   int8
+	Range    []byte
 	Rotation []byte
 	Latitude []byte
 }

@@ -5,5 +5,5 @@ package events
 // ZcResponseEnchant is the event emitted for the zc_response_enchant action.
 type ZcResponseEnchant struct {
 	MsgId int32
-	ITID uint32
+	ITID  uint32
 }

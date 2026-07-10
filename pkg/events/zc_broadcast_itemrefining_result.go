@@ -4,8 +4,8 @@ package events
 
 // ZcBroadcastItemrefiningResult is the event emitted for the zc_broadcast_itemrefining_result action.
 type ZcBroadcastItemrefiningResult struct {
-	Name string
-	ItemId uint32
+	Name         string
+	ItemId       uint32
 	Refine_level int8
-	Status int8
+	Status       int8
 }

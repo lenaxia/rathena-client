@@ -12,8 +12,8 @@ func EncodeCzNpcBarterMarketPurchase(req send.CzNpcBarterMarketPurchase, packetv
 	// Packet ID: 0x0B0F (little-endian)
 	p[0] = 0x0f
 	p[1] = 0x0b
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	copy(p[4:], req.List)  // rAthena: list
+	leU16Put(p[2:], uint16(len(p))) // rAthena: packetLength (computed)
+	copy(p[4:], req.List)           // rAthena: list
 	_ = packetver
 	return p
 }

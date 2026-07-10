@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func GuildChat_0x017F(data []byte, packetver uint32) events.GuildChat {
 	var e events.GuildChat
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Message = nullTermString(data[4:])  // rAthena: message (offset 4, size 0)
+	e.PacketLength = leI16(data, 2)      // rAthena: packetLength (offset 2, size 2)
+	e.Message = nullTermString(data[4:]) // rAthena: message (offset 4, size 0)
 	return e
 }
-

@@ -5,6 +5,6 @@ package events
 // ZcSayDialog is the event emitted for the zc_say_dialog action.
 type ZcSayDialog struct {
 	PacketLength int16
-	NpcID uint32
-	Message string
+	NpcID        uint32
+	Message      string
 }

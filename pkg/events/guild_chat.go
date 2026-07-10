@@ -5,5 +5,5 @@ package events
 // GuildChat is the event emitted for the guild_chat action.
 type GuildChat struct {
 	PacketLength int16
-	Message string
+	Message      string
 }

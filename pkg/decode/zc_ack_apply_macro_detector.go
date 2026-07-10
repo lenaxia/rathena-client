@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckApplyMacroDetector_0x0A57(data []byte, packetver uint32) events.ZcAckApplyMacroDetector {
 	var e events.ZcAckApplyMacroDetector
 	_ = packetver
-	e.Status = data[2:]  // rAthena: status (offset 2, size 4)
+	e.Status = data[2:] // rAthena: status (offset 2, size 4)
 	return e
 }
-

@@ -4,10 +4,10 @@ package events
 
 // ZcChangeItemOption is the event emitted for the zc_change_item_option action.
 type ZcChangeItemOption struct {
-	Index int16
+	Index         int16
 	RefiningLevel int16
-	Slot []byte
-	Option_data []byte
-	IsDamaged int8
-	Grade uint8
+	Slot          []byte
+	Option_data   []byte
+	IsDamaged     int8
+	Grade         uint8
 }

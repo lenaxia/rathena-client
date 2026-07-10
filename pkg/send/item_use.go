@@ -5,5 +5,5 @@ package send
 // ItemUse is the request struct for the item_use action.
 type ItemUse struct {
 	Index uint16
-	AID uint32
+	AID   uint32
 }

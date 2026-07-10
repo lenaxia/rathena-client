@@ -4,6 +4,6 @@ package events
 
 // ZcAckAddExchangeItem is the event emitted for the zc_ack_add_exchange_item action.
 type ZcAckAddExchangeItem struct {
-	Index uint16
+	Index  uint16
 	Result uint8
 }

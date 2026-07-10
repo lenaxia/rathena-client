@@ -12,8 +12,8 @@ func EncodeCzChooseMenuZero(req send.CzChooseMenuZero, packetver uint32) [7]byte
 	// Packet ID: 0x0BA8 (little-endian)
 	p[0] = 0xa8
 	p[1] = 0x0b
-	leU32Put(p[2:], req.NpcID)  // rAthena: NpcID
-	p[6] = req.MenuIndex  // rAthena: menuIndex
+	leU32Put(p[2:], req.NpcID) // rAthena: NpcID
+	p[6] = req.MenuIndex       // rAthena: menuIndex
 	_ = packetver
 	return p
 }

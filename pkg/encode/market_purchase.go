@@ -12,8 +12,8 @@ func EncodeMarketPurchase(req send.MarketPurchase, packetver uint32) []byte {
 	// Packet ID: 0x09D6 (little-endian)
 	p[0] = 0xd6
 	p[1] = 0x09
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: PacketLength (computed)
-	copy(p[4:], req.List)  // rAthena: list
+	leU16Put(p[2:], uint16(len(p))) // rAthena: PacketLength (computed)
+	copy(p[4:], req.List)           // rAthena: list
 	_ = packetver
 	return p
 }

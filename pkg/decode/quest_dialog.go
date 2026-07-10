@@ -3,4 +3,3 @@
 package decode
 
 // SKIP QuestDialog_0x0BA6: struct PACKET_ZC_QUEST_DIALOG not found in VersionTable
-

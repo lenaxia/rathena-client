@@ -12,8 +12,8 @@ func EncodeDealAddOther(req send.DealAddOther, packetver uint32) [8]byte {
 	// Packet ID: 0x00E8 (little-endian)
 	p[0] = 0xe8
 	p[1] = 0x00
-	leU16Put(p[2:], req.Index)  // rAthena: index
-	leU32Put(p[4:], uint32(req.Amount))  // rAthena: amount
+	leU16Put(p[2:], req.Index)          // rAthena: index
+	leU32Put(p[4:], uint32(req.Amount)) // rAthena: amount
 	_ = packetver
 	return p
 }

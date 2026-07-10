@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func CastCancelled_0x01B9(data []byte, packetver uint32) events.CastCancelled {
 	var e events.CastCancelled
 	_ = packetver
-	e.Gid = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
+	e.Gid = leU32(data, 2) // rAthena: gid (offset 2, size 4)
 	return e
 }
-

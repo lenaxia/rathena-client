@@ -4,6 +4,6 @@ package events
 
 // ZcNotifyBargainSaleSelling is the event emitted for the zc_notify_bargain_sale_selling action.
 type ZcNotifyBargainSaleSelling struct {
-	ItemId uint32
+	ItemId        uint32
 	RemainingTime uint32
 }

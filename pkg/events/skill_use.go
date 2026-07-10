@@ -4,14 +4,14 @@ package events
 
 // SkillUse is the event emitted for the skill_use action.
 type SkillUse struct {
-	SKID uint16
-	AID uint32
-	TargetID uint32
-	StartTime uint32
-	AttackMT int32
+	SKID       uint16
+	AID        uint32
+	TargetID   uint32
+	StartTime  uint32
+	AttackMT   int32
 	AttackedMT int32
-	Damage int32
-	Level int16
-	Count int16
-	Action int8
+	Damage     int32
+	Level      int16
+	Count      int16
+	Action     int8
 }

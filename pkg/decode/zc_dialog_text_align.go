@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDialogTextAlign_0x0BA1(data []byte, packetver uint32) events.ZcDialogTextAlign {
 	var e events.ZcDialogTextAlign
 	_ = packetver
-	e.Align = data[2]  // rAthena: align (offset 2, size 1)
+	e.Align = data[2] // rAthena: align (offset 2, size 1)
 	return e
 }
-

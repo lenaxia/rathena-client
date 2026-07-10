@@ -12,8 +12,8 @@ func EncodeCharDelete(req send.CharDelete, packetver uint32) [46]byte {
 	// Packet ID: 0x0068 (little-endian)
 	p[0] = 0x68
 	p[1] = 0x00
-	leU32Put(p[2:], req.CID)  // rAthena: CID
-	copy(p[6:46], req.Key)  // rAthena: key
+	leU32Put(p[2:], req.CID) // rAthena: CID
+	copy(p[6:46], req.Key)   // rAthena: key
 	_ = packetver
 	return p
 }

@@ -4,6 +4,6 @@ package send
 
 // CzChooseMenuZero is the request struct for the cz_choose_menu_zero action.
 type CzChooseMenuZero struct {
-	NpcID uint32
+	NpcID     uint32
 	MenuIndex uint8
 }

@@ -4,6 +4,6 @@ package events
 
 // ZcAckItemrepair is the event emitted for the zc_ack_itemrepair action.
 type ZcAckItemrepair struct {
-	Index uint16
+	Index  uint16
 	Result uint8
 }

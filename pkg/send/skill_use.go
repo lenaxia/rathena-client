@@ -4,7 +4,7 @@ package send
 
 // SkillUse is the request struct for the skill_use action.
 type SkillUse struct {
-	SkillLv uint16
-	SkillID uint16
+	SkillLv  uint16
+	SkillID  uint16
 	TargetID uint32
 }

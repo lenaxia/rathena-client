@@ -4,40 +4,40 @@ package events
 
 // ActorMoved is the event emitted for the actor_moved action.
 type ActorMoved struct {
-	GID uint32
-	Speed int16
-	BodyState int16
-	HealthState int16
-	EffectState int32
-	Job int16
-	Head uint16
-	Weapon uint32
-	Accessory uint16
+	GID           uint32
+	Speed         int16
+	BodyState     int16
+	HealthState   int16
+	EffectState   int32
+	Job           int16
+	Head          uint16
+	Weapon        uint32
+	Accessory     uint16
 	MoveStartTime uint32
-	Accessory2 uint16
-	Accessory3 uint16
-	Headpalette int16
-	Bodypalette int16
-	HeadDir int16
-	GUID uint32
-	GEmblemVer int16
-	Honor int16
-	Virtue int32
-	IsPKModeON uint8
-	Sex uint8
-	MoveData [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
-	XSize uint8
-	YSize uint8
-	Clevel int16
-	Objecttype uint8
-	Font int16
-	PacketLength int16
-	Robe uint16
-	MaxHP int32
-	HP int32
-	IsBoss uint8
-	AID uint32
-	Name string
-	Body uint16
-	Shield uint32
+	Accessory2    uint16
+	Accessory3    uint16
+	Headpalette   int16
+	Bodypalette   int16
+	HeadDir       int16
+	GUID          uint32
+	GEmblemVer    int16
+	Honor         int16
+	Virtue        int32
+	IsPKModeON    uint8
+	Sex           uint8
+	MoveData      [6]byte // Packed movement data (6 bytes: from_x, from_y, to_x, to_y, sx0, sy0). Call packing.DecodeMoveData to unpack.
+	XSize         uint8
+	YSize         uint8
+	Clevel        int16
+	Objecttype    uint8
+	Font          int16
+	PacketLength  int16
+	Robe          uint16
+	MaxHP         int32
+	HP            int32
+	IsBoss        uint8
+	AID           uint32
+	Name          string
+	Body          uint16
+	Shield        uint32
 }

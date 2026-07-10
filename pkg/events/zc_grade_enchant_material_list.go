@@ -4,11 +4,11 @@ package events
 
 // ZcGradeEnchantMaterialList is the event emitted for the zc_grade_enchant_material_list action.
 type ZcGradeEnchantMaterialList struct {
-	PacketLength int16
-	Index int16
+	PacketLength   int16
+	Index          int16
 	Success_chance int32
-	Blessing_info []byte
+	Blessing_info  []byte
 	Protect_itemid int32
 	Protect_amount int32
-	Material_info []byte
+	Material_info  []byte
 }

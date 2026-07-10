@@ -5,5 +5,5 @@ package events
 // ZcDialogWindowSize is the event emitted for the zc_dialog_window_size action.
 type ZcDialogWindowSize struct {
 	Height []byte
-	Width []byte
+	Width  []byte
 }

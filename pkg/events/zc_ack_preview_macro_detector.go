@@ -5,6 +5,6 @@ package events
 // ZcAckPreviewMacroDetector is the event emitted for the zc_ack_preview_macro_detector action.
 type ZcAckPreviewMacroDetector struct {
 	CaptchaFlag []byte
-	ImageSize uint16
-	CaptchaKey string
+	ImageSize   uint16
+	CaptchaKey  string
 }

@@ -4,6 +4,6 @@ package events
 
 // ZcOpenSearchStoreInfo is the event emitted for the zc_open_search_store_info action.
 type ZcOpenSearchStoreInfo struct {
-	Effect uint16
+	Effect        uint16
 	RemainingUses uint8
 }

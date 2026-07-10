@@ -4,15 +4,15 @@ package events
 
 // ItemAppeared is the event emitted for the item_appeared action.
 type ItemAppeared struct {
-	ITAID uint32
-	ITID uint32
-	IsIdentified uint8
-	XPos int16
-	YPos int16
-	SubX uint8
-	SubY uint8
-	Count int16
-	Type uint16
+	ITAID          uint32
+	ITID           uint32
+	IsIdentified   uint8
+	XPos           int16
+	YPos           int16
+	SubX           uint8
+	SubY           uint8
+	Count          int16
+	Type           uint16
 	Showdropeffect int8
 	Dropeffectmode int16
 }

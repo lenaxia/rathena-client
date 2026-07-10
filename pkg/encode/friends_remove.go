@@ -12,8 +12,8 @@ func EncodeFriendsRemove(req send.FriendsRemove, packetver uint32) [10]byte {
 	// Packet ID: 0x0203 (little-endian)
 	p[0] = 0x03
 	p[1] = 0x02
-	leU32Put(p[2:], req.AID)  // rAthena: AID
-	leU32Put(p[6:], req.CID)  // rAthena: CID
+	leU32Put(p[2:], req.AID) // rAthena: AID
+	leU32Put(p[6:], req.CID) // rAthena: CID
 	_ = packetver
 	return p
 }

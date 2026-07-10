@@ -12,9 +12,9 @@ func EncodeCzPcPurchaseItemlistFrommc(req send.CzPcPurchaseItemlistFrommc, packe
 	// Packet ID: 0x0134 (little-endian)
 	p[0] = 0x34
 	p[1] = 0x01
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	leU32Put(p[4:], req.AID)  // rAthena: AID
-	copy(p[8:], req.List)  // rAthena: list
+	leU16Put(p[2:], uint16(len(p))) // rAthena: packetLength (computed)
+	leU32Put(p[4:], req.AID)        // rAthena: AID
+	copy(p[8:], req.List)           // rAthena: list
 	_ = packetver
 	return p
 }

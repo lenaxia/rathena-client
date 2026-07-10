@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PinCodeRequest_0x08B9(data []byte, packetver uint32) events.PinCodeRequest {
 	var e events.PinCodeRequest
 	_ = packetver
-	e.Seed = leU32(data, 2)  // rAthena: seed (offset 2, size 4)
-	e.AID = leU32(data, 6)  // rAthena: AID (offset 6, size 4)
-	e.Result = leU16(data, 10)  // rAthena: result (offset 10, size 2)
+	e.Seed = leU32(data, 2)    // rAthena: seed (offset 2, size 4)
+	e.AID = leU32(data, 6)     // rAthena: AID (offset 6, size 4)
+	e.Result = leU16(data, 10) // rAthena: result (offset 10, size 2)
 	return e
 }
 
@@ -18,8 +18,7 @@ func PinCodeRequest_0x08B9(data []byte, packetver uint32) events.PinCodeRequest 
 func PinCodeRequest_0x02AD(data []byte, packetver uint32) events.PinCodeRequest {
 	var e events.PinCodeRequest
 	_ = packetver
-	e.Flag = leU16(data, 2)  // rAthena: flag (offset 2, size 2)
+	e.Flag = leU16(data, 2) // rAthena: flag (offset 2, size 2)
 	e.Key = leU32(data, 4)  // rAthena: key (offset 4, size 4)
 	return e
 }
-

@@ -5,8 +5,8 @@ package events
 // PrivateMessage is the event emitted for the private_message action.
 type PrivateMessage struct {
 	PacketLength int16
-	Sender string
-	Message string
-	IsAdmin int32
-	SenderGID uint32
+	Sender       string
+	Message      string
+	IsAdmin      int32
+	SenderGID    uint32
 }

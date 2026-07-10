@@ -12,7 +12,7 @@ func EncodeSkillUp(req send.SkillUp, packetver uint32) [4]byte {
 	// Packet ID: 0x0112 (little-endian)
 	p[0] = 0x12
 	p[1] = 0x01
-	leU16Put(p[2:], req.Skill_id)  // rAthena: skill_id
+	leU16Put(p[2:], req.Skill_id) // rAthena: skill_id
 	_ = packetver
 	return p
 }

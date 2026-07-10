@@ -5,5 +5,5 @@ package events
 // ZcNpcMarketOpen is the event emitted for the zc_npc_market_open action.
 type ZcNpcMarketOpen struct {
 	PacketLength int16
-	List []byte
+	List         []byte
 }

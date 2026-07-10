@@ -4,6 +4,6 @@ package events
 
 // ZcElParChange is the event emitted for the zc_el_par_change action.
 type ZcElParChange struct {
-	Type uint16
+	Type  uint16
 	Value uint32
 }

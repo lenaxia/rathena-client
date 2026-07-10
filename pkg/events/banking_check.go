@@ -4,6 +4,6 @@ package events
 
 // BankingCheck is the event emitted for the banking_check action.
 type BankingCheck struct {
-	Money int64
+	Money  int64
 	Reason int16
 }

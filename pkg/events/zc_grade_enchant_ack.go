@@ -4,7 +4,7 @@ package events
 
 // ZcGradeEnchantAck is the event emitted for the zc_grade_enchant_ack action.
 type ZcGradeEnchantAck struct {
-	Index int16
-	Grade int16
+	Index  int16
+	Grade  int16
 	Result []byte
 }

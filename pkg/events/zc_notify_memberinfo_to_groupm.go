@@ -4,7 +4,7 @@ package events
 
 // ZcNotifyMemberinfoToGroupm is the event emitted for the zc_notify_memberinfo_to_groupm action.
 type ZcNotifyMemberinfoToGroupm struct {
-	AID []byte
-	Job int16
+	AID   []byte
+	Job   int16
 	Level int16
 }

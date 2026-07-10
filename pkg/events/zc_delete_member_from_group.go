@@ -4,7 +4,7 @@ package events
 
 // ZcDeleteMemberFromGroup is the event emitted for the zc_delete_member_from_group action.
 type ZcDeleteMemberFromGroup struct {
-	AID []byte
+	AID           []byte
 	CharacterName string
-	Result int8
+	Result        int8
 }

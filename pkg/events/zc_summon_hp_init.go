@@ -6,5 +6,5 @@ package events
 type ZcSummonHpInit struct {
 	SummonAID uint32
 	CurrentHP uint32
-	MaxHP uint32
+	MaxHP     uint32
 }

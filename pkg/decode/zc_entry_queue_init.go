@@ -10,4 +10,3 @@ func ZcEntryQueueInit_0x090E(data []byte, packetver uint32) events.ZcEntryQueueI
 	_ = packetver
 	return e
 }
-

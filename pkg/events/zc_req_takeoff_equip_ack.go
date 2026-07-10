@@ -4,7 +4,7 @@ package events
 
 // ZcReqTakeoffEquipAck is the event emitted for the zc_req_takeoff_equip_ack action.
 type ZcReqTakeoffEquipAck struct {
-	Index uint16
+	Index        uint16
 	WearLocation uint32
-	Flag []byte
+	Flag         []byte
 }

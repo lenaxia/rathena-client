@@ -12,7 +12,7 @@ func EncodeCatchPet(req send.CatchPet, packetver uint32) [6]byte {
 	// Packet ID: 0x019F (little-endian)
 	p[0] = 0x9f
 	p[1] = 0x01
-	leU32Put(p[2:], req.TargetId)  // rAthena: targetId
+	leU32Put(p[2:], req.TargetId) // rAthena: targetId
 	_ = packetver
 	return p
 }

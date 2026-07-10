@@ -4,6 +4,6 @@ package events
 
 // ZcResurrection is the event emitted for the zc_resurrection action.
 type ZcResurrection struct {
-	Gid uint32
+	Gid  uint32
 	Type int16
 }

@@ -6,5 +6,5 @@ package events
 type ZcShortcutKeyList struct {
 	Hotkey []byte
 	Rotate int8
-	Tab int16
+	Tab    int16
 }

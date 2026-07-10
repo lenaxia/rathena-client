@@ -9,7 +9,6 @@ func ZcLonglongparChange_0x0ACB(data []byte, packetver uint32) events.ZcLonglong
 	var e events.ZcLonglongparChange
 	_ = packetver
 	e.VarID = leU16(data, 2)  // rAthena: varID (offset 2, size 2)
-	e.Amount = leI64(data, 4)  // rAthena: amount (offset 4, size 8)
+	e.Amount = leI64(data, 4) // rAthena: amount (offset 4, size 8)
 	return e
 }
-

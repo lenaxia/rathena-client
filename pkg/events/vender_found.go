@@ -4,6 +4,6 @@ package events
 
 // VenderFound is the event emitted for the vender_found action.
 type VenderFound struct {
-	MakerAID uint32
+	MakerAID  uint32
 	StoreName string
 }

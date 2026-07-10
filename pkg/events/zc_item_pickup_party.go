@@ -4,13 +4,13 @@ package events
 
 // ZcItemPickupParty is the event emitted for the zc_item_pickup_party action.
 type ZcItemPickupParty struct {
-	AID uint32
-	ItemId uint32
+	AID        uint32
+	ItemId     uint32
 	Identified uint8
-	Damaged uint8
-	Refine uint8
-	Slot []byte
-	Location uint16
-	ItemType uint8
-	Grade uint8
+	Damaged    uint8
+	Refine     uint8
+	Slot       []byte
+	Location   uint16
+	ItemType   uint8
+	Grade      uint8
 }

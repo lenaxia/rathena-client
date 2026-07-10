@@ -5,5 +5,5 @@ package send
 // ActorAction is the request struct for the actor_action action.
 type ActorAction struct {
 	TargetGID uint32
-	Action uint8
+	Action    uint8
 }
