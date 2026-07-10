@@ -2,8 +2,10 @@
 // ZC_USESKILL_ACK (ActionSkillCast).
 //
 // Validates facts #3 and #4 from the gap report:
-//   - Fact #3: lengths_map.go already sets t[0x0B1A] = 29 at pv >= 20191120, so
-//     the framer CAN frame it.
+//   - Fact #3: lengths_map.go sets t[0x0B1A] = 29 at pv >= 20181212 (the actual
+//     packets_struct.hpp guard — was previously mis-recorded as pv >= 20191120
+//     before the codegen fidelity fix in PR #16 that skipped injectMapPacketStructs
+//     overwrites of packets_struct.hpp version ranges), so the framer CAN frame it.
 //   - Fact #4 (before fix): feeding a 29-byte 0x0B1A frame at packetver 20200401
 //     results in unhandled=1 (no semantic handler fires).
 //
