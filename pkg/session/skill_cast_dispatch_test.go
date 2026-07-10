@@ -117,14 +117,17 @@ func TestSkillCast_0x0B1A_FiresAt_20200401(t *testing.T) {
 	}
 }
 
-// TestSkillCast_0x07FB_StillFires verifies the existing 0x07FB variant still
-// dispatches to ActionSkillCast (regression guard — the fix is additive only).
+// TestSkillCast_0x07FB_StillFires verifies the 0x07FB variant dispatches to
+// ActionSkillCast at packetvers where rAthena actually sends 0x07FB — that is,
+// 20091124 ≤ pv < 20181212 (see rAthena src/map/packets_struct.hpp:3965-3977).
+// At pv >= 20181212 rAthena binds ZC_USESKILL_ACK to 0x0B1A instead, so this
+// test uses a pv in 0x07FB's active range.
 func TestSkillCast_0x07FB_StillFires(t *testing.T) {
-	pv := uint32(20200401)
+	pv := uint32(20180101) // 0x07FB is on the wire at this pv (25 bytes)
 	s := NewMapSession(pv)
 
-	if got := s.core.lengths[0x07FB]; got != 29 {
-		t.Fatalf("prerequisite: lengths[0x07FB] = %d at pv=%d, want 29", got, pv)
+	if got := s.core.lengths[0x07FB]; got != 25 {
+		t.Fatalf("prerequisite: lengths[0x07FB] = %d at pv=%d, want 25", got, pv)
 	}
 
 	fired := 0
@@ -132,9 +135,8 @@ func TestSkillCast_0x07FB_StillFires(t *testing.T) {
 		fired++
 	})
 
-	// 29-byte 0x07FB frame. 0x07FB has no attackMT field but shares the layout
-	// through offset 24; we only assert dispatch fires, not field decode here.
-	frame := make([]byte, 29)
+	// 25-byte 0x07FB frame (9 fields, no attackMT — added only in 0x0B1A).
+	frame := make([]byte, 25)
 	binary.LittleEndian.PutUint16(frame[0:], 0x07FB)
 	if err := s.Feed(frame); err != nil {
 		t.Fatalf("Feed(0x07FB) error: %v", err)
