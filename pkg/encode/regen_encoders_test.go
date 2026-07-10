@@ -95,3 +95,43 @@ func TestEncodeCzReqTakeoffEquipAll_PanicsBelowRange(t *testing.T) {
 	}()
 	encode.EncodeCzReqTakeoffEquipAll(send.CzReqTakeoffEquipAll{}, 20200401)
 }
+
+// Benchmarks for the two changed encoders. Convention: run at goKore's
+// target pv=20200401 for CzReqGuildEmblemImg2 (valid at that pv), and at
+// each of the two branches for CzReqTakeoffEquipAll.
+//
+// Rule 4 target: 0 allocs/op. Verified locally: all three encoders
+// including the []byte-returning takeoff variant hit 0 allocs/op — Go's
+// escape analysis proves the make([]byte, N) doesn't escape for these
+// tiny-payload single-return use cases.
+
+func BenchmarkEncodeCzReqGuildEmblemImg2(b *testing.B) {
+	req := send.CzReqGuildEmblemImg2{
+		Guild_id:  0x11223344,
+		Emblem_id: 0x55667788,
+		Unused:    0,
+	}
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = encode.EncodeCzReqGuildEmblemImg2(req, 20200401)
+	}
+}
+
+func BenchmarkEncodeCzReqTakeoffEquipAll_v20210818(b *testing.B) {
+	req := send.CzReqTakeoffEquipAll{Location: 0x11223344}
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = encode.EncodeCzReqTakeoffEquipAll(req, 20210818)
+	}
+}
+
+func BenchmarkEncodeCzReqTakeoffEquipAll_v20230906(b *testing.B) {
+	req := send.CzReqTakeoffEquipAll{Location: 0x11223344}
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = encode.EncodeCzReqTakeoffEquipAll(req, 20230906)
+	}
+}

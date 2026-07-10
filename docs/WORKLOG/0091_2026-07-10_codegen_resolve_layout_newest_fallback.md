@@ -6,7 +6,7 @@
   - `internal/codegen/gen/encode.go` — `resolveLayout` newest-fallback
   - `internal/codegen/gen/resolve_layout_test.go` — 5 new unit tests
   - `internal/codegen/main.go` — `writeFile` runs gofmt on `.go` output
-  - `semantics/mappings.yaml` — bound `cz_req_guild_emblem_img2` (0x0B1E) at min=20190227; split `cz_req_takeoff_equip_all` into 0x0BAD [20210818..20230905] + 0x0BF5 [20230906..∞]
+  - `semantics/mappings.yaml` — bound `cz_req_guild_emblem_img2` (0x0B1E) at min=20190619 (matches the pv where the current 14-byte struct layout became active); split `cz_req_takeoff_equip_all` into 0x0BAD [20210818..20230905] + 0x0BF5 [20230906..∞]
   - Regenerated `pkg/{decode,events,encode,send,session}/` — 669 files touched by gofmt canonicalization + 2 substantive encoder rewrites
   - `CHANGELOG.md`
 

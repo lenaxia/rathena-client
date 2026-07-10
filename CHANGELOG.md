@@ -41,14 +41,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `[20210818..20230905]` (2 bytes) + new `0x0BF5` `[20230906..∞]`
   (6 bytes with `location` field). The codegen now emits
   `EncodeCzReqTakeoffEquipAll` as a pv-branching function returning
-  `[]byte` (was `[6]byte`). Source-level API break —
+  `[]byte` (was `[2]byte`). Source-level API break —
   `pkg/encode/register.go` is updated to use the new return type.
   goKore does not currently call this encoder.
 
 - **`cz_req_guild_emblem_img2` mapping bound.** Impl range explicitly
-  set to `[20190227, ∞)` (was unbounded). Makes intent explicit even
-  though the `resolveLayout` fix alone produces the correct encoder
-  now.
+  set to `[20190619, ∞)` (was unbounded). Corresponds to the pv where
+  rAthena's current 14-byte struct layout became active
+  (`packets_struct.hpp:5788` — the 10-byte layout at pv 20190227..20190618
+  is retired at pv >= 20190619). Since both variants share packet id
+  0x0B1E, the semantic DB cannot express them as two impls; picking the
+  current layout matches modern rAthena builds and goKore's target
+  pv=20200401.
 
 ---
 
