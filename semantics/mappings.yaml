@@ -3852,8 +3852,8 @@ semantic_actions:
         implementations:
             - packet_id: "0x07FB"
               packetver_range:
-                - null
-                - null
+                - 20091124
+                - 20181211
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping: {}
             - packet_id: "0x0B1A"
@@ -6899,8 +6899,8 @@ semantic_actions:
         implementations:
             - packet_id: "0x013E"
               packetver_range:
-                - null
-                - null
+                - 20090406
+                - 20091123
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping: {}
     zc_view_camerainfo:
