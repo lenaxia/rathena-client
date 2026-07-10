@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcNotifyEffect3_0x0284 decodes a 0x0284 packet (struct PACKET_ZC_NOTIFY_EFFECT3).
 func ZcNotifyEffect3_0x0284(data []byte, packetver uint32) events.ZcNotifyEffect3 {
 	var e events.ZcNotifyEffect3
-	if packetver >= 20200916 {
+	if packetver >= 20191127 {
 		e.Aid = leU32(data, 2)  // rAthena: aid (offset 2, size 4)
 		e.EffectId = leU32(data, 6)  // rAthena: effectId (offset 6, size 4)
 		e.Num = leU64(data, 10)  // rAthena: num (offset 10, size 8)

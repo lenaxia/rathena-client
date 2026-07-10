@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcUseskillAck_0x013E decodes a 0x013E packet (struct PACKET_ZC_USESKILL_ACK).
 func ZcUseskillAck_0x013E(data []byte, packetver uint32) events.ZcUseskillAck {
 	var e events.ZcUseskillAck
-	if packetver >= 20191120 {
+	if packetver >= 20181212 {
 		e.SrcId = leU32(data, 2)  // rAthena: srcId (offset 2, size 4)
 		e.DstId = leU32(data, 6)  // rAthena: dstId (offset 6, size 4)
 		e.X = leU16(data, 10)  // rAthena: x (offset 10, size 2)
@@ -17,7 +17,7 @@ func ZcUseskillAck_0x013E(data []byte, packetver uint32) events.ZcUseskillAck {
 		e.DelayTime = leU32(data, 20)  // rAthena: delayTime (offset 20, size 4)
 		e.Disposable = data[24]  // rAthena: disposable (offset 24, size 1)
 		e.AttackMT = leU32(data, 25)  // rAthena: attackMT (offset 25, size 4)
-	} else {
+	} else if packetver >= 20091124 {
 		e.SrcId = leU32(data, 2)  // rAthena: srcId (offset 2, size 4)
 		e.DstId = leU32(data, 6)  // rAthena: dstId (offset 6, size 4)
 		e.X = leU16(data, 10)  // rAthena: x (offset 10, size 2)
@@ -26,6 +26,14 @@ func ZcUseskillAck_0x013E(data []byte, packetver uint32) events.ZcUseskillAck {
 		e.Element = leU32(data, 16)  // rAthena: element (offset 16, size 4)
 		e.DelayTime = leU32(data, 20)  // rAthena: delayTime (offset 20, size 4)
 		e.Disposable = data[24]  // rAthena: disposable (offset 24, size 1)
+	} else {
+		e.SrcId = leU32(data, 2)  // rAthena: srcId (offset 2, size 4)
+		e.DstId = leU32(data, 6)  // rAthena: dstId (offset 6, size 4)
+		e.X = leU16(data, 10)  // rAthena: x (offset 10, size 2)
+		e.Y = leU16(data, 12)  // rAthena: y (offset 12, size 2)
+		e.SkillId = leU16(data, 14)  // rAthena: skillId (offset 14, size 2)
+		e.Element = leU32(data, 16)  // rAthena: element (offset 16, size 4)
+		e.DelayTime = leU32(data, 20)  // rAthena: delayTime (offset 20, size 4)
 	}
 	return e
 }

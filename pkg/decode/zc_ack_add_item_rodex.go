@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcAckAddItemRodex_0x0A05 decodes a 0x0A05 packet (struct PACKET_ZC_ACK_ADD_ITEM_RODEX).
 func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItemRodex {
 	var e events.ZcAckAddItemRodex
-	if packetver >= 20200916 {
+	if packetver >= 20200902 {
 		e.Result = int8(data[2])  // rAthena: result (offset 2, size 1)
 		e.Index = leI16(data, 3)  // rAthena: index (offset 3, size 2)
 		e.Count = leI16(data, 5)  // rAthena: count (offset 5, size 2)

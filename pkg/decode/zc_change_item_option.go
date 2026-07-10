@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcChangeItemOption_0x0AB9 decodes a 0x0AB9 packet (struct PACKET_ZC_CHANGE_ITEM_OPTION).
 func ZcChangeItemOption_0x0AB9(data []byte, packetver uint32) events.ZcChangeItemOption {
 	var e events.ZcChangeItemOption
-	if packetver >= 20200916 {
+	if packetver >= 20200902 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.IsDamaged = int8(data[4])  // rAthena: isDamaged (offset 4, size 1)
 		e.Slot = data[5:]  // rAthena: slot (offset 5, size 16)
@@ -20,6 +20,12 @@ func ZcChangeItemOption_0x0AB9(data []byte, packetver uint32) events.ZcChangeIte
 		e.RefiningLevel = leI16(data, 5)  // rAthena: refiningLevel (offset 5, size 2)
 		e.Slot = data[7:]  // rAthena: slot (offset 7, size 16)
 		e.Option_data = data[23:48]  // rAthena: option_data (offset 23, size 25)
+	} else if packetver >= 20181017 {
+		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
+		e.IsDamaged = int8(data[4])  // rAthena: isDamaged (offset 4, size 1)
+		e.RefiningLevel = leI16(data, 5)  // rAthena: refiningLevel (offset 5, size 2)
+		e.Slot = data[7:]  // rAthena: slot (offset 7, size 8)
+		e.Option_data = data[15:40]  // rAthena: option_data (offset 15, size 25)
 	} else {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.RefiningLevel = leI16(data, 4)  // rAthena: refiningLevel (offset 4, size 2)

@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcPersonalInfomation_0x08CB decodes a 0x08CB packet (struct PACKET_ZC_PERSONAL_INFOMATION).
 func ZcPersonalInfomation_0x08CB(data []byte, packetver uint32) events.ZcPersonalInfomation {
 	var e events.ZcPersonalInfomation
-	if packetver >= 20120618 {
+	if packetver >= 20120503 {
 		e.Length = leI16(data, 2)  // rAthena: length (offset 2, size 2)
 		e.Total_exp = leI32(data, 4)  // rAthena: total_exp (offset 4, size 4)
 		e.Total_death = leI32(data, 8)  // rAthena: total_death (offset 8, size 4)

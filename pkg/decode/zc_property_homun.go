@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcPropertyHomun_0x022E decodes a 0x022E packet (struct PACKET_ZC_PROPERTY_HOMUN).
 func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomun {
 	var e events.ZcPropertyHomun
-	if packetver >= 20250402 {
+	if packetver >= 20220216 {
 		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
@@ -29,7 +29,7 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.ExpNext = leI64(data, 73)  // rAthena: expNext (offset 73, size 8)
 		e.SkillPoints = leU16(data, 81)  // rAthena: skillPoints (offset 81, size 2)
 		e.Range = leU16(data, 83)  // rAthena: range (offset 83, size 2)
-	} else if packetver >= 20200916 {
+	} else if packetver >= 20200819 {
 		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
@@ -51,7 +51,7 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.ExpNext = int64(leI32(data, 69))  // rAthena: expNext (offset 69, size 4)
 		e.SkillPoints = leU16(data, 73)  // rAthena: skillPoints (offset 73, size 2)
 		e.Range = leU16(data, 75)  // rAthena: range (offset 75, size 2)
-	} else if packetver >= 20191120 {
+	} else if packetver >= 20190619 {
 		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)
@@ -96,7 +96,7 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.ExpNext = int64(leI32(data, 69))  // rAthena: expNext (offset 69, size 4)
 		e.SkillPoints = leU16(data, 73)  // rAthena: skillPoints (offset 73, size 2)
 		e.Range = leU16(data, 75)  // rAthena: range (offset 75, size 2)
-	} else if packetver >= 20141016 {
+	} else if packetver >= 20131230 {
 		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)  // rAthena: level (offset 27, size 2)

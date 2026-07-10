@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // SkillUsedNoDamage_0x011A decodes a 0x011A packet (struct PACKET_ZC_USE_SKILL).
 func SkillUsedNoDamage_0x011A(data []byte, packetver uint32) events.SkillUsedNoDamage {
 	var e events.SkillUsedNoDamage
-	if packetver >= 20131223 {
+	if packetver >= 20130731 {
 		e.SKID = leU16(data, 2)  // rAthena: SKID (offset 2, size 2)
 		e.Level = leI32(data, 4)  // rAthena: level (offset 4, size 4)
 		e.TargetAID = leU32(data, 8)  // rAthena: targetAID (offset 8, size 4)

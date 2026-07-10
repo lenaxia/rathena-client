@@ -2,8 +2,8 @@
 
 package events
 
-// MonsterRangedAttack is the event emitted for the monster_ranged_attack action.
-type MonsterRangedAttack struct {
+// AttackFailureForDistance is the event emitted for the attack_failure_for_distance action.
+type AttackFailureForDistance struct {
 	TargetAID uint32
 	TargetXPos int16
 	TargetYPos int16

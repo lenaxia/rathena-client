@@ -165,7 +165,6 @@ import (
 //   quest_dialog_list
 //   quest_update_mission_hunt
 //   quit_game
-//   received_character_ID_and_Map
 //   received_character_id_and_map
 //   remove_option
 //   repair_item
@@ -269,12 +268,16 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x080F, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x080F(d, pv) }},
 		{id: 0x0A09, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x0A09(d, pv) }},
 		{id: 0x0A96, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x0A96(d, pv) }},
+		{id: 0x0B42, fn: func(d []byte, pv uint32) interface{} { return decode.AddExchangeItem_0x0B42(d, pv) }},
 	},
 	ActionAreaSpell: {
 		{id: 0x011F, fn: func(d []byte, pv uint32) interface{} { return decode.AreaSpell_0x011F(d, pv) }},
 		{id: 0x08C7, fn: func(d []byte, pv uint32) interface{} { return decode.AreaSpell_0x08C7(d, pv) }},
 		{id: 0x099F, fn: func(d []byte, pv uint32) interface{} { return decode.AreaSpell_0x099F(d, pv) }},
 		{id: 0x09CA, fn: func(d []byte, pv uint32) interface{} { return decode.AreaSpell_0x09CA(d, pv) }},
+	},
+	ActionAttackFailureForDistance: {
+		{id: 0x0139, fn: func(d []byte, pv uint32) interface{} { return decode.AttackFailureForDistance_0x0139(d, pv) }},
 	},
 	ActionAttackRange: {
 		{id: 0x013A, fn: func(d []byte, pv uint32) interface{} { return decode.AttackRange_0x013A(d, pv) }},
@@ -387,9 +390,6 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionMonsterHpUpdate: {
 		{id: 0x0977, fn: func(d []byte, pv uint32) interface{} { return decode.MonsterHpUpdate_0x0977(d, pv) }},
-	},
-	ActionMonsterRangedAttack: {
-		{id: 0x0139, fn: func(d []byte, pv uint32) interface{} { return decode.MonsterRangedAttack_0x0139(d, pv) }},
 	},
 	ActionNpcStoreInfo: {
 		{id: 0x00C6, fn: func(d []byte, pv uint32) interface{} { return decode.NpcStoreInfo_0x00C6(d, pv) }},
@@ -763,16 +763,16 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	ActionZcGradeEnchantMaterialList: {
 		{id: 0x0B5A, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGradeEnchantMaterialList_0x0B5A(d, pv) }},
 	},
+	ActionZcGroupList: {
+		{id: 0x00FB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x00FB(d, pv) }},
+		{id: 0x0A44, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x0A44(d, pv) }},
+		{id: 0x0AE5, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x0AE5(d, pv) }},
+	},
 	ActionZcGuildAgitInfo: {
 		{id: 0x0B27, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildAgitInfo_0x0B27(d, pv) }},
 	},
 	ActionZcGuildEmblemImg: {
 		{id: 0x0152, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildEmblemImg_0x0152(d, pv) }},
-	},
-	ActionZcGroupList: {
-		{id: 0x00FB, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x00FB(d, pv) }},
-		{id: 0x0A44, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x0A44(d, pv) }},
-		{id: 0x0AE5, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGroupList_0x0AE5(d, pv) }},
 	},
 	ActionZcGuildInfo: {
 		{id: 0x0A84, fn: func(d []byte, pv uint32) interface{} { return decode.ZcGuildInfo_0x0A84(d, pv) }},

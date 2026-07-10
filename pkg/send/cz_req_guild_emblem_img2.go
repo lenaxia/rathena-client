@@ -6,5 +6,4 @@ package send
 type CzReqGuildEmblemImg2 struct {
 	Guild_id int32
 	Emblem_id int32
-	Unused int32
 }

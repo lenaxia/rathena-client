@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcBattlefieldNotifyHp_0x02E0 decodes a 0x02E0 packet (struct PACKET_ZC_BATTLEFIELD_NOTIFY_HP).
 func ZcBattlefieldNotifyHp_0x02E0(data []byte, packetver uint32) events.ZcBattlefieldNotifyHp {
 	var e events.ZcBattlefieldNotifyHp
-	if packetver >= 20141016 {
+	if packetver >= 20140312 {
 		e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
 		e.Hp = leI16(data, 6)  // rAthena: hp (offset 6, size 4)
 		e.Maxhp = leI16(data, 10)  // rAthena: maxhp (offset 10, size 4)

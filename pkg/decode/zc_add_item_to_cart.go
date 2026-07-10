@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcAddItemToCart_0x0124 decodes a 0x0124 packet (struct PACKET_ZC_ADD_ITEM_TO_CART).
 func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCart {
 	var e events.ZcAddItemToCart
-	if packetver >= 20200916 {
+	if packetver >= 20200902 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
 		e.ItemId = leU32(data, 8)  // rAthena: itemId (offset 8, size 4)
@@ -28,7 +28,7 @@ func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCar
 		e.Refine = data[15]  // rAthena: refine (offset 15, size 1)
 		e.Slot = data[16:]  // rAthena: slot (offset 16, size 16)
 		e.Option_data = data[32:57]  // rAthena: option_data (offset 32, size 25)
-	} else if packetver >= 20141016 {
+	} else if packetver >= 20140813 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
 		e.ItemId = uint32(leU16(data, 8))  // rAthena: itemId (offset 8, size 2)
