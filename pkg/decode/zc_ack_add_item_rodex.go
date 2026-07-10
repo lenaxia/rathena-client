@@ -7,22 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcAckAddItemRodex_0x0A05 decodes a 0x0A05 packet (struct PACKET_ZC_ACK_ADD_ITEM_RODEX).
 func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItemRodex {
 	var e events.ZcAckAddItemRodex
-	if packetver >= 20200916 {
-		e.Result = int8(data[2])  // rAthena: result (offset 2, size 1)
-		e.Index = leI16(data, 3)  // rAthena: index (offset 3, size 2)
-		e.Count = leI16(data, 5)  // rAthena: count (offset 5, size 2)
-		e.ItemId = leU32(data, 7)  // rAthena: itemId (offset 7, size 4)
-		e.Type = int8(data[11])  // rAthena: type (offset 11, size 1)
-		e.IsIdentified = int8(data[12])  // rAthena: IsIdentified (offset 12, size 1)
-		e.IsDamaged = int8(data[13])  // rAthena: IsDamaged (offset 13, size 1)
-		e.Slot = data[14:]  // rAthena: slot (offset 14, size 16)
-		e.OptionData = data[30:55]  // rAthena: optionData (offset 30, size 25)
-		e.Weight = leI16(data, 55)  // rAthena: weight (offset 55, size 2)
-		e.Favorite = data[57]  // rAthena: favorite (offset 57, size 1)
-		e.Location = leU32(data, 58)  // rAthena: location (offset 58, size 4)
-		e.RefiningLevel = int8(data[62])  // rAthena: refiningLevel (offset 62, size 1)
-		e.Grade = int8(data[63])  // rAthena: grade (offset 63, size 1)
-	} else if packetver >= 20181121 {
+	if packetver >= 20181121 {
 		e.Result = int8(data[2])  // rAthena: result (offset 2, size 1)
 		e.Index = leI16(data, 3)  // rAthena: index (offset 3, size 2)
 		e.Count = leI16(data, 5)  // rAthena: count (offset 5, size 2)
@@ -51,6 +36,27 @@ func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItem
 		e.Favorite = data[48]  // rAthena: favorite (offset 48, size 1)
 		e.Location = leU32(data, 49)  // rAthena: location (offset 49, size 4)
 	}
+	return e
+}
+
+// ZcAckAddItemRodex_0x0B3F decodes a 0x0B3F packet (struct PACKET_ZC_ACK_ADD_ITEM_RODEX).
+func ZcAckAddItemRodex_0x0B3F(data []byte, packetver uint32) events.ZcAckAddItemRodex {
+	var e events.ZcAckAddItemRodex
+	_ = packetver
+	e.Result = int8(data[2])  // rAthena: result (offset 2, size 1)
+	e.Index = leI16(data, 3)  // rAthena: index (offset 3, size 2)
+	e.Count = leI16(data, 5)  // rAthena: count (offset 5, size 2)
+	e.ItemId = leU32(data, 7)  // rAthena: itemId (offset 7, size 4)
+	e.Type = int8(data[11])  // rAthena: type (offset 11, size 1)
+	e.IsIdentified = int8(data[12])  // rAthena: IsIdentified (offset 12, size 1)
+	e.IsDamaged = int8(data[13])  // rAthena: IsDamaged (offset 13, size 1)
+	e.Slot = data[14:]  // rAthena: slot (offset 14, size 16)
+	e.OptionData = data[30:55]  // rAthena: optionData (offset 30, size 25)
+	e.Weight = leI16(data, 55)  // rAthena: weight (offset 55, size 2)
+	e.Favorite = data[57]  // rAthena: favorite (offset 57, size 1)
+	e.Location = leU32(data, 58)  // rAthena: location (offset 58, size 4)
+	e.RefiningLevel = int8(data[62])  // rAthena: refiningLevel (offset 62, size 1)
+	e.Grade = int8(data[63])  // rAthena: grade (offset 63, size 1)
 	return e
 }
 

@@ -16,3 +16,15 @@ func ZcSearchStoreInfoAck_0x0836(data []byte, packetver uint32) events.ZcSearchS
 	return e
 }
 
+// ZcSearchStoreInfoAck_0x0B64 decodes a 0x0B64 packet (struct PACKET_ZC_SEARCH_STORE_INFO_ACK).
+func ZcSearchStoreInfoAck_0x0B64(data []byte, packetver uint32) events.ZcSearchStoreInfoAck {
+	var e events.ZcSearchStoreInfoAck
+	_ = packetver
+	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
+	e.FirstPage = data[4]  // rAthena: firstPage (offset 4, size 1)
+	e.NextPage = data[5]  // rAthena: nextPage (offset 5, size 1)
+	e.UsesCount = data[6]  // rAthena: usesCount (offset 6, size 1)
+	e.Items = data[7:]  // rAthena: items (offset 7, size 0)
+	return e
+}
+

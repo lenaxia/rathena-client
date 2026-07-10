@@ -8,7 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ScNotifyBan_0x0081(data []byte, packetver uint32) events.ScNotifyBan {
 	var e events.ScNotifyBan
 	_ = packetver
-	e.ErrorCode = data[2]  // rAthena: errorCode (offset 2, size 1)
+	e.Result = data[2]  // rAthena: result (offset 2, size 1)
 	return e
 }
 

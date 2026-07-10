@@ -1027,6 +1027,12 @@ semantic_actions:
             - packet_id: "0x0A96"
               packetver_range:
                 - 20161026
+                - 20200915
+              struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
+              field_mapping: {}
+            - packet_id: "0x0B42"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ADD_EXCHANGE_ITEM
               field_mapping: {}
@@ -3154,9 +3160,9 @@ semantic_actions:
                 - null
               struct_name: packet_monster_hp
               field_mapping: {}
-    monster_ranged_attack:
+    attack_failure_for_distance:
         name: ""
-        description: ""
+        description: Attack failure notification when target is out of range (clif_movetoattack, clif.cpp:8171-8188). Client should walk to (TargetXPos, TargetYPos) and retry. Sent for players/mercenaries — not a monster attack (OpenKore name is misleading).
         openkore_name: monster_ranged_attack
         canonical_params: []
         implementations:
@@ -3846,7 +3852,13 @@ semantic_actions:
         implementations:
             - packet_id: "0x07FB"
               packetver_range:
-                - null
+                - 20091124
+                - 20181211
+              struct_name: PACKET_ZC_USESKILL_ACK
+              field_mapping: {}
+            - packet_id: "0x0B1A"
+              packetver_range:
+                - 20181212
                 - null
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping: {}
@@ -4207,6 +4219,12 @@ semantic_actions:
             - packet_id: "0x0A05"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_ACK_ADD_ITEM_RODEX
+              field_mapping: {}
+            - packet_id: "0x0B3F"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ACK_ADD_ITEM_RODEX
               field_mapping: {}
@@ -4495,6 +4513,12 @@ semantic_actions:
             - packet_id: "0x09EB"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_ACK_READ_RODEX
+              field_mapping: {}
+            - packet_id: "0x0B63"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ACK_READ_RODEX
               field_mapping: {}
@@ -4603,6 +4627,12 @@ semantic_actions:
             - packet_id: "0x0124"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_ADD_ITEM_TO_CART
+              field_mapping: {}
+            - packet_id: "0x0B45"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ADD_ITEM_TO_CART
               field_mapping: {}
@@ -4615,6 +4645,12 @@ semantic_actions:
             - packet_id: "0x00F4"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_ADD_ITEM_TO_STORE
+              field_mapping: {}
+            - packet_id: "0x0B44"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ADD_ITEM_TO_STORE
               field_mapping: {}
@@ -4831,6 +4867,12 @@ semantic_actions:
             - packet_id: "0x0AB9"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_CHANGE_ITEM_OPTION
+              field_mapping: {}
+            - packet_id: "0x0B43"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_CHANGE_ITEM_OPTION
               field_mapping: {}
@@ -4855,12 +4897,12 @@ semantic_actions:
             - packet_id: "0x0A14"
               packetver_range:
                 - 20141119
-                - null
+                - 20160301
               struct_name: PACKET_ZC_CHECKNAME
               field_mapping: {}
             - packet_id: "0x0A51"
               packetver_range:
-                - 20141118
+                - 20160302
                 - null
               struct_name: PACKET_ZC_CHECKNAME
               field_mapping: {}
@@ -5215,6 +5257,12 @@ semantic_actions:
             - packet_id: "0x0B03"
               packetver_range:
                 - 20180801
+                - 20200915
+              struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
+              field_mapping: {}
+            - packet_id: "0x0B37"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_EQUIPWIN_MICROSCOPE
               field_mapping: {}
@@ -5485,6 +5533,12 @@ semantic_actions:
             - packet_id: "0x02B8"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_ITEM_PICKUP_PARTY
+              field_mapping: {}
+            - packet_id: "0x0B67"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_ITEM_PICKUP_PARTY
               field_mapping: {}
@@ -6018,6 +6072,12 @@ semantic_actions:
             - packet_id: "0x0133"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_PC_PURCHASE_ITEMLIST_FROMMC
+              field_mapping: {}
+            - packet_id: "0x0B3D"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_PC_PURCHASE_ITEMLIST_FROMMC
               field_mapping: {}
@@ -6030,6 +6090,12 @@ semantic_actions:
             - packet_id: "0x0136"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_PC_PURCHASE_MYITEMLIST
+              field_mapping: {}
+            - packet_id: "0x0B40"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_PC_PURCHASE_MYITEMLIST
               field_mapping: {}
@@ -6222,6 +6288,12 @@ semantic_actions:
             - packet_id: "0x01FC"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_REPAIRITEMLIST
+              field_mapping: {}
+            - packet_id: "0x0B65"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_REPAIRITEMLIST
               field_mapping: {}
@@ -6432,6 +6504,12 @@ semantic_actions:
             - packet_id: "0x0836"
               packetver_range:
                 - null
+                - 20200915
+              struct_name: PACKET_ZC_SEARCH_STORE_INFO_ACK
+              field_mapping: {}
+            - packet_id: "0x0B64"
+              packetver_range:
+                - 20200916
                 - null
               struct_name: PACKET_ZC_SEARCH_STORE_INFO_ACK
               field_mapping: {}
@@ -6821,8 +6899,8 @@ semantic_actions:
         implementations:
             - packet_id: "0x013E"
               packetver_range:
-                - null
-                - null
+                - 20090406
+                - 20091123
               struct_name: PACKET_ZC_USESKILL_ACK
               field_mapping: {}
     zc_view_camerainfo:

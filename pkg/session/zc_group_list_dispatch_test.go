@@ -227,7 +227,7 @@ func TestZcGroupList_0x0A44_FiresAt_MidPacketver(t *testing.T) {
 	off += 1
 	b[off] = 0 // offline byte
 	off += 1
-	binary.LittleEndian.PutUint16(b[off:], 7)  // class_
+	binary.LittleEndian.PutUint16(b[off:], 7) // class_
 	off += 2
 	binary.LittleEndian.PutUint16(b[off:], 99) // baseLevel
 
@@ -252,13 +252,19 @@ func TestZcGroupList_0x0A44_FiresAt_MidPacketver(t *testing.T) {
 	}
 }
 
-// TestZcGroupList_ActionConstant verifies the constant exists and has the
-// expected value. Compile-time regression guard for issue #13's reproduction
-// ("ActionZcGroupList doesn't exist" was the original bug).
+// TestZcGroupList_ActionConstant verifies the constant exists and String()
+// returns the expected name. Compile-time regression guard for issue #13's
+// reproduction ("ActionZcGroupList doesn't exist" was the original bug).
+//
+// Note: we do NOT assert on the numeric value of ActionZcGroupList — that
+// is an auto-generated implementation detail of codegen that shifts
+// whenever actions are added, removed, or renamed in
+// semantics/mappings.yaml (the enum is emitted in alphabetical order
+// starting from 1). Callers must use the named constant, never the
+// underlying integer.
 func TestZcGroupList_ActionConstant(t *testing.T) {
-	var a SemanticAction = ActionZcGroupList
-	if a != 464 {
-		t.Errorf("ActionZcGroupList = %d, want 464", a)
+	if ActionZcGroupList == ActionUnknown {
+		t.Errorf("ActionZcGroupList = ActionUnknown (0), want a distinct semantic action value")
 	}
 	if got := ActionZcGroupList.String(); got != "ActionZcGroupList" {
 		t.Errorf("ActionZcGroupList.String() = %q, want \"ActionZcGroupList\"", got)

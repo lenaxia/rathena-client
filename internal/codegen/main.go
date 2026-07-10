@@ -384,7 +384,23 @@ func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) e
 	}
 
 	injected := 0
+	skippedExisting := 0
 	for structName := range structNames {
+		// If this struct already has a VT entry from packets_struct.hpp, keep
+		// that authoritative version. packets_struct.hpp's PACKETVER guards are
+		// more fine-grained than map/packets.hpp's, so overwriting would
+		// coarsen the layout ranges — causing correct-at-source layouts to be
+		// misattributed to later packets.hpp breakpoints (e.g. ZC_USESKILL_ACK
+		// changes at pv 20181212 in packets_struct.hpp but the packets.hpp
+		// breakpoint that first observes the new layout is 20191120, so
+		// injecting from packets.hpp would misdate the transition).
+		//
+		// Only inject structs that ORIGINATE from map/packets.hpp — i.e. those
+		// not already present in the VT.
+		if existing, ok := vt[structName]; ok && len(existing) > 0 {
+			skippedExisting++
+			continue
+		}
 		// Collect version ranges where this struct appears and has a distinct layout.
 		var ranges []preprocess.VersionedLayout
 		for i, snap := range snapshots {
@@ -430,6 +446,9 @@ func injectMapPacketStructs(cfg preprocess.Config, vt preprocess.VersionTable) e
 		vt[structName] = ranges
 		injected++
 		log.Printf("  Injected %s: %d version range(s)", structName, len(ranges))
+	}
+	if skippedExisting > 0 {
+		log.Printf("  Skipped %d structs already present in VT (packets_struct.hpp is authoritative)", skippedExisting)
 	}
 
 	return nil

@@ -283,6 +283,159 @@ func TestDeleteAction_NotFound(t *testing.T) {
 	}
 }
 
+func TestRenameAction_UpdatesKeyAndName(t *testing.T) {
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+
+	// Give the action a non-empty name field first, so we exercise the
+	// "inner name mirrors old key" branch.
+	newName := "actor_died_or_disappeared"
+	if err := db.UpdateActionMetadata(newName, nil, nil); err != nil {
+		t.Fatalf("prep: %v", err)
+	}
+	// Manually set inner name to match old key via re-parse trick: just call
+	// UpdateActionMetadata with description we don't care about, then verify.
+	// Simpler: rename and check both cases directly.
+
+	if err := db.RenameAction("actor_died_or_disappeared", "actor_disappeared"); err != nil {
+		t.Fatalf("RenameAction: %v", err)
+	}
+	if _, ok := db.GetAction("actor_died_or_disappeared"); ok {
+		t.Error("old name still present after rename")
+	}
+	a, ok := db.GetAction("actor_disappeared")
+	if !ok {
+		t.Fatal("new name not present after rename")
+	}
+	if len(a.Implementations) != 1 {
+		t.Errorf("implementations lost during rename: got %d, want 1", len(a.Implementations))
+	}
+	if a.Implementations[0].PacketID != "0x0080" {
+		t.Errorf("implementation packet_id changed: got %q", a.Implementations[0].PacketID)
+	}
+
+	if err := db.Save(); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	got, _ := os.ReadFile(p)
+	if strings.Contains(string(got), "actor_died_or_disappeared:") {
+		t.Error("old key still in file after Save")
+	}
+	if !strings.Contains(string(got), "actor_disappeared:") {
+		t.Error("new key not in file after Save")
+	}
+}
+
+func TestRenameAction_PreservesDocumentOrder(t *testing.T) {
+	// The sample has actor_died_or_disappeared before zc_accept_enter.
+	// After renaming actor_died_or_disappeared → aaa_first, the renamed
+	// action must still come before zc_accept_enter.
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+	if err := db.RenameAction("actor_died_or_disappeared", "aaa_first"); err != nil {
+		t.Fatalf("RenameAction: %v", err)
+	}
+	if err := db.Save(); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	got, _ := os.ReadFile(p)
+	iFirst := strings.Index(string(got), "aaa_first:")
+	iSecond := strings.Index(string(got), "zc_accept_enter:")
+	if iFirst < 0 || iSecond < 0 {
+		t.Fatalf("keys missing: iFirst=%d iSecond=%d", iFirst, iSecond)
+	}
+	if iFirst > iSecond {
+		t.Errorf("rename disturbed document order: aaa_first at %d, zc_accept_enter at %d", iFirst, iSecond)
+	}
+}
+
+func TestRenameAction_UpdatesInnerNameFieldWhenItMirrorsKey(t *testing.T) {
+	// Build a doc where the inner name: field equals the outer key. Then
+	// rename and confirm the inner field is updated too.
+	doc := `semantic_actions:
+    foo_action:
+        name: foo_action
+        description: ""
+        openkore_name: ""
+        canonical_params: []
+        implementations: []
+`
+	dir := t.TempDir()
+	p := filepath.Join(dir, "mappings.yaml")
+	if err := os.WriteFile(p, []byte(doc), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	db, err := semanticsdb.Load(p)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if err := db.RenameAction("foo_action", "bar_action"); err != nil {
+		t.Fatalf("RenameAction: %v", err)
+	}
+	if err := db.Save(); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	got, _ := os.ReadFile(p)
+	if !strings.Contains(string(got), "name: bar_action") {
+		t.Errorf("inner name: not updated; file:\n%s", got)
+	}
+	if strings.Contains(string(got), "name: foo_action") {
+		t.Errorf("inner name: still has old value; file:\n%s", got)
+	}
+}
+
+func TestRenameAction_PreservesInnerNameWhenNotMirroring(t *testing.T) {
+	// The sample uses name: "" — rename must NOT change it to the new name.
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+	if err := db.RenameAction("actor_died_or_disappeared", "actor_disappeared"); err != nil {
+		t.Fatalf("RenameAction: %v", err)
+	}
+	if err := db.Save(); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	got, _ := os.ReadFile(p)
+	// Inner name: should still be "" (as in sample), not "actor_disappeared".
+	if strings.Contains(string(got), "name: actor_disappeared") {
+		t.Errorf("inner name: was updated when it should have been left alone; file:\n%s", got)
+	}
+}
+
+func TestRenameAction_NotFound(t *testing.T) {
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+	if err := db.RenameAction("nonexistent", "whatever"); err == nil {
+		t.Error("expected error on missing action")
+	}
+}
+
+func TestRenameAction_RejectsExistingTarget(t *testing.T) {
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+	if err := db.RenameAction("actor_died_or_disappeared", "zc_accept_enter"); err == nil {
+		t.Error("expected error when renaming to an existing name")
+	}
+}
+
+func TestRenameAction_RejectsEmptyTarget(t *testing.T) {
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+	if err := db.RenameAction("actor_died_or_disappeared", "   "); err == nil {
+		t.Error("expected error on blank new name")
+	}
+}
+
+func TestRenameAction_SameNameIsNoop(t *testing.T) {
+	p := writeSample(t)
+	db, _ := semanticsdb.Load(p)
+	if err := db.RenameAction("zc_accept_enter", "zc_accept_enter"); err != nil {
+		t.Errorf("rename to same name should be no-op, got: %v", err)
+	}
+	if _, ok := db.GetAction("zc_accept_enter"); !ok {
+		t.Error("action disappeared after no-op rename")
+	}
+}
+
 func TestAddImplementation_AppendsToAction(t *testing.T) {
 	p := writeSample(t)
 	db, _ := semanticsdb.Load(p)

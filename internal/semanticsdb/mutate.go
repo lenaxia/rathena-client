@@ -12,13 +12,13 @@ import (
 
 // Mutation errors.
 var (
-	ErrActionExists        = errors.New("semantic action already exists")
-	ErrActionNotFound      = errors.New("semantic action not found")
-	ErrImplExists          = errors.New("implementation already exists for this action")
-	ErrImplNotFound        = errors.New("implementation not found for this action")
-	ErrEmptyActionName     = errors.New("action name must not be empty")
-	ErrEmptyPacketID       = errors.New("packet_id must not be empty")
-	ErrEmptyStructName     = errors.New("struct_name must not be empty")
+	ErrActionExists    = errors.New("semantic action already exists")
+	ErrActionNotFound  = errors.New("semantic action not found")
+	ErrImplExists      = errors.New("implementation already exists for this action")
+	ErrImplNotFound    = errors.New("implementation not found for this action")
+	ErrEmptyActionName = errors.New("action name must not be empty")
+	ErrEmptyPacketID   = errors.New("packet_id must not be empty")
+	ErrEmptyStructName = errors.New("struct_name must not be empty")
 )
 
 // CreateAction adds a new empty action with the given metadata. Returns
@@ -53,6 +53,42 @@ func (d *DB) DeleteAction(name string) error {
 		return err
 	}
 	delete(d.action, name)
+	return nil
+}
+
+// RenameAction renames a semantic action from oldName to newName, preserving
+// the action's document position and all of its implementations. Also updates
+// the action's inner `name:` field if it currently mirrors oldName (so that
+// the field stays consistent with the key). Fields left at the empty string
+// or at other values are untouched.
+//
+// Returns ErrActionNotFound if oldName is absent, ErrActionExists if newName
+// is already in use, or ErrEmptyActionName if newName is blank.
+func (d *DB) RenameAction(oldName, newName string) error {
+	if strings.TrimSpace(newName) == "" {
+		return ErrEmptyActionName
+	}
+	if oldName == newName {
+		return nil
+	}
+	node, ok := d.action[oldName]
+	if !ok {
+		return fmt.Errorf("%w: %s", ErrActionNotFound, oldName)
+	}
+	if _, exists := d.action[newName]; exists {
+		return fmt.Errorf("%w: %s", ErrActionExists, newName)
+	}
+	if err := renameActionsMappingKey(d.root, oldName, newName); err != nil {
+		return err
+	}
+	// Keep the inner name: field in sync only when it mirrored the old key.
+	// Empty strings and other values (used inconsistently across the file)
+	// are preserved as-is to keep diffs minimal.
+	if inner := getMappingValue(node, "name"); inner != nil && inner.Value == oldName {
+		setMappingField(node, "name", newName)
+	}
+	delete(d.action, oldName)
+	d.action[newName] = node
 	return nil
 }
 
@@ -213,12 +249,12 @@ func (d *DB) SaveTo(outPath string) error {
 //
 // Output layout (matching mappings.yaml style):
 //
-//	    <actionName>:
-//	        name: <actionName>
-//	        description: <description>
-//	        openkore_name: <openkoreName>
-//	        canonical_params: []
-//	        implementations: []
+//	<actionName>:
+//	    name: <actionName>
+//	    description: <description>
+//	    openkore_name: <openkoreName>
+//	    canonical_params: []
+//	    implementations: []
 func buildActionNode(name, description, openkoreName string, impls []Implementation) *yaml.Node {
 	mapping := &yaml.Node{Kind: yaml.MappingNode}
 	addMappingKV(mapping, "name", name)
@@ -248,14 +284,11 @@ func buildActionNode(name, description, openkoreName string, impls []Implementat
 
 // buildImplNode constructs the YAML node tree for one implementation.
 //
-// Output layout (matching mappings.yaml style):
-//
-//	    - packet_id: "0x00FB"
-//	      packetver_range:
-//	        - null
-//	        - null
-//	      struct_name: PACKET_ZC_GROUP_LIST
-//	      field_mapping: {}
+// The emitted mapping node has keys packet_id (double-quoted string,
+// e.g. "0x00FB"), packetver_range (a 2-element sequence of nullable ints
+// for [min, max]), struct_name (bare identifier), and field_mapping
+// (empty inline "{}" mapping unless field mappings are present). See
+// TestAddImplementation_AppendsToAction for a round-trip example.
 func buildImplNode(impl Implementation) *yaml.Node {
 	mapping := &yaml.Node{Kind: yaml.MappingNode, Tag: "!!map"}
 	// First key is packet_id (list-item key, on the same line as "- ").
@@ -497,6 +530,20 @@ func removeActionsMappingEntry(root *yaml.Node, name string, _ *yaml.Node) error
 		}
 	}
 	return fmt.Errorf("removeActionsMappingEntry: key %q not found", name)
+}
+
+// renameActionsMappingKey renames the top-level `semantic_actions:` key
+// oldName → newName in place, preserving document position and the
+// associated value node. Returns an error if oldName is not present.
+func renameActionsMappingKey(root *yaml.Node, oldName, newName string) error {
+	actionsMap := mustFindActionsMap(root)
+	for i := 0; i+1 < len(actionsMap.Content); i += 2 {
+		if actionsMap.Content[i].Value == oldName {
+			actionsMap.Content[i].Value = newName
+			return nil
+		}
+	}
+	return fmt.Errorf("renameActionsMappingKey: key %q not found", oldName)
 }
 
 // mustFindActionsMap returns the *semantic_actions mapping node, panicking

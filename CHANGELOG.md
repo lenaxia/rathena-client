@@ -5,6 +5,103 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **`semantics-tool rename-action` — rename a semantic action in-place.**
+  Adds `DB.RenameAction(oldName, newName)` to `internal/semanticsdb` plus a
+  CLI subcommand and MCP tool (`rename_action`). Preserves the action's
+  document position, all implementations, canonical_params, and metadata;
+  updates the inner `name:` field only when it currently mirrors the old
+  key so unrelated diffs stay minimal. Rejects blank/existing/missing
+  targets; a no-op when old == new.
+
+  Previously the only way to rename an action was delete + create (which
+  destroyed implementation history and moved the entry to the end of the
+  file) or a direct yaml edit (which the README's Rule 21 forbids).
+  `TestMCP_ToolsList_ReturnsAll15Tools` reflects the tool count bump from
+  14 → 15.
+
+### Changed
+
+- **Renamed `monster_ranged_attack` → `attack_failure_for_distance`.**
+  Packet 0x0139 is rAthena's `ZC_ATTACK_FAILURE_FOR_DISTANCE`, sent by
+  `clif_movetoattack` (`src/map/clif.cpp:8171-8188`) when a player's attack
+  target is out of range. It is not a monster attack and never involves a
+  monster on the wire; the OpenKore name is misleading. The rename is
+  in-place — position and implementation preserved. Event/decoder Go
+  identifiers now use `AttackFailureForDistance` (both files renamed
+  under `pkg/decode/` and `pkg/events/`); the `SemanticAction` enum
+  constant is `ActionAttackFailureForDistance`. `openkore_name:
+  monster_ranged_attack` is preserved as documentation of the (also
+  misleading) OpenKore name.
+
+- **Corrected two latent mapping errors caught by the codegen fidelity
+  fixes below**:
+  - `skill_cast` gains the missing `0x0B1A` implementation (pv >= 20181212;
+    `PACKET_ZC_USESKILL_ACK` binds to 0x0B1A at that pv per
+    `packets_struct.hpp:3951-3964`). Previously worked around by manual
+    edits to generated files (commit 657c728), which regeneration would
+    revert.
+  - `add_exchange_item` splits the previously-unbounded `0x0A96` into
+    `0x0A96 [20161026..20200915]` + new `0x0B42 [20200916..∞]`, matching
+    rAthena's `DEFINE_PACKET_HEADER(ZC_ADD_EXCHANGE_ITEM, ...)` schedule
+    at `packets_struct.hpp:2641-2648`.
+
+### Fixed
+
+- **Codegen: `packets_struct.hpp` array sizes now resolve correctly.**
+  `packets_struct.hpp` references macros (notably `MAX_ITEM_OPTIONS`)
+  that are only defined by `packets.hpp`, so preprocessing
+  `packets_struct.hpp` directly left them undefined and turned array
+  members like `ItemOptions option_data[MAX_ITEM_OPTIONS]` into flex
+  arrays of size 0. This mis-aligned every subsequent field in the
+  struct (e.g. `PACKET_ZC_ADD_EXCHANGE_ITEM` had `Location` at offset 29
+  instead of 54, `Grade` at 36 instead of 61).
+
+  Fix: include `packets_hpp_stub.h` when preprocessing
+  `SourcePacketsStruct` too, and define `MAX_ITEM_OPTIONS` in the stub.
+
+- **Codegen: `injectMapPacketStructs` no longer overwrites the
+  authoritative packets_struct.hpp version table.**
+  `packets_struct.hpp` contains fine-grained `#if PACKETVER_MAIN_NUM`
+  guards that identify the exact transition dates for each struct
+  layout. `packets.hpp` has a different (coarser) breakpoint schedule.
+  The previous `injectMapPacketStructs` re-derived version ranges from
+  `packets.hpp` snapshots for every struct name with a `PACKET_ZC_*` /
+  `PACKET_SC_*` / `PACKET_CZ_*` prefix — overwriting the accurate
+  packets_struct.hpp ranges with less-precise ones. For example,
+  `PACKET_ZC_USESKILL_ACK` really transitions from 25→29 bytes at
+  pv 20181212 (per `packets_struct.hpp:3951`) but the previous inject
+  recorded the transition at 20191120 (the packets.hpp snapshot that
+  first observed the new size).
+
+  Fix: `injectMapPacketStructs` now skips structs that already have a
+  VT entry from `packets_struct.hpp`. It continues to inject structs
+  that only exist in `packets.hpp` (login/char server packets) — its
+  original purpose. Emits a summary log line for skipped structs.
+
+- **Tests: stopped enshrining wire-behavior that doesn't happen and
+  codegen implementation details.**
+  Three tests were latent-passing only because of the codegen bugs
+  above:
+  - `TestSkillCast_0x07FB_StillFires` asserted `lengths[0x07FB] == 29`
+    at pv=20200401 — but rAthena never sends 0x07FB at pv >= 20181212;
+    it uses 0x0B1A. Updated to test at pv=20180101 (0x07FB's real
+    active range), expected length 25.
+  - `TestZcGroupList_ActionConstant` hardcoded the exact integer value
+    of a codegen-emitted enum constant, which shifts whenever actions
+    are added/renamed alphabetically. Replaced with the `!= ActionUnknown`
+    + `String() == "ActionZcGroupList"` invariants that match the actual
+    API contract.
+  - `TestGap_AddExchangeItem_Grade_20200401_IsZero` used
+    `AddExchangeItem_0x0A96` at pv=20200916 — but rAthena sends 0x0B42
+    at that pv. Split into two cases: 0x0A96 at pv=20200401 (no grade)
+    and 0x0B42 at pv=20200916 (grade at offset 61).
+
+---
+
 ## [v0.8.0] — 2026-07-10
 
 ### Added

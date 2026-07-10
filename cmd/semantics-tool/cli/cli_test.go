@@ -214,6 +214,35 @@ func TestCLI_DeleteAction(t *testing.T) {
 	}
 }
 
+func TestCLI_RenameAction(t *testing.T) {
+	p := writeSample(t)
+	out, err := runCLI(t, p, "rename-action", "actor_died_or_disappeared", "actor_gone")
+	if err != nil {
+		t.Fatalf("rename-action: %v", err)
+	}
+	if !strings.Contains(out, "actor_died_or_disappeared") || !strings.Contains(out, "actor_gone") {
+		t.Errorf("unexpected output: %q", out)
+	}
+	// Old name should be gone; new name should exist with the impl preserved.
+	if _, err := runCLI(t, p, "get-action", "actor_died_or_disappeared"); err == nil {
+		t.Error("expected error getting old name")
+	}
+	getOut, err := runCLI(t, p, "get-action", "actor_gone")
+	if err != nil {
+		t.Fatalf("get-action new: %v", err)
+	}
+	if !strings.Contains(getOut, "0x0080") {
+		t.Errorf("implementation lost during rename: %s", getOut)
+	}
+}
+
+func TestCLI_RenameAction_MissingArgs(t *testing.T) {
+	p := writeSample(t)
+	if _, err := runCLI(t, p, "rename-action", "actor_died_or_disappeared"); err == nil {
+		t.Error("expected error when new name missing")
+	}
+}
+
 func TestCLI_DeleteImplementation(t *testing.T) {
 	p := writeSample(t)
 	if _, err := runCLI(t, p, "delete-implementation", "-id", "0x0080", "actor_died_or_disappeared"); err != nil {

@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcUiOpen_0x0A38 decodes a 0x0A38 packet (struct PACKET_ZC_UI_OPEN).
 func ZcUiOpen_0x0A38(data []byte, packetver uint32) events.ZcUiOpen {
 	var e events.ZcUiOpen
-	if packetver >= 20180221 {
+	if packetver >= 20171122 {
 		e.UIType = int8(data[2])  // rAthena: UIType (offset 2, size 1)
 		e.Data = leI32(data, 3)  // rAthena: data (offset 3, size 4)
 	} else {

@@ -4,5 +4,4 @@ package send
 
 // CzReqTakeoffEquipAll is the request struct for the cz_req_takeoff_equip_all action.
 type CzReqTakeoffEquipAll struct {
-	Location uint32
 }

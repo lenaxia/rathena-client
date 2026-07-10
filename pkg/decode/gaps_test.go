@@ -190,10 +190,17 @@ func TestActorMoved_0x09DB_Name_Decoded(t *testing.T) {
 // GCC-verified struct layout for PACKETVER 20200401 (>= 20181121 branch):
 //
 //	same as above but without refine/grade at end, and location/look present
+//
+// TestGap_AddExchangeItem_Grade_20200401_IsZero verifies grade-field handling
+// across the pv=20200916 boundary. Per rAthena packets_struct.hpp:2641-2648,
+// the packet ID changes from 0x0A96 → 0x0B42 at that boundary AND the struct
+// gains a trailing `grade` field. So at pv=20200916+, rAthena sends 0x0B42
+// (not 0x0A96), and 0x0B42 includes grade. Testing:
+//
+//	0x0A96 at pv=20200401 → no grade (old layout, correct absent)
+//	0x0B42 at pv=20200916 → grade decodes (new layout)
 func TestGap_AddExchangeItem_Grade_20200401_IsZero(t *testing.T) {
-	// Build a 54-byte packet for the 0x0A96 variant at various packetvers.
-	// At 20200401: no refine/grade fields (absent in the 20181121 branch).
-	// At 20200916: grade present at offset 53.
+	// ── Case 1: 0x0A96 at pv=20200401 — no grade field in that struct version.
 	b := make([]byte, 70) // large enough for all branches
 	binary.LittleEndian.PutUint16(b[0:], 0x0A96)
 	gapPutU32(b, 2, 501) // itemId (uint32 at >= 20181121)
@@ -201,36 +208,42 @@ func TestGap_AddExchangeItem_Grade_20200401_IsZero(t *testing.T) {
 	gapPutI32(b, 7, 3)   // amount
 	b[11] = 1            // identified
 	b[12] = 0            // damaged
-	// GCC-verified offsets at >= 20200916:
-	// slot[13:29] = 16 bytes
-	// option_data[29:54] = 25 bytes
-	// location[54:58] = uint32
-	// look[58:60] = uint16
-	// refine[60] = uint8
-	// grade[61] = uint8
-	gapPutU32(b, 54, 0x100)                  // location
-	binary.LittleEndian.PutUint16(b[58:], 5) // look
-	b[60] = 2                                // refine
-	b[61] = 7                                // grade at GCC-verified offset 61
-
 	e20200401 := AddExchangeItem_0x0A96(b, 20200401)
 	if e20200401.Grade != 0 {
-		t.Errorf("Grade at 20200401: got %d want 0 (field absent in that struct version)", e20200401.Grade)
-	} else {
-		t.Logf("OK: Grade=0 at PACKETVER 20200401 (correct — field absent in that struct version)")
+		t.Errorf("Grade at 20200401 (0x0A96): got %d want 0 (field absent in that struct version)", e20200401.Grade)
 	}
-
-	// At 20200916 grade IS present
-	e20200916 := AddExchangeItem_0x0A96(b, 20200916)
-	if e20200916.Grade != 7 {
-		t.Errorf("Grade at 20200916: got %d want 7 (field present at GCC offset 53)", e20200916.Grade)
-	} else {
-		t.Logf("OK: Grade=%d at PACKETVER 20200916 (correctly decoded)", e20200916.Grade)
-	}
-
-	// Verify ItemId decoded correctly at 20200401
 	if e20200401.ItemId != 501 {
 		t.Errorf("ItemId at 20200401: got %d want 501", e20200401.ItemId)
+	}
+
+	// ── Case 2: 0x0B42 at pv=20200916 — grade field present at trailing offset.
+	// GCC-verified struct layout at PACKETVER >= 20200916 (packets_struct.hpp:2610-2639):
+	//   offset 0  : packetType int16
+	//   offset 2  : itemId uint32
+	//   offset 6  : itemType uint8
+	//   offset 7  : amount int32
+	//   offset 11 : identified uint8
+	//   offset 12 : damaged uint8
+	//   offset 13 : slot EQUIPSLOTINFO (16 bytes)
+	//   offset 29 : option_data [5]ItemOptions (25 bytes)
+	//   offset 54 : location uint32
+	//   offset 58 : look uint16
+	//   offset 60 : refine uint8
+	//   offset 61 : grade uint8
+	b2 := make([]byte, 62)
+	binary.LittleEndian.PutUint16(b2[0:], 0x0B42)
+	gapPutU32(b2, 2, 501)                     // itemId
+	b2[6] = 4                                 // itemType
+	gapPutI32(b2, 7, 3)                       // amount
+	b2[11] = 1                                // identified
+	b2[12] = 0                                // damaged
+	gapPutU32(b2, 54, 0x100)                  // location
+	binary.LittleEndian.PutUint16(b2[58:], 5) // look
+	b2[60] = 2                                // refine
+	b2[61] = 7                                // grade
+	e20200916 := AddExchangeItem_0x0B42(b2, 20200916)
+	if e20200916.Grade != 7 {
+		t.Errorf("Grade at 20200916 (0x0B42): got %d want 7 (field present at offset 61)", e20200916.Grade)
 	}
 }
 

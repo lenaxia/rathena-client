@@ -7,7 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcGuildEmblemImg_0x0152 decodes a 0x0152 packet (struct PACKET_ZC_GUILD_EMBLEM_IMG).
 func ZcGuildEmblemImg_0x0152(data []byte, packetver uint32) events.ZcGuildEmblemImg {
 	var e events.ZcGuildEmblemImg
-	if packetver >= 20191120 {
+	if packetver >= 20190821 {
 		e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
 		e.Result = leU16(data, 4)  // rAthena: result (offset 4, size 2)
 		e.Guild_id = leI32(data, 6)  // rAthena: guild_id (offset 6, size 4)

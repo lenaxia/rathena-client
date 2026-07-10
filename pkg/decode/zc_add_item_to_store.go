@@ -7,18 +7,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcAddItemToStore_0x00F4 decodes a 0x00F4 packet (struct PACKET_ZC_ADD_ITEM_TO_STORE).
 func ZcAddItemToStore_0x00F4(data []byte, packetver uint32) events.ZcAddItemToStore {
 	var e events.ZcAddItemToStore
-	if packetver >= 20200916 {
-		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-		e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
-		e.ItemId = leU32(data, 8)  // rAthena: itemId (offset 8, size 4)
-		e.ItemType = data[12]  // rAthena: itemType (offset 12, size 1)
-		e.Identified = data[13]  // rAthena: identified (offset 13, size 1)
-		e.Damaged = data[14]  // rAthena: damaged (offset 14, size 1)
-		e.Slot = data[15:]  // rAthena: slot (offset 15, size 16)
-		e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
-		e.Refine = data[56]  // rAthena: refine (offset 56, size 1)
-		e.Grade = data[57]  // rAthena: grade (offset 57, size 1)
-	} else if packetver >= 20181121 {
+	if packetver >= 20181121 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
 		e.ItemId = leU32(data, 8)  // rAthena: itemId (offset 8, size 4)
@@ -28,7 +17,7 @@ func ZcAddItemToStore_0x00F4(data []byte, packetver uint32) events.ZcAddItemToSt
 		e.Refine = data[15]  // rAthena: refine (offset 15, size 1)
 		e.Slot = data[16:]  // rAthena: slot (offset 16, size 16)
 		e.Option_data = data[32:57]  // rAthena: option_data (offset 32, size 25)
-	} else if packetver >= 20141016 {
+	} else if packetver >= 20140813 {
 		e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
 		e.ItemId = uint32(leU16(data, 8))  // rAthena: itemId (offset 8, size 2)
@@ -48,6 +37,23 @@ func ZcAddItemToStore_0x00F4(data []byte, packetver uint32) events.ZcAddItemToSt
 		e.Refine = data[13]  // rAthena: refine (offset 13, size 1)
 		e.Slot = data[14:]  // rAthena: slot (offset 14, size 8)
 	}
+	return e
+}
+
+// ZcAddItemToStore_0x0B44 decodes a 0x0B44 packet (struct PACKET_ZC_ADD_ITEM_TO_STORE).
+func ZcAddItemToStore_0x0B44(data []byte, packetver uint32) events.ZcAddItemToStore {
+	var e events.ZcAddItemToStore
+	_ = packetver
+	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
+	e.Amount = leI32(data, 4)  // rAthena: amount (offset 4, size 4)
+	e.ItemId = leU32(data, 8)  // rAthena: itemId (offset 8, size 4)
+	e.ItemType = data[12]  // rAthena: itemType (offset 12, size 1)
+	e.Identified = data[13]  // rAthena: identified (offset 13, size 1)
+	e.Damaged = data[14]  // rAthena: damaged (offset 14, size 1)
+	e.Slot = data[15:]  // rAthena: slot (offset 15, size 16)
+	e.Option_data = data[31:56]  // rAthena: option_data (offset 31, size 25)
+	e.Refine = data[56]  // rAthena: refine (offset 56, size 1)
+	e.Grade = data[57]  // rAthena: grade (offset 57, size 1)
 	return e
 }
 

@@ -26,9 +26,10 @@ func TestCheckSendStructs(t *testing.T) {
 	pv := uint32(20200401)
 
 	cfg := Config{
-		RathenaRoot:   rathenaRoot,
-		SyntheticHPP:  synthPath,
-		CommonHPPStub: "/home/mikekao/personal/rathena-client/internal/codegen/stubs/common_hpp_stub.h",
+		RathenaRoot:    rathenaRoot,
+		SyntheticHPP:   synthPath,
+		CommonHPPStub:  "/home/mikekao/personal/rathena-client/internal/codegen/stubs/common_hpp_stub.h",
+		PacketsHPPStub: "/home/mikekao/personal/rathena-client/internal/codegen/stubs/packets_hpp_stub.h",
 	}
 
 	// Build base VersionTable from packets_struct.hpp (map server structs).

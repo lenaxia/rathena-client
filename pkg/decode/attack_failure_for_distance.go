@@ -4,9 +4,9 @@ package decode
 
 import "github.com/lenaxia/rathena-client/pkg/events"
 
-// MonsterRangedAttack_0x0139 decodes a 0x0139 packet (struct PACKET_ZC_ATTACK_FAILURE_FOR_DISTANCE).
-func MonsterRangedAttack_0x0139(data []byte, packetver uint32) events.MonsterRangedAttack {
-	var e events.MonsterRangedAttack
+// AttackFailureForDistance_0x0139 decodes a 0x0139 packet (struct PACKET_ZC_ATTACK_FAILURE_FOR_DISTANCE).
+func AttackFailureForDistance_0x0139(data []byte, packetver uint32) events.AttackFailureForDistance {
+	var e events.AttackFailureForDistance
 	_ = packetver
 	e.TargetAID = leU32(data, 2)  // rAthena: targetAID (offset 2, size 4)
 	e.TargetXPos = leI16(data, 6)  // rAthena: targetXPos (offset 6, size 2)

@@ -23,6 +23,7 @@ import (
 //   actor_status_effect_extended
 //   add_exchange_item
 //   area_spell
+//   attack_failure_for_distance
 //   attack_range
 //   banking_check
 //   banking_deposit
@@ -52,7 +53,6 @@ import (
 //   map_changed
 //   map_loaded
 //   monster_hp_update
-//   monster_ranged_attack
 //   npc_store_info
 //   pet_egg_list
 //   pet_info
@@ -61,7 +61,6 @@ import (
 //   quest_dialog
 //   quest_dialog_list
 //   quest_update_mission_hunt
-//   received_character_ID_and_Map
 //   received_character_id_and_map
 //   received_characters
 //   received_characters_info
@@ -176,6 +175,7 @@ import (
 //   zc_grade_enchant_ack
 //   zc_grade_enchant_broadcast_result
 //   zc_grade_enchant_material_list
+//   zc_group_list
 //   zc_guild_agit_info
 //   zc_guild_emblem_img
 //   zc_guild_info
