@@ -2,6 +2,8 @@ package decode
 
 import (
 	"testing"
+
+	"github.com/lenaxia/rathena-client/pkg/events"
 )
 
 // GCC-verified wire layouts for PACKET_ZC_GROUP_LIST (rAthena
@@ -297,6 +299,67 @@ func TestZcGroupList_TruncatedMemberSlice(t *testing.T) {
 	e := ZcGroupList_0x0AE5(b, pv)
 	if len(e.Members) != 1 {
 		t.Errorf("len(Members) = %d, want 1 (partial trailing member dropped)", len(e.Members))
+	}
+}
+
+// TestZcGroupList_TruncatedHeaderDoesNotPanic covers the robustness
+// requirement that a malformed or malicious server packet must NEVER panic
+// the decoder. The framer only guarantees len(data) >= 4 for variable-length
+// packets, but this packet's fixed header is 28 bytes. A packet with
+// embedded packetLen in [4, 28) must yield a zero-value event, not a
+// runtime slice-bounds panic.
+func TestZcGroupList_TruncatedHeaderDoesNotPanic(t *testing.T) {
+	decoders := []struct {
+		name string
+		fn   func([]byte, uint32) events.ZcGroupList
+	}{
+		{"0x00FB", ZcGroupList_0x00FB},
+		{"0x0A44", ZcGroupList_0x0A44},
+		{"0x0AE5", ZcGroupList_0x0AE5},
+	}
+	for _, c := range decoders {
+		t.Run(c.name+"/len=4", func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("decoder panicked on 4-byte truncated header: %v", r)
+				}
+			}()
+			b := make([]byte, 4)
+			putU16LE(b, 0, 0x0AE5)
+			putI16LE(b, 2, 4) // embedded length matches actual
+			e := c.fn(b, 20200401)
+			if e.PartyName != "" || len(e.Members) != 0 {
+				t.Errorf("expected zero-value event, got %+v", e)
+			}
+		})
+		t.Run(c.name+"/len=10", func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("decoder panicked on 10-byte truncated header: %v", r)
+				}
+			}()
+			b := make([]byte, 10)
+			putU16LE(b, 0, 0x0AE5)
+			putI16LE(b, 2, 10)
+			e := c.fn(b, 20200401)
+			if e.PartyName != "" || len(e.Members) != 0 {
+				t.Errorf("expected zero-value event, got %+v", e)
+			}
+		})
+		t.Run(c.name+"/len=27", func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("decoder panicked on 27-byte truncated header: %v", r)
+				}
+			}()
+			b := make([]byte, 27)
+			putU16LE(b, 0, 0x0AE5)
+			putI16LE(b, 2, 27)
+			e := c.fn(b, 20200401)
+			if e.PartyName != "" || len(e.Members) != 0 {
+				t.Errorf("expected zero-value event, got %+v", e)
+			}
+		})
 	}
 }
 

@@ -120,34 +120,45 @@ func decodeZcGroupListRoster(body []byte, pv uint32) []events.ZcGroupListMember 
 	return members
 }
 
-// ZcGroupList_0x00FB decodes a 0x00FB packet (PACKET_ZC_GROUP_LIST, oldest
-// layout). Active for PACKETVER < 20170524 (MAIN) / 20170502 (RE).
-func ZcGroupList_0x00FB(data []byte, pv uint32) events.ZcGroupList {
+// decodeZcGroupList is the shared body of all three exported decoders. It
+// guards against truncated headers (the framer only guarantees len >= 4 for
+// variable-length packets; this packet's fixed header is 28 bytes — without
+// the guard, a malicious or corrupted frame with embedded packetLen in
+// [4, 28) would panic on data[4:28]).
+func decodeZcGroupList(data []byte, pv uint32) events.ZcGroupList {
 	var e events.ZcGroupList
+	if len(data) < zcGroupListHeaderSize {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: packetLen
 	e.PartyName = nullTermString(data[4 : 4+24])
 	e.Members = decodeZcGroupListRoster(data[zcGroupListHeaderSize:], pv)
 	return e
+}
+
+// ZcGroupList_0x00FB decodes a 0x00FB packet (PACKET_ZC_GROUP_LIST, oldest
+// layout). Active for PACKETVER < 20170524 (MAIN) / 20170502 (RE).
+//
+// The function body is identical to ZcGroupList_0x0A44 and ZcGroupList_0x0AE5
+// — the SUB layout is driven entirely by the pv parameter, not by which
+// function runs. The three exported wrappers exist because the dispatch
+// table registers one decode function per wire ID.
+func ZcGroupList_0x00FB(data []byte, pv uint32) events.ZcGroupList {
+	return decodeZcGroupList(data, pv)
 }
 
 // ZcGroupList_0x0A44 decodes a 0x0A44 packet (PACKET_ZC_GROUP_LIST, mid
 // layout). Active for 20170524 ≤ PACKETVER < 20171207 (MAIN) — RE/ZERO
-// approximated by the MAIN boundary.
+// approximated by the MAIN boundary. Body is identical to the other two
+// decoders; see ZcGroupList_0x00FB's doc comment.
 func ZcGroupList_0x0A44(data []byte, pv uint32) events.ZcGroupList {
-	var e events.ZcGroupList
-	e.PacketLength = leI16(data, 2) // rAthena: packetLen
-	e.PartyName = nullTermString(data[4 : 4+24])
-	e.Members = decodeZcGroupListRoster(data[zcGroupListHeaderSize:], pv)
-	return e
+	return decodeZcGroupList(data, pv)
 }
 
 // ZcGroupList_0x0AE5 decodes a 0x0AE5 packet (PACKET_ZC_GROUP_LIST, newest
 // layout, production target). Active for PACKETVER ≥ 20171207 — this is the
-// wire ID at production packetver pv=20200401.
+// wire ID at production packetver pv=20200401. Body is identical to the
+// other two decoders; see ZcGroupList_0x00FB's doc comment.
 func ZcGroupList_0x0AE5(data []byte, pv uint32) events.ZcGroupList {
-	var e events.ZcGroupList
-	e.PacketLength = leI16(data, 2) // rAthena: packetLen
-	e.PartyName = nullTermString(data[4 : 4+24])
-	e.Members = decodeZcGroupListRoster(data[zcGroupListHeaderSize:], pv)
-	return e
+	return decodeZcGroupList(data, pv)
 }

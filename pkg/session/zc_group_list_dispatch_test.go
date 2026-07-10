@@ -190,6 +190,68 @@ func TestZcGroupList_0x00FB_FiresAt_LegacyPacketver(t *testing.T) {
 	}
 }
 
+// TestZcGroupList_0x0A44_FiresAt_MidPacketver exercises the middle layout
+// (class/baseLevel fields added, no GID yet) at a packetver that emits
+// 0x0A44. Completes the trio of dispatch tests (0x00FB / 0x0A44 / 0x0AE5).
+func TestZcGroupList_0x0A44_FiresAt_MidPacketver(t *testing.T) {
+	pv := uint32(20171001)
+	s := NewMapSession(pv)
+
+	if got := s.core.lengths[0x0A44]; got != -1 {
+		t.Fatalf("prerequisite: lengths[0x0A44] = %d at pv=%d, want -1", got, pv)
+	}
+
+	var fired int
+	var gotEvent events.ZcGroupList
+	RegisterSemanticHandler(s, ActionZcGroupList, func(e events.ZcGroupList) {
+		fired++
+		gotEvent = e
+	})
+
+	// 0x0A44 frame with one 50-byte member.
+	const memberSize = 50
+	totalLen := 28 + memberSize
+	b := make([]byte, totalLen)
+	binary.LittleEndian.PutUint16(b[0:], 0x0A44)
+	binary.LittleEndian.PutUint16(b[2:], uint16(totalLen))
+	copy(b[4:28], "MidParty")
+	off := 28
+	binary.LittleEndian.PutUint32(b[off:], 5555) // AID
+	off += 4
+	// No GID at this pv.
+	copy(b[off:off+24], "Knight")
+	off += 24
+	copy(b[off:off+16], "aldebaran")
+	off += 16
+	b[off] = 0 // leader byte
+	off += 1
+	b[off] = 0 // offline byte
+	off += 1
+	binary.LittleEndian.PutUint16(b[off:], 7)  // class_
+	off += 2
+	binary.LittleEndian.PutUint16(b[off:], 99) // baseLevel
+
+	if err := s.Feed(b); err != nil {
+		t.Fatalf("Feed(0x0A44) error: %v", err)
+	}
+	if fired != 1 {
+		t.Fatalf("ActionZcGroupList fired %d times for 0x0A44, want 1", fired)
+	}
+	if len(gotEvent.Members) != 1 {
+		t.Fatalf("len(Members) = %d, want 1", len(gotEvent.Members))
+	}
+	m := gotEvent.Members[0]
+	if m.Class != 7 {
+		t.Errorf("Class = %d, want 7 (present at pv >= 20170524)", m.Class)
+	}
+	if m.BaseLevel != 99 {
+		t.Errorf("BaseLevel = %d, want 99", m.BaseLevel)
+	}
+	if m.GID != 0 {
+		t.Errorf("GID = %d, want 0 (absent at pv < 20171207)", m.GID)
+	}
+}
+
 // TestZcGroupList_ActionConstant verifies the constant exists and has the
 // expected value. Compile-time regression guard for issue #13's reproduction
 // ("ActionZcGroupList doesn't exist" was the original bug).
