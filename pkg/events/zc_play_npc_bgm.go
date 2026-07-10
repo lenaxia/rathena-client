@@ -4,7 +4,7 @@ package events
 
 // ZcPlayNpcBgm is the event emitted for the zc_play_npc_bgm action.
 type ZcPlayNpcBgm struct {
-	Bgm string
+	Bgm          string
 	PacketLength int16
-	PlayType uint8
+	PlayType     uint8
 }

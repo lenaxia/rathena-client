@@ -12,7 +12,7 @@ func EncodeDealReply(req send.DealReply, packetver uint32) [3]byte {
 	// Packet ID: 0x00E6 (little-endian)
 	p[0] = 0xe6
 	p[1] = 0x00
-	p[2] = req.Result  // rAthena: result
+	p[2] = req.Result // rAthena: result
 	_ = packetver
 	return p
 }

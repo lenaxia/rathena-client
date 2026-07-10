@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcResponseEnchant_0x0B9F(data []byte, packetver uint32) events.ZcResponseEnchant {
 	var e events.ZcResponseEnchant
 	_ = packetver
-	e.MsgId = leI32(data, 2)  // rAthena: msgId (offset 2, size 4)
+	e.MsgId = leI32(data, 2) // rAthena: msgId (offset 2, size 4)
 	e.ITID = leU32(data, 6)  // rAthena: ITID (offset 6, size 4)
 	return e
 }
-

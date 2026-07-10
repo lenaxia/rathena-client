@@ -4,9 +4,9 @@ package events
 
 // SkillUsedNoDamage is the event emitted for the skill_used_no_damage action.
 type SkillUsedNoDamage struct {
-	SKID uint16
-	Level int32
+	SKID      uint16
+	Level     int32
 	TargetAID uint32
-	SrcAID uint32
-	Result int8
+	SrcAID    uint32
+	Result    int8
 }

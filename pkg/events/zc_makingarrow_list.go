@@ -5,5 +5,5 @@ package events
 // ZcMakingarrowList is the event emitted for the zc_makingarrow_list action.
 type ZcMakingarrowList struct {
 	PacketLength int16
-	Items []byte
+	Items        []byte
 }

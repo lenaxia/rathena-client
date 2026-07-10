@@ -4,7 +4,7 @@ package send
 
 // CzReqPlayerAidInRange is the request struct for the cz_req_player_aid_in_range action.
 type CzReqPlayerAidInRange struct {
-	XPos int16
-	YPos int16
+	XPos        int16
+	YPos        int16
 	RadiusRange int8
 }

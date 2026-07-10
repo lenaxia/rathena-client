@@ -4,6 +4,6 @@ package send
 
 // MoveFromStorage is the request struct for the move_from_storage action.
 type MoveFromStorage struct {
-	Index uint16
+	Index  uint16
 	Amount uint32
 }

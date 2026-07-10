@@ -12,10 +12,10 @@ func EncodeMasterLogin(req send.MasterLogin, packetver uint32) [55]byte {
 	// Packet ID: 0x0064 (little-endian)
 	p[0] = 0x64
 	p[1] = 0x00
-	leU32Put(p[2:], req.Version)  // rAthena: version
+	leU32Put(p[2:], req.Version) // rAthena: version
 	copy(p[6:30], req.Username)  // rAthena: username
-	copy(p[30:54], req.Password)  // rAthena: password
-	p[54] = req.Clienttype  // rAthena: clienttype
+	copy(p[30:54], req.Password) // rAthena: password
+	p[54] = req.Clienttype       // rAthena: clienttype
 	_ = packetver
 	return p
 }

@@ -8,13 +8,13 @@ import (
 
 // EncodeCzReqRandomCombineItem encodes a 0x0A4F (PACKET_CZ_REQ_RANDOM_COMBINE_ITEM) packet for sending to the server.
 func EncodeCzReqRandomCombineItem(req send.CzReqRandomCombineItem, packetver uint32) []byte {
-	p := make([]byte, 6+len(req.Items))
+	p := make([]byte, 8+len(req.Items))
 	// Packet ID: 0x0A4F (little-endian)
 	p[0] = 0x4f
 	p[1] = 0x0a
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	leU16Put(p[4:], uint16(req.ItemId))  // rAthena: itemId
-	copy(p[6:], req.Items)  // rAthena: items
+	leU16Put(p[2:], uint16(len(p)))     // rAthena: packetLength (computed)
+	leU32Put(p[4:], uint32(req.ItemId)) // rAthena: itemId
+	copy(p[8:], req.Items)              // rAthena: items
 	_ = packetver
 	return p
 }

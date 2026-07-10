@@ -4,7 +4,7 @@ package events
 
 // ZcAckMergeItem is the event emitted for the zc_ack_merge_item action.
 type ZcAckMergeItem struct {
-	Index int16
+	Index  int16
 	Amount int16
 	Reason uint8
 }

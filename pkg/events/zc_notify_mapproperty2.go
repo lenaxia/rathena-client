@@ -4,6 +4,6 @@ package events
 
 // ZcNotifyMapproperty2 is the event emitted for the zc_notify_mapproperty2 action.
 type ZcNotifyMapproperty2 struct {
-	Type int16
+	Type  int16
 	Flags uint32
 }

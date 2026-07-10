@@ -4,17 +4,17 @@ package events
 
 // ZcEquipwinMicroscope is the event emitted for the zc_equipwin_microscope action.
 type ZcEquipwinMicroscope struct {
-	PacketLength int16
+	PacketLength  int16
 	CharacterName string
-	Job int16
-	Head int16
-	Accessory int16
-	Accessory2 int16
-	Accessory3 int16
-	Headpalette int16
-	Bodypalette int16
-	Sex uint8
-	List []byte
-	Robe int16
-	Body2 int16
+	Job           int16
+	Head          int16
+	Accessory     int16
+	Accessory2    int16
+	Accessory3    int16
+	Headpalette   int16
+	Bodypalette   int16
+	Sex           uint8
+	List          []byte
+	Robe          int16
+	Body2         int16
 }

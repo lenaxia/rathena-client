@@ -9,7 +9,6 @@ func ZcResurrection_0x0148(data []byte, packetver uint32) events.ZcResurrection 
 	var e events.ZcResurrection
 	_ = packetver
 	e.Gid = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
-	e.Type = leI16(data, 6)  // rAthena: type (offset 6, size 2)
+	e.Type = leI16(data, 6) // rAthena: type (offset 6, size 2)
 	return e
 }
-

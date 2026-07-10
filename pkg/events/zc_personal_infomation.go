@@ -4,9 +4,9 @@ package events
 
 // ZcPersonalInfomation is the event emitted for the zc_personal_infomation action.
 type ZcPersonalInfomation struct {
-	Length int16
-	Total_exp int32
+	Length      int16
+	Total_exp   int32
 	Total_death int32
-	Total_drop int32
-	Details []byte
+	Total_drop  int32
+	Details     []byte
 }

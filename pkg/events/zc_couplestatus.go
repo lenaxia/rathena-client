@@ -4,7 +4,7 @@ package events
 
 // ZcCouplestatus is the event emitted for the zc_couplestatus action.
 type ZcCouplestatus struct {
-	StatusType uint32
+	StatusType    uint32
 	DefaultStatus int32
-	PlusStatus int32
+	PlusStatus    int32
 }

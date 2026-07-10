@@ -12,7 +12,7 @@ func EncodeSelectEgg(req send.SelectEgg, packetver uint32) [4]byte {
 	// Packet ID: 0x01A7 (little-endian)
 	p[0] = 0xa7
 	p[1] = 0x01
-	leU16Put(p[2:], req.Index)  // rAthena: index
+	leU16Put(p[2:], req.Index) // rAthena: index
 	_ = packetver
 	return p
 }

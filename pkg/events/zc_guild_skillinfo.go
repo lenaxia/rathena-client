@@ -5,6 +5,6 @@ package events
 // ZcGuildSkillinfo is the event emitted for the zc_guild_skillinfo action.
 type ZcGuildSkillinfo struct {
 	PacketLength int16
-	SkillPoint int16
-	SkillInfo []byte
+	SkillPoint   int16
+	SkillInfo    []byte
 }

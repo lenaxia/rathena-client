@@ -12,10 +12,10 @@ func EncodeCzReqLeaveGuild(req send.CzReqLeaveGuild, packetver uint32) [54]byte 
 	// Packet ID: 0x0159 (little-endian)
 	p[0] = 0x59
 	p[1] = 0x01
-	leU32Put(p[2:], req.Guild_id)  // rAthena: guild_id
-	leU32Put(p[6:], req.AID)  // rAthena: AID
-	leU32Put(p[10:], req.CID)  // rAthena: CID
-	copy(p[14:54], req.Message)  // rAthena: message
+	leU32Put(p[2:], req.Guild_id) // rAthena: guild_id
+	leU32Put(p[6:], req.AID)      // rAthena: AID
+	leU32Put(p[10:], req.CID)     // rAthena: CID
+	copy(p[14:54], req.Message)   // rAthena: message
 	_ = packetver
 	return p
 }

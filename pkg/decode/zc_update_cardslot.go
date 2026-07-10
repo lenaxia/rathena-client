@@ -8,16 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcUpdateCardslot_0x0A3F(data []byte, packetver uint32) events.ZcUpdateCardslot {
 	var e events.ZcUpdateCardslot
 	if packetver >= 20181121 {
-		e.WearState = leI16(data, 2)  // rAthena: wearState (offset 2, size 2)
+		e.WearState = leI16(data, 2) // rAthena: wearState (offset 2, size 2)
 		e.CardSlot = leI16(data, 4)  // rAthena: cardSlot (offset 4, size 2)
-		e.ItemId = leI32(data, 6)  // rAthena: itemId (offset 6, size 4)
-		e.EquipFlag = int8(data[10])  // rAthena: equipFlag (offset 10, size 1)
+		e.ItemId = leI32(data, 6)    // rAthena: itemId (offset 6, size 4)
+		e.EquipFlag = int8(data[10]) // rAthena: equipFlag (offset 10, size 1)
 	} else {
-		e.WearState = leI16(data, 2)  // rAthena: wearState (offset 2, size 2)
-		e.CardSlot = leI16(data, 4)  // rAthena: cardSlot (offset 4, size 2)
-		e.ItemId = int32(leI16(data, 6))  // rAthena: itemId (offset 6, size 2)
-		e.EquipFlag = int8(data[8])  // rAthena: equipFlag (offset 8, size 1)
+		e.WearState = leI16(data, 2)     // rAthena: wearState (offset 2, size 2)
+		e.CardSlot = leI16(data, 4)      // rAthena: cardSlot (offset 4, size 2)
+		e.ItemId = int32(leI16(data, 6)) // rAthena: itemId (offset 6, size 2)
+		e.EquipFlag = int8(data[8])      // rAthena: equipFlag (offset 8, size 1)
 	}
 	return e
 }
-

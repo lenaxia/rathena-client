@@ -5,5 +5,5 @@ package events
 // ZcUiOpen is the event emitted for the zc_ui_open action.
 type ZcUiOpen struct {
 	UIType int8
-	Data int32
+	Data   int32
 }

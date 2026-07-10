@@ -12,7 +12,7 @@ func EncodePartyKick(req send.PartyKick, packetver uint32) [30]byte {
 	// Packet ID: 0x0103 (little-endian)
 	p[0] = 0x03
 	p[1] = 0x01
-	leU32Put(p[2:], req.AID)  // rAthena: AID
+	leU32Put(p[2:], req.AID) // rAthena: AID
 	copy(p[6:30], req.Name)  // rAthena: name
 	_ = packetver
 	return p

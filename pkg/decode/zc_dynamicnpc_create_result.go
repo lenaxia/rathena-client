@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDynamicnpcCreateResult_0x0A17(data []byte, packetver uint32) events.ZcDynamicnpcCreateResult {
 	var e events.ZcDynamicnpcCreateResult
 	_ = packetver
-	e.Result = leU32(data, 2)  // rAthena: result (offset 2, size 4)
+	e.Result = leU32(data, 2) // rAthena: result (offset 2, size 4)
 	return e
 }
-

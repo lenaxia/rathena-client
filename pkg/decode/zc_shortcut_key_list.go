@@ -8,9 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcShortcutKeyList_0x02B9(data []byte, packetver uint32) events.ZcShortcutKeyList {
 	var e events.ZcShortcutKeyList
 	if packetver >= 20090603 {
-		e.Hotkey = data[2:254]  // rAthena: hotkey (offset 2, size 252)
+		e.Hotkey = data[2:254] // rAthena: hotkey (offset 2, size 252)
 	} else {
-		e.Hotkey = data[2:191]  // rAthena: hotkey (offset 2, size 189)
+		e.Hotkey = data[2:191] // rAthena: hotkey (offset 2, size 189)
 	}
 	return e
 }
@@ -19,7 +19,7 @@ func ZcShortcutKeyList_0x02B9(data []byte, packetver uint32) events.ZcShortcutKe
 func ZcShortcutKeyList_0x07D9(data []byte, packetver uint32) events.ZcShortcutKeyList {
 	var e events.ZcShortcutKeyList
 	_ = packetver
-	e.Hotkey = data[2:268]  // rAthena: hotkey (offset 2, size 266)
+	e.Hotkey = data[2:268] // rAthena: hotkey (offset 2, size 266)
 	return e
 }
 
@@ -27,8 +27,8 @@ func ZcShortcutKeyList_0x07D9(data []byte, packetver uint32) events.ZcShortcutKe
 func ZcShortcutKeyList_0x0A00(data []byte, packetver uint32) events.ZcShortcutKeyList {
 	var e events.ZcShortcutKeyList
 	_ = packetver
-	e.Rotate = int8(data[2])  // rAthena: rotate (offset 2, size 1)
-	e.Hotkey = data[3:269]  // rAthena: hotkey (offset 3, size 266)
+	e.Rotate = int8(data[2]) // rAthena: rotate (offset 2, size 1)
+	e.Hotkey = data[3:269]   // rAthena: hotkey (offset 3, size 266)
 	return e
 }
 
@@ -36,9 +36,8 @@ func ZcShortcutKeyList_0x0A00(data []byte, packetver uint32) events.ZcShortcutKe
 func ZcShortcutKeyList_0x0B20(data []byte, packetver uint32) events.ZcShortcutKeyList {
 	var e events.ZcShortcutKeyList
 	_ = packetver
-	e.Rotate = int8(data[2])  // rAthena: rotate (offset 2, size 1)
-	e.Tab = leI16(data, 3)  // rAthena: tab (offset 3, size 2)
-	e.Hotkey = data[5:271]  // rAthena: hotkey (offset 5, size 266)
+	e.Rotate = int8(data[2]) // rAthena: rotate (offset 2, size 1)
+	e.Tab = leI16(data, 3)   // rAthena: tab (offset 3, size 2)
+	e.Hotkey = data[5:271]   // rAthena: hotkey (offset 5, size 266)
 	return e
 }
-

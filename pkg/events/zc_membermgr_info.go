@@ -4,6 +4,6 @@ package events
 
 // ZcMembermgrInfo is the event emitted for the zc_membermgr_info action.
 type ZcMembermgrInfo struct {
-	PacketLength int16
+	PacketLength    int16
 	GuildMemberInfo []byte
 }

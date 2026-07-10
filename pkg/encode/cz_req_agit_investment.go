@@ -12,7 +12,7 @@ func EncodeCzReqAgitInvestment(req send.CzReqAgitInvestment, packetver uint32) [
 	// Packet ID: 0x0B2C (little-endian)
 	p[0] = 0x2c
 	p[1] = 0x0b
-	p[2] = uint8(req.Castle_id)  // rAthena: castle_id
+	p[2] = uint8(req.Castle_id) // rAthena: castle_id
 	_ = packetver
 	return p
 }

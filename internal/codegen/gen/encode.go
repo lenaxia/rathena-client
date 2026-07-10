@@ -83,23 +83,44 @@ func GenerateEncodeFile(input EncodeInput) (filename string, src string, err err
 	return filename, src, nil
 }
 
-// resolveLayout finds the best available layout for a struct at a given packetver.
+// resolveLayout finds the best available layout for a struct at a given
+// packetver.
+//
+// When packetverMin is non-zero, we look for the version range that CONTAINS
+// packetverMin — i.e. the newest r where r.MinVer <= packetverMin. This
+// gives the exact layout in force at that pv.
+//
+// When packetverMin is zero (unbounded / no lower bound in the semantic DB),
+// we fall through to the NEWEST available layout rather than the oldest.
+// Rationale: encoders emit a single fixed-size wire format at compile time,
+// so we must pick one variant; modern rAthena builds serve the newest
+// variant, and clients targeting recent packetvers see it on the wire.
+// Picking the oldest here (as previous versions did) produced wrong-size
+// encoders for packets like PACKET_CZ_REQ_GUILD_EMBLEM_IMG2 whose newest
+// variant is 4 bytes larger than the oldest (10 → 14 at pv >= 20190619
+// per rAthena packets_struct.hpp:5788-5803) — a real regression at
+// goKore's target pv=20200401.
 func resolveLayout(structName string, packetverMin int, vt preprocess.VersionTable) *preprocess.StructLayout {
 	ranges, ok := vt[structName]
 	if !ok || len(ranges) == 0 {
 		return nil
 	}
-	pv := uint32(packetverMin)
-	if pv == 0 {
-		pv = 20030000
-	}
-	for i := len(ranges) - 1; i >= 0; i-- {
-		r := ranges[i]
-		if r.Layout != nil && r.Layout.Available && r.MinVer <= pv {
-			return r.Layout
+	// If a specific packetverMin is supplied, honor it: pick the newest
+	// range whose MinVer <= packetverMin.
+	if packetverMin > 0 {
+		pv := uint32(packetverMin)
+		for i := len(ranges) - 1; i >= 0; i-- {
+			r := ranges[i]
+			if r.Layout != nil && r.Layout.Available && r.MinVer <= pv {
+				return r.Layout
+			}
 		}
 	}
-	for _, r := range ranges {
+	// Fallback (either packetverMin==0 or no range covered it): pick the
+	// NEWEST available layout. Iterate backwards through ranges and return
+	// the first one that has an available layout.
+	for i := len(ranges) - 1; i >= 0; i-- {
+		r := ranges[i]
 		if r.Layout != nil && r.Layout.Available {
 			return r.Layout
 		}

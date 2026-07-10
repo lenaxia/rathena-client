@@ -9,8 +9,7 @@ func ZcAckMergeItem_0x096F(data []byte, packetver uint32) events.ZcAckMergeItem 
 	var e events.ZcAckMergeItem
 	_ = packetver
 	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-	e.Amount = leI16(data, 4)  // rAthena: amount (offset 4, size 2)
-	e.Reason = data[6]  // rAthena: reason (offset 6, size 1)
+	e.Amount = leI16(data, 4) // rAthena: amount (offset 4, size 2)
+	e.Reason = data[6]        // rAthena: reason (offset 6, size 1)
 	return e
 }
-

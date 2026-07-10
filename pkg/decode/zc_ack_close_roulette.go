@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckCloseRoulette_0x0A1E(data []byte, packetver uint32) events.ZcAckCloseRoulette {
 	var e events.ZcAckCloseRoulette
 	_ = packetver
-	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }
-

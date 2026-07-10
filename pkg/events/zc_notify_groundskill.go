@@ -4,10 +4,10 @@ package events
 
 // ZcNotifyGroundskill is the event emitted for the zc_notify_groundskill action.
 type ZcNotifyGroundskill struct {
-	SKID uint16
-	AID uint32
-	Level int16
-	XPos int16
-	YPos int16
+	SKID      uint16
+	AID       uint32
+	Level     int16
+	XPos      int16
+	YPos      int16
 	StartTime uint32
 }

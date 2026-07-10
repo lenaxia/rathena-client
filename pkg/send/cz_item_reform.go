@@ -4,6 +4,6 @@ package send
 
 // CzItemReform is the request struct for the cz_item_reform action.
 type CzItemReform struct {
-	ITID int32
+	ITID  int32
 	Index int16
 }

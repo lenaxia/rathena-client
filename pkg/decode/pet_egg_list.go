@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PetEggList_0x01A6(data []byte, packetver uint32) events.PetEggList {
 	var e events.PetEggList
 	_ = packetver
-	e.PacketLength = leU16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.Eggs = data[4:]  // rAthena: eggs (offset 4, size 0)
+	e.PacketLength = leU16(data, 2) // rAthena: PacketLength (offset 2, size 2)
+	e.Eggs = data[4:]               // rAthena: eggs (offset 4, size 0)
 	return e
 }
-

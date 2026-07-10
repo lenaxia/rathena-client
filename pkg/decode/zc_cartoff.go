@@ -10,4 +10,3 @@ func ZcCartoff_0x012B(data []byte, packetver uint32) events.ZcCartoff {
 	_ = packetver
 	return e
 }
-

@@ -13,7 +13,7 @@ func EncodeCzReqGuildEmblemImg3(req send.CzReqGuildEmblemImg3, packetver uint32)
 	p[0] = 0x46
 	p[1] = 0x0b
 	leU32Put(p[2:], uint32(req.Guild_id))  // rAthena: guild_id
-	leU32Put(p[6:], uint32(req.Emblem_id))  // rAthena: emblem_id
+	leU32Put(p[6:], uint32(req.Emblem_id)) // rAthena: emblem_id
 	_ = packetver
 	return p
 }

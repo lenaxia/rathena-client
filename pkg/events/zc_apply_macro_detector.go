@@ -4,6 +4,6 @@ package events
 
 // ZcApplyMacroDetector is the event emitted for the zc_apply_macro_detector action.
 type ZcApplyMacroDetector struct {
-	ImageSize uint16
+	ImageSize  uint16
 	CaptchaKey string
 }

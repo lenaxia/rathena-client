@@ -13,7 +13,7 @@ func EncodeInsertCard(req send.InsertCard, packetver uint32) [6]byte {
 	p[0] = 0x7c
 	p[1] = 0x01
 	leU16Put(p[2:], req.Index_card)  // rAthena: index_card
-	leU16Put(p[4:], req.Index_equip)  // rAthena: index_equip
+	leU16Put(p[4:], req.Index_equip) // rAthena: index_equip
 	_ = packetver
 	return p
 }

@@ -11,12 +11,13 @@ func EncodeGameLogin(req send.GameLogin, packetver uint32) [17]byte {
 	switch {
 	case packetver >= 20030000: // 0x0065
 		var p [17]byte
-		p[0] = 0x65; p[1] = 0x00
-	leU32Put(		p[2:], req.AID)  // rAthena: AID
-	leU32Put(		p[6:], req.AuthCode)  // rAthena: AuthCode
-	leU32Put(		p[10:], req.Login_id2)  // rAthena: login_id2
-	leU16Put(		p[14:], req.Clienttype)  // rAthena: clienttype
-			p[16] = req.Sex  // rAthena: sex
+		p[0] = 0x65
+		p[1] = 0x00
+		leU32Put(p[2:], req.AID)         // rAthena: AID
+		leU32Put(p[6:], req.AuthCode)    // rAthena: AuthCode
+		leU32Put(p[10:], req.Login_id2)  // rAthena: login_id2
+		leU16Put(p[14:], req.Clienttype) // rAthena: clienttype
+		p[16] = req.Sex                  // rAthena: sex
 		return p
 	}
 	panic("EncodeGameLogin: no matching packetver implementation — unimplemented")

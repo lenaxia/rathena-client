@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcOpenReformUi_0x0B8F(data []byte, packetver uint32) events.ZcOpenReformUi {
 	var e events.ZcOpenReformUi
 	_ = packetver
-	e.ITID = leI32(data, 2)  // rAthena: ITID (offset 2, size 4)
+	e.ITID = leI32(data, 2) // rAthena: ITID (offset 2, size 4)
 	return e
 }
-

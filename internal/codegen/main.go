@@ -12,6 +12,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go/format"
 	"log"
 	"os"
 	"path/filepath"
@@ -1458,6 +1459,19 @@ func writeFile(path, content string) error {
 	if existing, err := os.ReadFile(path); err == nil {
 		if !strings.HasPrefix(string(existing), generatedHeader) {
 			return nil // preserve hand-written file
+		}
+	}
+	// gofmt Go files. Templates emit correct-but-not-canonical whitespace
+	// (e.g. extra tabs inside switch-case bodies of pv-branching encoders
+	// from GenerateEncodeFile) — canonicalising here keeps the generated
+	// tree diff-stable across runs and avoids CI format-check false
+	// positives.
+	if strings.HasSuffix(path, ".go") {
+		formatted, err := format.Source([]byte(content))
+		if err != nil {
+			log.Printf("  WARNING: gofmt failed for %s: %v — writing unformatted", path, err)
+		} else {
+			content = string(formatted)
 		}
 	}
 	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {

@@ -4,13 +4,13 @@ package events
 
 // ZcBroadcastingSpecialItemObtainItem is the event emitted for the zc_broadcasting_special_item_obtain_item action.
 type ZcBroadcastingSpecialItemObtainItem struct {
-	PacketLength int16
-	Type uint8
-	ItemID uint32
-	Len int8
-	Name string
-	BoxItemID_len int8
-	BoxItemID uint32
+	PacketLength    int16
+	Type            uint8
+	ItemID          uint32
+	Len             int8
+	Name            string
+	BoxItemID_len   int8
+	BoxItemID       uint32
 	RefineLevel_len int8
-	RefineLevel uint32
+	RefineLevel     uint32
 }

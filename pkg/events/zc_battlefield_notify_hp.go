@@ -4,8 +4,8 @@ package events
 
 // ZcBattlefieldNotifyHp is the event emitted for the zc_battlefield_notify_hp action.
 type ZcBattlefieldNotifyHp struct {
-	AID uint32
-	Name string
-	Hp int16
+	AID   uint32
+	Name  string
+	Hp    int16
 	Maxhp int16
 }

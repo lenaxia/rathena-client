@@ -12,16 +12,16 @@ func EncodeCharCreate(req send.CharCreate, packetver uint32) [37]byte {
 	// Packet ID: 0x0067 (little-endian)
 	p[0] = 0x67
 	p[1] = 0x00
-	copy(p[2:26], req.Name)  // rAthena: name
-	p[26] = req.Str  // rAthena: str
-	p[27] = req.Agi  // rAthena: agi
-	p[28] = req.Vit  // rAthena: vit
-	p[29] = req.Int_  // rAthena: int_
-	p[30] = req.Dex  // rAthena: dex
-	p[31] = req.Luk  // rAthena: luk
-	p[32] = req.Slot  // rAthena: slot
-	leU16Put(p[33:], req.Hair_color)  // rAthena: hair_color
-	leU16Put(p[35:], req.Hair_style)  // rAthena: hair_style
+	copy(p[2:26], req.Name)          // rAthena: name
+	p[26] = req.Str                  // rAthena: str
+	p[27] = req.Agi                  // rAthena: agi
+	p[28] = req.Vit                  // rAthena: vit
+	p[29] = req.Int_                 // rAthena: int_
+	p[30] = req.Dex                  // rAthena: dex
+	p[31] = req.Luk                  // rAthena: luk
+	p[32] = req.Slot                 // rAthena: slot
+	leU16Put(p[33:], req.Hair_color) // rAthena: hair_color
+	leU16Put(p[35:], req.Hair_style) // rAthena: hair_style
 	_ = packetver
 	return p
 }

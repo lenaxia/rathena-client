@@ -5,7 +5,7 @@ package events
 // ZcEquipmentEffect is the event emitted for the zc_equipment_effect action.
 type ZcEquipmentEffect struct {
 	PacketLength int16
-	Aid uint32
-	Status int8
-	Effects []byte
+	Aid          uint32
+	Status       int8
+	Effects      []byte
 }

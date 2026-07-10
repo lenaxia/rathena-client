@@ -5,5 +5,5 @@ package events
 // ZcMergeItemOpen is the event emitted for the zc_merge_item_open action.
 type ZcMergeItemOpen struct {
 	PacketLen uint16
-	Items []byte
+	Items     []byte
 }

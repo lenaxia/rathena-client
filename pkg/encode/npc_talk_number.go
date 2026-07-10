@@ -12,8 +12,8 @@ func EncodeNpcTalkNumber(req send.NpcTalkNumber, packetver uint32) [10]byte {
 	// Packet ID: 0x0143 (little-endian)
 	p[0] = 0x43
 	p[1] = 0x01
-	leU32Put(p[2:], req.GID)  // rAthena: GID
-	leU32Put(p[6:], uint32(req.Value))  // rAthena: value
+	leU32Put(p[2:], req.GID)           // rAthena: GID
+	leU32Put(p[6:], uint32(req.Value)) // rAthena: value
 	_ = packetver
 	return p
 }

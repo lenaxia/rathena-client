@@ -4,10 +4,10 @@ package send
 
 // CaLoginPcbang is the request struct for the ca_login_pcbang action.
 type CaLoginPcbang struct {
-	Version uint32
-	Username string
-	Password string
+	Version    uint32
+	Username   string
+	Password   string
 	Clienttype uint8
-	Ip string
-	Mac string
+	Ip         string
+	Mac        string
 }

@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcClearDialog_0x08D6(data []byte, packetver uint32) events.ZcClearDialog {
 	var e events.ZcClearDialog
 	_ = packetver
-	e.GID = leU32(data, 2)  // rAthena: GID (offset 2, size 4)
+	e.GID = leU32(data, 2) // rAthena: GID (offset 2, size 4)
 	return e
 }
-

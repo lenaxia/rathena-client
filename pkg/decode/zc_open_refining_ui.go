@@ -10,4 +10,3 @@ func ZcOpenRefiningUi_0x0AA0(data []byte, packetver uint32) events.ZcOpenRefinin
 	_ = packetver
 	return e
 }
-

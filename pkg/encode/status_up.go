@@ -12,8 +12,8 @@ func EncodeStatusUp(req send.StatusUp, packetver uint32) [5]byte {
 	// Packet ID: 0x00BB (little-endian)
 	p[0] = 0xbb
 	p[1] = 0x00
-	leU16Put(p[2:], req.StatusType)  // rAthena: statusType
-	p[4] = req.Amount  // rAthena: amount
+	leU16Put(p[2:], req.StatusType) // rAthena: statusType
+	p[4] = req.Amount               // rAthena: amount
 	_ = packetver
 	return p
 }

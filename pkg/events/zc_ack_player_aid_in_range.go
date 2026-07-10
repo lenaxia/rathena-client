@@ -5,5 +5,5 @@ package events
 // ZcAckPlayerAidInRange is the event emitted for the zc_ack_player_aid_in_range action.
 type ZcAckPlayerAidInRange struct {
 	PacketLength int16
-	AID []byte
+	AID          []byte
 }

@@ -5,5 +5,5 @@ package events
 // AcAckHash is the event emitted for the ac_ack_hash action.
 type AcAckHash struct {
 	PacketLength int16
-	Salt string
+	Salt         string
 }

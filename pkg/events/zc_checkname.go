@@ -4,8 +4,8 @@ package events
 
 // ZcCheckname is the event emitted for the zc_checkname action.
 type ZcCheckname struct {
-	CharId int32
-	Class int16
+	CharId    int32
+	Class     int16
 	BaseLevel int16
-	Name string
+	Name      string
 }

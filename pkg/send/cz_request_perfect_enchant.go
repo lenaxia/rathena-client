@@ -5,6 +5,6 @@ package send
 // CzRequestPerfectEnchant is the request struct for the cz_request_perfect_enchant action.
 type CzRequestPerfectEnchant struct {
 	Enchant_group int64
-	Index int16
-	ITID uint32
+	Index         int16
+	ITID          uint32
 }

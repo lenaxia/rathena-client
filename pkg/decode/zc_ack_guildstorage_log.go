@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckGuildstorageLog_0x09DA(data []byte, packetver uint32) events.ZcAckGuildstorageLog {
 	var e events.ZcAckGuildstorageLog
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: PacketLength (offset 2, size 2)
-	e.Result = leU16(data, 4)  // rAthena: result (offset 4, size 2)
-	e.Amount = leU16(data, 6)  // rAthena: amount (offset 6, size 2)
-	e.Items = data[8:]  // rAthena: items (offset 8, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
+	e.Result = leU16(data, 4)       // rAthena: result (offset 4, size 2)
+	e.Amount = leU16(data, 6)       // rAthena: amount (offset 6, size 2)
+	e.Items = data[8:]              // rAthena: items (offset 8, size 0)
 	return e
 }
-

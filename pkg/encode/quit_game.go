@@ -12,7 +12,7 @@ func EncodeQuitGame(req send.QuitGame, packetver uint32) [4]byte {
 	// Packet ID: 0x018A (little-endian)
 	p[0] = 0x8a
 	p[1] = 0x01
-	leU16Put(p[2:], req.Type)  // rAthena: type
+	leU16Put(p[2:], req.Type) // rAthena: type
 	_ = packetver
 	return p
 }

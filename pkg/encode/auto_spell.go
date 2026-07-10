@@ -12,7 +12,7 @@ func EncodeAutoSpell(req send.AutoSpell, packetver uint32) [6]byte {
 	// Packet ID: 0x01CE (little-endian)
 	p[0] = 0xce
 	p[1] = 0x01
-	leU32Put(p[2:], req.Skill_id)  // rAthena: skill_id
+	leU32Put(p[2:], req.Skill_id) // rAthena: skill_id
 	_ = packetver
 	return p
 }

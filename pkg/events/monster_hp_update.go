@@ -4,7 +4,7 @@ package events
 
 // MonsterHpUpdate is the event emitted for the monster_hp_update action.
 type MonsterHpUpdate struct {
-	GID uint32
-	HP int32
+	GID   uint32
+	HP    int32
 	MaxHP int32
 }

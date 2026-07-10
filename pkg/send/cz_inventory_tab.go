@@ -4,6 +4,6 @@ package send
 
 // CzInventoryTab is the request struct for the cz_inventory_tab action.
 type CzInventoryTab struct {
-	Index int16
+	Index    int16
 	Favorite []byte
 }

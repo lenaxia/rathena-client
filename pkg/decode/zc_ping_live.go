@@ -10,4 +10,3 @@ func ZcPingLive_0x0B1D(data []byte, packetver uint32) events.ZcPingLive {
 	_ = packetver
 	return e
 }
-

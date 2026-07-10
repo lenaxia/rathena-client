@@ -4,6 +4,6 @@ package events
 
 // ZcLonglongparChange is the event emitted for the zc_longlongpar_change action.
 type ZcLonglongparChange struct {
-	VarID uint16
+	VarID  uint16
 	Amount int64
 }

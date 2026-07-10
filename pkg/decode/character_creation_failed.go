@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func CharacterCreationFailed_0x006E(data []byte, packetver uint32) events.CharacterCreationFailed {
 	var e events.CharacterCreationFailed
 	_ = packetver
-	e.Error = data[2]  // rAthena: error (offset 2, size 1)
+	e.Error = data[2] // rAthena: error (offset 2, size 1)
 	return e
 }
-

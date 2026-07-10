@@ -9,11 +9,11 @@ func ZcAcceptEnter_0x0A18(data []byte, packetver uint32) events.ZcAcceptEnter {
 	var e events.ZcAcceptEnter
 	_ = packetver
 	e.StartTime = leU32(data, 2)  // rAthena: startTime (offset 2, size 4)
-	e.PosDir = [3]byte(data[6:9])  // rAthena: posDir (offset 6, size 3)
-	e.XSize = data[9]  // rAthena: xSize (offset 9, size 1)
-	e.YSize = data[10]  // rAthena: ySize (offset 10, size 1)
-	e.Font = leU16(data, 11)  // rAthena: font (offset 11, size 2)
-	e.Sex = data[13]  // rAthena: sex (offset 13, size 1)
+	e.PosDir = [3]byte(data[6:9]) // rAthena: posDir (offset 6, size 3)
+	e.XSize = data[9]             // rAthena: xSize (offset 9, size 1)
+	e.YSize = data[10]            // rAthena: ySize (offset 10, size 1)
+	e.Font = leU16(data, 11)      // rAthena: font (offset 11, size 2)
+	e.Sex = data[13]              // rAthena: sex (offset 13, size 1)
 	return e
 }
 
@@ -22,9 +22,9 @@ func ZcAcceptEnter_0x0073(data []byte, packetver uint32) events.ZcAcceptEnter {
 	var e events.ZcAcceptEnter
 	_ = packetver
 	e.StartTime = leU32(data, 2)  // rAthena: startTime (offset 2, size 4)
-	e.PosDir = [3]byte(data[6:9])  // rAthena: posDir (offset 6, size 3)
-	e.XSize = data[9]  // rAthena: xSize (offset 9, size 1)
-	e.YSize = data[10]  // rAthena: ySize (offset 10, size 1)
+	e.PosDir = [3]byte(data[6:9]) // rAthena: posDir (offset 6, size 3)
+	e.XSize = data[9]             // rAthena: xSize (offset 9, size 1)
+	e.YSize = data[10]            // rAthena: ySize (offset 10, size 1)
 	return e
 }
 
@@ -33,10 +33,9 @@ func ZcAcceptEnter_0x02EB(data []byte, packetver uint32) events.ZcAcceptEnter {
 	var e events.ZcAcceptEnter
 	_ = packetver
 	e.StartTime = leU32(data, 2)  // rAthena: startTime (offset 2, size 4)
-	e.PosDir = [3]byte(data[6:9])  // rAthena: posDir (offset 6, size 3)
-	e.XSize = data[9]  // rAthena: xSize (offset 9, size 1)
-	e.YSize = data[10]  // rAthena: ySize (offset 10, size 1)
-	e.Font = leU16(data, 11)  // rAthena: font (offset 11, size 2)
+	e.PosDir = [3]byte(data[6:9]) // rAthena: posDir (offset 6, size 3)
+	e.XSize = data[9]             // rAthena: xSize (offset 9, size 1)
+	e.YSize = data[10]            // rAthena: ySize (offset 10, size 1)
+	e.Font = leU16(data, 11)      // rAthena: font (offset 11, size 2)
 	return e
 }
-

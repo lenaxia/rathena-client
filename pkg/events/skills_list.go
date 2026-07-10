@@ -5,5 +5,5 @@ package events
 // SkillsList is the event emitted for the skills_list action.
 type SkillsList struct {
 	PacketLength int16
-	Skills []byte
+	Skills       []byte
 }

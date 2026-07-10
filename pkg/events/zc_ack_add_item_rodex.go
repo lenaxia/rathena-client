@@ -4,18 +4,18 @@ package events
 
 // ZcAckAddItemRodex is the event emitted for the zc_ack_add_item_rodex action.
 type ZcAckAddItemRodex struct {
-	Result int8
-	Index int16
-	Count int16
-	ItemId uint32
-	Type int8
-	IsIdentified int8
-	IsDamaged int8
+	Result        int8
+	Index         int16
+	Count         int16
+	ItemId        uint32
+	Type          int8
+	IsIdentified  int8
+	IsDamaged     int8
 	RefiningLevel int8
-	Slot []byte
-	OptionData []byte
-	Weight int16
-	Favorite uint8
-	Location uint32
-	Grade int8
+	Slot          []byte
+	OptionData    []byte
+	Weight        int16
+	Favorite      uint8
+	Location      uint32
+	Grade         int8
 }

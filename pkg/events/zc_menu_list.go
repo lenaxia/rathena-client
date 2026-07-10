@@ -5,6 +5,6 @@ package events
 // ZcMenuList is the event emitted for the zc_menu_list action.
 type ZcMenuList struct {
 	PacketLength int16
-	NpcId uint32
-	Menu string
+	NpcId        uint32
+	Menu         string
 }

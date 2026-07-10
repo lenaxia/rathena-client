@@ -12,7 +12,7 @@ func EncodeCzReqMoveGuildAgit(req send.CzReqMoveGuildAgit, packetver uint32) [3]
 	// Packet ID: 0x0B28 (little-endian)
 	p[0] = 0x28
 	p[1] = 0x0b
-	p[2] = uint8(req.Castle_id)  // rAthena: castle_id
+	p[2] = uint8(req.Castle_id) // rAthena: castle_id
 	_ = packetver
 	return p
 }

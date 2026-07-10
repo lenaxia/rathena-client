@@ -5,5 +5,5 @@ package events
 // ZcNpcBarterMarketIteminfo is the event emitted for the zc_npc_barter_market_iteminfo action.
 type ZcNpcBarterMarketIteminfo struct {
 	PacketLength int16
-	List []byte
+	List         []byte
 }

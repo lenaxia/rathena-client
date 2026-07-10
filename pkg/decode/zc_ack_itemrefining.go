@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckItemrefining_0x0188(data []byte, packetver uint32) events.ZcAckItemrefining {
 	var e events.ZcAckItemrefining
 	_ = packetver
-	e.Result = leU16(data, 2)  // rAthena: result (offset 2, size 2)
+	e.Result = leU16(data, 2) // rAthena: result (offset 2, size 2)
 	e.Index = leU16(data, 4)  // rAthena: index (offset 4, size 2)
 	e.Value = leU16(data, 6)  // rAthena: value (offset 6, size 2)
 	return e
 }
-

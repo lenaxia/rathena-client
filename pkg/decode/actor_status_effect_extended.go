@@ -8,13 +8,12 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorStatusEffectExtended_0x043F(data []byte, packetver uint32) events.ActorStatusEffectExtended {
 	var e events.ActorStatusEffectExtended
 	_ = packetver
-	e.Index = leI16(data, 2)  // rAthena: index (offset 2, size 2)
-	e.AID = leU32(data, 4)  // rAthena: AID (offset 4, size 4)
-	e.State = data[8]  // rAthena: state (offset 8, size 1)
+	e.Index = leI16(data, 2) // rAthena: index (offset 2, size 2)
+	e.AID = leU32(data, 4)   // rAthena: AID (offset 4, size 4)
+	e.State = data[8]        // rAthena: state (offset 8, size 1)
 	e.Left = leU32(data, 9)  // rAthena: Left (offset 9, size 4)
-	e.Val1 = leI32(data, 13)  // rAthena: val1 (offset 13, size 4)
-	e.Val2 = leI32(data, 17)  // rAthena: val2 (offset 17, size 4)
-	e.Val3 = leI32(data, 21)  // rAthena: val3 (offset 21, size 4)
+	e.Val1 = leI32(data, 13) // rAthena: val1 (offset 13, size 4)
+	e.Val2 = leI32(data, 17) // rAthena: val2 (offset 17, size 4)
+	e.Val3 = leI32(data, 21) // rAthena: val3 (offset 21, size 4)
 	return e
 }
-

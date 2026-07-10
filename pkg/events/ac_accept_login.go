@@ -5,12 +5,12 @@ package events
 // AcAcceptLogin is the event emitted for the ac_accept_login action.
 type AcAcceptLogin struct {
 	PacketLength int16
-	Login_id1 uint32
-	AID uint32
-	Login_id2 uint32
-	Last_ip uint32
-	Last_login string
-	Sex uint8
+	Login_id1    uint32
+	AID          uint32
+	Login_id2    uint32
+	Last_ip      uint32
+	Last_login   string
+	Sex          uint8
 	Char_servers []byte
-	Token string
+	Token        string
 }

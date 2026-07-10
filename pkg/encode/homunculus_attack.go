@@ -12,9 +12,9 @@ func EncodeHomunculusAttack(req send.HomunculusAttack, packetver uint32) [11]byt
 	// Packet ID: 0x0233 (little-endian)
 	p[0] = 0x33
 	p[1] = 0x02
-	leU32Put(p[2:], req.TargetId)  // rAthena: targetId
-	leU32Put(p[6:], req.HomId)  // rAthena: homId
-	p[10] = req.Action  // rAthena: action
+	leU32Put(p[2:], req.TargetId) // rAthena: targetId
+	leU32Put(p[6:], req.HomId)    // rAthena: homId
+	p[10] = req.Action            // rAthena: action
 	_ = packetver
 	return p
 }

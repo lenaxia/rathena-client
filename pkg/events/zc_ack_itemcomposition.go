@@ -5,6 +5,6 @@ package events
 // ZcAckItemcomposition is the event emitted for the zc_ack_itemcomposition action.
 type ZcAckItemcomposition struct {
 	EquipIndex uint16
-	CardIndex uint16
-	Result uint8
+	CardIndex  uint16
+	Result     uint8
 }

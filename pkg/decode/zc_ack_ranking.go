@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckRanking_0x097D(data []byte, packetver uint32) events.ZcAckRanking {
 	var e events.ZcAckRanking
 	_ = packetver
-	e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
-	e.Mypoints = leU32(data, 4)  // rAthena: mypoints (offset 4, size 4)
+	e.Type = leU16(data, 2)     // rAthena: type (offset 2, size 2)
+	e.Mypoints = leU32(data, 4) // rAthena: mypoints (offset 4, size 4)
 	return e
 }
-

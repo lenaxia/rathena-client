@@ -12,7 +12,7 @@ func EncodeUnequipItem(req send.UnequipItem, packetver uint32) [4]byte {
 	// Packet ID: 0x00AB (little-endian)
 	p[0] = 0xab
 	p[1] = 0x00
-	leU16Put(p[2:], req.Index)  // rAthena: index
+	leU16Put(p[2:], req.Index) // rAthena: index
 	_ = packetver
 	return p
 }

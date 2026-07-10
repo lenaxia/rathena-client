@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcItemThrowAck_0x00AF(data []byte, packetver uint32) events.ZcItemThrowAck {
 	var e events.ZcItemThrowAck
 	_ = packetver
-	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
-	e.Count = leU16(data, 4)  // rAthena: count (offset 4, size 2)
+	e.Index = leU16(data, 2) // rAthena: index (offset 2, size 2)
+	e.Count = leU16(data, 4) // rAthena: count (offset 4, size 2)
 	return e
 }
-

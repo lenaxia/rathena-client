@@ -4,8 +4,8 @@ package events
 
 // ZcSePcBuyCashitemResult is the event emitted for the zc_se_pc_buy_cashitem_result action.
 type ZcSePcBuyCashitemResult struct {
-	ItemId uint32
-	Result uint16
-	CashPoints uint32
+	ItemId      uint32
+	Result      uint16
+	CashPoints  uint32
 	KafraPoints uint32
 }

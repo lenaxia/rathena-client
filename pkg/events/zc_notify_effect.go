@@ -4,6 +4,6 @@ package events
 
 // ZcNotifyEffect is the event emitted for the zc_notify_effect action.
 type ZcNotifyEffect struct {
-	Aid uint32
+	Aid      uint32
 	EffectId uint32
 }

@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCouplename_0x01E6(data []byte, packetver uint32) events.ZcCouplename {
 	var e events.ZcCouplename
 	_ = packetver
-	e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
+	e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 	return e
 }
-

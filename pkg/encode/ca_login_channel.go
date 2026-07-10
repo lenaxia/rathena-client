@@ -12,13 +12,13 @@ func EncodeCaLoginChannel(req send.CaLoginChannel, packetver uint32) [85]byte {
 	// Packet ID: 0x02B0 (little-endian)
 	p[0] = 0xb0
 	p[1] = 0x02
-	leU32Put(p[2:], req.Version)  // rAthena: version
+	leU32Put(p[2:], req.Version) // rAthena: version
 	copy(p[6:30], req.Username)  // rAthena: username
-	copy(p[30:54], req.Password)  // rAthena: password
-	p[54] = req.Clienttype  // rAthena: clienttype
-	copy(p[55:71], req.Ip)  // rAthena: ip
-	copy(p[71:84], req.Mac)  // rAthena: mac
-	p[84] = req.Is_gravity  // rAthena: is_gravity
+	copy(p[30:54], req.Password) // rAthena: password
+	p[54] = req.Clienttype       // rAthena: clienttype
+	copy(p[55:71], req.Ip)       // rAthena: ip
+	copy(p[71:84], req.Mac)      // rAthena: mac
+	p[84] = req.Is_gravity       // rAthena: is_gravity
 	_ = packetver
 	return p
 }

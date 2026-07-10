@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckAdditemToCart_0x012C(data []byte, packetver uint32) events.ZcAckAdditemToCart {
 	var e events.ZcAckAdditemToCart
 	_ = packetver
-	e.Result = data[2]  // rAthena: result (offset 2, size 1)
+	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }
-

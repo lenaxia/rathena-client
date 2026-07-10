@@ -5,10 +5,10 @@ package events
 // ActorStatusEffectExtended is the event emitted for the actor_status_effect_extended action.
 type ActorStatusEffectExtended struct {
 	Index int16
-	AID uint32
+	AID   uint32
 	State uint8
-	Left uint32
-	Val1 int32
-	Val2 int32
-	Val3 int32
+	Left  uint32
+	Val1  int32
+	Val2  int32
+	Val3  int32
 }

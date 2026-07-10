@@ -8,7 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func CharacterServerRefused_0x006C(data []byte, packetver uint32) events.CharacterServerRefused {
 	var e events.CharacterServerRefused
 	_ = packetver
-	e.Error = data[2]  // rAthena: error (offset 2, size 1)
+	e.Error = data[2] // rAthena: error (offset 2, size 1)
 	return e
 }
 
@@ -16,7 +16,6 @@ func CharacterServerRefused_0x006C(data []byte, packetver uint32) events.Charact
 func CharacterServerRefused_0x02CA(data []byte, packetver uint32) events.CharacterServerRefused {
 	var e events.CharacterServerRefused
 	_ = packetver
-	e.ErrorCode = data[2]  // rAthena: errorCode (offset 2, size 1)
+	e.ErrorCode = data[2] // rAthena: errorCode (offset 2, size 1)
 	return e
 }
-

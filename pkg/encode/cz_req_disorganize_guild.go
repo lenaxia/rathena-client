@@ -12,7 +12,7 @@ func EncodeCzReqDisorganizeGuild(req send.CzReqDisorganizeGuild, packetver uint3
 	// Packet ID: 0x015D (little-endian)
 	p[0] = 0x5d
 	p[1] = 0x01
-	copy(p[2:42], req.Key)  // rAthena: key
+	copy(p[2:42], req.Key) // rAthena: key
 	_ = packetver
 	return p
 }

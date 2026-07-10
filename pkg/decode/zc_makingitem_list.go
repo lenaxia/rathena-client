@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcMakingitemList_0x025A(data []byte, packetver uint32) events.ZcMakingitemList {
 	var e events.ZcMakingitemList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.MakeItem = leU16(data, 4)  // rAthena: makeItem (offset 4, size 2)
-	e.Items = data[6:]  // rAthena: items (offset 6, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.MakeItem = leU16(data, 4)     // rAthena: makeItem (offset 4, size 2)
+	e.Items = data[6:]              // rAthena: items (offset 6, size 0)
 	return e
 }
-

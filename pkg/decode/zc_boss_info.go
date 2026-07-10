@@ -8,14 +8,13 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBossInfo_0x0293(data []byte, packetver uint32) events.ZcBossInfo {
 	var e events.ZcBossInfo
 	_ = packetver
-	e.Type = data[2]  // rAthena: type (offset 2, size 1)
-	e.X = leU32(data, 3)  // rAthena: x (offset 3, size 4)
-	e.Y = leU32(data, 7)  // rAthena: y (offset 7, size 4)
-	e.MinHours = leU16(data, 11)  // rAthena: minHours (offset 11, size 2)
-	e.MinMinutes = leU16(data, 13)  // rAthena: minMinutes (offset 13, size 2)
-	e.MaxHours = leU16(data, 15)  // rAthena: maxHours (offset 15, size 2)
-	e.MaxMinutes = leU16(data, 17)  // rAthena: maxMinutes (offset 17, size 2)
-	e.Name = nullTermString(data[19:70])  // rAthena: name (offset 19, size 51)
+	e.Type = data[2]                     // rAthena: type (offset 2, size 1)
+	e.X = leU32(data, 3)                 // rAthena: x (offset 3, size 4)
+	e.Y = leU32(data, 7)                 // rAthena: y (offset 7, size 4)
+	e.MinHours = leU16(data, 11)         // rAthena: minHours (offset 11, size 2)
+	e.MinMinutes = leU16(data, 13)       // rAthena: minMinutes (offset 13, size 2)
+	e.MaxHours = leU16(data, 15)         // rAthena: maxHours (offset 15, size 2)
+	e.MaxMinutes = leU16(data, 17)       // rAthena: maxMinutes (offset 17, size 2)
+	e.Name = nullTermString(data[19:70]) // rAthena: name (offset 19, size 51)
 	return e
 }
-

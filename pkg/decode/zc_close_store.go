@@ -10,4 +10,3 @@ func ZcCloseStore_0x00F8(data []byte, packetver uint32) events.ZcCloseStore {
 	_ = packetver
 	return e
 }
-

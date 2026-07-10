@@ -5,7 +5,7 @@ package events
 // ZcAdventurerAgencyJoinResult is the event emitted for the zc_adventurer_agency_join_result action.
 type ZcAdventurerAgencyJoinResult struct {
 	Player_name string
-	Party_name string
-	AID []byte
-	Result []byte
+	Party_name  string
+	AID         []byte
+	Result      []byte
 }

@@ -4,11 +4,11 @@ package events
 
 // ZcUpdateGdid is the event emitted for the zc_update_gdid action.
 type ZcUpdateGdid struct {
-	GuildId uint32
+	GuildId       uint32
 	EmblemVersion []byte
-	Mode uint32
-	IsMaster uint8
-	InterSid int32
-	GuildName string
-	MasterGID uint32
+	Mode          uint32
+	IsMaster      uint8
+	InterSid      int32
+	GuildName     string
+	MasterGID     uint32
 }

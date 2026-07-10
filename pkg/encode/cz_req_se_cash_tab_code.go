@@ -12,7 +12,7 @@ func EncodeCzReqSeCashTabCode(req send.CzReqSeCashTabCode, packetver uint32) [4]
 	// Packet ID: 0x0846 (little-endian)
 	p[0] = 0x46
 	p[1] = 0x08
-	leU16Put(p[2:], uint16(req.Tab))  // rAthena: tab
+	leU16Put(p[2:], uint16(req.Tab)) // rAthena: tab
 	_ = packetver
 	return p
 }

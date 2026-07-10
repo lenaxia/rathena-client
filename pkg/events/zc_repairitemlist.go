@@ -5,5 +5,5 @@ package events
 // ZcRepairitemlist is the event emitted for the zc_repairitemlist action.
 type ZcRepairitemlist struct {
 	PacketLength int16
-	Items []byte
+	Items        []byte
 }

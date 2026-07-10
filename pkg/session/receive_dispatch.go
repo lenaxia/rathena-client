@@ -677,7 +677,9 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x0144, fn: func(d []byte, pv uint32) interface{} { return decode.ZcCompass_0x0144(d, pv) }},
 	},
 	ActionZcCompleteUploadMacroDetectorCaptcha: {
-		{id: 0x0A55, fn: func(d []byte, pv uint32) interface{} { return decode.ZcCompleteUploadMacroDetectorCaptcha_0x0A55(d, pv) }},
+		{id: 0x0A55, fn: func(d []byte, pv uint32) interface{} {
+			return decode.ZcCompleteUploadMacroDetectorCaptcha_0x0A55(d, pv)
+		}},
 	},
 	ActionZcCouplename: {
 		{id: 0x01E6, fn: func(d []byte, pv uint32) interface{} { return decode.ZcCouplename_0x01E6(d, pv) }},

@@ -4,6 +4,6 @@ package events
 
 // ZcHoParChange is the event emitted for the zc_ho_par_change action.
 type ZcHoParChange struct {
-	Type uint16
+	Type  uint16
 	Value uint64
 }

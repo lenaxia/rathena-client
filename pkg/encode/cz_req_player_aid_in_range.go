@@ -12,9 +12,9 @@ func EncodeCzReqPlayerAidInRange(req send.CzReqPlayerAidInRange, packetver uint3
 	// Packet ID: 0x0A6C (little-endian)
 	p[0] = 0x6c
 	p[1] = 0x0a
-	leU16Put(p[2:], uint16(req.XPos))  // rAthena: xPos
-	leU16Put(p[4:], uint16(req.YPos))  // rAthena: yPos
-	p[6] = uint8(req.RadiusRange)  // rAthena: RadiusRange
+	leU16Put(p[2:], uint16(req.XPos)) // rAthena: xPos
+	leU16Put(p[4:], uint16(req.YPos)) // rAthena: yPos
+	p[6] = uint8(req.RadiusRange)     // rAthena: RadiusRange
 	_ = packetver
 	return p
 }

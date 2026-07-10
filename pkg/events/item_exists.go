@@ -4,12 +4,12 @@ package events
 
 // ItemExists is the event emitted for the item_exists action.
 type ItemExists struct {
-	AID uint32
-	ItemId uint32
+	AID      uint32
+	ItemId   uint32
 	Identify uint8
-	X uint16
-	Y uint16
-	Amount uint16
-	SubX uint8
-	SubY uint8
+	X        uint16
+	Y        uint16
+	Amount   uint16
+	SubX     uint8
+	SubY     uint8
 }

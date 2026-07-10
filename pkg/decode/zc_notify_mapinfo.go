@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyMapinfo_0x0189(data []byte, packetver uint32) events.ZcNotifyMapinfo {
 	var e events.ZcNotifyMapinfo
 	_ = packetver
-	e.Type = leI16(data, 2)  // rAthena: type (offset 2, size 2)
+	e.Type = leI16(data, 2) // rAthena: type (offset 2, size 2)
 	return e
 }
-

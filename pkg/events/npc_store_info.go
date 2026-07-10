@@ -5,5 +5,5 @@ package events
 // NpcStoreInfo is the event emitted for the npc_store_info action.
 type NpcStoreInfo struct {
 	PacketLength int16
-	Items []byte
+	Items        []byte
 }

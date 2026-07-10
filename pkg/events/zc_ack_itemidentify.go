@@ -4,6 +4,6 @@ package events
 
 // ZcAckItemidentify is the event emitted for the zc_ack_itemidentify action.
 type ZcAckItemidentify struct {
-	Index uint16
+	Index  uint16
 	Result uint8
 }

@@ -4,9 +4,9 @@ package events
 
 // ZcHoskillinfoUpdate is the event emitted for the zc_hoskillinfo_update action.
 type ZcHoskillinfoUpdate struct {
-	Skill_id uint16
-	Level int16
-	SP int16
+	Skill_id    uint16
+	Level       int16
+	SP          int16
 	AttackRange int16
-	Upgradable []byte
+	Upgradable  []byte
 }

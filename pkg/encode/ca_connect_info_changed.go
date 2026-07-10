@@ -12,7 +12,7 @@ func EncodeCaConnectInfoChanged(req send.CaConnectInfoChanged, packetver uint32)
 	// Packet ID: 0x0200 (little-endian)
 	p[0] = 0x00
 	p[1] = 0x02
-	copy(p[2:26], req.Name)  // rAthena: name
+	copy(p[2:26], req.Name) // rAthena: name
 	_ = packetver
 	return p
 }

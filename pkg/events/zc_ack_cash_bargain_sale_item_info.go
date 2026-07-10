@@ -6,5 +6,5 @@ package events
 type ZcAckCashBargainSaleItemInfo struct {
 	Result uint16
 	ItemId uint32
-	Price uint32
+	Price  uint32
 }

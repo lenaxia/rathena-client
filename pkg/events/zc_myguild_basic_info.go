@@ -5,5 +5,5 @@ package events
 // ZcMyguildBasicInfo is the event emitted for the zc_myguild_basic_info action.
 type ZcMyguildBasicInfo struct {
 	PacketLength int16
-	RgInfo []byte
+	RgInfo       []byte
 }

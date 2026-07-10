@@ -5,6 +5,6 @@ package events
 // ZcSummonHpUpdate is the event emitted for the zc_summon_hp_update action.
 type ZcSummonHpUpdate struct {
 	SummonAID uint32
-	VarId uint16
-	Value uint32
+	VarId     uint16
+	Value     uint32
 }

@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDisappearBuyingStoreEntry_0x0816(data []byte, packetver uint32) events.ZcDisappearBuyingStoreEntry {
 	var e events.ZcDisappearBuyingStoreEntry
 	_ = packetver
-	e.MakerAID = leU32(data, 2)  // rAthena: makerAID (offset 2, size 4)
+	e.MakerAID = leU32(data, 2) // rAthena: makerAID (offset 2, size 4)
 	return e
 }
-

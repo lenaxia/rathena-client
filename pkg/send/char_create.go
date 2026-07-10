@@ -4,14 +4,14 @@ package send
 
 // CharCreate is the request struct for the char_create action.
 type CharCreate struct {
-	Name string
-	Str uint8
-	Agi uint8
-	Vit uint8
-	Int_ uint8
-	Dex uint8
-	Luk uint8
-	Slot uint8
+	Name       string
+	Str        uint8
+	Agi        uint8
+	Vit        uint8
+	Int_       uint8
+	Dex        uint8
+	Luk        uint8
+	Slot       uint8
 	Hair_color uint16
 	Hair_style uint16
 }

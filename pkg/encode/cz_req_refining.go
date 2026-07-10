@@ -7,14 +7,14 @@ import (
 )
 
 // EncodeCzReqRefining encodes a 0x0AA3 (PACKET_CZ_REQ_REFINING) packet for sending to the server.
-func EncodeCzReqRefining(req send.CzReqRefining, packetver uint32) [7]byte {
-	var p [7]byte
+func EncodeCzReqRefining(req send.CzReqRefining, packetver uint32) [9]byte {
+	var p [9]byte
 	// Packet ID: 0x0AA3 (little-endian)
 	p[0] = 0xa3
 	p[1] = 0x0a
-	leU16Put(p[2:], uint16(req.Index))  // rAthena: index
-	leU16Put(p[4:], req.ItemId)  // rAthena: itemId
-	p[6] = uint8(req.BlacksmithBlessing)  // rAthena: blacksmithBlessing
+	leU16Put(p[2:], uint16(req.Index))   // rAthena: index
+	leU32Put(p[4:], req.ItemId)          // rAthena: itemId
+	p[8] = uint8(req.BlacksmithBlessing) // rAthena: blacksmithBlessing
 	_ = packetver
 	return p
 }

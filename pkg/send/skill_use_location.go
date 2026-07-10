@@ -5,7 +5,7 @@ package send
 // SkillUseLocation is the request struct for the skill_use_location action.
 type SkillUseLocation struct {
 	SkillLevel uint16
-	SkillID uint16
-	XPos uint16
-	YPos uint16
+	SkillID    uint16
+	XPos       uint16
+	YPos       uint16
 }

@@ -8,11 +8,10 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcOpenSearchStoreInfo_0x083A(data []byte, packetver uint32) events.ZcOpenSearchStoreInfo {
 	var e events.ZcOpenSearchStoreInfo
 	if packetver >= 20100701 {
-		e.Effect = leU16(data, 2)  // rAthena: effect (offset 2, size 2)
-		e.RemainingUses = data[4]  // rAthena: remainingUses (offset 4, size 1)
+		e.Effect = leU16(data, 2) // rAthena: effect (offset 2, size 2)
+		e.RemainingUses = data[4] // rAthena: remainingUses (offset 4, size 1)
 	} else {
-		e.Effect = leU16(data, 2)  // rAthena: effect (offset 2, size 2)
+		e.Effect = leU16(data, 2) // rAthena: effect (offset 2, size 2)
 	}
 	return e
 }
-

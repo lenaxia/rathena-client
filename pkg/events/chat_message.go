@@ -5,6 +5,6 @@ package events
 // ChatMessage is the event emitted for the chat_message action.
 type ChatMessage struct {
 	PacketLength int16
-	GID uint32
-	Message string
+	GID          uint32
+	Message      string
 }

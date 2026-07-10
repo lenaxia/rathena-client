@@ -4,6 +4,6 @@ package send
 
 // DealAddOther is the request struct for the deal_add_other action.
 type DealAddOther struct {
-	Index uint16
+	Index  uint16
 	Amount int32
 }

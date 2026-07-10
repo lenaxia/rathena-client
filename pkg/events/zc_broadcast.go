@@ -5,5 +5,5 @@ package events
 // ZcBroadcast is the event emitted for the zc_broadcast action.
 type ZcBroadcast struct {
 	PacketLength int16
-	Message string
+	Message      string
 }

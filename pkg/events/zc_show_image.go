@@ -5,5 +5,5 @@ package events
 // ZcShowImage is the event emitted for the zc_show_image action.
 type ZcShowImage struct {
 	Image string
-	Type uint8
+	Type  uint8
 }

@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckItemcomposition_0x017D(data []byte, packetver uint32) events.ZcAckItemcomposition {
 	var e events.ZcAckItemcomposition
 	_ = packetver
-	e.EquipIndex = leU16(data, 2)  // rAthena: equipIndex (offset 2, size 2)
+	e.EquipIndex = leU16(data, 2) // rAthena: equipIndex (offset 2, size 2)
 	e.CardIndex = leU16(data, 4)  // rAthena: cardIndex (offset 4, size 2)
-	e.Result = data[6]  // rAthena: result (offset 6, size 1)
+	e.Result = data[6]            // rAthena: result (offset 6, size 1)
 	return e
 }
-

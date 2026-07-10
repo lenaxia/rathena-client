@@ -4,20 +4,20 @@ package events
 
 // AreaSpell is the event emitted for the area_spell action.
 type AreaSpell struct {
-	AID uint32
-	CreatorAID uint32
-	XPos int16
-	YPos int16
-	Job int32
-	IsVisible uint8
+	AID          uint32
+	CreatorAID   uint32
+	XPos         int16
+	YPos         int16
+	Job          int32
+	IsVisible    uint8
 	PacketLength int16
-	RadiusRange int8
-	Level uint8
-	Pad uint16
-	Id uint32
-	CreatorId uint32
-	X uint16
-	Y uint16
-	Type uint8
-	Range uint16
+	RadiusRange  int8
+	Level        uint8
+	Pad          uint16
+	Id           uint32
+	CreatorId    uint32
+	X            uint16
+	Y            uint16
+	Type         uint8
+	Range        uint16
 }

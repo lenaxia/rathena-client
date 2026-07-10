@@ -5,6 +5,6 @@ package events
 // ZcNotifyChatParty is the event emitted for the zc_notify_chat_party action.
 type ZcNotifyChatParty struct {
 	PacketLength int16
-	AID []byte
-	ChatMsg string
+	AID          []byte
+	ChatMsg      string
 }

@@ -12,10 +12,10 @@ func EncodeCzUsePackageitem(req send.CzUsePackageitem, packetver uint32) [16]byt
 	// Packet ID: 0x0BAF (little-endian)
 	p[0] = 0xaf
 	p[1] = 0x0b
-	leU16Put(p[2:], req.Index)  // rAthena: index
-	leU32Put(p[4:], req.AID)  // rAthena: AID
-	leU32Put(p[8:], req.ItemID)  // rAthena: itemID
-	leU32Put(p[12:], req.BoxIndex)  // rAthena: BoxIndex
+	leU16Put(p[2:], req.Index)     // rAthena: index
+	leU32Put(p[4:], req.AID)       // rAthena: AID
+	leU32Put(p[8:], req.ItemID)    // rAthena: itemID
+	leU32Put(p[12:], req.BoxIndex) // rAthena: BoxIndex
 	_ = packetver
 	return p
 }

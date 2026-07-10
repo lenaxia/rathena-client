@@ -4,7 +4,7 @@ package events
 
 // ZcStatusChangeAck is the event emitted for the zc_status_change_ack action.
 type ZcStatusChangeAck struct {
-	Sp uint16
-	Ok uint8
+	Sp    uint16
+	Ok    uint8
 	Value uint8
 }

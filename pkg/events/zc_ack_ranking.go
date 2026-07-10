@@ -4,6 +4,6 @@ package events
 
 // ZcAckRanking is the event emitted for the zc_ack_ranking action.
 type ZcAckRanking struct {
-	Type uint16
+	Type     uint16
 	Mypoints uint32
 }

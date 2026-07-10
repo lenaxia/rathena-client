@@ -4,11 +4,11 @@ package events
 
 // ZcAutorunSkill is the event emitted for the zc_autorun_skill action.
 type ZcAutorunSkill struct {
-	Skill_id uint16
-	Skill_type uint32
-	Skill_lv uint16
-	Skill_sp uint16
+	Skill_id    uint16
+	Skill_type  uint32
+	Skill_lv    uint16
+	Skill_sp    uint16
 	Skill_range uint16
-	Skill_name string
-	Up_flag uint8
+	Skill_name  string
+	Up_flag     uint8
 }

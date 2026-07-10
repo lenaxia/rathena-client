@@ -11,13 +11,15 @@ func EncodeTimeSyncResponse(req send.TimeSyncResponse, packetver uint32) [6]byte
 	switch {
 	case packetver >= 20101124: // 0x0360
 		var p [6]byte
-		p[0] = 0x60; p[1] = 0x03
-	leU32Put(		p[2:], req.ClientTime)  // rAthena: ClientTime
+		p[0] = 0x60
+		p[1] = 0x03
+		leU32Put(p[2:], req.ClientTime) // rAthena: ClientTime
 		return p
 	case packetver >= 20030000: // 0x007E
 		var p [6]byte
-		p[0] = 0x7e; p[1] = 0x00
-	leU32Put(		p[2:], req.ClientTime)  // rAthena: clientTime
+		p[0] = 0x7e
+		p[1] = 0x00
+		leU32Put(p[2:], req.ClientTime) // rAthena: clientTime
 		return p
 	}
 	panic("EncodeTimeSyncResponse: no matching packetver implementation — unimplemented")

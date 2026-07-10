@@ -12,8 +12,8 @@ func EncodeCzReqChangeMemberpos(req send.CzReqChangeMemberpos, packetver uint32)
 	// Packet ID: 0x0155 (little-endian)
 	p[0] = 0x55
 	p[1] = 0x01
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	copy(p[4:], req.List)  // rAthena: list
+	leU16Put(p[2:], uint16(len(p))) // rAthena: packetLength (computed)
+	copy(p[4:], req.List)           // rAthena: list
 	_ = packetver
 	return p
 }

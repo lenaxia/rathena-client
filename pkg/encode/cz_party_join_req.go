@@ -12,7 +12,7 @@ func EncodeCzPartyJoinReq(req send.CzPartyJoinReq, packetver uint32) [26]byte {
 	// Packet ID: 0x02C4 (little-endian)
 	p[0] = 0xc4
 	p[1] = 0x02
-	copy(p[2:26], req.Name)  // rAthena: name
+	copy(p[2:26], req.Name) // rAthena: name
 	_ = packetver
 	return p
 }

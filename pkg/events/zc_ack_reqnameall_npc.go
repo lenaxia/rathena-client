@@ -5,8 +5,8 @@ package events
 // ZcAckReqnameallNpc is the event emitted for the zc_ack_reqnameall_npc action.
 type ZcAckReqnameallNpc struct {
 	Packet_id uint16
-	Gid int32
-	Name string
-	GroupId int32
-	Title string
+	Gid       int32
+	Name      string
+	GroupId   int32
+	Title     string
 }

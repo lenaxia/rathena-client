@@ -13,8 +13,8 @@ func EncodeNpcTalkText(req send.NpcTalkText, packetver uint32) []byte {
 	p[0] = 0xd5
 	p[1] = 0x01
 	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetSize (computed)
-	leU32Put(p[4:], uint32(req.GID))  // rAthena: GID
-	copy(p[8:], req.Value)  // rAthena: value
+	leU32Put(p[4:], uint32(req.GID)) // rAthena: GID
+	copy(p[8:], req.Value)           // rAthena: value
 	_ = packetver
 	return p
 }

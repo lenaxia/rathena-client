@@ -4,6 +4,6 @@ package send
 
 // DropItem is the request struct for the drop_item action.
 type DropItem struct {
-	Index uint16
+	Index  uint16
 	Amount uint16
 }

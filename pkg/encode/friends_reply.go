@@ -12,9 +12,9 @@ func EncodeFriendsReply(req send.FriendsReply, packetver uint32) [14]byte {
 	// Packet ID: 0x0208 (little-endian)
 	p[0] = 0x08
 	p[1] = 0x02
-	leU32Put(p[2:], req.AID)  // rAthena: AID
-	leU32Put(p[6:], req.CID)  // rAthena: CID
-	leU32Put(p[10:], req.Reply)  // rAthena: reply
+	leU32Put(p[2:], req.AID)    // rAthena: AID
+	leU32Put(p[6:], req.CID)    // rAthena: CID
+	leU32Put(p[10:], req.Reply) // rAthena: reply
 	_ = packetver
 	return p
 }

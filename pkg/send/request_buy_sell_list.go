@@ -4,6 +4,6 @@ package send
 
 // RequestBuySellList is the request struct for the request_buy_sell_list action.
 type RequestBuySellList struct {
-	GID uint32
+	GID  uint32
 	Type uint8
 }

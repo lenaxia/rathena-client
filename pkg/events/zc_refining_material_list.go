@@ -4,8 +4,8 @@ package events
 
 // ZcRefiningMaterialList is the event emitted for the zc_refining_material_list action.
 type ZcRefiningMaterialList struct {
-	PacketLength int16
-	ItemIndex int16
+	PacketLength       int16
+	ItemIndex          int16
 	BlacksmithBlessing int8
-	Req []byte
+	Req                []byte
 }

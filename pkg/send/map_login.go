@@ -4,9 +4,9 @@ package send
 
 // MapLogin is the request struct for the map_login action.
 type MapLogin struct {
-	AID uint32
-	GID uint32
-	AuthCode int32
+	AID        uint32
+	GID        uint32
+	AuthCode   int32
 	ClientTime uint32
-	Sex uint8
+	Sex        uint8
 }

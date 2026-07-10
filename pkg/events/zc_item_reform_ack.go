@@ -4,6 +4,6 @@ package events
 
 // ZcItemReformAck is the event emitted for the zc_item_reform_ack action.
 type ZcItemReformAck struct {
-	Index int16
+	Index  int16
 	Result int8
 }

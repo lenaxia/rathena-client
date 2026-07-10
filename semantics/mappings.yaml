@@ -2046,7 +2046,7 @@ semantic_actions:
         implementations:
             - packet_id: "0x0B1E"
               packetver_range:
-                - null
+                - 20190619
                 - null
               struct_name: PACKET_CZ_REQ_GUILD_EMBLEM_IMG2
               field_mapping: {}
@@ -2262,7 +2262,13 @@ semantic_actions:
         implementations:
             - packet_id: "0x0BAD"
               packetver_range:
-                - null
+                - 20210818
+                - 20230905
+              struct_name: PACKET_CZ_REQ_TAKEOFF_EQUIP_ALL
+              field_mapping: {}
+            - packet_id: "0x0BF5"
+              packetver_range:
+                - 20230906
                 - null
               struct_name: PACKET_CZ_REQ_TAKEOFF_EQUIP_ALL
               field_mapping: {}

@@ -12,8 +12,8 @@ func EncodeCzPartyJoinReqAck(req send.CzPartyJoinReqAck, packetver uint32) [7]by
 	// Packet ID: 0x02C7 (little-endian)
 	p[0] = 0xc7
 	p[1] = 0x02
-	leU32Put(p[2:], req.Party_id)  // rAthena: party_id
-	p[6] = req.Flag  // rAthena: flag
+	leU32Put(p[2:], req.Party_id) // rAthena: party_id
+	p[6] = req.Flag               // rAthena: flag
 	_ = packetver
 	return p
 }

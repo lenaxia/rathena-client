@@ -4,10 +4,10 @@ package events
 
 // ZcSkillinfoUpdate2 is the event emitted for the zc_skillinfo_update2 action.
 type ZcSkillinfoUpdate2 struct {
-	Id uint16
-	Inf int32
-	Level uint16
-	Sp uint16
+	Id     uint16
+	Inf    int32
+	Level  uint16
+	Sp     uint16
 	Range2 uint16
 	UpFlag uint8
 }

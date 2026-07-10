@@ -4,6 +4,6 @@ package events
 
 // ZcNotifyStoreitemCountinfo is the event emitted for the zc_notify_storeitem_countinfo action.
 type ZcNotifyStoreitemCountinfo struct {
-	Amount uint16
+	Amount     uint16
 	Max_amount uint16
 }

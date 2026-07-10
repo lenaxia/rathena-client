@@ -12,8 +12,8 @@ func EncodePinCodeResponse(req send.PinCodeResponse, packetver uint32) [10]byte 
 	// Packet ID: 0x08B8 (little-endian)
 	p[0] = 0xb8
 	p[1] = 0x08
-	leU32Put(p[2:], req.AID)  // rAthena: AID
-	copy(p[6:10], req.Pin)  // rAthena: pin
+	leU32Put(p[2:], req.AID) // rAthena: AID
+	copy(p[6:10], req.Pin)   // rAthena: pin
 	_ = packetver
 	return p
 }

@@ -12,7 +12,7 @@ func EncodeEmote(req send.Emote, packetver uint32) [3]byte {
 	// Packet ID: 0x00BF (little-endian)
 	p[0] = 0xbf
 	p[1] = 0x00
-	p[2] = req.Emotion_type  // rAthena: emotion_type
+	p[2] = req.Emotion_type // rAthena: emotion_type
 	_ = packetver
 	return p
 }

@@ -3,4 +3,3 @@
 package decode
 
 // SKIP QuestDialogList_0x0BA7: struct PACKET_ZC_QUEST_DIALOG_MENU_LIST not found in VersionTable
-

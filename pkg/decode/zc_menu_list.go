@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcMenuList_0x00B7(data []byte, packetver uint32) events.ZcMenuList {
 	var e events.ZcMenuList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.NpcId = leU32(data, 4)  // rAthena: npcId (offset 4, size 4)
-	e.Menu = nullTermString(data[8:])  // rAthena: menu (offset 8, size 0)
+	e.PacketLength = leI16(data, 2)   // rAthena: packetLength (offset 2, size 2)
+	e.NpcId = leU32(data, 4)          // rAthena: npcId (offset 4, size 4)
+	e.Menu = nullTermString(data[8:]) // rAthena: menu (offset 8, size 0)
 	return e
 }
-

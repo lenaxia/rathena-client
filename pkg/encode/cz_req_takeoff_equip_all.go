@@ -6,12 +6,20 @@ import (
 	"github.com/lenaxia/rathena-client/pkg/send"
 )
 
-// EncodeCzReqTakeoffEquipAll encodes a 0x0BAD (PACKET_CZ_REQ_TAKEOFF_EQUIP_ALL) packet for sending to the server.
-func EncodeCzReqTakeoffEquipAll(req send.CzReqTakeoffEquipAll, packetver uint32) [2]byte {
-	var p [2]byte
-	// Packet ID: 0x0BAD (little-endian)
-	p[0] = 0xad
-	p[1] = 0x0b
-	_ = packetver
-	return p
+// EncodeCzReqTakeoffEquipAll encodes a CzReqTakeoffEquipAll packet for the appropriate packet version.
+func EncodeCzReqTakeoffEquipAll(req send.CzReqTakeoffEquipAll, packetver uint32) []byte {
+	switch {
+	case packetver >= 20230906: // 0x0BF5
+		p := make([]byte, 6)
+		p[0] = 0xf5
+		p[1] = 0x0b
+		leU32Put(p[2:], req.Location) // rAthena: location
+		return p
+	case packetver >= 20210818: // 0x0BAD
+		p := make([]byte, 2)
+		p[0] = 0xad
+		p[1] = 0x0b
+		return p
+	}
+	panic("EncodeCzReqTakeoffEquipAll: no matching packetver implementation — unimplemented")
 }

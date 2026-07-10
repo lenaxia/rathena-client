@@ -5,5 +5,5 @@ package send
 // CzRequestRandomEnchant is the request struct for the cz_request_random_enchant action.
 type CzRequestRandomEnchant struct {
 	Enchant_group int64
-	Index int16
+	Index         int16
 }

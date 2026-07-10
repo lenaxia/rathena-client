@@ -8,16 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBroadcastItemrefiningResult_0x0ADA(data []byte, packetver uint32) events.ZcBroadcastItemrefiningResult {
 	var e events.ZcBroadcastItemrefiningResult
 	if packetver >= 20181121 {
-		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
-		e.ItemId = leU32(data, 26)  // rAthena: itemId (offset 26, size 4)
-		e.Refine_level = int8(data[30])  // rAthena: refine_level (offset 30, size 1)
-		e.Status = int8(data[31])  // rAthena: status (offset 31, size 1)
+		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
+		e.ItemId = leU32(data, 26)          // rAthena: itemId (offset 26, size 4)
+		e.Refine_level = int8(data[30])     // rAthena: refine_level (offset 30, size 1)
+		e.Status = int8(data[31])           // rAthena: status (offset 31, size 1)
 	} else {
-		e.Name = nullTermString(data[2:26])  // rAthena: name (offset 2, size 24)
+		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.ItemId = uint32(leU16(data, 26))  // rAthena: itemId (offset 26, size 2)
-		e.Refine_level = int8(data[28])  // rAthena: refine_level (offset 28, size 1)
-		e.Status = int8(data[29])  // rAthena: status (offset 29, size 1)
+		e.Refine_level = int8(data[28])     // rAthena: refine_level (offset 28, size 1)
+		e.Status = int8(data[29])           // rAthena: status (offset 29, size 1)
 	}
 	return e
 }
-

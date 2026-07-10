@@ -4,7 +4,7 @@ package send
 
 // CzShortcutKeyChange2 is the request struct for the cz_shortcut_key_change2 action.
 type CzShortcutKeyChange2 struct {
-	Tab uint16
-	Index uint16
+	Tab    uint16
+	Index  uint16
 	Hotkey []byte
 }

@@ -5,6 +5,57 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Codegen: `resolveLayout` picks NEWEST layout for unbounded impls.**
+  Encoders for actions whose semantic-DB implementation had
+  `PacketverMin=0` (unbounded) emitted the OLDEST struct variant
+  instead of the newest. Concrete regression: `EncodeCzReqGuildEmblemImg2`
+  was a `[10]byte` encoder, but at goKore's target packetver 20200401
+  rAthena expects 14 bytes (the 20190619+ variant that adds a trailing
+  `unused` field — see `packets_struct.hpp:5788-5803`). Root cause:
+  `resolveLayout` treated `PacketverMin=0` as `pv=20030000`, then
+  iterated ranges newest-first looking for `MinVer <= 20030000`. For
+  structs whose earliest range starts after 20030000 (post-2019
+  packets), no range matched, so the fallback returned the oldest
+  available range. Fix: honor `PacketverMin > 0` as before; when zero
+  or no range covers the supplied min, fall through to the NEWEST
+  available range. Adds 5 unit tests for `resolveLayout` in
+  `internal/codegen/gen/resolve_layout_test.go`.
+
+### Changed
+
+- **Codegen: `writeFile` runs gofmt on all generated `.go` output.**
+  Templates for pv-branching encoders (see `GenerateEncodeFile`
+  switch/case path) emit correct-but-not-canonical whitespace. Running
+  `format.Source()` in `writeFile` canonicalises the generated tree,
+  keeping diffs stable across regeneration runs. On format failure, a
+  warning is logged and unformatted content is written — preserves the
+  historic fail-open behavior for edge-case templates.
+
+- **`cz_req_takeoff_equip_all` mapping split.** rAthena binds
+  `ZC_REQ_TAKEOFF_EQUIP_ALL` to two DIFFERENT packet IDs across
+  pv=20230906 with different struct sizes. Split into `0x0BAD`
+  `[20210818..20230905]` (2 bytes) + new `0x0BF5` `[20230906..∞]`
+  (6 bytes with `location` field). The codegen now emits
+  `EncodeCzReqTakeoffEquipAll` as a pv-branching function returning
+  `[]byte` (was `[2]byte`). Source-level API break —
+  `pkg/encode/register.go` is updated to use the new return type.
+  goKore does not currently call this encoder.
+
+- **`cz_req_guild_emblem_img2` mapping bound.** Impl range explicitly
+  set to `[20190619, ∞)` (was unbounded). Corresponds to the pv where
+  rAthena's current 14-byte struct layout became active
+  (`packets_struct.hpp:5788` — the 10-byte layout at pv 20190227..20190618
+  is retired at pv >= 20190619). Since both variants share packet id
+  0x0B1E, the semantic DB cannot express them as two impls; picking the
+  current layout matches modern rAthena builds and goKore's target
+  pv=20200401.
+
+---
+
 ## [v0.9.0] — 2026-07-10
 
 ### Added

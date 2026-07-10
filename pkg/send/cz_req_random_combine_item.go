@@ -4,6 +4,6 @@ package send
 
 // CzReqRandomCombineItem is the request struct for the cz_req_random_combine_item action.
 type CzReqRandomCombineItem struct {
-	ItemId int16
-	Items []byte
+	ItemId int32
+	Items  []byte
 }

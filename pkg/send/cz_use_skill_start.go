@@ -4,7 +4,7 @@ package send
 
 // CzUseSkillStart is the request struct for the cz_use_skill_start action.
 type CzUseSkillStart struct {
-	SkillId int16
-	SkillLv int16
+	SkillId  int16
+	SkillLv  int16
 	TargetId uint32
 }

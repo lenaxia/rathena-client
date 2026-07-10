@@ -4,20 +4,20 @@ package events
 
 // ZcGuildInfo is the event emitted for the zc_guild_info action.
 type ZcGuildInfo struct {
-	GDID []byte
-	Level []byte
-	UserNum []byte
-	MaxUserNum []byte
+	GDID             []byte
+	Level            []byte
+	UserNum          []byte
+	MaxUserNum       []byte
 	UserAverageLevel []byte
-	Exp []byte
-	MaxExp []byte
-	Point []byte
-	Honor []byte
-	Virtue []byte
-	EmblemVersion []byte
-	Guildname string
-	MasterName string
-	ManageLand string
-	Zeny []byte
-	MasterGID []byte
+	Exp              []byte
+	MaxExp           []byte
+	Point            []byte
+	Honor            []byte
+	Virtue           []byte
+	EmblemVersion    []byte
+	Guildname        string
+	MasterName       string
+	ManageLand       string
+	Zeny             []byte
+	MasterGID        []byte
 }

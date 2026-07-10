@@ -5,6 +5,6 @@ package events
 // ZcChangestatePet is the event emitted for the zc_changestate_pet action.
 type ZcChangestatePet struct {
 	Type int8
-	GID []byte
+	GID  []byte
 	Data []byte
 }

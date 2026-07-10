@@ -12,7 +12,7 @@ func EncodeCzAckAnswerMacroDetector(req send.CzAckAnswerMacroDetector, packetver
 	// Packet ID: 0x0A5C (little-endian)
 	p[0] = 0x5c
 	p[1] = 0x0a
-	copy(p[2:18], req.Answer)  // rAthena: answer
+	copy(p[2:18], req.Answer) // rAthena: answer
 	_ = packetver
 	return p
 }

@@ -10,4 +10,3 @@ func ZcStartCapture_0x019E(data []byte, packetver uint32) events.ZcStartCapture 
 	_ = packetver
 	return e
 }
-

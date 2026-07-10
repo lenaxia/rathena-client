@@ -8,13 +8,12 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ReceivedCharactersInfo_0x082D(data []byte, packetver uint32) events.ReceivedCharactersInfo {
 	var e events.ReceivedCharactersInfo
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Normal = data[4]  // rAthena: normal (offset 4, size 1)
-	e.Premium = data[5]  // rAthena: premium (offset 5, size 1)
-	e.Billing = data[6]  // rAthena: billing (offset 6, size 1)
-	e.Producible = data[7]  // rAthena: producible (offset 7, size 1)
-	e.Total = data[8]  // rAthena: total (offset 8, size 1)
-	e.Extension = nullTermString(data[9:29])  // rAthena: extension (offset 9, size 20)
+	e.PacketLength = leI16(data, 2)          // rAthena: packetLength (offset 2, size 2)
+	e.Normal = data[4]                       // rAthena: normal (offset 4, size 1)
+	e.Premium = data[5]                      // rAthena: premium (offset 5, size 1)
+	e.Billing = data[6]                      // rAthena: billing (offset 6, size 1)
+	e.Producible = data[7]                   // rAthena: producible (offset 7, size 1)
+	e.Total = data[8]                        // rAthena: total (offset 8, size 1)
+	e.Extension = nullTermString(data[9:29]) // rAthena: extension (offset 9, size 20)
 	return e
 }
-

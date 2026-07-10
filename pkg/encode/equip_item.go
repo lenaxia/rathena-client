@@ -12,8 +12,8 @@ func EncodeEquipItem(req send.EquipItem, packetver uint32) [6]byte {
 	// Packet ID: 0x00A9 (little-endian)
 	p[0] = 0xa9
 	p[1] = 0x00
-	leU16Put(p[2:], req.Index)  // rAthena: index
-	leU16Put(p[4:], req.Position)  // rAthena: position
+	leU16Put(p[2:], req.Index)    // rAthena: index
+	leU16Put(p[4:], req.Position) // rAthena: position
 	_ = packetver
 	return p
 }

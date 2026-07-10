@@ -4,6 +4,6 @@ package send
 
 // InsertCard is the request struct for the insert_card action.
 type InsertCard struct {
-	Index_card uint16
+	Index_card  uint16
 	Index_equip uint16
 }

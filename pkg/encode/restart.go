@@ -12,7 +12,7 @@ func EncodeRestart(req send.Restart, packetver uint32) [3]byte {
 	// Packet ID: 0x00B2 (little-endian)
 	p[0] = 0xb2
 	p[1] = 0x00
-	p[2] = req.Type  // rAthena: type
+	p[2] = req.Type // rAthena: type
 	_ = packetver
 	return p
 }

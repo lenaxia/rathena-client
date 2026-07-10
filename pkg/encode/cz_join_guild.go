@@ -12,8 +12,8 @@ func EncodeCzJoinGuild(req send.CzJoinGuild, packetver uint32) [10]byte {
 	// Packet ID: 0x016B (little-endian)
 	p[0] = 0x6b
 	p[1] = 0x01
-	leU32Put(p[2:], req.Guild_id)  // rAthena: guild_id
-	leU32Put(p[6:], uint32(req.Answer))  // rAthena: answer
+	leU32Put(p[2:], req.Guild_id)       // rAthena: guild_id
+	leU32Put(p[6:], uint32(req.Answer)) // rAthena: answer
 	_ = packetver
 	return p
 }

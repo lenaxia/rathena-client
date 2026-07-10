@@ -12,7 +12,7 @@ func EncodeNpcTalkContinue(req send.NpcTalkContinue, packetver uint32) [6]byte {
 	// Packet ID: 0x00B9 (little-endian)
 	p[0] = 0xb9
 	p[1] = 0x00
-	leU32Put(p[2:], req.NpcID)  // rAthena: NpcID
+	leU32Put(p[2:], req.NpcID) // rAthena: NpcID
 	_ = packetver
 	return p
 }

@@ -5,10 +5,10 @@ package events
 // ZcBroadcast2 is the event emitted for the zc_broadcast2 action.
 type ZcBroadcast2 struct {
 	PacketLength int16
-	FontColor uint32
-	FontType int16
-	FontSize int16
-	FontAlign int16
-	FontY int16
-	Message string
+	FontColor    uint32
+	FontType     int16
+	FontSize     int16
+	FontAlign    int16
+	FontY        int16
+	Message      string
 }

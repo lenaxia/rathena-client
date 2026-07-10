@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AcAckHash_0x01DC(data []byte, packetver uint32) events.AcAckHash {
 	var e events.AcAckHash
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Salt = nullTermString(data[4:])  // rAthena: salt (offset 4, size 0)
+	e.PacketLength = leI16(data, 2)   // rAthena: packetLength (offset 2, size 2)
+	e.Salt = nullTermString(data[4:]) // rAthena: salt (offset 4, size 0)
 	return e
 }
-

@@ -12,14 +12,14 @@ func EncodeCaSsoLoginReq(req send.CaSsoLoginReq, packetver uint32) []byte {
 	// Packet ID: 0x0825 (little-endian)
 	p[0] = 0x25
 	p[1] = 0x08
-	leU16Put(p[2:], uint16(len(p)))  // rAthena: packetLength (computed)
-	leU32Put(p[4:], req.Version)  // rAthena: version
-	p[8] = req.Clienttype  // rAthena: clienttype
-	copy(p[9:33], req.Username)  // rAthena: username
-	copy(p[33:60], req.Password)  // rAthena: password
-	copy(p[60:77], req.Mac)  // rAthena: mac
-	copy(p[77:92], req.Ip)  // rAthena: ip
-	copy(p[92:], req.Token)  // rAthena: token
+	leU16Put(p[2:], uint16(len(p))) // rAthena: packetLength (computed)
+	leU32Put(p[4:], req.Version)    // rAthena: version
+	p[8] = req.Clienttype           // rAthena: clienttype
+	copy(p[9:33], req.Username)     // rAthena: username
+	copy(p[33:60], req.Password)    // rAthena: password
+	copy(p[60:77], req.Mac)         // rAthena: mac
+	copy(p[77:92], req.Ip)          // rAthena: ip
+	copy(p[92:], req.Token)         // rAthena: token
 	_ = packetver
 	return p
 }

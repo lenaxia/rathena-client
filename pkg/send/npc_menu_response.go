@@ -4,6 +4,6 @@ package send
 
 // NpcMenuResponse is the request struct for the npc_menu_response action.
 type NpcMenuResponse struct {
-	NpcID uint32
+	NpcID  uint32
 	Select uint8
 }

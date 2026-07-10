@@ -8,11 +8,11 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcStateChange_0x0119(data []byte, packetver uint32) events.ZcStateChange {
 	var e events.ZcStateChange
 	_ = packetver
-	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-	e.BodyState = leI16(data, 6)  // rAthena: bodyState (offset 6, size 2)
+	e.AID = leU32(data, 2)          // rAthena: AID (offset 2, size 4)
+	e.BodyState = leI16(data, 6)    // rAthena: bodyState (offset 6, size 2)
 	e.HealthState = leI16(data, 8)  // rAthena: healthState (offset 8, size 2)
-	e.EffectState = leI32(data, 10)  // rAthena: effectState (offset 10, size 4)
-	e.IsPKModeON = int8(data[14])  // rAthena: isPKModeON (offset 14, size 1)
+	e.EffectState = leI32(data, 10) // rAthena: effectState (offset 10, size 4)
+	e.IsPKModeON = int8(data[14])   // rAthena: isPKModeON (offset 14, size 1)
 	return e
 }
 
@@ -20,11 +20,10 @@ func ZcStateChange_0x0119(data []byte, packetver uint32) events.ZcStateChange {
 func ZcStateChange_0x0229(data []byte, packetver uint32) events.ZcStateChange {
 	var e events.ZcStateChange
 	_ = packetver
-	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-	e.BodyState = leI16(data, 6)  // rAthena: bodyState (offset 6, size 2)
+	e.AID = leU32(data, 2)          // rAthena: AID (offset 2, size 4)
+	e.BodyState = leI16(data, 6)    // rAthena: bodyState (offset 6, size 2)
 	e.HealthState = leI16(data, 8)  // rAthena: healthState (offset 8, size 2)
-	e.EffectState = leI32(data, 10)  // rAthena: effectState (offset 10, size 4)
-	e.IsPKModeON = int8(data[14])  // rAthena: isPKModeON (offset 14, size 1)
+	e.EffectState = leI32(data, 10) // rAthena: effectState (offset 10, size 4)
+	e.IsPKModeON = int8(data[14])   // rAthena: isPKModeON (offset 14, size 1)
 	return e
 }
-

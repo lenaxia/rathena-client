@@ -4,8 +4,8 @@ package events
 
 // ZcReqWearEquipAck is the event emitted for the zc_req_wear_equip_ack action.
 type ZcReqWearEquipAck struct {
-	Index uint16
-	WearLocation uint32
-	Result uint8
+	Index             uint16
+	WearLocation      uint32
+	Result            uint8
 	WItemSpriteNumber uint16
 }

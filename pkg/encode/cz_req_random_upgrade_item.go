@@ -7,13 +7,13 @@ import (
 )
 
 // EncodeCzReqRandomUpgradeItem encodes a 0x0AB6 (PACKET_CZ_REQ_RANDOM_UPGRADE_ITEM) packet for sending to the server.
-func EncodeCzReqRandomUpgradeItem(req send.CzReqRandomUpgradeItem, packetver uint32) [6]byte {
-	var p [6]byte
+func EncodeCzReqRandomUpgradeItem(req send.CzReqRandomUpgradeItem, packetver uint32) [8]byte {
+	var p [8]byte
 	// Packet ID: 0x0AB6 (little-endian)
 	p[0] = 0xb6
 	p[1] = 0x0a
-	leU16Put(p[2:], req.ItemId)  // rAthena: itemId
-	leU16Put(p[4:], req.Index)  // rAthena: index
+	leU32Put(p[2:], req.ItemId) // rAthena: itemId
+	leU16Put(p[6:], req.Index)  // rAthena: index
 	_ = packetver
 	return p
 }

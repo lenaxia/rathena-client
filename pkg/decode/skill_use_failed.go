@@ -8,18 +8,17 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillUseFailed_0x0110(data []byte, packetver uint32) events.SkillUseFailed {
 	var e events.SkillUseFailed
 	if packetver >= 20181121 {
-		e.SkillId = leU16(data, 2)  // rAthena: skillId (offset 2, size 2)
-		e.Btype = leI32(data, 4)  // rAthena: btype (offset 4, size 4)
+		e.SkillId = leU16(data, 2) // rAthena: skillId (offset 2, size 2)
+		e.Btype = leI32(data, 4)   // rAthena: btype (offset 4, size 4)
 		e.ItemId = leU32(data, 8)  // rAthena: itemId (offset 8, size 4)
-		e.Flag = data[12]  // rAthena: flag (offset 12, size 1)
-		e.Cause = data[13]  // rAthena: cause (offset 13, size 1)
+		e.Flag = data[12]          // rAthena: flag (offset 12, size 1)
+		e.Cause = data[13]         // rAthena: cause (offset 13, size 1)
 	} else {
-		e.SkillId = leU16(data, 2)  // rAthena: skillId (offset 2, size 2)
-		e.Btype = int32(leI16(data, 4))  // rAthena: btype (offset 4, size 2)
-		e.ItemId = uint32(leU16(data, 6))  // rAthena: itemId (offset 6, size 2)
-		e.Flag = data[8]  // rAthena: flag (offset 8, size 1)
-		e.Cause = data[9]  // rAthena: cause (offset 9, size 1)
+		e.SkillId = leU16(data, 2)        // rAthena: skillId (offset 2, size 2)
+		e.Btype = int32(leI16(data, 4))   // rAthena: btype (offset 4, size 2)
+		e.ItemId = uint32(leU16(data, 6)) // rAthena: itemId (offset 6, size 2)
+		e.Flag = data[8]                  // rAthena: flag (offset 8, size 1)
+		e.Cause = data[9]                 // rAthena: cause (offset 9, size 1)
 	}
 	return e
 }
-

@@ -4,13 +4,13 @@ package events
 
 // SkillCast is the event emitted for the skill_cast action.
 type SkillCast struct {
-	SrcId uint32
-	DstId uint32
-	X uint16
-	Y uint16
-	SkillId uint16
-	Element uint32
-	DelayTime uint32
+	SrcId      uint32
+	DstId      uint32
+	X          uint16
+	Y          uint16
+	SkillId    uint16
+	Element    uint32
+	DelayTime  uint32
 	Disposable uint8
-	AttackMT uint32
+	AttackMT   uint32
 }

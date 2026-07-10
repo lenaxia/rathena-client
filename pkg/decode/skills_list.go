@@ -8,8 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillsList_0x010F(data []byte, packetver uint32) events.SkillsList {
 	var e events.SkillsList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Skills = data[4:]  // rAthena: skills (offset 4, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Skills = data[4:]             // rAthena: skills (offset 4, size 0)
 	return e
 }
 
@@ -17,8 +17,7 @@ func SkillsList_0x010F(data []byte, packetver uint32) events.SkillsList {
 func SkillsList_0x0B32(data []byte, packetver uint32) events.SkillsList {
 	var e events.SkillsList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Skills = data[4:]  // rAthena: skills (offset 4, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Skills = data[4:]             // rAthena: skills (offset 4, size 0)
 	return e
 }
-

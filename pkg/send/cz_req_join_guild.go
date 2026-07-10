@@ -4,7 +4,7 @@ package send
 
 // CzReqJoinGuild is the request struct for the cz_req_join_guild action.
 type CzReqJoinGuild struct {
-	AID uint32
+	AID         uint32
 	Inviter_AID uint32
 	Inviter_CID uint32
 }

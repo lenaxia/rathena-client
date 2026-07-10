@@ -12,9 +12,9 @@ func EncodeCzApproximateActor(req send.CzApproximateActor, packetver uint32) [9]
 	// Packet ID: 0x0BB0 (little-endian)
 	p[0] = 0xb0
 	p[1] = 0x0b
-	leU32Put(p[2:], req.MasterGID)  // rAthena: masterGID
-	leU16Put(p[6:], req.Unused1)  // rAthena: unused1
-	p[8] = req.Unused2  // rAthena: unused2
+	leU32Put(p[2:], req.MasterGID) // rAthena: masterGID
+	leU16Put(p[6:], req.Unused1)   // rAthena: unused1
+	p[8] = req.Unused2             // rAthena: unused2
 	_ = packetver
 	return p
 }

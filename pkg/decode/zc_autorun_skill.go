@@ -8,13 +8,12 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAutorunSkill_0x0147(data []byte, packetver uint32) events.ZcAutorunSkill {
 	var e events.ZcAutorunSkill
 	_ = packetver
-	e.Skill_id = leU16(data, 2)  // rAthena: skill_id (offset 2, size 2)
-	e.Skill_type = leU32(data, 4)  // rAthena: skill_type (offset 4, size 4)
-	e.Skill_lv = leU16(data, 8)  // rAthena: skill_lv (offset 8, size 2)
-	e.Skill_sp = leU16(data, 10)  // rAthena: skill_sp (offset 10, size 2)
-	e.Skill_range = leU16(data, 12)  // rAthena: skill_range (offset 12, size 2)
-	e.Skill_name = nullTermString(data[14:38])  // rAthena: skill_name (offset 14, size 24)
-	e.Up_flag = data[38]  // rAthena: up_flag (offset 38, size 1)
+	e.Skill_id = leU16(data, 2)                // rAthena: skill_id (offset 2, size 2)
+	e.Skill_type = leU32(data, 4)              // rAthena: skill_type (offset 4, size 4)
+	e.Skill_lv = leU16(data, 8)                // rAthena: skill_lv (offset 8, size 2)
+	e.Skill_sp = leU16(data, 10)               // rAthena: skill_sp (offset 10, size 2)
+	e.Skill_range = leU16(data, 12)            // rAthena: skill_range (offset 12, size 2)
+	e.Skill_name = nullTermString(data[14:38]) // rAthena: skill_name (offset 14, size 24)
+	e.Up_flag = data[38]                       // rAthena: up_flag (offset 38, size 1)
 	return e
 }
-

@@ -4,6 +4,6 @@ package events
 
 // ZcDeleteItemFromCart is the event emitted for the zc_delete_item_from_cart action.
 type ZcDeleteItemFromCart struct {
-	Index uint16
+	Index  uint16
 	Amount int32
 }

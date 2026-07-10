@@ -4,8 +4,8 @@ package events
 
 // Exp is the event emitted for the exp action.
 type Exp struct {
-	Aid uint32
-	Exp uint64
-	Type uint16
+	Aid   uint32
+	Exp   uint64
+	Type  uint16
 	Quest uint16
 }

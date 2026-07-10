@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSelectDealtype_0x00C4(data []byte, packetver uint32) events.ZcSelectDealtype {
 	var e events.ZcSelectDealtype
 	_ = packetver
-	e.NpcId = leU32(data, 2)  // rAthena: npcId (offset 2, size 4)
+	e.NpcId = leU32(data, 2) // rAthena: npcId (offset 2, size 4)
 	return e
 }
-

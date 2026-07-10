@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckSeCashItemList2_0x08C0(data []byte, packetver uint32) events.ZcAckSeCashItemList2 {
 	var e events.ZcAckSeCashItemList2
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Tab = leU32(data, 4)  // rAthena: tab (offset 4, size 4)
-	e.Count = leI16(data, 8)  // rAthena: count (offset 8, size 2)
-	e.Items = data[10:]  // rAthena: items (offset 10, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Tab = leU32(data, 4)          // rAthena: tab (offset 4, size 4)
+	e.Count = leI16(data, 8)        // rAthena: count (offset 8, size 2)
+	e.Items = data[10:]             // rAthena: items (offset 10, size 0)
 	return e
 }
-

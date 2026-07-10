@@ -5,6 +5,6 @@ package send
 // CzReqCashBargainSaleItemInfo is the request struct for the cz_req_cash_bargain_sale_item_info action.
 type CzReqCashBargainSaleItemInfo struct {
 	PacketLength int16
-	AID uint32
-	ItemId uint16
+	AID          uint32
+	ItemId       uint16
 }

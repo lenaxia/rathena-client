@@ -8,8 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSpirits2_0x01E1(data []byte, packetver uint32) events.ZcSpirits2 {
 	var e events.ZcSpirits2
 	_ = packetver
-	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
-	e.Num = leI16(data, 6)  // rAthena: num (offset 6, size 2)
+	e.AID = leU32(data, 2) // rAthena: AID (offset 2, size 4)
+	e.Num = leI16(data, 6) // rAthena: num (offset 6, size 2)
 	return e
 }
-

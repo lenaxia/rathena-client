@@ -4,7 +4,7 @@ package events
 
 // ZcSeCashshopOpen is the event emitted for the zc_se_cashshop_open action.
 type ZcSeCashshopOpen struct {
-	CashPoints uint32
+	CashPoints  uint32
 	KafraPoints uint32
-	Tab uint32
+	Tab         uint32
 }

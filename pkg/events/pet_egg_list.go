@@ -5,5 +5,5 @@ package events
 // PetEggList is the event emitted for the pet_egg_list action.
 type PetEggList struct {
 	PacketLength uint16
-	Eggs []byte
+	Eggs         []byte
 }

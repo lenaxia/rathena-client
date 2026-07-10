@@ -5,5 +5,5 @@ package events
 // CharacterBlocked is the event emitted for the character_blocked action.
 type CharacterBlocked struct {
 	PacketLength int16
-	Characters []byte
+	Characters   []byte
 }

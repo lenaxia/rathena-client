@@ -5,6 +5,6 @@ package send
 // CzApproximateActor is the request struct for the cz_approximate_actor action.
 type CzApproximateActor struct {
 	MasterGID uint32
-	Unused1 uint16
-	Unused2 uint8
+	Unused1   uint16
+	Unused2   uint8
 }

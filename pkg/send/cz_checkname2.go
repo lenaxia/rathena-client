@@ -4,6 +4,6 @@ package send
 
 // CzCheckname2 is the request struct for the cz_checkname2 action.
 type CzCheckname2 struct {
-	Name string
+	Name     string
 	Own_char uint8
 }

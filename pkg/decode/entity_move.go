@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func EntityMove_0x0086(data []byte, packetver uint32) events.EntityMove {
 	var e events.EntityMove
 	_ = packetver
-	e.Gid = leU32(data, 2)  // rAthena: gid (offset 2, size 4)
+	e.Gid = leU32(data, 2)            // rAthena: gid (offset 2, size 4)
 	e.MoveData = [6]byte(data[6:12])  // rAthena: moveData (offset 6, size 6)
-	e.MoveStartTime = leU32(data, 12)  // rAthena: moveStartTime (offset 12, size 4)
+	e.MoveStartTime = leU32(data, 12) // rAthena: moveStartTime (offset 12, size 4)
 	return e
 }
-

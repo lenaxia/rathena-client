@@ -12,8 +12,8 @@ func EncodeSelectAccessibleMap(req send.SelectAccessibleMap, packetver uint32) [
 	// Packet ID: 0x0841 (little-endian)
 	p[0] = 0x41
 	p[1] = 0x08
-	p[2] = uint8(req.Slot)  // rAthena: slot
-	p[3] = uint8(req.Mapnumber)  // rAthena: mapnumber
+	p[2] = uint8(req.Slot)      // rAthena: slot
+	p[3] = uint8(req.Mapnumber) // rAthena: mapnumber
 	_ = packetver
 	return p
 }

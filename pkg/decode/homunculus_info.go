@@ -8,10 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func HomunculusInfo_0x0230(data []byte, packetver uint32) events.HomunculusInfo {
 	var e events.HomunculusInfo
 	_ = packetver
-	e.Type = data[2]  // rAthena: type (offset 2, size 1)
-	e.State = data[3]  // rAthena: state (offset 3, size 1)
+	e.Type = data[2]        // rAthena: type (offset 2, size 1)
+	e.State = data[3]       // rAthena: state (offset 3, size 1)
 	e.Gid = leU32(data, 4)  // rAthena: gid (offset 4, size 4)
-	e.Data = leU32(data, 8)  // rAthena: data (offset 8, size 4)
+	e.Data = leU32(data, 8) // rAthena: data (offset 8, size 4)
 	return e
 }
-

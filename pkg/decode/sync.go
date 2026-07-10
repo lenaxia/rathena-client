@@ -8,7 +8,6 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func Sync_0x007F(data []byte, packetver uint32) events.Sync {
 	var e events.Sync
 	_ = packetver
-	e.Time = leU32(data, 2)  // rAthena: time (offset 2, size 4)
+	e.Time = leU32(data, 2) // rAthena: time (offset 2, size 4)
 	return e
 }
-

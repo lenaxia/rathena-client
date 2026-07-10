@@ -5,5 +5,5 @@ package events
 // ZcInventoryEnd is the event emitted for the zc_inventory_end action.
 type ZcInventoryEnd struct {
 	InvType uint8
-	Flag uint8
+	Flag    uint8
 }

@@ -4,10 +4,10 @@ package events
 
 // StatUpdate is the event emitted for the stat_update action.
 type StatUpdate struct {
-	VarID uint16
-	Count int32
-	Amount int32
+	VarID    uint16
+	Count    int32
+	Amount   int32
 	StatusID uint16
-	Value uint32
-	Type int16
+	Value    uint32
+	Type     int16
 }

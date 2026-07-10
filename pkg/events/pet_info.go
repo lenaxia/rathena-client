@@ -4,11 +4,11 @@ package events
 
 // PetInfo is the event emitted for the pet_info action.
 type PetInfo struct {
-	SzName string
-	BModified int8
-	NLevel int16
-	NFullness int16
+	SzName        string
+	BModified     int8
+	NLevel        int16
+	NFullness     int16
 	NRelationship int16
-	ITID int16
-	Job int16
+	ITID          int16
+	Job           int16
 }

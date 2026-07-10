@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSkillSelectRequest_0x0442(data []byte, packetver uint32) events.ZcSkillSelectRequest {
 	var e events.ZcSkillSelectRequest
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Flag = leI32(data, 4)  // rAthena: flag (offset 4, size 4)
-	e.SkillIds = data[8:]  // rAthena: skillIds (offset 8, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Flag = leI32(data, 4)         // rAthena: flag (offset 4, size 4)
+	e.SkillIds = data[8:]           // rAthena: skillIds (offset 8, size 0)
 	return e
 }
-

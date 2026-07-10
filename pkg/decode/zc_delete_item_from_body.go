@@ -8,9 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDeleteItemFromBody_0x07FA(data []byte, packetver uint32) events.ZcDeleteItemFromBody {
 	var e events.ZcDeleteItemFromBody
 	_ = packetver
-	e.DeleteType = leI16(data, 2)  // rAthena: deleteType (offset 2, size 2)
-	e.Index = leU16(data, 4)  // rAthena: index (offset 4, size 2)
-	e.Count = leI16(data, 6)  // rAthena: count (offset 6, size 2)
+	e.DeleteType = leI16(data, 2) // rAthena: deleteType (offset 2, size 2)
+	e.Index = leU16(data, 4)      // rAthena: index (offset 4, size 2)
+	e.Count = leI16(data, 6)      // rAthena: count (offset 6, size 2)
 	return e
 }
-

@@ -4,9 +4,9 @@ package events
 
 // ReceivedMapServerInfo is the event emitted for the received_map_server_info action.
 type ReceivedMapServerInfo struct {
-	CID uint32
+	CID     uint32
 	Mapname string
-	Ip uint32
-	Port uint16
-	Domain string
+	Ip      uint32
+	Port    uint16
+	Domain  string
 }

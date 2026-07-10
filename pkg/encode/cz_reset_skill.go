@@ -12,7 +12,7 @@ func EncodeCzResetSkill(req send.CzResetSkill, packetver uint32) [3]byte {
 	// Packet ID: 0x0BB1 (little-endian)
 	p[0] = 0xb1
 	p[1] = 0x0b
-	p[2] = req.Unknown  // rAthena: unknown
+	p[2] = req.Unknown // rAthena: unknown
 	_ = packetver
 	return p
 }

@@ -12,7 +12,7 @@ func EncodePartyInvite(req send.PartyInvite, packetver uint32) [6]byte {
 	// Packet ID: 0x00FC (little-endian)
 	p[0] = 0xfc
 	p[1] = 0x00
-	leU32Put(p[2:], req.AID)  // rAthena: AID
+	leU32Put(p[2:], req.AID) // rAthena: AID
 	_ = packetver
 	return p
 }

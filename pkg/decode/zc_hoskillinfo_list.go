@@ -8,8 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcHoskillinfoList_0x0235(data []byte, packetver uint32) events.ZcHoskillinfoList {
 	var e events.ZcHoskillinfoList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Skills = data[4:]  // rAthena: skills (offset 4, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Skills = data[4:]             // rAthena: skills (offset 4, size 0)
 	return e
 }
 
@@ -17,8 +17,7 @@ func ZcHoskillinfoList_0x0235(data []byte, packetver uint32) events.ZcHoskillinf
 func ZcHoskillinfoList_0x029D(data []byte, packetver uint32) events.ZcHoskillinfoList {
 	var e events.ZcHoskillinfoList
 	_ = packetver
-	e.PacketLength = leI16(data, 2)  // rAthena: packetLength (offset 2, size 2)
-	e.Skills = data[4:]  // rAthena: skills (offset 4, size 0)
+	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
+	e.Skills = data[4:]             // rAthena: skills (offset 4, size 0)
 	return e
 }
-
