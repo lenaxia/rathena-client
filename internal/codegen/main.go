@@ -1048,7 +1048,21 @@ func buildMapStocJoinPass(vt preprocess.VersionTable, mappings []semantics.Packe
 				length = int16(size)
 			}
 
+			// Emit at the LATER of vr.MinVer (VT range start) and
+			// mapping.PacketverMin (impl's on-wire start). If the impl
+			// starts later than the VT range, the length must not be
+			// registered until the impl's own start — otherwise packet
+			// IDs that don't exist yet at wire level get incorrect
+			// length-table entries. Concrete example: PACKET_ZC_CHANGE_GUILD
+			// binds to 0x0B1F at pv 20190703 and 0x0B47 at pv 20190807.
+			// The VT range for the current struct layout starts at
+			// 20190703 (its earliest pv). Emitting 0x0B47 at 20190703
+			// would prematurely register it — but rAthena doesn't send
+			// 0x0B47 until pv >= 20190807.
 			ver := vr.MinVer
+			if mapping.PacketverMin != 0 && uint32(mapping.PacketverMin) > ver {
+				ver = uint32(mapping.PacketverMin)
+			}
 			if ver == 20030000 {
 				ver = 0
 			}

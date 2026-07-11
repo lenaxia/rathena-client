@@ -5,6 +5,45 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Codegen: `buildMapStocJoinPass` respects `PacketverMin` when emitting
+  length breakpoints.** Previously the join pass emitted the length at
+  `vr.MinVer` (VT range start), ignoring the impl's own PacketverMin.
+  For packets that get a NEW ID mid-VT-range (e.g. `PACKET_ZC_CHANGE_GUILD`
+  binds to 0x0B1F at pv 20190703 and 0x0B47 at pv 20190807 within the
+  same 14-byte struct-layout range), the new ID's length was
+  prematurely registered at the earlier VT range start. Fix: emit at
+  `max(vr.MinVer, mapping.PacketverMin)`. Verified by
+  `TestModernPacketIDs_TransitionBoundaries` in
+  `pkg/session/modern_packet_ids_dispatch_test.go`.
+
+- **Semantic DB: add missing modern packet IDs for `private_message`,
+  `zc_ack_reqnameall`, and `zc_change_guild`.** Three actions had only
+  their OLDEST rAthena packet ID unbounded in `semantics/mappings.yaml`,
+  with no corresponding modern-ID entries. Once PR #16's codegen fidelity
+  fixes started producing accurate length tables (retiring packet IDs at
+  their real transition dates per `packets_struct.hpp`), these actions
+  became unreachable at modern packetvers — the framer had `t[old_id] = 0`
+  (retired) with no `t[modern_id]` registered, so wire packets for these
+  actions were silently dropped as "unknown packet ID."
+
+  Added the missing IDs:
+  - `private_message`: 0x0097 `[20091104, 20131203]` + 0x09DE `[20131204, ∞)`
+    (senderGID + isAdmin int8 variant, per `packets_struct.hpp:5348-5358`)
+  - `zc_ack_reqnameall`: 0x0195 `[..., 20150224]` + 0x0A30 `[20150225, ∞)`
+    (adds `title_id int32`, per `packets_struct.hpp:3564-3573`)
+  - `zc_change_guild`: 0x01B4 `[..., 20190702]` + 0x0B1F `[20190703, 20190806]`
+    + 0x0B47 `[20190807, ∞)` (14-byte layout: guild_id, emblem_id, AID,
+    per `packets_struct.hpp:5806-5822`)
+
+  See worklog 0092 for the rAthena source citations and the systematic
+  scan that identified the affected actions.
+
+---
+
 ## [v0.9.1] — 2026-07-10
 
 ### Fixed

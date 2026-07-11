@@ -406,6 +406,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionPrivateMessage: {
 		{id: 0x0097, fn: func(d []byte, pv uint32) interface{} { return decode.PrivateMessage_0x0097(d, pv) }},
+		{id: 0x09DE, fn: func(d []byte, pv uint32) interface{} { return decode.PrivateMessage_0x09DE(d, pv) }},
 	},
 	ActionReceivedCharacters: {
 		{id: 0x006B, fn: func(d []byte, pv uint32) interface{} { return decode.ReceivedCharacters_0x006B(d, pv) }},
@@ -572,6 +573,7 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcAckReqnameall: {
 		{id: 0x0195, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckReqnameall_0x0195(d, pv) }},
+		{id: 0x0A30, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckReqnameall_0x0A30(d, pv) }},
 	},
 	ActionZcAckReqnameallNpc: {
 		{id: 0x0095, fn: func(d []byte, pv uint32) interface{} { return decode.ZcAckReqnameallNpc_0x0095(d, pv) }},
@@ -646,6 +648,8 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 	},
 	ActionZcChangeGuild: {
 		{id: 0x01B4, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangeGuild_0x01B4(d, pv) }},
+		{id: 0x0B1F, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangeGuild_0x0B1F(d, pv) }},
+		{id: 0x0B47, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangeGuild_0x0B47(d, pv) }},
 	},
 	ActionZcChangeItemOption: {
 		{id: 0x0AB9, fn: func(d []byte, pv uint32) interface{} { return decode.ZcChangeItemOption_0x0AB9(d, pv) }},
