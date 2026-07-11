@@ -32,17 +32,17 @@ At goKore's target `pv=20200401`, every one of these actions had `t[old_id] = 0`
 Applied via `semantics-tool` (`update-implementation` + `add-implementation`) for each of the three actions. Each split follows the rAthena source pv guards exactly:
 
 **`private_message`**:
-- 0x0097 capped at `[20091104, 20131203]` (pre-senderGID variant, `packets_struct.hpp:2378-2392`)
-- 0x09DE added at `[20131204, ∞)` (senderGID + isAdmin int8 variant)
+- 0x0097 capped at `[20091104, 20131203]` (pre-senderGID variant, `packets_struct.hpp:5359-5367` and `:5368-5376`)
+- 0x09DE added at `[20131204, ∞)` (senderGID + isAdmin int8 variant, `packets_struct.hpp:5348-5358`)
 
 **`zc_ack_reqnameall`**:
-- 0x0195 capped at `[0, 20150224]` (pre-title_id variant)
-- 0x0A30 added at `[20150225, ∞)` (adds `title_id int32`, per `packets_struct.hpp:1836-1846`)
+- 0x0195 capped at `[0, 20150224]` (pre-title_id variant, `packets_struct.hpp:3575-3583`)
+- 0x0A30 added at `[20150225, ∞)` (adds `title_id int32`, per `packets_struct.hpp:3564-3573`)
 
 **`zc_change_guild`**:
-- 0x01B4 capped at `[0, 20190702]` (pre-modern variant)
-- 0x0B1F added at `[20190703, 20190806]` (14-byte modern layout: guild_id, emblem_id, AID)
-- 0x0B47 added at `[20190807, ∞)` (same 14-byte layout, packet ID change per RE 20190731 / MAIN 20190807)
+- 0x01B4 capped at `[0, 20190702]` (pre-modern variant, `packets_struct.hpp:5824-5830`)
+- 0x0B1F added at `[20190703, 20190806]` (14-byte modern layout: guild_id, emblem_id, AID, per `packets_struct.hpp:5816-5822`)
+- 0x0B47 added at `[20190807, ∞)` (same 14-byte layout, packet ID change per RE 20190731 / MAIN 20190807, per `packets_struct.hpp:5806-5814`)
 
 The three 0x0B1F/0x0B47 boundaries came from the source comment in `packets_struct.hpp`: "20190619 main exists in first versions, then removed" — indicating a narrow window where 0x0B1F was on the wire before rAthena settled on 0x0B47.
 
