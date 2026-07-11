@@ -5,6 +5,33 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Semantic DB: add missing modern packet IDs for `private_message`,
+  `zc_ack_reqnameall`, and `zc_change_guild`.** Three actions had only
+  their OLDEST rAthena packet ID unbounded in `semantics/mappings.yaml`,
+  with no corresponding modern-ID entries. Once PR #16's codegen fidelity
+  fixes started producing accurate length tables (retiring packet IDs at
+  their real transition dates per `packets_struct.hpp`), these actions
+  became unreachable at modern packetvers — the framer had `t[old_id] = 0`
+  (retired) with no `t[modern_id]` registered, so wire packets for these
+  actions were silently dropped as "unknown packet ID."
+
+  Added the missing IDs:
+  - `private_message`: 0x0097 `[20091104, 20131203]` + 0x09DE `[20131204, ∞)`
+    (senderGID + isAdmin int8 variant, per `packets_struct.hpp:2378-2392`)
+  - `zc_ack_reqnameall`: 0x0195 `[..., 20150224]` + 0x0A30 `[20150225, ∞)`
+    (adds `title_id int32`, per `packets_struct.hpp:1836-1846`)
+  - `zc_change_guild`: 0x01B4 `[..., 20190702]` + 0x0B1F `[20190703, 20190806]`
+    + 0x0B47 `[20190807, ∞)` (14-byte layout: guild_id, emblem_id, AID)
+
+  See worklog 0092 for the rAthena source citations and the systematic
+  scan that identified the affected actions.
+
+---
+
 ## [v0.9.1] — 2026-07-10
 
 ### Fixed

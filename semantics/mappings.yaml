@@ -3504,7 +3504,13 @@ semantic_actions:
         implementations:
             - packet_id: "0x0097"
               packetver_range:
-                - null
+                - 20091104
+                - 20131203
+              struct_name: PACKET_ZC_WHISPER
+              field_mapping: {}
+            - packet_id: "0x09DE"
+              packetver_range:
+                - 20131204
                 - null
               struct_name: PACKET_ZC_WHISPER
               field_mapping: {}
@@ -4561,6 +4567,12 @@ semantic_actions:
             - packet_id: "0x0195"
               packetver_range:
                 - null
+                - 20150224
+              struct_name: PACKET_ZC_ACK_REQNAMEALL
+              field_mapping: {}
+            - packet_id: "0x0A30"
+              packetver_range:
+                - 20150225
                 - null
               struct_name: PACKET_ZC_ACK_REQNAMEALL
               field_mapping: {}
@@ -4861,6 +4873,18 @@ semantic_actions:
             - packet_id: "0x01B4"
               packetver_range:
                 - null
+                - 20190702
+              struct_name: PACKET_ZC_CHANGE_GUILD
+              field_mapping: {}
+            - packet_id: "0x0B1F"
+              packetver_range:
+                - 20190703
+                - 20190806
+              struct_name: PACKET_ZC_CHANGE_GUILD
+              field_mapping: {}
+            - packet_id: "0x0B47"
+              packetver_range:
+                - 20190807
                 - null
               struct_name: PACKET_ZC_CHANGE_GUILD
               field_mapping: {}

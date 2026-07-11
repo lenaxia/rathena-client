@@ -7,14 +7,29 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ZcChangeGuild_0x01B4 decodes a 0x01B4 packet (struct PACKET_ZC_CHANGE_GUILD).
 func ZcChangeGuild_0x01B4(data []byte, packetver uint32) events.ZcChangeGuild {
 	var e events.ZcChangeGuild
-	if packetver >= 20190703 {
-		e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
-		e.Emblem_id = leU32(data, 6) // rAthena: emblem_id (offset 6, size 4)
-		e.AID = leU32(data, 10)      // rAthena: AID (offset 10, size 4)
-	} else {
-		e.AID = leU32(data, 2)                // rAthena: AID (offset 2, size 4)
-		e.Guild_id = leI32(data, 6)           // rAthena: guild_id (offset 6, size 4)
-		e.Emblem_id = uint32(leU16(data, 10)) // rAthena: emblem_id (offset 10, size 2)
-	}
+	_ = packetver
+	e.AID = leU32(data, 2)                // rAthena: AID (offset 2, size 4)
+	e.Guild_id = leI32(data, 6)           // rAthena: guild_id (offset 6, size 4)
+	e.Emblem_id = uint32(leU16(data, 10)) // rAthena: emblem_id (offset 10, size 2)
+	return e
+}
+
+// ZcChangeGuild_0x0B1F decodes a 0x0B1F packet (struct PACKET_ZC_CHANGE_GUILD).
+func ZcChangeGuild_0x0B1F(data []byte, packetver uint32) events.ZcChangeGuild {
+	var e events.ZcChangeGuild
+	_ = packetver
+	e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+	e.Emblem_id = leU32(data, 6) // rAthena: emblem_id (offset 6, size 4)
+	e.AID = leU32(data, 10)      // rAthena: AID (offset 10, size 4)
+	return e
+}
+
+// ZcChangeGuild_0x0B47 decodes a 0x0B47 packet (struct PACKET_ZC_CHANGE_GUILD).
+func ZcChangeGuild_0x0B47(data []byte, packetver uint32) events.ZcChangeGuild {
+	var e events.ZcChangeGuild
+	_ = packetver
+	e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
+	e.Emblem_id = leU32(data, 6) // rAthena: emblem_id (offset 6, size 4)
+	e.AID = leU32(data, 10)      // rAthena: AID (offset 10, size 4)
 	return e
 }
