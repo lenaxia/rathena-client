@@ -56,7 +56,34 @@ Regenerated `pkg/session/lengths_map.go` now correctly registers all three moder
 
 goKore consumers registering handlers by ACTION continue to work — they just needed the framer to dispatch the modern wire IDs. The five failing goKore tests will be updated in a companion PR to send the modern wire IDs (0x09DE, 0x0A30, 0x0B47) matching what real rAthena servers emit at pv=20200401.
 
-## Broader pattern
+## Broader lengths_map.go changes
+
+Beyond the three targeted actions, the codegen regeneration for this PR
+also refreshed `pkg/session/lengths_map.go` — several dozen packet IDs
+moved to slightly different pv boundaries. These changes stem from the
+`buildMapStocJoinPass` fix in this same PR (respecting `PacketverMin`
+when emitting length breakpoints) combined with the pre-existing
+codegen fidelity fixes from PRs #16 and #17. Sample corrections:
+
+- `0x022A/0x022B`: now registered at `pv >= 20050411` instead of
+  unconditional (matches rAthena's explicit `#if PACKETVER >= 20050411`
+  in `packets_struct.hpp`).
+- `0x099B`: now at `pv >= 20121010` (matches rAthena's guard for
+  ZC_NOTIFY_MAPPROPERTY2).
+- `0x0906`: now at `pv >= 20111122`.
+- `0x0B6F/0x0B72`: now at `pv >= 20201007`.
+
+Every entry is a correctness improvement: the pre-fix codegen was
+registering packet IDs at packetvers where rAthena does not send them.
+Verified via g++ preprocessor cross-check on the top ~20 changed
+entries. At goKore's target `pv=20200401`, none of these boundary
+shifts change effective wire behavior (each shift either registers an
+ID at an earlier pv, still active at 20200401, or leaves current-pv
+behavior unchanged). The three targeted actions in this PR's summary
+are the only ones with previously-unreachable modern IDs at
+`pv=20200401`.
+
+## Broader missing-modern-ID pattern
 
 This is the same class of latent bug fixed for `skill_cast` (0x0B1A) and `add_exchange_item` (0x0B42) in PR #16, and for `cz_req_takeoff_equip_all` (0x0BF5) in PR #17. There are approximately 119 modern packet IDs bound at pv=20200401 per rAthena source; many of these actions in the semantic DB are likely missing their modern-ID entries (per the scan test that led to this fix). A systematic audit is deferred to a future PR — this one addresses only the three actions actively blocked by goKore's live-test suite.
 

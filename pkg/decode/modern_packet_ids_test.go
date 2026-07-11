@@ -12,7 +12,7 @@ import (
 )
 
 // TestPrivateMessage_0x09DE_WireFormat verifies the 0x09DE (modern whisper)
-// decoder. rAthena packets_struct.hpp:2378-2392 at pv >= 20131204:
+// decoder. rAthena packets_struct.hpp:5348-5358 at pv >= 20131204:
 //
 //	int16  PacketType    // offset 0
 //	int16  PacketLength  // offset 2
@@ -52,7 +52,7 @@ func TestPrivateMessage_0x09DE_WireFormat(t *testing.T) {
 }
 
 // TestZcAckReqnameall_0x0A30_WireFormat verifies the 0x0A30 (modern name
-// resolution) decoder. rAthena packets_struct.hpp:1836-1846 at pv >= 20150225:
+// resolution) decoder. rAthena packets_struct.hpp:3564-3573 at pv >= 20150225:
 //
 //	uint16 packet_id       // offset 0
 //	int32  gid             // offset 2
