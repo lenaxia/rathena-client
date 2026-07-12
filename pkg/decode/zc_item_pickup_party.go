@@ -13,7 +13,7 @@ func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickup
 		e.Identified = data[10]      // rAthena: identified (offset 10, size 1)
 		e.Damaged = data[11]         // rAthena: damaged (offset 11, size 1)
 		e.Refine = data[12]          // rAthena: refine (offset 12, size 1)
-		e.Slot = data[13:]           // rAthena: slot (offset 13, size 16)
+		e.Slot = data[13:29]         // rAthena: slot (offset 13, size 16)
 		e.Location = leU16(data, 29) // rAthena: location (offset 29, size 2)
 		e.ItemType = data[31]        // rAthena: itemType (offset 31, size 1)
 	} else {
@@ -22,7 +22,7 @@ func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickup
 		e.Identified = data[8]            // rAthena: identified (offset 8, size 1)
 		e.Damaged = data[9]               // rAthena: damaged (offset 9, size 1)
 		e.Refine = data[10]               // rAthena: refine (offset 10, size 1)
-		e.Slot = data[11:]                // rAthena: slot (offset 11, size 8)
+		e.Slot = data[11:19]              // rAthena: slot (offset 11, size 8)
 		e.Location = leU16(data, 19)      // rAthena: location (offset 19, size 2)
 		e.ItemType = data[21]             // rAthena: itemType (offset 21, size 1)
 	}
@@ -37,7 +37,7 @@ func ZcItemPickupParty_0x0B67(data []byte, packetver uint32) events.ZcItemPickup
 	e.ItemId = leU32(data, 6)    // rAthena: itemId (offset 6, size 4)
 	e.Identified = data[10]      // rAthena: identified (offset 10, size 1)
 	e.Damaged = data[11]         // rAthena: damaged (offset 11, size 1)
-	e.Slot = data[12:]           // rAthena: slot (offset 12, size 16)
+	e.Slot = data[12:28]         // rAthena: slot (offset 12, size 16)
 	e.Location = leU16(data, 28) // rAthena: location (offset 28, size 2)
 	e.ItemType = data[30]        // rAthena: itemType (offset 30, size 1)
 	e.Refine = data[31]          // rAthena: refine (offset 31, size 1)

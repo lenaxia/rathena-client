@@ -12,6 +12,6 @@ func ZcHoskillinfoUpdate_0x0239(data []byte, packetver uint32) events.ZcHoskilli
 	e.Level = leI16(data, 4)       // rAthena: Level (offset 4, size 2)
 	e.SP = leI16(data, 6)          // rAthena: SP (offset 6, size 2)
 	e.AttackRange = leI16(data, 8) // rAthena: AttackRange (offset 8, size 2)
-	e.Upgradable = data[10:]       // rAthena: upgradable (offset 10, size 1)
+	e.Upgradable = data[10:11]     // rAthena: upgradable (offset 10, size 1)
 	return e
 }

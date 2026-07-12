@@ -9,7 +9,7 @@ func ZcUpdateGdid_0x016C(data []byte, packetver uint32) events.ZcUpdateGdid {
 	var e events.ZcUpdateGdid
 	if packetver >= 20220216 {
 		e.GuildId = leU32(data, 2)                // rAthena: guildId (offset 2, size 4)
-		e.EmblemVersion = data[6:]                // rAthena: emblemVersion (offset 6, size 4)
+		e.EmblemVersion = data[6:10]              // rAthena: emblemVersion (offset 6, size 4)
 		e.Mode = leU32(data, 10)                  // rAthena: mode (offset 10, size 4)
 		e.IsMaster = data[14]                     // rAthena: isMaster (offset 14, size 1)
 		e.InterSid = leI32(data, 15)              // rAthena: interSid (offset 15, size 4)
@@ -17,7 +17,7 @@ func ZcUpdateGdid_0x016C(data []byte, packetver uint32) events.ZcUpdateGdid {
 		e.MasterGID = leU32(data, 43)             // rAthena: masterGID (offset 43, size 4)
 	} else {
 		e.GuildId = leU32(data, 2)                // rAthena: guildId (offset 2, size 4)
-		e.EmblemVersion = data[6:]                // rAthena: emblemVersion (offset 6, size 4)
+		e.EmblemVersion = data[6:10]              // rAthena: emblemVersion (offset 6, size 4)
 		e.Mode = leU32(data, 10)                  // rAthena: mode (offset 10, size 4)
 		e.IsMaster = data[14]                     // rAthena: isMaster (offset 14, size 1)
 		e.InterSid = leI32(data, 15)              // rAthena: interSid (offset 15, size 4)

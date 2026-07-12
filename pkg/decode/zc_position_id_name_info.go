@@ -9,7 +9,7 @@ func ZcPositionIdNameInfo_0x0166(data []byte, packetver uint32) events.ZcPositio
 	var e events.ZcPositionIdNameInfo
 	_ = packetver
 	e.PacketLength = leI16(data, 2)        // rAthena: PacketLength (offset 2, size 2)
-	e.PositionID = data[4:]                // rAthena: positionID (offset 4, size 4)
+	e.PositionID = data[4:]                // rAthena: positionID (offset 4, size 4) — variable: posInfo[MAX_GUILDPOSITION]
 	e.PosName = nullTermString(data[8:32]) // rAthena: posName (offset 8, size 24)
 	return e
 }

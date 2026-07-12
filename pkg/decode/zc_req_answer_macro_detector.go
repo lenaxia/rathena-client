@@ -9,6 +9,6 @@ func ZcReqAnswerMacroDetector_0x0A5B(data []byte, packetver uint32) events.ZcReq
 	var e events.ZcReqAnswerMacroDetector
 	_ = packetver
 	e.RetryCount = data[2] // rAthena: retryCount (offset 2, size 1)
-	e.Timeout = data[3:]   // rAthena: timeout (offset 3, size 4)
+	e.Timeout = data[3:7]  // rAthena: timeout (offset 3, size 4)
 	return e
 }

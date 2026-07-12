@@ -8,7 +8,7 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDialogWindowSize_0x0BA2(data []byte, packetver uint32) events.ZcDialogWindowSize {
 	var e events.ZcDialogWindowSize
 	_ = packetver
-	e.Height = data[2:] // rAthena: height (offset 2, size 4)
-	e.Width = data[6:]  // rAthena: width (offset 6, size 4)
+	e.Height = data[2:6] // rAthena: height (offset 2, size 4)
+	e.Width = data[6:10] // rAthena: width (offset 6, size 4)
 	return e
 }

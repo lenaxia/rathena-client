@@ -92,13 +92,13 @@ func TestZcGroupList_0x00FB_OldestLayout(t *testing.T) {
 
 	// Member 0: Alice (leader, online, no class fields populated at this pv).
 	encodeMemberForTest(b, 28, pv,
-		1001,              // AID
-		0,                 // GID (absent)
-		"Alice",           // name
-		"prontera.gat",    // mapName
-		0,                 // leader byte (0 = leader per clif.cpp:7892)
-		0,                 // offline byte (0 = online per clif.cpp:7893)
-		0, 0,              // class/baseLevel absent at pv < 20170524
+		1001,           // AID
+		0,              // GID (absent)
+		"Alice",        // name
+		"prontera.gat", // mapName
+		0,              // leader byte (0 = leader per clif.cpp:7892)
+		0,              // offline byte (0 = online per clif.cpp:7893)
+		0, 0,           // class/baseLevel absent at pv < 20170524
 	)
 	// Member 1: Bob (normal member, offline).
 	encodeMemberForTest(b, 28+memberSize, pv,
@@ -106,8 +106,8 @@ func TestZcGroupList_0x00FB_OldestLayout(t *testing.T) {
 		0,
 		"Bob",
 		"geffen.gat",
-		1,    // leader byte (1 = normal member)
-		1,    // offline byte (1 = offline)
+		1, // leader byte (1 = normal member)
+		1, // offline byte (1 = offline)
 		0, 0,
 	)
 
@@ -169,8 +169,8 @@ func TestZcGroupList_0x0A44_MidLayout(t *testing.T) {
 
 	encodeMemberForTest(b, 28, pv,
 		42, 0, "Knight", "aldebaran.gat", 1, 0,
-		7,   // class = 7 (knight)
-		99,  // baseLevel = 99
+		7,  // class = 7 (knight)
+		99, // baseLevel = 99
 	)
 
 	e := ZcGroupList_0x0A44(b, pv)

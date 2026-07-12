@@ -5,6 +5,47 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.9.3] — 2026-07-12
+
+### Added
+
+- **Comprehensive golden tests for the entire `ItemPickup_*` decoder family.**
+  Previously only `ItemPickup_0x029A` had any test coverage. The new
+  `pkg/decode/item_pickup_golden_test.go` adds 9 golden tests + 7
+  benchmarks covering all 7 packet IDs (`0x00A0`, `0x029A`, `0x02D4`,
+  `0x0990`, `0x0A0C`, `0x0A37`, `0x0B41`) including both branches of
+  `0x0A37` (pre/post `nameid` widening to `uint32` at pv >= 20181121).
+  Each test constructs a packet frame by manually laying out C struct
+  fields per the GCC-preprocessed rAthena definition and asserts decoded
+  values. All benchmarks report 0 allocs/op (decode hot-path invariant
+  preserved). The `0x0A37_ModernNameid_RejectionPayload` test documents
+  that server-sent rejection frames (`clif_additem(sd,0,0,6)` from
+  rAthena's `clif_parse_TakeItem`) decode to `Result=6, Nameid=0,
+  Count=0` — closing the goKore worklog 1001 misdiagnosis that initially
+  blamed a (nonexistent) decoder bug for `TestLive_Loot_ItemPickup`
+  failures.
+
+### Fixed
+
+- **Decoder slice-bounds cleanup: 123 unbounded `data[N:]` reads bound
+  to `data[N:N+M]` across 34 decoder files.** Where the rAthena struct
+  field has a known fixed size (e.g. `EQUIPSLOTINFO` = 8 or 16 bytes
+  depending on packetver, `ItemOptions[5]` = 25 bytes), the generated
+  decoders previously emitted `e.Field = data[N:]` (unbounded) instead
+  of `e.Field = data[N:N+M]`. Functionally harmless (no caller read the
+  trailing bytes, and the existing test suite + race detector confirmed
+  no behavior change), but a latent defensive-correctness issue. The
+  cleanup was applied programmatically with one false positive caught
+  and reverted: `ZcPositionIdNameInfo_0x0166.PositionID` is annotated
+  `size 4` but is actually `posInfo[MAX_GUILDPOSITION]` (variable-length
+  array of structs), so the unbounded slice is correct there. See
+  worklog 0093 for the full audit methodology and the 4-category
+  classification (CORRECT_BOUNDED, HARMLESS_UNBOUNDED, UNKNOWN_SIZE,
+  SIZE_MISMATCH). No SIZE_MISMATCH bugs were found — the codegen
+  pipeline is producing correct output.
+
+---
+
 ## [v0.9.2] — 2026-07-11
 
 ### Fixed

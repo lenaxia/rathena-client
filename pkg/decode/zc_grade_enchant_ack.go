@@ -10,6 +10,6 @@ func ZcGradeEnchantAck_0x0B5D(data []byte, packetver uint32) events.ZcGradeEncha
 	_ = packetver
 	e.Index = leI16(data, 2) // rAthena: index (offset 2, size 2)
 	e.Grade = leI16(data, 4) // rAthena: grade (offset 4, size 2)
-	e.Result = data[6:]      // rAthena: result (offset 6, size 4)
+	e.Result = data[6:10]    // rAthena: result (offset 6, size 4)
 	return e
 }
