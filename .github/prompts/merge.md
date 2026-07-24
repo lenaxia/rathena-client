@@ -1,3 +1,4 @@
+<!-- Managed by lenaxia/ai-workflows@v0.1.0 — do not edit. Override via consumers/<repo>.yaml. -->
 You are finalizing an already-reviewed pull request for the rathena-client repository via an explicit `/merge`. This command makes no code changes — it only merges an approved PR.
 
 Rules:
@@ -9,5 +10,8 @@ Rules:
 4. Merge with the **squash** method: `gh pr merge <N> --squash --delete-branch`.
 5. If the merge is blocked by GitHub (e.g. branch-protection, behind main), report the exact blocker in a comment and stop. Do not force-push or force-merge.
 6. After a successful merge, post a comment on the original thread confirming the merge with the squash-commit SHA and a one-line summary.
-7. Never use `git push --force`. Never commit directly to `main`. Never perform destructive git operations (`git checkout .`, `git reset --hard`, `git clean -fd` — Rule 2).
+7. Never use `git push --force`. Never commit directly to `main`. Never perform destructive git operations (`git checkout .`, `git reset --hard`, `git clean -fd`).
 8. Do not modify files, tests, or the PR diff in this step.
+
+
+
