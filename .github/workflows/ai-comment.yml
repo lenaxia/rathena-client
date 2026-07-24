@@ -9,9 +9,8 @@
 # called workflow's job-level `if:` against github.event.comment.* is not
 # reliably evaluated for issue_comment / pull_request_review_comment events.
 #
-# Requires the repo variable AI_WORKFLOWS_PIN (tag or SHA of lenaxia/ai-workflows)
-# and the OPENAI_API_KEY / OPENAI_API_BASE secrets + OPENAI_MODEL variable,
-# which are inherited by the reusable workflow.
+# Pinned to ai-workflows v0.1.2 — bump by editing the tag below (or via propagate.yml).
+# Requires OPENAI_API_KEY / OPENAI_API_BASE secrets + OPENAI_MODEL variable (inherited).
 
 name: AI Commands
 
@@ -51,8 +50,8 @@ jobs:
       (github.event.comment.author_association == 'OWNER' ||
        github.event.comment.author_association == 'MEMBER' ||
        github.event.comment.author_association == 'COLLABORATOR')
-    uses: lenaxia/ai-workflows/.github/workflows/ai-comment.yml@${{ vars.AI_WORKFLOWS_PIN }}
+    uses: lenaxia/ai-workflows/.github/workflows/ai-comment.yml@v0.1.2
     secrets: inherit
     with:
-      version: ${{ vars.AI_WORKFLOWS_PIN }}
+      version: v0.1.2
       project_name: rathena-client
