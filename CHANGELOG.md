@@ -5,6 +5,35 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [v0.9.4] — 2026-07-26
+
+### Added
+
+- **`ServerConfig.MapLoadDelay`** — a configurable delay between receiving
+  `ZC_ACCEPT_ENTER` (map entry granted) and sending `CZ_NOTIFY_ACTORINIT`
+  (0x007D, LoadEndAck). Normal clients have a 200-500ms rendering delay
+  here; bot frameworks that send LoadEndAck immediately can trigger a
+  server-side race condition in rAthena where `PC_DIE_COUNTER` register
+  sync arrives before `sd->bonus` is populated, causing SIGSEGV in
+  `status_calc_pc` for Super Novice characters. Defaults to 0 (backward
+  compatible). Recommended: 500ms for automated clients. The delay is
+  context-cancellable via `ctx.Done()`. Full crash analysis and rAthena
+  source references in the field doc comment and worklog 0094.
+
+### Fixed
+
+- **rAthena map-server crash on bot login (SIGSEGV).** Root cause: the
+  FSM sent LoadEndAck with zero delay, clearing `connect_new` before the
+  char-server's async register sync completed. For Super Novice characters
+  with `die_counter == 1`, `pc_setparam` triggered `status_calc_pc` on
+  partially-initialized session data (`sd->bonus.hp` dereference at
+  `status.cpp:3149`). Discovered during a 100-bot load test with 34 map-
+  server crashes. The `MapLoadDelay` field is the client-side fix; rAthena
+  also needs null-check patches (`status.cpp:3138`, `pc.cpp:10640`) for
+  full defense-in-depth.
+
+---
+
 ## [v0.9.3] — 2026-07-12
 
 ### Added
