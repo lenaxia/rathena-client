@@ -43,6 +43,33 @@ type ServerConfig struct {
 	// StepTimeout is the per-step deadline applied via conn.SetDeadline before
 	// each blocking read inside Connect(). Defaults to 30s if zero.
 	StepTimeout time.Duration
+	// MapLoadDelay is the delay between receiving ZC_ACCEPT_ENTER (map entry
+	// granted by the server) and sending CZ_NOTIFY_ACTORINIT (0x007D, the
+	// "map loaded" confirmation a.k.a. LoadEndAck).
+	//
+	// A normal client has a 200-500ms rendering delay here: it receives the
+	// map entry packet, renders the map tiles, then sends LoadEndAck. Bot
+	// frameworks and automated clients that send LoadEndAck immediately
+	// (zero delay) can trigger server-side race conditions — notably in
+	// rAthena, where the char-server's async register sync (PC_DIE_COUNTER)
+	// arrives after connect_new is cleared but before sd->bonus is fully
+	// populated, causing a SIGSEGV in status_calc_pc for Super Novice
+	// characters.
+	//
+	// rAthena source references for the race mechanism:
+	//   - connect_new flag: clif.cpp:10756 (cleared in clif_parse_LoadEndAck
+	//     when character is loaded)
+	//   - PC_DIE_COUNTER recalc: pc.cpp:10640-10641 (pc_setparam SP_PCDIECOUNTER
+	//     triggers status_calc_pc when connect_new==0 && die_counter==1)
+	//   - SIGSEGV site: status.cpp:3149 (status_get_hpbonus dereferences
+	//     sd->bonus.hp when session data is partially initialized)
+	//   - Register sync path: intif.cpp:1474 (intif_parse_Registers →
+	//     set_reg_num → pc_setparam, driven by char-server async push)
+	//
+	// Set to 500ms to match typical client behavior and eliminate the race.
+	// Defaults to 0 (no delay, preserving backward compatibility for
+	// existing callers).
+	MapLoadDelay time.Duration
 }
 
 // Credentials holds the per-account authentication details.
@@ -815,6 +842,27 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		if res.done {
 			return
 		}
+
+		// Apply MapLoadDelay before sending LoadEndAck (0x007D). This mimics
+		// the rendering delay of a normal client and prevents server-side race
+		// conditions (see ServerConfig.MapLoadDelay doc comment).
+		//
+		// Use select instead of time.Sleep so the delay is interruptible by
+		// context cancellation (e.g. Connect(ctx) caller cancels during the
+		// map-enter phase). At 1000 bots × 500ms, an uninterruptible sleep
+		// delays shutdown by up to 500ms per bot with no way to abort.
+		if f.server.MapLoadDelay > 0 {
+			timer := time.NewTimer(f.server.MapLoadDelay)
+			select {
+			case <-timer.C:
+			case <-ctx.Done():
+				timer.Stop()
+				res.err = fmt.Errorf("fsm: map load delay cancelled: %w", ctx.Err())
+				res.done = true
+				return
+			}
+		}
+
 		// Send 0x007D CZ_NOTIFY_ACTORINIT (map loaded confirmation)
 		// struct: int16 only = 2 bytes; Source: clif.cpp:10742
 		loadedPkt := fsmEncodeMapLoaded()
