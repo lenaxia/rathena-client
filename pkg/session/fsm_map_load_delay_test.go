@@ -3,6 +3,7 @@ package session
 import (
 	"context"
 	"net"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -44,7 +45,7 @@ func TestConnect_MapLoadDelay_AppliedBeforeLoadEndAck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var loadEndAckElapsed time.Duration
+			var loadEndAckElapsedNanos int64 // written by mapScript goroutine, read by test
 
 			loginScript := func(t *testing.T, conn net.Conn) {
 				mustDrain(t, conn, 55)
@@ -72,7 +73,7 @@ func TestConnect_MapLoadDelay_AppliedBeforeLoadEndAck(t *testing.T) {
 				// Read LoadEndAck (2 bytes) + TimeSyncResponse (6 bytes) = 8 bytes.
 				mustRead(t, conn, 8)
 
-				loadEndAckElapsed = time.Since(enterTime)
+				atomic.StoreInt64(&loadEndAckElapsedNanos, int64(time.Since(enterTime)))
 			}
 
 			server := ServerConfig{
@@ -96,6 +97,8 @@ func TestConnect_MapLoadDelay_AppliedBeforeLoadEndAck(t *testing.T) {
 			if !readyCalled {
 				t.Fatal("OnReady was not called")
 			}
+
+			loadEndAckElapsed := time.Duration(atomic.LoadInt64(&loadEndAckElapsedNanos))
 
 			t.Logf("delay=%v: LoadEndAck elapsed=%v", tt.delay, loadEndAckElapsed)
 
