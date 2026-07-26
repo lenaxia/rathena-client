@@ -142,7 +142,7 @@ goKore calls fsm.Connect(ctx)
   → recv 0x0081 (PACKETVER < 20170315) / 0x0AC5 (≥ 20170315): extracts map addr, closes conn
   → FSM calls dialer(ctx, mapAddr) → net.Conn
   → FSM creates MapSession, sends 0x0436, runs Feed loop internally
-  → recv 0x0073 / 0x0A18 / 0x02EB: sends 0x007D + 0x007E/0x0360, transitions to Ready
+  → recv 0x0073 / 0x0A18 / 0x02EB: [if MapLoadDelay > 0, wait delay] sends 0x007D + 0x007E/0x0360, transitions to Ready
   → FSM calls OnReady(mapSession, mapConn)        [goKore takes over the conn]
   → goKore's read loop takes over: conn.Read → mapSession.Feed(buf)
 ```
@@ -210,15 +210,19 @@ type Dialer func(ctx context.Context, addr string) (net.Conn, error)
 // Shared across all bot instances connecting to the same server.
 // Mirrors the server-config layer of OpenKore's servers.txt entry.
 type ServerConfig struct {
-    LoginAddr   string        // "host:port" of the rAthena login server
-    Packetver   uint32        // YYYYMMDD; selects packet layouts and IDs
-    StepTimeout time.Duration // per-step deadline (default: 30s); enforced via
+    LoginAddr    string        // "host:port" of the rAthena login server
+    Packetver    uint32        // YYYYMMDD; selects packet layouts and IDs
+    StepTimeout  time.Duration // per-step deadline (default: 30s); enforced via
                                // conn.SetDeadline(time.Now().Add(StepTimeout)) before
                                // each blocking read inside Connect(). Returns ErrTimeout
                                // if the server accepts TCP but never responds within the
                                // deadline. The FSM calls SetDeadline before every read,
                                // not once globally, so long-running authentication steps
                                // each get a fresh deadline.
+    MapLoadDelay time.Duration // delay between ZC_ACCEPT_ENTER and CZ_NOTIFY_ACTORINIT
+                               // (0x007D, LoadEndAck). Default: 0 (no delay). Set to
+                               // 500ms for bot frameworks to mimic client rendering
+                               // delay and avoid server-side race conditions.
 }
 
 // Credentials holds the per-account authentication details.
@@ -356,7 +360,7 @@ Every step below happens with zero application involvement:
 | After `OnCharList` returns slot | Send `0x0066` with chosen slot |
 | Recv `0x0081` (PACKETVER < 20170315) or `0x0AC5` (≥ 20170315) | Close char conn, dial map server, send `0x0436`. Source: `common/packets.hpp:290–308` (HEADER_HC_NOTIFY_ZONESVR). NOTE: `0x0081` == SC_NOTIFY_BAN on same connection — FSM distinguishes by payload size: SC_NOTIFY_BAN is 4 bytes; HC_NOTIFY_ZONESVR is ≥ 28 bytes. |
 | Recv `0x0283` (PACKETVER ≥ 20070521) | Store account ID echo; stay in MapAuth |
-| Recv `0x0073`/`0x0A18`/`0x02EB` | Send `0x007D` (map loaded) + `0x007E`/`0x0360` (tick sync) → call `OnReady` |
+| Recv `0x0073`/`0x0A18`/`0x02EB` | **[if `MapLoadDelay > 0`]** wait `MapLoadDelay` (context-cancellable). Send `0x007D` (map loaded) + `0x007E`/`0x0360` (tick sync) → call `OnReady` |
 
 ### goKore usage pattern
 
@@ -364,9 +368,10 @@ Every step below happens with zero application involvement:
 // internal/network/rathena/connector.go
 
 server := fsm.ServerConfig{
-    LoginAddr:   cfg.LoginAddr,   // e.g. "127.0.0.1:6900"
-    Packetver:   cfg.Packetver,
-    StepTimeout: 30 * time.Second,
+    LoginAddr:    cfg.LoginAddr,   // e.g. "127.0.0.1:6900"
+    Packetver:    cfg.Packetver,
+    StepTimeout:  30 * time.Second,
+    MapLoadDelay: 500 * time.Millisecond, // mimic client rendering delay (optional)
 }
 
 creds := fsm.Credentials{
