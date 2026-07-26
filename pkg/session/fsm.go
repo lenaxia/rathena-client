@@ -57,10 +57,11 @@ type ServerConfig struct {
 	// characters.
 	//
 	// rAthena source references for the race mechanism:
-	//   - connect_new flag: clif.cpp:10754 (cleared in clif_parse_LoadEndAck)
-	//   - PC_DIE_COUNTER recalc: pc.cpp:10628-10630 (pc_setparam SP_PCDIECOUNTER
+	//   - connect_new flag: clif.cpp:10756 (cleared in clif_parse_LoadEndAck
+	//     when character is loaded)
+	//   - PC_DIE_COUNTER recalc: pc.cpp:10640-10641 (pc_setparam SP_PCDIECOUNTER
 	//     triggers status_calc_pc when connect_new==0 && die_counter==1)
-	//   - SIGSEGV site: status.cpp:3138 (status_get_hpbonus dereferences
+	//   - SIGSEGV site: status.cpp:3149 (status_get_hpbonus dereferences
 	//     sd->bonus.hp when session data is partially initialized)
 	//   - Register sync path: intif.cpp:1474 (intif_parse_Registers →
 	//     set_reg_num → pc_setparam, driven by char-server async push)
@@ -851,9 +852,11 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		// map-enter phase). At 1000 bots × 500ms, an uninterruptible sleep
 		// delays shutdown by up to 500ms per bot with no way to abort.
 		if f.server.MapLoadDelay > 0 {
+			timer := time.NewTimer(f.server.MapLoadDelay)
 			select {
-			case <-time.After(f.server.MapLoadDelay):
+			case <-timer.C:
 			case <-ctx.Done():
+				timer.Stop()
 				res.err = fmt.Errorf("fsm: map load delay cancelled: %w", ctx.Err())
 				res.done = true
 				return

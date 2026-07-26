@@ -2,6 +2,7 @@ package session
 
 import (
 	"context"
+	"errors"
 	"net"
 	"sync/atomic"
 	"testing"
@@ -179,6 +180,9 @@ func TestConnect_MapLoadDelay_CancelledByContext(t *testing.T) {
 
 	if err == nil {
 		t.Fatal("expected error from cancelled Connect, got nil")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("expected error to wrap context.Canceled, got: %v", err)
 	}
 	if elapsed > 2*time.Second {
 		t.Errorf("Connect took %v after context cancel, expected < 2s", elapsed)
