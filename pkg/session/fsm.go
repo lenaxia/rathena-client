@@ -43,6 +43,23 @@ type ServerConfig struct {
 	// StepTimeout is the per-step deadline applied via conn.SetDeadline before
 	// each blocking read inside Connect(). Defaults to 30s if zero.
 	StepTimeout time.Duration
+	// MapLoadDelay is the delay between receiving ZC_ACCEPT_ENTER (map entry
+	// granted by the server) and sending CZ_NOTIFY_ACTORINIT (0x007D, the
+	// "map loaded" confirmation a.k.a. LoadEndAck).
+	//
+	// A normal client has a 200-500ms rendering delay here: it receives the
+	// map entry packet, renders the map tiles, then sends LoadEndAck. Bot
+	// frameworks and automated clients that send LoadEndAck immediately
+	// (zero delay) can trigger server-side race conditions — notably in
+	// rAthena, where the char-server's async register sync (PC_DIE_COUNTER)
+	// arrives after connect_new is cleared but before sd->bonus is fully
+	// populated, causing a SIGSEGV in status_calc_pc for Super Novice
+	// characters.
+	//
+	// Set to 500ms to match typical client behavior and eliminate the race.
+	// Defaults to 0 (no delay, preserving backward compatibility for
+	// existing callers).
+	MapLoadDelay time.Duration
 }
 
 // Credentials holds the per-account authentication details.
@@ -815,6 +832,14 @@ func (f *ConnectionFSM) runMapPhase(ctx context.Context, mapAddr string) error {
 		if res.done {
 			return
 		}
+
+		// Apply MapLoadDelay before sending LoadEndAck (0x007D). This mimics
+		// the rendering delay of a normal client and prevents server-side race
+		// conditions (see ServerConfig.MapLoadDelay doc comment).
+		if f.server.MapLoadDelay > 0 {
+			time.Sleep(f.server.MapLoadDelay)
+		}
+
 		// Send 0x007D CZ_NOTIFY_ACTORINIT (map loaded confirmation)
 		// struct: int16 only = 2 bytes; Source: clif.cpp:10742
 		loadedPkt := fsmEncodeMapLoaded()
