@@ -14,8 +14,8 @@ on:
 
 jobs:
   respond:
-    uses: lenaxia/ai-workflows/.github/workflows/issue-opened.yml@v0.1.2
+    uses: lenaxia/ai-workflows/.github/workflows/issue-opened.yml@v0.2.9
     secrets: inherit
     with:
-      version: v0.1.2
+      version: v0.2.9
       project_name: rathena-client

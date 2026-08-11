@@ -17,8 +17,8 @@ on:
 jobs:
   review:
     if: github.event.pull_request.user.login != 'renovate[bot]'
-    uses: lenaxia/ai-workflows/.github/workflows/pr-review.yml@v0.1.2
+    uses: lenaxia/ai-workflows/.github/workflows/pr-review.yml@v0.2.9
     secrets: inherit
     with:
-      version: v0.1.2
+      version: v0.2.9
       project_name: rathena-client
