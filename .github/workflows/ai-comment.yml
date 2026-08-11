@@ -50,8 +50,8 @@ jobs:
       (github.event.comment.author_association == 'OWNER' ||
        github.event.comment.author_association == 'MEMBER' ||
        github.event.comment.author_association == 'COLLABORATOR')
-    uses: lenaxia/ai-workflows/.github/workflows/ai-comment.yml@v0.1.2
+    uses: lenaxia/ai-workflows/.github/workflows/ai-comment.yml@v0.2.9
     secrets: inherit
     with:
-      version: v0.1.2
+      version: v0.2.9
       project_name: rathena-client
