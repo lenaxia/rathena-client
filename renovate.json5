@@ -24,5 +24,10 @@
       matchPackageNames: ['anomalyco/opencode'],
       automerge: false,
     },
+    {
+      description: ['Never auto-merge lenaxia/ai-workflows updates'],
+      matchPackageNames: ['lenaxia/ai-workflows'],
+      automerge: false,
+    },
   ],
 }
