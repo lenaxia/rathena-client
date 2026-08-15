@@ -1,0 +1,33 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    ':disableRateLimiting',
+    ':dependencyDashboard',
+    ':semanticCommits',
+  ],
+  dependencyDashboard: true,
+  dependencyDashboardTitle: 'Renovate Dashboard 🤖',
+  suppressNotifications: ['prEditedNotification', 'prIgnoreNotification'],
+  rebaseWhen: 'conflicted',
+  packageRules: [
+    {
+      description: ['Auto merge GitHub Actions digest/patch/minor updates'],
+      matchManagers: ['github-actions'],
+      automerge: true,
+      automergeType: 'branch',
+      ignoreTests: true,
+      matchUpdateTypes: ['digest', 'patch', 'minor'],
+    },
+    {
+      description: ['Never auto-merge anomalyco/opencode updates'],
+      matchPackageNames: ['anomalyco/opencode'],
+      automerge: false,
+    },
+    {
+      description: ['Never auto-merge lenaxia/ai-workflows updates'],
+      matchPackageNames: ['lenaxia/ai-workflows'],
+      automerge: false,
+    },
+  ],
+}

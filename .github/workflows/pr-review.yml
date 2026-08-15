@@ -5,7 +5,7 @@
 # The reusable workflow appends the formal-blocking-review directive (submit via
 # `gh pr review` as APPROVE / REQUEST_CHANGES — never a plain comment).
 #
-# Pinned to ai-workflows v0.1.2 — bump by editing the tag below (or via propagate.yml).
+# Pinned to ai-workflows v0.2.10 — bump by editing the tag below (or via propagate.yml).
 # Requires OPENAI_API_KEY / OPENAI_API_BASE secrets + OPENAI_MODEL variable (inherited).
 
 name: PR Review
@@ -17,8 +17,8 @@ on:
 jobs:
   review:
     if: github.event.pull_request.user.login != 'renovate[bot]'
-    uses: lenaxia/ai-workflows/.github/workflows/pr-review.yml@v0.1.2
+    uses: lenaxia/ai-workflows/.github/workflows/pr-review.yml@v0.2.10
     secrets: inherit
     with:
-      version: v0.1.2
+      version: v0.2.10
       project_name: rathena-client
