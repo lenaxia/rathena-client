@@ -25,9 +25,12 @@
       automerge: false,
     },
     {
-      description: ['Never auto-merge lenaxia/ai-workflows updates'],
+      // enabled:false (not just automerge:false) — even a human-merged
+      // Renovate PR would bump `uses:` without the sibling `version:`
+      // inputs and strand them; propagate.yml is the only pin-mover.
+      description: ['lenaxia/ai-workflows pins are propagate-only'],
       matchPackageNames: ['lenaxia/ai-workflows'],
-      automerge: false,
+      enabled: false,
     },
   ],
 }
