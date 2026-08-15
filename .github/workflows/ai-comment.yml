@@ -9,7 +9,7 @@
 # called workflow's job-level `if:` against github.event.comment.* is not
 # reliably evaluated for issue_comment / pull_request_review_comment events.
 #
-# Pinned to ai-workflows v0.1.2 — bump by editing the tag below (or via propagate.yml).
+# Pinned to ai-workflows v0.2.10 — bump by editing the tag below (or via propagate.yml).
 # Requires OPENAI_API_KEY / OPENAI_API_BASE secrets + OPENAI_MODEL variable (inherited).
 
 name: AI Commands
@@ -50,8 +50,8 @@ jobs:
       (github.event.comment.author_association == 'OWNER' ||
        github.event.comment.author_association == 'MEMBER' ||
        github.event.comment.author_association == 'COLLABORATOR')
-    uses: lenaxia/ai-workflows/.github/workflows/ai-comment.yml@v0.1.2
+    uses: lenaxia/ai-workflows/.github/workflows/ai-comment.yml@v0.2.10
     secrets: inherit
     with:
-      version: v0.1.2
+      version: v0.2.10
       project_name: rathena-client

@@ -3,7 +3,7 @@
 # Delegates the issue-responder AI flow to the central reusable workflow, which
 # owns prompt assembly, the opencode run, and the once-per-thread command footer.
 #
-# Pinned to ai-workflows v0.1.2 — bump by editing the tag below (or via propagate.yml).
+# Pinned to ai-workflows v0.2.10 — bump by editing the tag below (or via propagate.yml).
 # Requires OPENAI_API_KEY / OPENAI_API_BASE secrets + OPENAI_MODEL variable (inherited).
 
 name: Issue Opened
@@ -14,8 +14,8 @@ on:
 
 jobs:
   respond:
-    uses: lenaxia/ai-workflows/.github/workflows/issue-opened.yml@v0.1.2
+    uses: lenaxia/ai-workflows/.github/workflows/issue-opened.yml@v0.2.10
     secrets: inherit
     with:
-      version: v0.1.2
+      version: v0.2.10
       project_name: rathena-client
