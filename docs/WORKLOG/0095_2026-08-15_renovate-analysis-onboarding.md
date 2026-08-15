@@ -64,6 +64,28 @@ digest/patch/minor auto-merge rule and never-auto-merge guards.
 ## Test Results
 
 - `renovate.json5` validated as JSON5 (Renovate natively supports `.json5`).
-- Diff vs `origin/main`: exactly the 3 claimed files, +145/-0 — no `.go`
-  files touched, so `go build`/`go test ./...` outcomes cannot differ from
-  `main`.
+- Diff vs `origin/main`: 7 files, +228/-9 (caller, forked prompt,
+  `renovate.json5`, work log, three sibling caller files) — no `.go` files
+  touched, so `go build`/`go test ./...` outcomes cannot differ from `main`.
+- CI passed on `f340ade` (runs 31902852949, 31903468213); head `72d312c`
+  differs only by the three YAML pin lines — confirm green before merge.
+
+## Incident & Follow-up (stray `.ai-workflows` gitlink)
+
+- A review run under the old sibling pin `v0.1.2` (`pr-review.yml@v0.2.3`-era
+  callers) pushed a stray commit `dbc21dc` ("APPROVE: findings fixed, all
+  verified", authored by `github-actions[bot]`) adding `.ai-workflows` as a
+  broken submodule gitlink (`mode 160000`, no `.gitmodules` mapping).
+- Root cause, verified against upstream `ai-workflows` source: `v0.1.2`
+  `pr-review.yml` (commit `027a24d`) used `persist-credentials: true`,
+  checked ai-workflows out to `path: .ai-workflows`, and had **no**
+  index-exclusion guard — opencode's end-of-run `git add -A` + push swept
+  the nested clone into the consumer repo as a gitlink.
+- Removed by rewriting the PR branch (drop `dbc21dc`; HEAD now
+  `72d312c`; `git ls-tree HEAD` shows no mode-160000 entries).
+- `v0.2.10` `pr-review.yml` fixes the mechanism (upstream issue #17, Bugs A &
+  B): `persist-credentials: false` ("this workflow only REVIEWS code, it never
+  pushes") + `printf '.ai-workflows/\n' >> .git/info/exclude` guard.
+- Sibling callers (`ai-comment.yml`, `issue-opened.yml`, `pr-review.yml`)
+  aligned `v0.1.2` → `v0.2.10` so all four pin sites move together in
+  lockstep on future propagate runs.
