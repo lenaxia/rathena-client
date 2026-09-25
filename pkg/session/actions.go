@@ -473,10 +473,11 @@ const (
 	ActionZcUseskillAck                        SemanticAction = 461
 	ActionZcViewCamerainfo                     SemanticAction = 462
 	ActionZcWaitDialog                         SemanticAction = 463
+	ActionZcPartyJoinReqAck                    SemanticAction = 464
 
 	// maxSemanticAction is the highest assigned SemanticAction value.
 	// Used to size the sendRegistry array in semantic.go.
-	maxSemanticAction SemanticAction = ActionZcWaitDialog
+	maxSemanticAction SemanticAction = ActionZcPartyJoinReqAck
 )
 
 // String returns the constant name for known SemanticAction values
@@ -1411,6 +1412,8 @@ func (a SemanticAction) String() string {
 		return "ActionZcViewCamerainfo"
 	case ActionZcWaitDialog:
 		return "ActionZcWaitDialog"
+	case ActionZcPartyJoinReqAck:
+		return "ActionZcPartyJoinReqAck"
 	}
 	return fmt.Sprintf("SemanticAction(%d)", uint16(a))
 }

@@ -945,6 +945,10 @@ var receiveDispatch = map[SemanticAction][]receiveEntry{
 		{id: 0x02C6, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPartyJoinReq_0x02C6(d, pv) }},
 		{id: 0x00FE, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPartyJoinReq_0x00FE(d, pv) }},
 	},
+	ActionZcPartyJoinReqAck: {
+		{id: 0x02C5, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPartyJoinReqAck_0x02C5(d, pv) }},
+		{id: 0x00FD, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPartyJoinReqAck_0x00FD(d, pv) }},
+	},
 	ActionZcPcPurchaseItemlistFrommc: {
 		{id: 0x0133, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseItemlistFrommc_0x0133(d, pv) }},
 		{id: 0x0B3D, fn: func(d []byte, pv uint32) interface{} { return decode.ZcPcPurchaseItemlistFrommc_0x0B3D(d, pv) }},

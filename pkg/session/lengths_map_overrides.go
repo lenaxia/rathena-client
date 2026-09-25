@@ -47,4 +47,17 @@ func applyMapLengthOverrides(pv uint32, t *[65536]int16) {
 	if pv >= 20181121 {
 		t[0x0ADD] = 24
 	}
+
+	// 0x00FD ZC_ACK_REQ_JOIN_GROUP — PACKET_ZC_PARTY_JOIN_REQ_ACK
+	// packets_struct.hpp:5093-5101: the struct is int16 + char[24] + int (30 bytes)
+	// at ALL packetvers — only the header constant is gated (< 20070821 → 0x00FD,
+	// >= 20070821 → 0x02C5). clif_party_invite_reply sends sizeof(p) == 30
+	// unconditionally (clif.cpp:7968-7974). clif_packetdb.hpp:101 hardcodes
+	// packet(0x00fd,27) — a stale literal describing the 2007-era client format,
+	// never updated when the struct gained the 4-byte result (and that file's
+	// lengths govern C→S parsing, not S→C framing).
+	// GCC verified: pv=20070820 → 30 bytes (header 0x00fd); pv=20200401 → 30 bytes
+	// (header 0x02c5). Unconditional override: without it the framer consumes 27 of
+	// 30 bytes on a legacy-header frame and desyncs the stream by 3 bytes.
+	t[0x00FD] = 30
 }
