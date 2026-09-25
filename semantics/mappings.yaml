@@ -6981,4 +6981,22 @@ semantic_actions:
                 - null
               struct_name: PACKET_ZC_GROUP_LIST
               field_mapping: {}
+    zc_party_join_req_ack:
+        name: zc_party_join_req_ack
+        description: Server tells the inviter whether their party invite was accepted, rejected, or failed (ZC_PARTY_JOIN_REQ_ACK / ZC_ACK_REQ_JOIN_GROUP, rAthena clif_party_invite_reply)
+        openkore_name: ""
+        canonical_params: []
+        implementations:
+            - packet_id: "0x02C5"
+              packetver_range:
+                - 20070821
+                - null
+              struct_name: PACKET_ZC_PARTY_JOIN_REQ_ACK
+              field_mapping: {}
+            - packet_id: "0x00FD"
+              packetver_range:
+                - null
+                - 20070820
+              struct_name: PACKET_ZC_PARTY_JOIN_REQ_ACK
+              field_mapping: {}
 version: ""
