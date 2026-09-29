@@ -13,7 +13,7 @@ ARG RATHENA_REF
 RUN test -n "$RATHENA_REF"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential git ca-certificates libmariadb-dev \
+        build-essential git ca-certificates libmariadb-dev libmariadb-dev-compat \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --no-checkout https://github.com/rathena/rathena.git /src/rathena
