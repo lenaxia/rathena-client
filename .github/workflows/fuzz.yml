@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: "0 3 * * *"
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/fuzz.yml
+      - pkg/session/fuzz_test.go
+      - pkg/packing/fuzz_test.go
 
 jobs:
   fuzz:
