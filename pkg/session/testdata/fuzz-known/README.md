@@ -17,8 +17,9 @@ Full blast radius (58 packet IDs), root cause, and fix direction:
 `docs/BACKLOG/BUG-02_legacy-variant-length-overread.md` /
 `docs/BACKLOG/BUG-03_variable-length-decoder-bounds.md`.
 
-To re-verify either crash against a fixed build:
-
-    cp <corpus-file> ../fuzz/FuzzFeedMapSessionWithDispatch/
-    go test ./pkg/session -run 'FuzzFeedMapSessionWithDispatch/<name>'
+Both crashers PASS since the length-guard fix and have been PROMOTED into
+`../fuzz/FuzzFeedMapSessionWithDispatch/` — `go test ./pkg/session` now
+replays them as ordinary seeds on every run, keeping a permanent regression
+guard on the truncated-frame axis. This directory is kept for history; new
+crashers land here first, quarantined until triaged.
 

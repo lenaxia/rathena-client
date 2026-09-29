@@ -28,13 +28,11 @@ import (
 	"testing"
 )
 
-// knownLengthOverread lists receiveDispatch packet IDs whose generated decoder
-// reads past the length-table frame for the ID. Each entry keeps CI green
-// while the fix is pending; the goal is for this map to be empty.
 // knownLengthOverread lists receiveDispatch packet IDs whose decoder still
 // reads past the length-table frame. EMPTY since the BUG-02/BUG-03 fixes:
-// generated decoders emit per-layout length guards and evaluate legacy
-// variants at their era layout; hand-written decoders carry entry guards.
+// every generated decode branch emits a length guard (gen/decode.go
+// layoutMinLen — layout selection itself is unchanged) and hand-written
+// decoders carry entry guards.
 // A NEW entry here fails CI — triage, fix, and empty the list again.
 var knownLengthOverread = map[uint16]string{}
 
