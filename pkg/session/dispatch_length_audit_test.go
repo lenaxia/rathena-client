@@ -19,9 +19,6 @@
 // (see gen/decode.go layoutMinLen) and hand-written decoders carry entry
 // guards, so a short frame decodes to a zero event instead of panicking.
 // A NEW offender fails this test — triage it, fix it, keep the list empty.
-//
-// Runtime risk note: all known offenders are legacy IDs that rAthena does not
-// send at modern packetvers, which is why live captures never tripped them.
 package session
 
 import (

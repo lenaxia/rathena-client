@@ -29,9 +29,9 @@ import (
 // This drives the raw decode functions with frames exactly as Feed() would
 // deliver them in production.
 //
-// IDs frozen in knownLengthOverread (dispatch_length_audit_test.go) are
-// skipped until the codegen packetver-evaluation fix lands — their crashes
-// are already enumerated and gated by TestReceiveDispatchLengthAudit.
+// The list is empty since the guard fix; the skip remains so a triage entry
+// added to knownLengthOverread keeps fuzz runs green on NEW bugs rather than
+// re-crashing on a known, audit-gated offender.
 func fuzzDispatchAll(s *MapSession) {
 	for _, entries := range receiveDispatch {
 		for _, e := range entries {

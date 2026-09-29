@@ -14,7 +14,7 @@ with the codegen drift CI job.
 
     make testserver-up     # builds the image (~5-15 min first time), starts db + rathena
     make testserver-logs   # tail server logs
-    make testserver-down   # stop and remove (add V=1 to also drop the db volume)
+    make testserver-down-v  # stop and also drop the db volume
 
 Server: login `127.0.0.1:6900`, char `127.0.0.1:6121`, map `127.0.0.1:5121`.
 Test account: `testbot` / `testpass`, character `TestBot` in slot 0 (Prontera).
@@ -54,8 +54,7 @@ Turning a capture into a regression test:
 
 then add a case to `fsm_replay_test.go` (see `runReplayTest`) and register
 assertion handlers. Missing S→C lengths discovered this way should be fixed in
-codegen/mappings — not re-patched in `registerMapBurstLengths`, which exists
-only for lengths the generated tables lack today.
+codegen/mappings so the generated tables carry them.
 
 ## Files
 

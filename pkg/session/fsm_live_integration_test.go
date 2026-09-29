@@ -1,7 +1,5 @@
 //go:build integration
 
-// In-package (not _test) so it can inject missing lengths via the unexported
-// setLength — the API-unexport pass (0055) intentionally keeps it internal.
 // Contains the live server integration test for ConnectionFSM.
 // Run with: go test -tags integration -timeout 60s -v ./pkg/session/ -run TestLiveServer
 package session
