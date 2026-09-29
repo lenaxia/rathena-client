@@ -1,0 +1,46 @@
+name: Codegen drift
+
+# Regenerates pkg/ and semantics from the pinned rAthena ref and fails if the
+# committed generated code differs. This is the single-source gate: encode/
+# decode/events/session must always be in sync with internal/codegen output.
+#
+# The pin lives in hack/testserver/RATHENA_REF (shared with the docker
+# harness). Bumping the pin without regenerating fails here.
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+jobs:
+  codegen-drift:
+    name: Regenerate and diff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install C preprocessor toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc g++
+
+      - name: Clone pinned rAthena
+        run: |
+          REF=$(cat hack/testserver/RATHENA_REF)
+          git clone --no-checkout https://github.com/rathena/rathena.git ../rathena
+          git -C ../rathena checkout "$REF"
+
+      - name: Regenerate
+        run: go run ./internal/codegen/main.go --rathena ../rathena --out .
+
+      - name: Fail on drift
+        run: |
+          if ! git diff --exit-code -- pkg semantics; then
+            echo "FAIL: committed generated code differs from codegen output at the pinned rAthena ref."
+            echo "Regenerate locally (make codegen-check) and commit the result."
+            exit 1
+          fi

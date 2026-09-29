@@ -1,0 +1,13 @@
+# Overlay for capture mode: rAthena's published ports shift to the 3xxxx range
+# so pktmirror can listen on the addresses rAthena advertises (127.0.0.1:6900/
+# 6121/5121) and forward to the shifted ports.
+#
+#   docker compose -f docker-compose.yml -f compose.pktmirror.yml up -d
+#   go run ./cmd/pktmirror -trio -packetver 20200401 -label mycapture
+#
+services:
+  rathena:
+    ports: !override
+      - "36900:6900"
+      - "36121:6121"
+      - "35121:5121"

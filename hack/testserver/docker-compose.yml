@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MARIADB_DATABASE: ragnarok
+      MARIADB_USER: ragnarok
+      MARIADB_PASSWORD: ragnarok
+      MARIADB_ROOT_PASSWORD: ragnarok-root
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 3s
+      retries: 60
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  rathena:
+    build:
+      context: .
+      dockerfile: Dockerfile.rathena
+      args:
+        RATHENA_REF: ${RATHENA_REF:-e985006171d2eb320ee512a653f4c83aea3d81b6}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "6900:6900"  # login (advertised as-is to clients)
+      - "6121:6121"  # char  (advertised as 127.0.0.1:6121 via char_ip)
+      - "5121:5121"  # map   (advertised as 127.0.0.1:5121 via map_ip)
+
+volumes:
+  dbdata:

@@ -1,0 +1,39 @@
+# Builds rAthena at a pinned ref with PACKETVER=20200401, matching the
+# library's replay fixtures and the live integration test defaults.
+#
+# rAthena is GPL-3.0. It is used here strictly as an external test dependency
+# (built and run in a container); no rAthena code is linked into or distributed
+# with this Apache-2.0 repository.
+#
+# The ref is pinned in ./RATHENA_REF so the Docker build and the codegen drift
+# CI job stay in lockstep.
+FROM debian:bookworm-slim AS build
+
+ARG RATHENA_REF
+RUN test -n "$RATHENA_REF"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential git ca-certificates libmariadb-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone --no-checkout https://github.com/rathena/rathena.git /src/rathena
+WORKDIR /src/rathena
+RUN git checkout "$RATHENA_REF"
+
+RUN ./configure --enable-packetver=20200401
+RUN make -j"$(nproc)" server
+
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libmariadb3 default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /src/rathena /opt/rathena
+COPY conf/import/ /opt/rathena/conf/import/
+COPY seed/ /seed/
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+WORKDIR /opt/rathena
+ENTRYPOINT ["/entrypoint.sh"]

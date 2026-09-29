@@ -1,0 +1,49 @@
+name: Fuzz
+
+# Seed-corpus smoke runs implicitly in the normal Test job (fuzz targets
+# execute their seeds under plain `go test`). This workflow runs live fuzzing:
+# nothing on PRs, nightly bursts with corpus caching so discoveries compound.
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  fuzz:
+    name: Nightly fuzz
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Restore fuzz corpus
+        uses: actions/cache@v4
+        with:
+          path: |
+            pkg/session/testdata/fuzz
+            pkg/packing/testdata/fuzz
+          key: fuzz-corpus-${{ github.run_id }}
+          restore-keys: fuzz-corpus-
+
+      - name: Fuzz session framing (map, full dispatch)
+        run: go test ./pkg/session/ -run '^$' -fuzz FuzzFeedMapSessionWithDispatch -fuzztime 5m
+
+      - name: Fuzz session framing (login)
+        run: go test ./pkg/session/ -run '^$' -fuzz FuzzFeedLoginSession -fuzztime 2m
+
+      - name: Fuzz session framing (char)
+        run: go test ./pkg/session/ -run '^$' -fuzz FuzzFeedCharSession -fuzztime 2m
+
+      - name: Fuzz packing round trips
+        run: |
+          go test ./pkg/packing/ -run '^$' -fuzz FuzzPosDirRoundTrip -fuzztime 1m
+          go test ./pkg/packing/ -run '^$' -fuzz FuzzMoveDataRoundTrip -fuzztime 1m
+
+      # A crash found here: the failing input lands in testdata/fuzz/<target>/.
+      # Quarantine it under testdata/fuzz-known/ (see that directory's README),
+      # document the bug under docs/BACKLOG/, and add the ID to
+      # knownLengthOverread only if it is a decoder length over-read.

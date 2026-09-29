@@ -1,0 +1,59 @@
+name: Integration
+
+# Live rAthena integration test against the docker harness
+# (hack/testserver). The image build takes ~5-15 minutes the first time;
+# docker layer caching softens repeats. Manual + weekly — PRs rely on the
+# fixture replay tests, which run in the normal Test job.
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+jobs:
+  live-server:
+    name: Live rAthena (docker)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: hack/testserver
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build and start harness
+        run: docker compose up -d --build
+
+      - name: Wait for login server
+        run: |
+          for i in $(seq 1 60); do
+            if (echo > /dev/tcp/127.0.0.1/6900) 2>/dev/null; then
+              echo "login server up after ${i} tries"; exit 0
+            fi
+            sleep 5
+          done
+          docker compose logs rathena
+          echo "FATAL: login server never came up" >&2
+          exit 1
+
+      - name: Run live integration test
+        working-directory: .
+        env:
+          RATHENA_ADDR: 127.0.0.1:6900
+          RATHENA_PACKETVER: "20200401"
+          RATHENA_USER: testbot
+          RATHENA_PASS: testpass
+          RATHENA_CHARSLOT: "0"
+        run: go test -tags integration -timeout 120s ./pkg/session/ -run TestLiveServer -v
+
+      - name: Dump server logs
+        if: always()
+        run: docker compose logs rathena
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
