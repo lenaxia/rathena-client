@@ -8,10 +8,16 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyHpToGroupm_0x0106(data []byte, packetver uint32) events.ZcNotifyHpToGroupm {
 	var e events.ZcNotifyHpToGroupm
 	if packetver >= 20100119 {
+		if len(data) < 14 {
+			return e
+		}
 		e.AID = leU32(data, 2)    // rAthena: AID (offset 2, size 4)
 		e.Hp = leI16(data, 6)     // rAthena: hp (offset 6, size 4)
 		e.Maxhp = leI16(data, 10) // rAthena: maxhp (offset 10, size 4)
 	} else {
+		if len(data) < 10 {
+			return e
+		}
 		e.AID = leU32(data, 2)   // rAthena: AID (offset 2, size 4)
 		e.Hp = leI16(data, 6)    // rAthena: hp (offset 6, size 2)
 		e.Maxhp = leI16(data, 8) // rAthena: maxhp (offset 8, size 2)

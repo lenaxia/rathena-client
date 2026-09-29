@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorStatusEffectExtended_0x043F(data []byte, packetver uint32) events.ActorStatusEffectExtended {
 	var e events.ActorStatusEffectExtended
 	_ = packetver
+	if len(data) < 25 {
+		return e
+	}
 	e.Index = leI16(data, 2) // rAthena: index (offset 2, size 2)
 	e.AID = leU32(data, 4)   // rAthena: AID (offset 4, size 4)
 	e.State = data[8]        // rAthena: state (offset 8, size 1)

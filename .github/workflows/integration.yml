@@ -1,0 +1,78 @@
+name: Integration
+
+# Live rAthena integration test against the docker harness
+# (hack/testserver). The image build takes ~5-15 minutes the first time;
+# docker layer caching softens repeats. Manual + weekly — PRs rely on the
+# fixture replay tests, which run in the normal Test job.
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - hack/testserver/**
+      - .github/workflows/integration.yml
+      - pkg/session/fsm_live_integration_test.go
+
+jobs:
+  live-server:
+    name: Live rAthena (docker)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: hack/testserver
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build and start harness
+        run: docker compose up -d --build
+
+      - name: Wait for server trio readiness
+        run: |
+          set -euo pipefail
+          failed=0
+          for port in 6900 6121 5121; do
+            up=0
+            for i in $(seq 1 60); do
+              if (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null; then
+                echo "port $port up after ${i} tries"; up=1; break
+              fi
+              sleep 5
+            done
+            if [ "$up" -ne 1 ]; then
+              echo "FATAL: port $port never came up" >&2
+              failed=1
+            fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            docker compose logs rathena
+            exit 1
+          fi
+          # char↔login and map↔char inter-registration retries on ~10s
+          # intervals; give it one full cycle before the client connects or
+          # CH_ENTER stalls on an unregistered session.
+          sleep 15
+
+      - name: Run live integration test
+        working-directory: .
+        env:
+          RATHENA_ADDR: 127.0.0.1:6900
+          RATHENA_PACKETVER: "20200401"
+          RATHENA_USER: testbot
+          RATHENA_PASS: testpass
+          RATHENA_CHARSLOT: "0"
+        run: go test -tags integration -timeout 120s ./pkg/session/ -run TestLiveServer -v
+
+      - name: Dump server logs
+        if: always()
+        run: docker compose logs rathena
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDeleteItemFromCart_0x0125(data []byte, packetver uint32) events.ZcDeleteItemFromCart {
 	var e events.ZcDeleteItemFromCart
 	_ = packetver
+	if len(data) < 8 {
+		return e
+	}
 	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
 	e.Amount = leI32(data, 4) // rAthena: amount (offset 4, size 4)
 	return e

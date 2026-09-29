@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcParChangeUser_0x01AB(data []byte, packetver uint32) events.ZcParChangeUser {
 	var e events.ZcParChangeUser
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.Gid = leU32(data, 2)   // rAthena: gid (offset 2, size 4)
 	e.Type = leI16(data, 6)  // rAthena: type (offset 6, size 2)
 	e.Value = leU32(data, 8) // rAthena: value (offset 8, size 4)

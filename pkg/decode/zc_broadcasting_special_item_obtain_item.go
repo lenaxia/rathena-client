@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) events.ZcBroadcastingSpecialItemObtainItem {
 	var e events.ZcBroadcastingSpecialItemObtainItem
 	if packetver >= 20220518 {
+		if len(data) < 44 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)      // rAthena: PacketLength (offset 2, size 2)
 		e.Type = data[4]                     // rAthena: type (offset 4, size 1)
 		e.ItemID = leU32(data, 5)            // rAthena: ItemID (offset 5, size 4)
@@ -18,6 +21,9 @@ func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) e
 		e.RefineLevel_len = int8(data[39])   // rAthena: refineLevel_len (offset 39, size 1)
 		e.RefineLevel = leU32(data, 40)      // rAthena: refineLevel (offset 40, size 4)
 	} else if packetver >= 20181121 {
+		if len(data) < 39 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)      // rAthena: PacketLength (offset 2, size 2)
 		e.Type = data[4]                     // rAthena: type (offset 4, size 1)
 		e.ItemID = leU32(data, 5)            // rAthena: ItemID (offset 5, size 4)
@@ -26,6 +32,9 @@ func ZcBroadcastingSpecialItemObtainItem_0x07FD(data []byte, packetver uint32) e
 		e.BoxItemID_len = int8(data[34])     // rAthena: boxItemID_len (offset 34, size 1)
 		e.BoxItemID = leU32(data, 35)        // rAthena: BoxItemID (offset 35, size 4)
 	} else {
+		if len(data) < 35 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Type = data[4]                      // rAthena: type (offset 4, size 1)
 		e.ItemID = uint32(leU16(data, 5))     // rAthena: ItemID (offset 5, size 2)

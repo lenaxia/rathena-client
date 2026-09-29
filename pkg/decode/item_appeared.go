@@ -30,8 +30,14 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // lengths_map_overrides.go corrects t[0x009E] = 19 at pv == 20130000.
 func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {
 	var e events.ItemAppeared
+	if len(data) < 6 {
+		return e
+	}
 	e.ITAID = leU32(data, 2) // rAthena: ITAID
 	if packetver >= 20130000 {
+		if len(data) < 19 {
+			return e
+		}
 		// pv == 20130000 only: struct adds type field at offset 6.
 		e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
 		e.Type = leU16(data, 8)         // rAthena: type (added pv >= 20130000)
@@ -42,6 +48,9 @@ func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {
 		e.SubY = data[16]               // rAthena: subY
 		e.Count = leI16(data, 17)       // rAthena: count
 	} else {
+		if len(data) < 17 {
+			return e
+		}
 		e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
 		e.IsIdentified = data[8]        // rAthena: IsIdentified
 		e.XPos = leI16(data, 9)         // rAthena: xPos
@@ -59,6 +68,9 @@ func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {
 func ItemAppeared_0x084B(data []byte, packetver uint32) events.ItemAppeared {
 	var e events.ItemAppeared
 	_ = packetver
+	if len(data) < 19 {
+		return e
+	}
 	e.ITAID = leU32(data, 2)        // rAthena: ITAID
 	e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16 at this pv)
 	e.Type = leU16(data, 8)         // rAthena: type (added pv > 20130000)
@@ -78,8 +90,14 @@ func ItemAppeared_0x084B(data []byte, packetver uint32) events.ItemAppeared {
 // Source: packets_struct.hpp:597-620 at pv=20180418 and pv=20181121.
 func ItemAppeared_0x0ADD(data []byte, packetver uint32) events.ItemAppeared {
 	var e events.ItemAppeared
+	if len(data) < 6 {
+		return e
+	}
 	e.ITAID = leU32(data, 2) // rAthena: ITAID
 	if packetver >= 20181121 {
+		if len(data) < 24 {
+			return e
+		}
 		e.ITID = leU32(data, 6)            // rAthena: ITID (uint32 at pv >= 20181121)
 		e.Type = leU16(data, 10)           // rAthena: type
 		e.IsIdentified = data[12]          // rAthena: IsIdentified
@@ -91,6 +109,9 @@ func ItemAppeared_0x0ADD(data []byte, packetver uint32) events.ItemAppeared {
 		e.Showdropeffect = int8(data[21])  // rAthena: showdropeffect
 		e.Dropeffectmode = leI16(data, 22) // rAthena: dropeffectmode
 	} else {
+		if len(data) < 22 {
+			return e
+		}
 		e.ITID = uint32(leU16(data, 6))    // rAthena: ITID (uint16 at pv < 20181121)
 		e.Type = leU16(data, 8)            // rAthena: type
 		e.IsIdentified = data[10]          // rAthena: IsIdentified

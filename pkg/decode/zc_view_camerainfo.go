@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcViewCamerainfo_0x0A78(data []byte, packetver uint32) events.ZcViewCamerainfo {
 	var e events.ZcViewCamerainfo
 	_ = packetver
+	if len(data) < 15 {
+		return e
+	}
 	e.Action = int8(data[2]) // rAthena: action (offset 2, size 1)
 	e.Range = data[3:7]      // rAthena: range (offset 3, size 4)
 	e.Rotation = data[7:11]  // rAthena: rotation (offset 7, size 4)

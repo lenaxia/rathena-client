@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcEquipmentEffect_0x0A3B(data []byte, packetver uint32) events.ZcEquipmentEffect {
 	var e events.ZcEquipmentEffect
 	_ = packetver
+	if len(data) < 9 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 	e.Aid = leU32(data, 4)          // rAthena: aid (offset 4, size 4)
 	e.Status = int8(data[8])        // rAthena: status (offset 8, size 1)

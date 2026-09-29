@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcTargetSpirits_0x0B68(data []byte, packetver uint32) events.ZcTargetSpirits {
 	var e events.ZcTargetSpirits
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.GID = leU32(data, 2)         // rAthena: GID (offset 2, size 4)
 	e.Unknown_val = leU32(data, 6) // rAthena: unknown_val (offset 6, size 4)
 	e.Amount = leU16(data, 10)     // rAthena: amount (offset 10, size 2)

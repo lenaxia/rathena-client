@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckTakeoffEquipAll_0x0BAE(data []byte, packetver uint32) events.ZcAckTakeoffEquipAll {
 	var e events.ZcAckTakeoffEquipAll
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGuildAgitInfo_0x0B27(data []byte, packetver uint32) events.ZcGuildAgitInfo {
 	var e events.ZcGuildAgitInfo
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 	e.Castle_list = data[4:]        // rAthena: castle_list (offset 4, size 0)
 	return e

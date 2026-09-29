@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAcceptEnter_0x0A18(data []byte, packetver uint32) events.ZcAcceptEnter {
 	var e events.ZcAcceptEnter
 	_ = packetver
+	if len(data) < 14 {
+		return e
+	}
 	e.StartTime = leU32(data, 2)  // rAthena: startTime (offset 2, size 4)
 	e.PosDir = [3]byte(data[6:9]) // rAthena: posDir (offset 6, size 3)
 	e.XSize = data[9]             // rAthena: xSize (offset 9, size 1)
@@ -21,6 +24,9 @@ func ZcAcceptEnter_0x0A18(data []byte, packetver uint32) events.ZcAcceptEnter {
 func ZcAcceptEnter_0x0073(data []byte, packetver uint32) events.ZcAcceptEnter {
 	var e events.ZcAcceptEnter
 	_ = packetver
+	if len(data) < 11 {
+		return e
+	}
 	e.StartTime = leU32(data, 2)  // rAthena: startTime (offset 2, size 4)
 	e.PosDir = [3]byte(data[6:9]) // rAthena: posDir (offset 6, size 3)
 	e.XSize = data[9]             // rAthena: xSize (offset 9, size 1)
@@ -32,6 +38,9 @@ func ZcAcceptEnter_0x0073(data []byte, packetver uint32) events.ZcAcceptEnter {
 func ZcAcceptEnter_0x02EB(data []byte, packetver uint32) events.ZcAcceptEnter {
 	var e events.ZcAcceptEnter
 	_ = packetver
+	if len(data) < 13 {
+		return e
+	}
 	e.StartTime = leU32(data, 2)  // rAthena: startTime (offset 2, size 4)
 	e.PosDir = [3]byte(data[6:9]) // rAthena: posDir (offset 6, size 3)
 	e.XSize = data[9]             // rAthena: xSize (offset 9, size 1)

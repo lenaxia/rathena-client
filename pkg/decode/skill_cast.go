@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillCast_0x07FB(data []byte, packetver uint32) events.SkillCast {
 	var e events.SkillCast
 	_ = packetver
+	if len(data) < 25 {
+		return e
+	}
 	e.SrcId = leU32(data, 2)      // rAthena: srcId (offset 2, size 4)
 	e.DstId = leU32(data, 6)      // rAthena: dstId (offset 6, size 4)
 	e.X = leU16(data, 10)         // rAthena: x (offset 10, size 2)
@@ -23,6 +26,9 @@ func SkillCast_0x07FB(data []byte, packetver uint32) events.SkillCast {
 func SkillCast_0x0B1A(data []byte, packetver uint32) events.SkillCast {
 	var e events.SkillCast
 	_ = packetver
+	if len(data) < 29 {
+		return e
+	}
 	e.SrcId = leU32(data, 2)      // rAthena: srcId (offset 2, size 4)
 	e.DstId = leU32(data, 6)      // rAthena: dstId (offset 6, size 4)
 	e.X = leU16(data, 10)         // rAthena: x (offset 10, size 2)

@@ -8,10 +8,16 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBattlefieldNotifyHp_0x02E0(data []byte, packetver uint32) events.ZcBattlefieldNotifyHp {
 	var e events.ZcBattlefieldNotifyHp
 	if packetver >= 20140312 {
+		if len(data) < 14 {
+			return e
+		}
 		e.AID = leU32(data, 2)    // rAthena: AID (offset 2, size 4)
 		e.Hp = leI16(data, 6)     // rAthena: hp (offset 6, size 4)
 		e.Maxhp = leI16(data, 10) // rAthena: maxhp (offset 10, size 4)
 	} else {
+		if len(data) < 34 {
+			return e
+		}
 		e.AID = leU32(data, 2)              // rAthena: AID (offset 2, size 4)
 		e.Name = nullTermString(data[6:30]) // rAthena: name (offset 6, size 24)
 		e.Hp = leI16(data, 30)              // rAthena: hp (offset 30, size 2)

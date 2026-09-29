@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcShowImage_0x01B3(data []byte, packetver uint32) events.ZcShowImage {
 	var e events.ZcShowImage
 	_ = packetver
+	if len(data) < 67 {
+		return e
+	}
 	e.Image = nullTermString(data[2:66]) // rAthena: image (offset 2, size 64)
 	e.Type = data[66]                    // rAthena: type (offset 66, size 1)
 	return e

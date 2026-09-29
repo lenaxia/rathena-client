@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcUseskillAck_0x013E(data []byte, packetver uint32) events.ZcUseskillAck {
 	var e events.ZcUseskillAck
 	_ = packetver
+	if len(data) < 24 {
+		return e
+	}
 	e.SrcId = leU32(data, 2)      // rAthena: srcId (offset 2, size 4)
 	e.DstId = leU32(data, 6)      // rAthena: dstId (offset 6, size 4)
 	e.X = leU16(data, 10)         // rAthena: x (offset 10, size 2)

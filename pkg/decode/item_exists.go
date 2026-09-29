@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ItemExists_0x009D(data []byte, packetver uint32) events.ItemExists {
 	var e events.ItemExists
 	if packetver >= 20181121 {
+		if len(data) < 19 {
+			return e
+		}
 		e.AID = leU32(data, 2)     // rAthena: AID (offset 2, size 4)
 		e.ItemId = leU32(data, 6)  // rAthena: itemId (offset 6, size 4)
 		e.Identify = data[10]      // rAthena: identify (offset 10, size 1)
@@ -17,6 +20,9 @@ func ItemExists_0x009D(data []byte, packetver uint32) events.ItemExists {
 		e.SubX = data[17]          // rAthena: subX (offset 17, size 1)
 		e.SubY = data[18]          // rAthena: subY (offset 18, size 1)
 	} else {
+		if len(data) < 17 {
+			return e
+		}
 		e.AID = leU32(data, 2)            // rAthena: AID (offset 2, size 4)
 		e.ItemId = uint32(leU16(data, 6)) // rAthena: itemId (offset 6, size 2)
 		e.Identify = data[8]              // rAthena: identify (offset 8, size 1)

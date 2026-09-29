@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcExchangeitemUndo_0x00F1(data []byte, packetver uint32) events.ZcExchangeitemUndo {
 	var e events.ZcExchangeitemUndo
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

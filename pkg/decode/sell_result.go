@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SellResult_0x00CB(data []byte, packetver uint32) events.SellResult {
 	var e events.SellResult
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }

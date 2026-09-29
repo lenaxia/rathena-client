@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcStartCapture_0x019E(data []byte, packetver uint32) events.ZcStartCapture {
 	var e events.ZcStartCapture
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

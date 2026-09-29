@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyCartitemCountinfo_0x0121(data []byte, packetver uint32) events.ZcNotifyCartitemCountinfo {
 	var e events.ZcNotifyCartitemCountinfo
 	_ = packetver
+	if len(data) < 14 {
+		return e
+	}
 	e.CurCount = leI16(data, 2)   // rAthena: curCount (offset 2, size 2)
 	e.MaxCount = leI16(data, 4)   // rAthena: maxCount (offset 4, size 2)
 	e.CurWeight = leI32(data, 6)  // rAthena: curWeight (offset 6, size 4)

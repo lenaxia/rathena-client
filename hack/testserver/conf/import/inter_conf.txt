@@ -1,0 +1,38 @@
+// rathena-client test harness overrides (conf/import/inter_conf.txt).
+// All databases (char/map, login, and log) live in the compose `db` service.
+
+sql.db_hostname: db
+sql.db_port: 3306
+sql.db_username: ragnarok
+sql.db_password: ragnarok
+sql.db_database: ragnarok
+
+login_server_ip: db
+login_server_port: 3306
+login_server_id: ragnarok
+login_server_pw: ragnarok
+login_server_db: ragnarok
+
+ipban_db_ip: db
+ipban_db_port: 3306
+ipban_db_id: ragnarok
+ipban_db_pw: ragnarok
+ipban_db_db: ragnarok
+
+log_db_ip: db
+log_db_port: 3306
+log_db_id: ragnarok
+log_db_pw: ragnarok
+log_db_db: ragnarok
+
+char_server_ip: db
+char_server_port: 3306
+char_server_id: ragnarok
+char_server_pw: ragnarok
+char_server_db: ragnarok
+
+map_server_ip: db
+map_server_port: 3306
+map_server_id: ragnarok
+map_server_pw: ragnarok
+map_server_db: ragnarok

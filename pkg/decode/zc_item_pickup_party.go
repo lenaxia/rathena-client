@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickupParty {
 	var e events.ZcItemPickupParty
 	if packetver >= 20181121 {
+		if len(data) < 32 {
+			return e
+		}
 		e.AID = leU32(data, 2)       // rAthena: AID (offset 2, size 4)
 		e.ItemId = leU32(data, 6)    // rAthena: itemId (offset 6, size 4)
 		e.Identified = data[10]      // rAthena: identified (offset 10, size 1)
@@ -17,6 +20,9 @@ func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickup
 		e.Location = leU16(data, 29) // rAthena: location (offset 29, size 2)
 		e.ItemType = data[31]        // rAthena: itemType (offset 31, size 1)
 	} else {
+		if len(data) < 22 {
+			return e
+		}
 		e.AID = leU32(data, 2)            // rAthena: AID (offset 2, size 4)
 		e.ItemId = uint32(leU16(data, 6)) // rAthena: itemId (offset 6, size 2)
 		e.Identified = data[8]            // rAthena: identified (offset 8, size 1)
@@ -33,6 +39,9 @@ func ZcItemPickupParty_0x02B8(data []byte, packetver uint32) events.ZcItemPickup
 func ZcItemPickupParty_0x0B67(data []byte, packetver uint32) events.ZcItemPickupParty {
 	var e events.ZcItemPickupParty
 	_ = packetver
+	if len(data) < 33 {
+		return e
+	}
 	e.AID = leU32(data, 2)       // rAthena: AID (offset 2, size 4)
 	e.ItemId = leU32(data, 6)    // rAthena: itemId (offset 6, size 4)
 	e.Identified = data[10]      // rAthena: identified (offset 10, size 1)

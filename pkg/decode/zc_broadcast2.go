@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBroadcast2_0x01C3(data []byte, packetver uint32) events.ZcBroadcast2 {
 	var e events.ZcBroadcast2
 	_ = packetver
+	if len(data) < 16 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.FontColor = leU32(data, 4)          // rAthena: fontColor (offset 4, size 4)
 	e.FontType = leI16(data, 8)           // rAthena: fontType (offset 8, size 2)

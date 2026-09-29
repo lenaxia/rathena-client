@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyBindOnEquip_0x02D3(data []byte, packetver uint32) events.ZcNotifyBindOnEquip {
 	var e events.ZcNotifyBindOnEquip
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.Index = leI16(data, 2) // rAthena: index (offset 2, size 2)
 	return e
 }

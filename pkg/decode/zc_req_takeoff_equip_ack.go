@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcReqTakeoffEquipAck_0x00AC(data []byte, packetver uint32) events.ZcReqTakeoffEquipAck {
 	var e events.ZcReqTakeoffEquipAck
 	_ = packetver
+	if len(data) < 7 {
+		return e
+	}
 	e.Index = leU16(data, 2)                // rAthena: index (offset 2, size 2)
 	e.WearLocation = uint32(leU16(data, 4)) // rAthena: wearLocation (offset 4, size 2)
 	e.Flag = data[6:7]                      // rAthena: flag (offset 6, size 1)
@@ -18,6 +21,9 @@ func ZcReqTakeoffEquipAck_0x00AC(data []byte, packetver uint32) events.ZcReqTake
 func ZcReqTakeoffEquipAck_0x08D1(data []byte, packetver uint32) events.ZcReqTakeoffEquipAck {
 	var e events.ZcReqTakeoffEquipAck
 	_ = packetver
+	if len(data) < 7 {
+		return e
+	}
 	e.Index = leU16(data, 2)                // rAthena: index (offset 2, size 2)
 	e.WearLocation = uint32(leU16(data, 4)) // rAthena: wearLocation (offset 4, size 2)
 	e.Flag = data[6:7]                      // rAthena: flag (offset 6, size 1)
@@ -28,6 +34,9 @@ func ZcReqTakeoffEquipAck_0x08D1(data []byte, packetver uint32) events.ZcReqTake
 func ZcReqTakeoffEquipAck_0x099A(data []byte, packetver uint32) events.ZcReqTakeoffEquipAck {
 	var e events.ZcReqTakeoffEquipAck
 	_ = packetver
+	if len(data) < 9 {
+		return e
+	}
 	e.Index = leU16(data, 2)        // rAthena: index (offset 2, size 2)
 	e.WearLocation = leU32(data, 4) // rAthena: wearLocation (offset 4, size 4)
 	e.Flag = data[8:9]              // rAthena: flag (offset 8, size 1)

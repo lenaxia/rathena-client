@@ -8,11 +8,17 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPcPurchaseItemlistFrommc_0x0133(data []byte, packetver uint32) events.ZcPcPurchaseItemlistFrommc {
 	var e events.ZcPcPurchaseItemlistFrommc
 	if packetver >= 20100105 {
+		if len(data) < 12 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 		e.AID = leU32(data, 4)          // rAthena: AID (offset 4, size 4)
 		e.VenderId = leU32(data, 8)     // rAthena: venderId (offset 8, size 4)
 		e.Items = data[12:]             // rAthena: items (offset 12, size 0)
 	} else {
+		if len(data) < 8 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 		e.AID = leU32(data, 4)          // rAthena: AID (offset 4, size 4)
 		e.Items = data[8:]              // rAthena: items (offset 8, size 0)
@@ -24,6 +30,9 @@ func ZcPcPurchaseItemlistFrommc_0x0133(data []byte, packetver uint32) events.ZcP
 func ZcPcPurchaseItemlistFrommc_0x0B3D(data []byte, packetver uint32) events.ZcPcPurchaseItemlistFrommc {
 	var e events.ZcPcPurchaseItemlistFrommc
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 	e.AID = leU32(data, 4)          // rAthena: AID (offset 4, size 4)
 	e.VenderId = leU32(data, 8)     // rAthena: venderId (offset 8, size 4)

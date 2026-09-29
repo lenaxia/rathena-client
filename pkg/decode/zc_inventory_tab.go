@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcInventoryTab_0x0908(data []byte, packetver uint32) events.ZcInventoryTab {
 	var e events.ZcInventoryTab
 	_ = packetver
+	if len(data) < 5 {
+		return e
+	}
 	e.Index = leI16(data, 2) // rAthena: index (offset 2, size 2)
 	e.Favorite = data[4:5]   // rAthena: favorite (offset 4, size 1)
 	return e

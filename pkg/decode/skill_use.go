@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillUse_0x01DE(data []byte, packetver uint32) events.SkillUse {
 	var e events.SkillUse
 	_ = packetver
+	if len(data) < 33 {
+		return e
+	}
 	e.SKID = leU16(data, 2)        // rAthena: SKID (offset 2, size 2)
 	e.AID = leU32(data, 4)         // rAthena: AID (offset 4, size 4)
 	e.TargetID = leU32(data, 8)    // rAthena: targetID (offset 8, size 4)
@@ -25,6 +28,9 @@ func SkillUse_0x01DE(data []byte, packetver uint32) events.SkillUse {
 func SkillUse_0x0114(data []byte, packetver uint32) events.SkillUse {
 	var e events.SkillUse
 	_ = packetver
+	if len(data) < 33 {
+		return e
+	}
 	e.SKID = leU16(data, 2)        // rAthena: SKID (offset 2, size 2)
 	e.AID = leU32(data, 4)         // rAthena: AID (offset 4, size 4)
 	e.TargetID = leU32(data, 8)    // rAthena: targetID (offset 8, size 4)

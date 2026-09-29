@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCloseMacroDetector_0x0A5D(data []byte, packetver uint32) events.ZcCloseMacroDetector {
 	var e events.ZcCloseMacroDetector
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.Status = data[2:6] // rAthena: status (offset 2, size 4)
 	return e
 }

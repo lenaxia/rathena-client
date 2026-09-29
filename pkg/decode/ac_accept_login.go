@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AcAcceptLogin_0x0069(data []byte, packetver uint32) events.AcAcceptLogin {
 	var e events.AcAcceptLogin
 	if packetver >= 20170315 {
+		if len(data) < 64 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)            // rAthena: packetLength (offset 2, size 2)
 		e.Login_id1 = leU32(data, 4)               // rAthena: login_id1 (offset 4, size 4)
 		e.AID = leU32(data, 8)                     // rAthena: AID (offset 8, size 4)
@@ -18,6 +21,9 @@ func AcAcceptLogin_0x0069(data []byte, packetver uint32) events.AcAcceptLogin {
 		e.Token = nullTermString(data[47:64])      // rAthena: token (offset 47, size 17)
 		e.Char_servers = data[64:]                 // rAthena: char_servers (offset 64, size 0)
 	} else {
+		if len(data) < 47 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)            // rAthena: packetLength (offset 2, size 2)
 		e.Login_id1 = leU32(data, 4)               // rAthena: login_id1 (offset 4, size 4)
 		e.AID = leU32(data, 8)                     // rAthena: AID (offset 8, size 4)
@@ -34,6 +40,9 @@ func AcAcceptLogin_0x0069(data []byte, packetver uint32) events.AcAcceptLogin {
 func AcAcceptLogin_0x0AC4(data []byte, packetver uint32) events.AcAcceptLogin {
 	var e events.AcAcceptLogin
 	if packetver >= 20170315 {
+		if len(data) < 64 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)            // rAthena: packetLength (offset 2, size 2)
 		e.Login_id1 = leU32(data, 4)               // rAthena: login_id1 (offset 4, size 4)
 		e.AID = leU32(data, 8)                     // rAthena: AID (offset 8, size 4)
@@ -44,6 +53,9 @@ func AcAcceptLogin_0x0AC4(data []byte, packetver uint32) events.AcAcceptLogin {
 		e.Token = nullTermString(data[47:64])      // rAthena: token (offset 47, size 17)
 		e.Char_servers = data[64:]                 // rAthena: char_servers (offset 64, size 0)
 	} else {
+		if len(data) < 47 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)            // rAthena: packetLength (offset 2, size 2)
 		e.Login_id1 = leU32(data, 4)               // rAthena: login_id1 (offset 4, size 4)
 		e.AID = leU32(data, 8)                     // rAthena: AID (offset 8, size 4)

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGradeEnchantAck_0x0B5D(data []byte, packetver uint32) events.ZcGradeEnchantAck {
 	var e events.ZcGradeEnchantAck
 	_ = packetver
+	if len(data) < 10 {
+		return e
+	}
 	e.Index = leI16(data, 2) // rAthena: index (offset 2, size 2)
 	e.Grade = leI16(data, 4) // rAthena: grade (offset 4, size 2)
 	e.Result = data[6:10]    // rAthena: result (offset 6, size 4)

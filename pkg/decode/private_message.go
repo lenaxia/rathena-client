@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PrivateMessage_0x0097(data []byte, packetver uint32) events.PrivateMessage {
 	var e events.PrivateMessage
 	_ = packetver
+	if len(data) < 32 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Sender = nullTermString(data[4:28]) // rAthena: sender (offset 4, size 24)
 	e.IsAdmin = leI32(data, 28)           // rAthena: isAdmin (offset 28, size 4)
@@ -19,6 +22,9 @@ func PrivateMessage_0x0097(data []byte, packetver uint32) events.PrivateMessage 
 func PrivateMessage_0x09DE(data []byte, packetver uint32) events.PrivateMessage {
 	var e events.PrivateMessage
 	_ = packetver
+	if len(data) < 33 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.SenderGID = leU32(data, 4)          // rAthena: senderGID (offset 4, size 4)
 	e.Sender = nullTermString(data[8:32]) // rAthena: sender (offset 8, size 24)
