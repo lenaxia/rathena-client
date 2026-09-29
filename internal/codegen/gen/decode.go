@@ -466,6 +466,19 @@ func fieldReadExpr(f *preprocess.Field, goType string) (expr string, usesPacking
 	case "string":
 		return fmt.Sprintf("nullTermString(data[%d:])", off), false
 	case "[]byte":
+		// Fields with a known fixed extent: bound the read. This covers named
+		// nested-struct scalars ("struct EQUIPSLOTINFO slot", 16 bytes
+		// post-20181121) and C int-typed members that degrade to []byte.
+		//
+		// Fields tagged preprocess.AnonFlexNote stay open: they belong to an
+		// anonymous inline struct with an unevaluable array count (e.g.
+		// posInfo[MAX_GUILDPOSITION] in PACKET_ZC_POSITION_ID_NAME_INFO),
+		// so their wire extent is variable — bounding them broke
+		// ZC_POSITION_ID_NAME_INFO in the hand-pass that inspired this rule
+		// (worklog 0093's reverted false positive).
+		if f.Size > 0 && f.Note != preprocess.AnonFlexNote {
+			return fmt.Sprintf("data[%d:%d]", off, off+f.Size), false
+		}
 		return fmt.Sprintf("data[%d:]", off), false
 	default:
 		if strings.HasPrefix(goType, "[") {

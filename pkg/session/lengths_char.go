@@ -11,10 +11,11 @@ func populateCharLengths(pv uint32, t *[65536]int16) {
 	t[0x0068] = 46
 	t[0x006B] = -1
 	t[0x006C] = 3
-	t[0x006D] = 114
+	t[0x006D] = 108
 	t[0x006E] = 3
 	t[0x006F] = 2
 	t[0x0070] = 3
+	t[0x0071] = 28
 	t[0x0081] = 3
 	t[0x0187] = 6
 	t[0x020D] = -1
@@ -44,6 +45,12 @@ func populateCharLengths(pv uint32, t *[65536]int16) {
 	if pv >= 20040419 {
 		t[0x0068] = 0
 		t[0x01FB] = 56
+	}
+	if pv >= 20061023 {
+		t[0x006D] = 110
+	}
+	if pv >= 20081217 {
+		t[0x006D] = 114
 	}
 	if pv >= 20100803 {
 		t[0x006D] = 134
@@ -78,6 +85,7 @@ func populateCharLengths(pv uint32, t *[65536]int16) {
 		t[0x0A39] = 36
 	}
 	if pv >= 20170315 {
+		t[0x0071] = 0
 		t[0x0AC5] = 156
 	}
 	if pv >= 20170830 {
