@@ -44,6 +44,18 @@ fi
 echo "[entrypoint] starting rAthena (login:6900 char:6121 map:5121, PACKETVER=20200401)"
 cd /opt/rathena
 ./login-server &
+LOGIN_PID=$!
 ./char-server &
-sleep 2
+sleep 3
+# Fail fast if either background server died (e.g. DB unreachable) instead of
+# limping on with a dead login server and confusing connection resets.
+for pid_name in "$LOGIN_PID:login"; do
+    pid="${pid_name%%:*}"
+    name="${pid_name##*:}"
+    if ! kill -0 "$pid" 2>/dev/null; then
+        echo "[entrypoint] FATAL: $name-server exited during startup" >&2
+        tail -n 40 "log/$name-server.log" >&2 2>/dev/null || true
+        exit 1
+    fi
+done
 exec ./map-server

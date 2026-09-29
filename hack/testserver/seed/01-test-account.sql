@@ -3,7 +3,7 @@
 -- Character TestBot, slot 0, Novice in Prontera.
 
 INSERT INTO `login`
-    (`account_id`, `userid`, `passwd`, `sex`, `email`, `group_id`, `birthdate`)
+    (`account_id`, `userid`, `user_pass`, `sex`, `email`, `group_id`, `birthdate`)
 VALUES
     (2000001, 'testbot', 'testpass', 'M', 'testbot@example.invalid', 99, '1990-01-01');
 
