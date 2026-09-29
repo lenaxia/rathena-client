@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPcPurchaseResultFrommc_0x0135(data []byte, packetver uint32) events.ZcPcPurchaseResultFrommc {
 	var e events.ZcPcPurchaseResultFrommc
 	_ = packetver
+	if len(data) < 7 {
+		return e
+	}
 	e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
 	e.Amount = leU16(data, 4) // rAthena: amount (offset 4, size 2)
 	e.Result = data[6]        // rAthena: result (offset 6, size 1)

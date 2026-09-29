@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSpiritsAttribute_0x08CF(data []byte, packetver uint32) events.ZcSpiritsAttribute {
 	var e events.ZcSpiritsAttribute
 	_ = packetver
+	if len(data) < 10 {
+		return e
+	}
 	e.Aid = leU32(data, 2)         // rAthena: aid (offset 2, size 4)
 	e.SpiritsType = leI16(data, 6) // rAthena: spiritsType (offset 6, size 2)
 	e.Num = leI16(data, 8)         // rAthena: num (offset 8, size 2)

@@ -137,6 +137,11 @@ func generateDecodeFunc(
 
 	if len(applicable) == 0 {
 		// No matching layouts — use the most recent available layout.
+		// NOTE: decoders are runtime-packetver-parameterized by design; golden
+		// tests decode legacy IDs with the layout at the session's packetver.
+		// Length-table/decoder mismatches for legacy IDs are handled by the
+		// per-layout guards emitted below (short frame → zero event, not a
+		// panic), not by era-pinning the layout.
 		for i := len(ranges) - 1; i >= 0; i-- {
 			if ranges[i].Layout != nil && ranges[i].Layout.Available {
 				applicable = append(applicable, ranges[i])
@@ -159,6 +164,7 @@ func generateDecodeFunc(
 
 	if len(applicable) == 1 {
 		sb.WriteString("\t_ = packetver\n")
+		sb.WriteString(fmt.Sprintf("\tif len(data) < %d {\n\t\treturn e\n\t}\n", layoutMinLen(applicable[0].Layout)))
 		body, usesPack := generateFieldReadsFromLayout("\t", applicable[0].Layout, eventFieldTypes)
 		sb.WriteString(body)
 		if usesPack {
@@ -178,6 +184,7 @@ func generateDecodeFunc(
 			} else {
 				sb.WriteString(fmt.Sprintf("\t} else if packetver >= %d {\n", r.MinVer))
 			}
+			sb.WriteString(fmt.Sprintf("\t\tif len(data) < %d {\n\t\t\treturn e\n\t\t}\n", layoutMinLen(r.Layout)))
 			body, usesPack := generateFieldReadsFromLayout("\t\t", r.Layout, eventFieldTypes)
 			sb.WriteString(body)
 			if usesPack {
@@ -189,6 +196,29 @@ func generateDecodeFunc(
 
 	sb.WriteString("\treturn e\n}\n")
 	return sb.String(), usesPacking, nil
+}
+
+// layoutMinLen returns the minimum frame length a decoder generated from this
+// layout requires: the greatest fixed-field extent (offset+size) across all
+// fields, floor of the 2-byte packet ID header. Flex fields (Size == 0)
+// contribute their offset — their data[off:] read needs len >= off.
+//
+// generateDecodeFunc emits `if len(data) < N { return e }` guards from this so
+// truncated or hostile frames decode to a zero event instead of panicking
+// (BUG-03: 45 variable-length decoders trusted the embedded frame length).
+func layoutMinLen(layout *preprocess.StructLayout) int {
+	n := 2
+	for i := range layout.Fields {
+		f := &layout.Fields[i]
+		end := f.Offset
+		if f.Size > 0 {
+			end += f.Size
+		}
+		if end > n {
+			n = end
+		}
+	}
+	return n
 }
 
 // buildActionEventFieldTypes builds the action-scoped canonical field type map.

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorAction_0x008A(data []byte, packetver uint32) events.ActorAction {
 	var e events.ActorAction
 	if packetver >= 20131223 {
+		if len(data) < 34 {
+			return e
+		}
 		e.SrcID = leI32(data, 2)       // rAthena: srcID (offset 2, size 4)
 		e.TargetID = leI32(data, 6)    // rAthena: targetID (offset 6, size 4)
 		e.ServerTick = leI32(data, 10) // rAthena: serverTick (offset 10, size 4)
@@ -19,6 +22,9 @@ func ActorAction_0x008A(data []byte, packetver uint32) events.ActorAction {
 		e.Type = data[29]              // rAthena: type (offset 29, size 1)
 		e.Damage2 = leI32(data, 30)    // rAthena: damage2 (offset 30, size 4)
 	} else if packetver >= 20071113 {
+		if len(data) < 33 {
+			return e
+		}
 		e.SrcID = leI32(data, 2)       // rAthena: srcID (offset 2, size 4)
 		e.TargetID = leI32(data, 6)    // rAthena: targetID (offset 6, size 4)
 		e.ServerTick = leI32(data, 10) // rAthena: serverTick (offset 10, size 4)
@@ -29,6 +35,9 @@ func ActorAction_0x008A(data []byte, packetver uint32) events.ActorAction {
 		e.Type = data[28]              // rAthena: type (offset 28, size 1)
 		e.Damage2 = leI32(data, 29)    // rAthena: damage2 (offset 29, size 4)
 	} else {
+		if len(data) < 29 {
+			return e
+		}
 		e.SrcID = leI32(data, 2)           // rAthena: srcID (offset 2, size 4)
 		e.TargetID = leI32(data, 6)        // rAthena: targetID (offset 6, size 4)
 		e.ServerTick = leI32(data, 10)     // rAthena: serverTick (offset 10, size 4)
@@ -46,6 +55,9 @@ func ActorAction_0x008A(data []byte, packetver uint32) events.ActorAction {
 func ActorAction_0x08C8(data []byte, packetver uint32) events.ActorAction {
 	var e events.ActorAction
 	if packetver >= 20131223 {
+		if len(data) < 34 {
+			return e
+		}
 		e.SrcID = leI32(data, 2)       // rAthena: srcID (offset 2, size 4)
 		e.TargetID = leI32(data, 6)    // rAthena: targetID (offset 6, size 4)
 		e.ServerTick = leI32(data, 10) // rAthena: serverTick (offset 10, size 4)
@@ -57,6 +69,9 @@ func ActorAction_0x08C8(data []byte, packetver uint32) events.ActorAction {
 		e.Type = data[29]              // rAthena: type (offset 29, size 1)
 		e.Damage2 = leI32(data, 30)    // rAthena: damage2 (offset 30, size 4)
 	} else if packetver >= 20071113 {
+		if len(data) < 33 {
+			return e
+		}
 		e.SrcID = leI32(data, 2)       // rAthena: srcID (offset 2, size 4)
 		e.TargetID = leI32(data, 6)    // rAthena: targetID (offset 6, size 4)
 		e.ServerTick = leI32(data, 10) // rAthena: serverTick (offset 10, size 4)
@@ -67,6 +82,9 @@ func ActorAction_0x08C8(data []byte, packetver uint32) events.ActorAction {
 		e.Type = data[28]              // rAthena: type (offset 28, size 1)
 		e.Damage2 = leI32(data, 29)    // rAthena: damage2 (offset 29, size 4)
 	} else {
+		if len(data) < 29 {
+			return e
+		}
 		e.SrcID = leI32(data, 2)           // rAthena: srcID (offset 2, size 4)
 		e.TargetID = leI32(data, 6)        // rAthena: targetID (offset 6, size 4)
 		e.ServerTick = leI32(data, 10)     // rAthena: serverTick (offset 10, size 4)

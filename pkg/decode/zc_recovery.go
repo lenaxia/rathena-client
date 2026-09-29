@@ -8,9 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcRecovery_0x013D(data []byte, packetver uint32) events.ZcRecovery {
 	var e events.ZcRecovery
 	if packetver >= 20141022 {
+		if len(data) < 8 {
+			return e
+		}
 		e.Type = leU16(data, 2)   // rAthena: type (offset 2, size 2)
 		e.Amount = leI32(data, 4) // rAthena: amount (offset 4, size 4)
 	} else {
+		if len(data) < 6 {
+			return e
+		}
 		e.Type = leU16(data, 2)          // rAthena: type (offset 2, size 2)
 		e.Amount = int32(leI16(data, 4)) // rAthena: amount (offset 4, size 2)
 	}

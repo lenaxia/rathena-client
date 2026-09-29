@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcChangestatePet_0x01A4(data []byte, packetver uint32) events.ZcChangestatePet {
 	var e events.ZcChangestatePet
 	_ = packetver
+	if len(data) < 11 {
+		return e
+	}
 	e.Type = int8(data[2]) // rAthena: type (offset 2, size 1)
 	e.GID = data[3:7]      // rAthena: GID (offset 3, size 4)
 	e.Data = data[7:11]    // rAthena: data (offset 7, size 4)

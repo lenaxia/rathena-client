@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyEffect_0x019B(data []byte, packetver uint32) events.ZcNotifyEffect {
 	var e events.ZcNotifyEffect
 	_ = packetver
+	if len(data) < 10 {
+		return e
+	}
 	e.Aid = leU32(data, 2)      // rAthena: aid (offset 2, size 4)
 	e.EffectId = leU32(data, 6) // rAthena: effectId (offset 6, size 4)
 	return e

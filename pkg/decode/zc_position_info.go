@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPositionInfo_0x0160(data []byte, packetver uint32) events.ZcPositionInfo {
 	var e events.ZcPositionInfo
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.PosInfo = data[4:]            // rAthena: posInfo (offset 4, size 0)
 	return e

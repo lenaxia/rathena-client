@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGoldpccafePoint_0x0A15(data []byte, packetver uint32) events.ZcGoldpccafePoint {
 	var e events.ZcGoldpccafePoint
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.IsActive = int8(data[2])    // rAthena: isActive (offset 2, size 1)
 	e.Mode = int8(data[3])        // rAthena: mode (offset 3, size 1)
 	e.Point = leI32(data, 4)      // rAthena: point (offset 4, size 4)

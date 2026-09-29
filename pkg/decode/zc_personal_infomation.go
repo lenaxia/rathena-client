@@ -8,12 +8,18 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPersonalInfomation_0x08CB(data []byte, packetver uint32) events.ZcPersonalInfomation {
 	var e events.ZcPersonalInfomation
 	if packetver >= 20120503 {
+		if len(data) < 16 {
+			return e
+		}
 		e.Length = leI16(data, 2)      // rAthena: length (offset 2, size 2)
 		e.Total_exp = leI32(data, 4)   // rAthena: total_exp (offset 4, size 4)
 		e.Total_death = leI32(data, 8) // rAthena: total_death (offset 8, size 4)
 		e.Total_drop = leI32(data, 12) // rAthena: total_drop (offset 12, size 4)
 		e.Details = data[16:]          // rAthena: details (offset 16, size 0)
 	} else {
+		if len(data) < 10 {
+			return e
+		}
 		e.Length = leI16(data, 2)             // rAthena: length (offset 2, size 2)
 		e.Total_exp = int32(leI16(data, 4))   // rAthena: total_exp (offset 4, size 2)
 		e.Total_death = int32(leI16(data, 6)) // rAthena: total_death (offset 6, size 2)

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGradeEnchantMaterialList_0x0B5A(data []byte, packetver uint32) events.ZcGradeEnchantMaterialList {
 	var e events.ZcGradeEnchantMaterialList
 	_ = packetver
+	if len(data) < 34 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)    // rAthena: PacketLength (offset 2, size 2)
 	e.Index = leI16(data, 4)           // rAthena: index (offset 4, size 2)
 	e.Success_chance = leI32(data, 6)  // rAthena: success_chance (offset 6, size 4)

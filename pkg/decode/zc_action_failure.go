@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcActionFailure_0x013B(data []byte, packetver uint32) events.ZcActionFailure {
 	var e events.ZcActionFailure
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.Type = leU16(data, 2) // rAthena: type (offset 2, size 2)
 	return e
 }

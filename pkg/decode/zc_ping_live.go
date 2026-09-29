@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPingLive_0x0B1D(data []byte, packetver uint32) events.ZcPingLive {
 	var e events.ZcPingLive
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

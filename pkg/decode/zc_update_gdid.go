@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcUpdateGdid_0x016C(data []byte, packetver uint32) events.ZcUpdateGdid {
 	var e events.ZcUpdateGdid
 	if packetver >= 20220216 {
+		if len(data) < 47 {
+			return e
+		}
 		e.GuildId = leU32(data, 2)                // rAthena: guildId (offset 2, size 4)
 		e.EmblemVersion = data[6:10]              // rAthena: emblemVersion (offset 6, size 4)
 		e.Mode = leU32(data, 10)                  // rAthena: mode (offset 10, size 4)
@@ -16,6 +19,9 @@ func ZcUpdateGdid_0x016C(data []byte, packetver uint32) events.ZcUpdateGdid {
 		e.GuildName = nullTermString(data[19:43]) // rAthena: guildName (offset 19, size 24)
 		e.MasterGID = leU32(data, 43)             // rAthena: masterGID (offset 43, size 4)
 	} else {
+		if len(data) < 43 {
+			return e
+		}
 		e.GuildId = leU32(data, 2)                // rAthena: guildId (offset 2, size 4)
 		e.EmblemVersion = data[6:10]              // rAthena: emblemVersion (offset 6, size 4)
 		e.Mode = leU32(data, 10)                  // rAthena: mode (offset 10, size 4)

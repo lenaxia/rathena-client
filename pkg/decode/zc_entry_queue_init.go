@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcEntryQueueInit_0x090E(data []byte, packetver uint32) events.ZcEntryQueueInit {
 	var e events.ZcEntryQueueInit
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

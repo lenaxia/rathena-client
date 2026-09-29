@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcRestartAck_0x00B3(data []byte, packetver uint32) events.ZcRestartAck {
 	var e events.ZcRestartAck
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Type = data[2] // rAthena: type (offset 2, size 1)
 	return e
 }

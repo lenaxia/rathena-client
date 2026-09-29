@@ -8,9 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func WhisperSent_0x0098(data []byte, packetver uint32) events.WhisperSent {
 	var e events.WhisperSent
 	if packetver >= 20131223 {
+		if len(data) < 7 {
+			return e
+		}
 		e.Result = data[2]     // rAthena: result (offset 2, size 1)
 		e.CID = leU32(data, 3) // rAthena: CID (offset 3, size 4)
 	} else {
+		if len(data) < 3 {
+			return e
+		}
 		e.Result = data[2] // rAthena: result (offset 2, size 1)
 	}
 	return e

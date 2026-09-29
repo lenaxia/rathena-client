@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcEquipwinMicroscope_0x02D7(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 43 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)
@@ -26,6 +29,9 @@ func ZcEquipwinMicroscope_0x02D7(data []byte, packetver uint32) events.ZcEquipwi
 func ZcEquipwinMicroscope_0x0859(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 45 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)
@@ -45,6 +51,9 @@ func ZcEquipwinMicroscope_0x0859(data []byte, packetver uint32) events.ZcEquipwi
 func ZcEquipwinMicroscope_0x0906(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 45 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)
@@ -64,6 +73,9 @@ func ZcEquipwinMicroscope_0x0906(data []byte, packetver uint32) events.ZcEquipwi
 func ZcEquipwinMicroscope_0x0997(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 45 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)
@@ -83,6 +95,9 @@ func ZcEquipwinMicroscope_0x0997(data []byte, packetver uint32) events.ZcEquipwi
 func ZcEquipwinMicroscope_0x0A2D(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 45 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)
@@ -102,6 +117,9 @@ func ZcEquipwinMicroscope_0x0A2D(data []byte, packetver uint32) events.ZcEquipwi
 func ZcEquipwinMicroscope_0x0B03(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 47 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)
@@ -122,6 +140,9 @@ func ZcEquipwinMicroscope_0x0B03(data []byte, packetver uint32) events.ZcEquipwi
 func ZcEquipwinMicroscope_0x0B37(data []byte, packetver uint32) events.ZcEquipwinMicroscope {
 	var e events.ZcEquipwinMicroscope
 	_ = packetver
+	if len(data) < 47 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)              // rAthena: PacketLength (offset 2, size 2)
 	e.CharacterName = nullTermString(data[4:28]) // rAthena: characterName (offset 4, size 24)
 	e.Job = leI16(data, 28)                      // rAthena: job (offset 28, size 2)

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcStatusChangeAck_0x00BC(data []byte, packetver uint32) events.ZcStatusChangeAck {
 	var e events.ZcStatusChangeAck
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.Sp = leU16(data, 2) // rAthena: sp (offset 2, size 2)
 	e.Ok = data[4]        // rAthena: ok (offset 4, size 1)
 	e.Value = data[5]     // rAthena: value (offset 5, size 1)

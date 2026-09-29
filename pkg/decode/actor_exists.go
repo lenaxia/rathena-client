@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorExists_0x0078(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 108 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -51,6 +54,9 @@ func ActorExists_0x0078(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x01D8(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 56 {
+		return e
+	}
 	e.GID = leU32(data, 2)                 // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)               // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)           // rAthena: bodyState (offset 8, size 2)
@@ -83,6 +89,9 @@ func ActorExists_0x01D8(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	if packetver >= 20181121 {
+		if len(data) < 108 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -120,6 +129,9 @@ func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 		e.Body = leU16(data, 82)              // rAthena: body (offset 82, size 2)
 		e.Name = nullTermString(data[84:108]) // rAthena: name (offset 84, size 24)
 	} else {
+		if len(data) < 104 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -163,6 +175,9 @@ func ActorExists_0x09FF(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x022A(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 56 {
+		return e
+	}
 	e.GID = leU32(data, 2)                 // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)               // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)           // rAthena: bodyState (offset 8, size 2)
@@ -195,6 +210,9 @@ func ActorExists_0x022A(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x02EE(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 60 {
+		return e
+	}
 	e.GID = leU32(data, 2)          // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)        // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)    // rAthena: bodyState (offset 8, size 2)
@@ -228,6 +246,9 @@ func ActorExists_0x02EE(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x09DD(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 102 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -269,6 +290,9 @@ func ActorExists_0x09DD(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x07F9(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 63 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]          // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)          // rAthena: GID (offset 5, size 4)
@@ -304,6 +328,9 @@ func ActorExists_0x07F9(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x0857(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 65 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]          // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)          // rAthena: GID (offset 5, size 4)
@@ -340,6 +367,9 @@ func ActorExists_0x0857(data []byte, packetver uint32) events.ActorExists {
 func ActorExists_0x0915(data []byte, packetver uint32) events.ActorExists {
 	var e events.ActorExists
 	_ = packetver
+	if len(data) < 74 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]          // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)          // rAthena: GID (offset 5, size 4)

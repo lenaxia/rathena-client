@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillDelete_0x0441(data []byte, packetver uint32) events.SkillDelete {
 	var e events.SkillDelete
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.SkillID = leU16(data, 2) // rAthena: skillID (offset 2, size 2)
 	return e
 }

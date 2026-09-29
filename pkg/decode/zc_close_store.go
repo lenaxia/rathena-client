@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCloseStore_0x00F8(data []byte, packetver uint32) events.ZcCloseStore {
 	var e events.ZcCloseStore
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

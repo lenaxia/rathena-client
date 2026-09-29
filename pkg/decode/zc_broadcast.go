@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBroadcast_0x009A(data []byte, packetver uint32) events.ZcBroadcast {
 	var e events.ZcBroadcast
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)      // rAthena: PacketLength (offset 2, size 2)
 	e.Message = nullTermString(data[4:]) // rAthena: message (offset 4, size 0)
 	return e

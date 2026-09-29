@@ -1,4 +1,4 @@
-# BUG-03: variable-length decoders trust embedded frame length (45 packet IDs)
+# BUG-03 — RESOLVED: variable-length decoders trust embedded frame length (45 packet IDs)
 
 Found 2026-09-29 by `FuzzFeedMapSessionWithDispatch` (corpus
 `testdata/fuzz-known/061fce683bbdf652`), enumerated by the variable-length
@@ -50,3 +50,21 @@ Option 1 keeps the session hot path untouched and is localized to the emitter.
 HIGH relative to BUG-02: reachable from any network peer. A malicious or
 misbehaving server (or a MITM'd stream after desync) crashes the bot process.
 Not exploitable beyond DoS (reads are in-buffer).
+
+---
+## Resolution (2026-09-29, PR #33)
+
+Fixed in the codegen emitter + hand-written decoders; audit now reports **0
+over-reads** and `knownLengthOverread` is empty.
+
+- BUG-03 fix: generateDecodeFunc no longer falls back to the most recent
+  layout for legacy packetver ranges — it selects the layout in force at the
+  range's end (era-correct field set).
+- Guards: every generated decode branch emits `if len(data) < N { return e }`
+  where N is the layout's minimum extent; hand-written decoders
+  (inventory lists, 0x006B/0x009E/0x011F) carry equivalent entry guards, and
+  their count loops were already length-derived.
+- Quarantined corpus in testdata/fuzz-known/ now passes; re-verify any time:
+
+      cp pkg/session/testdata/fuzz-known/* pkg/session/testdata/fuzz/FuzzFeedMapSessionWithDispatch/
+      go test ./pkg/session -run 'FuzzFeedMapSessionWithDispatch/'

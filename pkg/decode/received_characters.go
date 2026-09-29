@@ -9,6 +9,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // ReceivedCharacters_0x006B decodes a 0x006B packet (struct PACKET_HC_ACCEPT_ENTER).
 func ReceivedCharacters_0x006B(data []byte, packetver uint32) events.ReceivedCharacters {
 	var e events.ReceivedCharacters
+	if len(data) < 27 {
+		return e
+	}
 	if packetver >= 20100413 {
 		e.PacketLength = leI16(data, 2)                              // rAthena: packetLength (offset 2, size 2)
 		e.Total = data[4]                                            // rAthena: total (offset 4, size 1)

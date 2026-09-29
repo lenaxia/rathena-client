@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func DealRequest_0x01F5(data []byte, packetver uint32) events.DealRequest {
 	var e events.DealRequest
 	_ = packetver
+	if len(data) < 9 {
+		return e
+	}
 	e.Result = data[2]          // rAthena: result (offset 2, size 1)
 	e.TargetId = leU32(data, 3) // rAthena: targetId (offset 3, size 4)
 	e.TargetLv = leU16(data, 7) // rAthena: targetLv (offset 7, size 2)
@@ -18,6 +21,9 @@ func DealRequest_0x01F5(data []byte, packetver uint32) events.DealRequest {
 func DealRequest_0x00E7(data []byte, packetver uint32) events.DealRequest {
 	var e events.DealRequest
 	_ = packetver
+	if len(data) < 9 {
+		return e
+	}
 	e.Result = data[2]          // rAthena: result (offset 2, size 1)
 	e.TargetId = leU32(data, 3) // rAthena: targetId (offset 3, size 4)
 	e.TargetLv = leU16(data, 7) // rAthena: targetLv (offset 7, size 2)
@@ -28,6 +34,9 @@ func DealRequest_0x00E7(data []byte, packetver uint32) events.DealRequest {
 func DealRequest_0x01F4(data []byte, packetver uint32) events.DealRequest {
 	var e events.DealRequest
 	_ = packetver
+	if len(data) < 32 {
+		return e
+	}
 	e.RequesterName = nullTermString(data[2:26]) // rAthena: requesterName (offset 2, size 24)
 	e.TargetId = leU32(data, 26)                 // rAthena: targetId (offset 26, size 4)
 	e.TargetLv = leU16(data, 30)                 // rAthena: targetLv (offset 30, size 2)

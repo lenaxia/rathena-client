@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcRoleChange_0x00E1(data []byte, packetver uint32) events.ZcRoleChange {
 	var e events.ZcRoleChange
 	_ = packetver
+	if len(data) < 30 {
+		return e
+	}
 	e.Flag = leI32(data, 2)             // rAthena: flag (offset 2, size 4)
 	e.Name = nullTermString(data[6:30]) // rAthena: name (offset 6, size 24)
 	return e

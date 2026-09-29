@@ -164,6 +164,9 @@ func decodeEquipItems(body []byte, pv uint32) []events.EquipItemEntry {
 // Active: pv < 20071002.
 func InventoryItemsEquip_0x00A4(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeEquipItems(data[4:], pv)
 	return e
@@ -173,6 +176,9 @@ func InventoryItemsEquip_0x00A4(data []byte, pv uint32) events.InventoryItemsEqu
 // Active: pv >= 20071002, < 20080102.
 func InventoryItemsEquip_0x0295(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeEquipItems(data[4:], pv)
 	return e
@@ -182,6 +188,9 @@ func InventoryItemsEquip_0x0295(data []byte, pv uint32) events.InventoryItemsEqu
 // Active: pv >= 20080102, < 20120925.
 func InventoryItemsEquip_0x02D0(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeEquipItems(data[4:], pv)
 	return e
@@ -191,6 +200,9 @@ func InventoryItemsEquip_0x02D0(data []byte, pv uint32) events.InventoryItemsEqu
 // Active: pv >= 20120925, < 20150226.
 func InventoryItemsEquip_0x0992(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeEquipItems(data[4:], pv)
 	return e
@@ -200,6 +212,9 @@ func InventoryItemsEquip_0x0992(data []byte, pv uint32) events.InventoryItemsEqu
 // Active: pv >= 20150226, < 20181002 (MAIN).
 func InventoryItemsEquip_0x0A0D(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeEquipItems(data[4:], pv)
 	return e
@@ -209,6 +224,9 @@ func InventoryItemsEquip_0x0A0D(data []byte, pv uint32) events.InventoryItemsEqu
 // Active: pv >= 20181002 (MAIN), < 20200916. Adds invType at offset 4.
 func InventoryItemsEquip_0x0B0A(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 5 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.InvType = data[4]             // rAthena: invType
 	e.Items = decodeEquipItems(data[5:], pv)
@@ -219,6 +237,9 @@ func InventoryItemsEquip_0x0B0A(data []byte, pv uint32) events.InventoryItemsEqu
 // Active: pv >= 20200916 (MAIN). Adds invType at offset 4.
 func InventoryItemsEquip_0x0B39(data []byte, pv uint32) events.InventoryItemsEquip {
 	var e events.InventoryItemsEquip
+	if len(data) < 5 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.InvType = data[4]             // rAthena: invType
 	e.Items = decodeEquipItems(data[5:], pv)

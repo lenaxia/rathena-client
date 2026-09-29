@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyGroundskill_0x0117(data []byte, packetver uint32) events.ZcNotifyGroundskill {
 	var e events.ZcNotifyGroundskill
 	_ = packetver
+	if len(data) < 18 {
+		return e
+	}
 	e.SKID = leU16(data, 2)       // rAthena: SKID (offset 2, size 2)
 	e.AID = leU32(data, 4)        // rAthena: AID (offset 4, size 4)
 	e.Level = leI16(data, 8)      // rAthena: level (offset 8, size 2)

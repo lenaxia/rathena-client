@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNpcBarterMarketIteminfo_0x0B0E(data []byte, packetver uint32) events.ZcNpcBarterMarketIteminfo {
 	var e events.ZcNpcBarterMarketIteminfo
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 	e.List = data[4:]               // rAthena: list (offset 4, size 0)
 	return e

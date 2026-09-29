@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcInventoryEnd_0x0B0B(data []byte, packetver uint32) events.ZcInventoryEnd {
 	var e events.ZcInventoryEnd
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.InvType = data[2] // rAthena: invType (offset 2, size 1)
 	e.Flag = data[3]    // rAthena: flag (offset 3, size 1)
 	return e

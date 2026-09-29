@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcApplyMacroDetector_0x0A58(data []byte, packetver uint32) events.ZcApplyMacroDetector {
 	var e events.ZcApplyMacroDetector
 	_ = packetver
+	if len(data) < 8 {
+		return e
+	}
 	e.ImageSize = leU16(data, 2)             // rAthena: imageSize (offset 2, size 2)
 	e.CaptchaKey = nullTermString(data[4:8]) // rAthena: captchaKey (offset 4, size 4)
 	return e

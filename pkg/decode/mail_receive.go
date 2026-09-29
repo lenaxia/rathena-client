@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func MailReceive_0x0274(data []byte, packetver uint32) events.MailReceive {
 	var e events.MailReceive
 	_ = packetver
+	if len(data) < 8 {
+		return e
+	}
 	e.MailId = leU32(data, 2) // rAthena: mailId (offset 2, size 4)
 	e.Fail = leU16(data, 6)   // rAthena: fail (offset 6, size 2)
 	return e

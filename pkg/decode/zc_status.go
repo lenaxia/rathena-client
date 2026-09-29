@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcStatus_0x00BD(data []byte, packetver uint32) events.ZcStatus {
 	var e events.ZcStatus
 	_ = packetver
+	if len(data) < 44 {
+		return e
+	}
 	e.Point = leU16(data, 2)                  // rAthena: point (offset 2, size 2)
 	e.Str = data[4]                           // rAthena: str (offset 4, size 1)
 	e.StandardStr = data[5]                   // rAthena: standardStr (offset 5, size 1)

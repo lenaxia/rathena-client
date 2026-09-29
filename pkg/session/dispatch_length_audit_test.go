@@ -15,11 +15,10 @@
 // length 53, but ActorConnected_0x01D9 reads through offset 55; 0x0079 reads
 // through offset 107 against length 53.
 //
-// Offending IDs discovered so far are frozen in knownLengthOverread below so
-// the suite stays green while the codegen fix (evaluate struct guards at the
-// mapping's packetver_range, not the session packetver) lands. A NEW offender
-// fails this test — the list must shrink, never grow. When the codegen fix
-// lands, empty the list and delete the skip.
+// The list is EMPTY: every generated decode branch emits a length guard
+// (see gen/decode.go layoutMinLen) and hand-written decoders carry entry
+// guards, so a short frame decodes to a zero event instead of panicking.
+// A NEW offender fails this test — triage it, fix it, keep the list empty.
 //
 // Runtime risk note: all known offenders are legacy IDs that rAthena does not
 // send at modern packetvers, which is why live captures never tripped them.
@@ -35,66 +34,12 @@ import (
 // knownLengthOverread lists receiveDispatch packet IDs whose generated decoder
 // reads past the length-table frame for the ID. Each entry keeps CI green
 // while the fix is pending; the goal is for this map to be empty.
-var knownLengthOverread = map[uint16]string{
-	0x0069: "variable: decoder reads past length-table frame",
-	0x006A: "fixed: decoder reads past length-table frame",
-	0x006B: "variable: decoder reads past length-table frame",
-	0x0079: "fixed: decoder reads past length-table frame",
-	0x007B: "fixed: decoder reads past length-table frame",
-	0x008D: "variable: decoder reads past length-table frame",
-	0x009E: "fixed: decoder reads past length-table frame",
-	0x00B4: "variable: decoder reads past length-table frame",
-	0x00B7: "variable: decoder reads past length-table frame",
-	0x0109: "variable: decoder reads past length-table frame",
-	0x0114: "fixed: decoder reads past length-table frame",
-	0x0119: "fixed: decoder reads past length-table frame",
-	0x011F: "fixed: decoder reads past length-table frame",
-	0x0136: "variable: decoder reads past length-table frame",
-	0x0152: "variable: decoder reads past length-table frame",
-	0x0162: "variable: decoder reads past length-table frame",
-	0x0166: "variable: decoder reads past length-table frame",
-	0x01C3: "variable: decoder reads past length-table frame",
-	0x01D8: "fixed: decoder reads past length-table frame",
-	0x01D9: "fixed: decoder reads past length-table frame",
-	0x01DA: "fixed: decoder reads past length-table frame",
-	0x022E: "fixed: decoder reads past length-table frame",
-	0x025A: "variable: decoder reads past length-table frame",
-	0x0284: "fixed: decoder reads past length-table frame",
-	0x02B9: "fixed: decoder reads past length-table frame",
-	0x0442: "variable: decoder reads past length-table frame",
-	0x07F7: "variable: decoder reads past length-table frame",
-	0x07F8: "variable: decoder reads past length-table frame",
-	0x07F9: "variable: decoder reads past length-table frame",
-	0x0836: "variable: decoder reads past length-table frame",
-	0x0856: "variable: decoder reads past length-table frame",
-	0x0857: "variable: decoder reads past length-table frame",
-	0x0858: "variable: decoder reads past length-table frame",
-	0x08C0: "variable: decoder reads past length-table frame",
-	0x090F: "variable: decoder reads past length-table frame",
-	0x0914: "variable: decoder reads past length-table frame",
-	0x0915: "variable: decoder reads past length-table frame",
-	0x09D7: "variable: decoder reads past length-table frame",
-	0x09DA: "variable: decoder reads past length-table frame",
-	0x09DB: "variable: decoder reads past length-table frame",
-	0x09DC: "variable: decoder reads past length-table frame",
-	0x09DD: "variable: decoder reads past length-table frame",
-	0x09DE: "variable: decoder reads past length-table frame",
-	0x09EB: "variable: decoder reads past length-table frame",
-	0x09FD: "variable: decoder reads past length-table frame",
-	0x09FE: "variable: decoder reads past length-table frame",
-	0x09FF: "variable: decoder reads past length-table frame",
-	0x0A3B: "variable: decoder reads past length-table frame",
-	0x0A59: "variable: decoder reads past length-table frame",
-	0x0A6B: "variable: decoder reads past length-table frame",
-	0x0AA2: "variable: decoder reads past length-table frame",
-	0x0AC4: "variable: decoder reads past length-table frame",
-	0x0ADB: "variable: decoder reads past length-table frame",
-	0x0B03: "variable: decoder reads past length-table frame",
-	0x0B08: "variable: decoder reads past length-table frame",
-	0x0B09: "variable: decoder reads past length-table frame",
-	0x0B0A: "variable: decoder reads past length-table frame",
-	0x0B8D: "variable: decoder reads past length-table frame",
-}
+// knownLengthOverread lists receiveDispatch packet IDs whose decoder still
+// reads past the length-table frame. EMPTY since the BUG-02/BUG-03 fixes:
+// generated decoders emit per-layout length guards and evaluate legacy
+// variants at their era layout; hand-written decoders carry entry guards.
+// A NEW entry here fails CI — triage, fix, and empty the list again.
+var knownLengthOverread = map[uint16]string{}
 
 // auditResult is one over-read finding: packet ID and its semantic action.
 type auditResult struct {

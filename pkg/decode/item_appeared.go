@@ -32,6 +32,9 @@ func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {
 	var e events.ItemAppeared
 	e.ITAID = leU32(data, 2) // rAthena: ITAID
 	if packetver >= 20130000 {
+		if len(data) < 19 {
+			return e
+		}
 		// pv == 20130000 only: struct adds type field at offset 6.
 		e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
 		e.Type = leU16(data, 8)         // rAthena: type (added pv >= 20130000)
@@ -42,6 +45,9 @@ func ItemAppeared_0x009E(data []byte, packetver uint32) events.ItemAppeared {
 		e.SubY = data[16]               // rAthena: subY
 		e.Count = leI16(data, 17)       // rAthena: count
 	} else {
+		if len(data) < 17 {
+			return e
+		}
 		e.ITID = uint32(leU16(data, 6)) // rAthena: ITID (uint16)
 		e.IsIdentified = data[8]        // rAthena: IsIdentified
 		e.XPos = leI16(data, 9)         // rAthena: xPos

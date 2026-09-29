@@ -1,4 +1,4 @@
-# BUG-02: legacy-variant decoders read past length-table frame (13 packet IDs)
+# BUG-02 — RESOLVED: legacy-variant decoders read past length-table frame (13 packet IDs)
 
 Found 2026-09-29 by `FuzzFeedMapSessionWithDispatch` (corpus
 `testdata/fuzz-known/75869bcf4b578ee9`), enumerated by
@@ -50,3 +50,24 @@ Low for gokore on modern servers: rAthena does not send these legacy IDs at
 modern packetvers. On capture/replay of old-server traffic, decoders silently
 read adjacent bytes (garbage trailing fields) and panic only at buffer
 boundaries.
+
+---
+## Resolution (2026-09-29, PR #33)
+
+Fixed in the codegen emitter + hand-written decoders; audit now reports **0
+over-reads** and `knownLengthOverread` is empty.
+
+- Both classes resolved by GUARDS, not by era-pinning layouts: decoders are
+  runtime-packetver-parameterized by design (golden tests decode legacy IDs
+  such as 0x0078/0x0079 at modern packetvers with modern-sized frames), so
+  the layout fallback keeps selecting the most recent layout.
+- Every generated decode branch emits `if len(data) < N { return e }` where
+  N is the layout's minimum extent (gen/decode.go layoutMinLen); a frame
+  shorter than the decoder's declared extent — hostile, truncated, or a
+  legacy table length — decodes to a zero event instead of panicking.
+- Hand-written decoders (inventory lists, 0x006B/0x009E/0x011F) carry
+  equivalent entry guards; their count loops were already length-derived.
+- Quarantined corpus in testdata/fuzz-known/ now passes; re-verify any time:
+
+      cp pkg/session/testdata/fuzz-known/* pkg/session/testdata/fuzz/FuzzFeedMapSessionWithDispatch/
+      go test ./pkg/session -run 'FuzzFeedMapSessionWithDispatch/'
