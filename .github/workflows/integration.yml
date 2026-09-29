@@ -35,14 +35,25 @@ jobs:
 
       - name: Wait for server trio readiness
         run: |
+          set -euo pipefail
+          failed=0
           for port in 6900 6121 5121; do
+            up=0
             for i in $(seq 1 60); do
               if (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null; then
-                echo "port $port up after ${i} tries"; break
+                echo "port $port up after ${i} tries"; up=1; break
               fi
               sleep 5
-            done || exit 1
+            done
+            if [ "$up" -ne 1 ]; then
+              echo "FATAL: port $port never came up" >&2
+              failed=1
+            fi
           done
+          if [ "$failed" -ne 0 ]; then
+            docker compose logs rathena
+            exit 1
+          fi
           # char↔login and map↔char inter-registration retries on ~10s
           # intervals; give it one full cycle before the client connects or
           # CH_ENTER stalls on an unregistered session.

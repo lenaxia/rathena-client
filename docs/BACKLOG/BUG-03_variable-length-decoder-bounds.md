@@ -57,13 +57,17 @@ Not exploitable beyond DoS (reads are in-buffer).
 Fixed in the codegen emitter + hand-written decoders; audit now reports **0
 over-reads** and `knownLengthOverread` is empty.
 
-- BUG-03 fix: generateDecodeFunc no longer falls back to the most recent
-  layout for legacy packetver ranges — it selects the layout in force at the
-  range's end (era-correct field set).
-- Guards: every generated decode branch emits `if len(data) < N { return e }`
-  where N is the layout's minimum extent; hand-written decoders
-  (inventory lists, 0x006B/0x009E/0x011F) carry equivalent entry guards, and
-  their count loops were already length-derived.
+- Both classes (BUG-02 and BUG-03) resolved by GUARDS, not by era-pinning:
+  generateDecodeFunc's layout fallback deliberately keeps selecting the most
+  recent layout — decoders are runtime-packetver-parameterized by design
+  (golden tests decode legacy IDs such as 0x0078/0x0079 at modern packetvers
+  with modern-sized frames).
+- Every generated decode branch emits `if len(data) < N { return e }` where
+  N is the layout's minimum extent (gen/decode.go layoutMinLen); a frame
+  shorter than the declared extent — hostile, truncated, or a legacy table
+  length — decodes to a zero event instead of panicking.
+- Hand-written decoders (inventory lists, 0x006B/0x009E/0x011F) carry
+  equivalent entry guards; their count loops were already length-derived.
 - Quarantined corpus in testdata/fuzz-known/ now passes; re-verify any time:
 
       cp pkg/session/testdata/fuzz-known/* pkg/session/testdata/fuzz/FuzzFeedMapSessionWithDispatch/

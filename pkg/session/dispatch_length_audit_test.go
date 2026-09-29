@@ -120,20 +120,16 @@ func TestReceiveDispatchLengthAudit(t *testing.T) {
 	t.Logf("audit: %d over-reads (all known): %s", len(offenders), formatIDs(offenders))
 }
 
-// decodePanics calls fn on frame in a goroutine with recover, reporting
-// whether the call panicked.
+// decodePanics calls fn on frame with recover, reporting whether the call
+// panicked. Direct recover on the calling goroutine — no goroutine/channel
+// needed (and keeps this file clean of `go` statements entirely).
 func decodePanics(frame []byte, fn func([]byte, uint32) interface{}) (panicked bool) {
-	done := make(chan bool)
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				panicked = true
-			}
-			done <- true
-		}()
-		_ = fn(frame, 20200401)
+	defer func() {
+		if r := recover(); r != nil {
+			panicked = true
+		}
 	}()
-	<-done
+	_ = fn(frame, 20200401)
 	return panicked
 }
 

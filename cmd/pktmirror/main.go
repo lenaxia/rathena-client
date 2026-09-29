@@ -27,8 +27,8 @@
 // Output files (in -out, default ./captures):
 //
 //	<label>_<phase>_<ts>.log    hexdump log, both directions, timestamped
-//	<label>_<phase>_<ts>_c2s.bin raw client→server byte stream
-//	<label>_<phase>_<ts>_s2c.bin raw server→client byte stream
+//	<label>_<phase>_<ts>_c2s_NN.bin raw client→server stream of connection N
+//	<label>_<phase>_<ts>_s2c_NN.bin raw server→client stream of connection N
 //	<label>_<ts>.fixture         RATF v1 fixture (trio mode + -packetver only)
 //
 // The fixture contains only S→C bytes (replay tests script server responses).
@@ -46,6 +46,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -54,10 +55,13 @@ const fixtureMagic = "RATF"
 type phaseStats struct {
 	label string
 
-	mu        sync.Mutex
+	mu sync.Mutex
+	// c2s/s2c accumulate the current connection's bytes; on connection close
+	// they are written out as raw .bin dumps and reset.
 	c2s, s2c  []byte
 	conns     int
 	firstSeen time.Time
+	base      string // output path prefix for this phase's files
 }
 
 func newPhaseStats(label string) *phaseStats {
@@ -76,12 +80,10 @@ func (p *phaseStats) add(dir string, b []byte) {
 }
 
 type mirror struct {
-	out       string
-	label     string
-	packetver uint32
-	fixture   bool
-	phase     string
-	stats     *phaseStats
+	out   string
+	label string
+	phase string
+	stats *phaseStats
 
 	logFile *os.File
 }
@@ -98,6 +100,7 @@ func newMirror(out, label, phase string, stats *phaseStats) (*mirror, error) {
 	if err != nil {
 		return nil, err
 	}
+	stats.base = base
 	return &mirror{out: out, label: label, phase: phase, stats: stats, logFile: f}, nil
 }
 
@@ -182,6 +185,14 @@ func (m *mirror) handle(client net.Conn, upstreamAddr string) {
 
 	fmt.Fprintf(m.logFile, "# connection closed %s\n", time.Now().UTC().Format(time.RFC3339))
 	_ = m.logFile.Sync()
+
+	m.stats.mu.Lock()
+	n := m.stats.conns
+	_ = os.WriteFile(fmt.Sprintf("%s_c2s_%02d.bin", m.stats.base, n), m.stats.c2s, 0o644)
+	_ = os.WriteFile(fmt.Sprintf("%s_s2c_%02d.bin", m.stats.base, n), m.stats.s2c, 0o644)
+	m.stats.c2s = nil
+	m.stats.s2c = nil
+	m.stats.mu.Unlock()
 }
 
 // writeFixture emits a RATF v1 fixture from the captured S→C phase streams.
@@ -266,11 +277,13 @@ func main() {
 		{"char", *charListen, *charUpstream},
 		{"map", *mapListen, *mapUpstream},
 	}
+	var mirrors []*mirror
 	for _, l := range listeners {
 		m, err := newMirror(*out, *label, l.name, phases[l.name])
 		if err != nil {
 			log.Fatalf("create mirror %s: %v", l.name, err)
 		}
+		mirrors = append(mirrors, m)
 		ln, err := net.Listen("tcp", l.listen)
 		if err != nil {
 			log.Fatalf("listen %s (%s): %v", l.listen, l.name, err)
@@ -288,11 +301,16 @@ func main() {
 		}(m, ln, l.upstream)
 	}
 
-	// On interrupt, write the fixture from whatever S→C bytes were captured.
+	// On SIGINT/SIGTERM (docker stop sends TERM), write the fixture from
+	// whatever S→C bytes were captured. Without the TERM handler a
+	// docker-stop capture silently discards everything.
 	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	<-sig
 	log.Print("shutting down; writing fixture...")
+	for _, m := range mirrors {
+		_ = m.logFile.Close()
+	}
 	if *packetverU32 == 0 {
 		return
 	}
