@@ -33,17 +33,20 @@ jobs:
       - name: Build and start harness
         run: docker compose up -d --build
 
-      - name: Wait for login server
+      - name: Wait for server trio readiness
         run: |
-          for i in $(seq 1 60); do
-            if (echo > /dev/tcp/127.0.0.1/6900) 2>/dev/null; then
-              echo "login server up after ${i} tries"; exit 0
-            fi
-            sleep 5
+          for port in 6900 6121 5121; do
+            for i in $(seq 1 60); do
+              if (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null; then
+                echo "port $port up after ${i} tries"; break
+              fi
+              sleep 5
+            done || exit 1
           done
-          docker compose logs rathena
-          echo "FATAL: login server never came up" >&2
-          exit 1
+          # char↔login and map↔char inter-registration retries on ~10s
+          # intervals; give it one full cycle before the client connects or
+          # CH_ENTER stalls on an unregistered session.
+          sleep 15
 
       - name: Run live integration test
         working-directory: .
