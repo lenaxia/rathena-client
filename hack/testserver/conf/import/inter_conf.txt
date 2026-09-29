@@ -13,6 +13,12 @@ login_server_id: ragnarok
 login_server_pw: ragnarok
 login_server_db: ragnarok
 
+ipban_db_ip: db
+ipban_db_port: 3306
+ipban_db_id: ragnarok
+ipban_db_pw: ragnarok
+ipban_db_db: ragnarok
+
 log_db_ip: db
 log_db_port: 3306
 log_db_id: ragnarok
