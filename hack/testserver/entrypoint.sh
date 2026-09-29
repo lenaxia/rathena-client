@@ -30,6 +30,10 @@ if ! mysql_cli -e "USE \`$DB_NAME\`; SELECT 1 FROM codegen_marker LIMIT 1;" >/de
     echo "[entrypoint] importing rAthena schema ..."
     mysql_cli -e "CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`;"
     mysql_cli "$DB_NAME" < /opt/rathena/sql-files/main.sql
+    # logs.sql carries the loginlog/ipbanlog tables the login server writes
+    # to on every auth attempt — missing them makes it close connections
+    # silently mid-handshake.
+    mysql_cli "$DB_NAME" < /opt/rathena/sql-files/logs.sql
     echo "[entrypoint] importing seed data ..."
     if mysql_cli "$DB_NAME" < /seed/01-test-account.sql; then
         mysql_cli -e "USE \`$DB_NAME\`; CREATE TABLE codegen_marker (ok TINYINT PRIMARY KEY) ENGINE=InnoDB; INSERT INTO codegen_marker VALUES (1);"
