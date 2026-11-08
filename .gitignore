@@ -41,3 +41,6 @@ validation/output/
 gokore_api_check
 new_api_check
 verify_new_api
+
+# pktmirror capture output
+captures/

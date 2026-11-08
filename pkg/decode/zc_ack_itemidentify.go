@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckItemidentify_0x0179(data []byte, packetver uint32) events.ZcAckItemidentify {
 	var e events.ZcAckItemidentify
 	_ = packetver
+	if len(data) < 5 {
+		return e
+	}
 	e.Index = leU16(data, 2) // rAthena: index (offset 2, size 2)
 	e.Result = data[4]       // rAthena: result (offset 4, size 1)
 	return e

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckCloseBanking_0x09B9(data []byte, packetver uint32) events.ZcAckCloseBanking {
 	var e events.ZcAckCloseBanking
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.Unknown = leI16(data, 2) // rAthena: unknown (offset 2, size 2)
 	return e
 }

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckReqnameall_0x0195(data []byte, packetver uint32) events.ZcAckReqnameall {
 	var e events.ZcAckReqnameall
 	_ = packetver
+	if len(data) < 102 {
+		return e
+	}
 	e.Packet_id = leU16(data, 0)                   // rAthena: packet_id (offset 0, size 2)
 	e.Gid = leI32(data, 2)                         // rAthena: gid (offset 2, size 4)
 	e.Name = nullTermString(data[6:30])            // rAthena: name (offset 6, size 24)
@@ -21,6 +24,9 @@ func ZcAckReqnameall_0x0195(data []byte, packetver uint32) events.ZcAckReqnameal
 func ZcAckReqnameall_0x0A30(data []byte, packetver uint32) events.ZcAckReqnameall {
 	var e events.ZcAckReqnameall
 	_ = packetver
+	if len(data) < 106 {
+		return e
+	}
 	e.Packet_id = leU16(data, 0)                   // rAthena: packet_id (offset 0, size 2)
 	e.Gid = leI32(data, 2)                         // rAthena: gid (offset 2, size 4)
 	e.Name = nullTermString(data[6:30])            // rAthena: name (offset 6, size 24)

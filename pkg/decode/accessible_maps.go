@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AccessibleMaps_0x0840(data []byte, packetver uint32) events.AccessibleMaps {
 	var e events.AccessibleMaps
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: packetLength (offset 2, size 2)
 	e.Maps = data[4:]               // rAthena: maps (offset 4, size 0)
 	return e

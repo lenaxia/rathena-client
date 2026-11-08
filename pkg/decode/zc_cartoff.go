@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCartoff_0x012B(data []byte, packetver uint32) events.ZcCartoff {
 	var e events.ZcCartoff
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ReceivedMapServerInfo_0x0AC5(data []byte, packetver uint32) events.ReceivedMapServerInfo {
 	var e events.ReceivedMapServerInfo
 	_ = packetver
+	if len(data) < 156 {
+		return e
+	}
 	e.CID = leU32(data, 2)                  // rAthena: CID (offset 2, size 4)
 	e.Mapname = nullTermString(data[6:22])  // rAthena: mapname (offset 6, size 16)
 	e.Ip = leU32(data, 22)                  // rAthena: ip (offset 22, size 4)
@@ -20,6 +23,9 @@ func ReceivedMapServerInfo_0x0AC5(data []byte, packetver uint32) events.Received
 func ReceivedMapServerInfo_0x0071(data []byte, packetver uint32) events.ReceivedMapServerInfo {
 	var e events.ReceivedMapServerInfo
 	_ = packetver
+	if len(data) < 28 {
+		return e
+	}
 	e.CID = leU32(data, 2)                 // rAthena: CID (offset 2, size 4)
 	e.Mapname = nullTermString(data[6:22]) // rAthena: mapname (offset 6, size 16)
 	e.Ip = leU32(data, 22)                 // rAthena: ip (offset 22, size 4)

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSsilistItemClickAck_0x083D(data []byte, packetver uint32) events.ZcSsilistItemClickAck {
 	var e events.ZcSsilistItemClickAck
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.X = leI16(data, 2) // rAthena: x (offset 2, size 2)
 	e.Y = leI16(data, 4) // rAthena: y (offset 4, size 2)
 	return e

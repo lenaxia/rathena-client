@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcStateChange_0x0119(data []byte, packetver uint32) events.ZcStateChange {
 	var e events.ZcStateChange
 	_ = packetver
+	if len(data) < 15 {
+		return e
+	}
 	e.AID = leU32(data, 2)          // rAthena: AID (offset 2, size 4)
 	e.BodyState = leI16(data, 6)    // rAthena: bodyState (offset 6, size 2)
 	e.HealthState = leI16(data, 8)  // rAthena: healthState (offset 8, size 2)
@@ -20,6 +23,9 @@ func ZcStateChange_0x0119(data []byte, packetver uint32) events.ZcStateChange {
 func ZcStateChange_0x0229(data []byte, packetver uint32) events.ZcStateChange {
 	var e events.ZcStateChange
 	_ = packetver
+	if len(data) < 15 {
+		return e
+	}
 	e.AID = leU32(data, 2)          // rAthena: AID (offset 2, size 4)
 	e.BodyState = leI16(data, 6)    // rAthena: bodyState (offset 6, size 2)
 	e.HealthState = leI16(data, 8)  // rAthena: healthState (offset 8, size 2)

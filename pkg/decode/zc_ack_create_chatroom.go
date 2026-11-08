@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckCreateChatroom_0x00D6(data []byte, packetver uint32) events.ZcAckCreateChatroom {
 	var e events.ZcAckCreateChatroom
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Flag = data[2] // rAthena: flag (offset 2, size 1)
 	return e
 }

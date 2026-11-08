@@ -8,10 +8,16 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckCashBargainSaleItemInfo_0x09AD(data []byte, packetver uint32) events.ZcAckCashBargainSaleItemInfo {
 	var e events.ZcAckCashBargainSaleItemInfo
 	if packetver >= 20181121 {
+		if len(data) < 12 {
+			return e
+		}
 		e.Result = leU16(data, 2) // rAthena: result (offset 2, size 2)
 		e.ItemId = leU32(data, 4) // rAthena: itemId (offset 4, size 4)
 		e.Price = leU32(data, 8)  // rAthena: price (offset 8, size 4)
 	} else {
+		if len(data) < 10 {
+			return e
+		}
 		e.Result = leU16(data, 2)         // rAthena: result (offset 2, size 2)
 		e.ItemId = uint32(leU16(data, 4)) // rAthena: itemId (offset 4, size 2)
 		e.Price = leU32(data, 6)          // rAthena: price (offset 6, size 4)

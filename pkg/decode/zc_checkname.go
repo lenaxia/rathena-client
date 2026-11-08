@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCheckname_0x0A14(data []byte, packetver uint32) events.ZcCheckname {
 	var e events.ZcCheckname
 	_ = packetver
+	if len(data) < 10 {
+		return e
+	}
 	e.CharId = leI32(data, 2)    // rAthena: CharId (offset 2, size 4)
 	e.Class = leI16(data, 6)     // rAthena: Class (offset 6, size 2)
 	e.BaseLevel = leI16(data, 8) // rAthena: BaseLevel (offset 8, size 2)
@@ -18,6 +21,9 @@ func ZcCheckname_0x0A14(data []byte, packetver uint32) events.ZcCheckname {
 func ZcCheckname_0x0A51(data []byte, packetver uint32) events.ZcCheckname {
 	var e events.ZcCheckname
 	_ = packetver
+	if len(data) < 34 {
+		return e
+	}
 	e.CharId = leI32(data, 2)            // rAthena: CharId (offset 2, size 4)
 	e.Class = leI16(data, 6)             // rAthena: Class (offset 6, size 2)
 	e.BaseLevel = leI16(data, 8)         // rAthena: BaseLevel (offset 8, size 2)

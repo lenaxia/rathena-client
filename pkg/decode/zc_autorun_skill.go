@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAutorunSkill_0x0147(data []byte, packetver uint32) events.ZcAutorunSkill {
 	var e events.ZcAutorunSkill
 	_ = packetver
+	if len(data) < 39 {
+		return e
+	}
 	e.Skill_id = leU16(data, 2)                // rAthena: skill_id (offset 2, size 2)
 	e.Skill_type = leU32(data, 4)              // rAthena: skill_type (offset 4, size 4)
 	e.Skill_lv = leU16(data, 8)                // rAthena: skill_lv (offset 8, size 2)

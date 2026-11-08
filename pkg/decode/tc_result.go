@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func TcResult_0x0AE3(data []byte, packetver uint32) events.TcResult {
 	var e events.TcResult
 	_ = packetver
+	if len(data) < 34 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)          // rAthena: packetLength (offset 2, size 2)
 	e.Type = leU32(data, 4)                  // rAthena: type (offset 4, size 4)
 	e.Unknown1 = nullTermString(data[8:28])  // rAthena: unknown1 (offset 8, size 20)

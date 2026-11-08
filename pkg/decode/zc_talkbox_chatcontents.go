@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcTalkboxChatcontents_0x0191(data []byte, packetver uint32) events.ZcTalkboxChatcontents {
 	var e events.ZcTalkboxChatcontents
 	_ = packetver
+	if len(data) < 86 {
+		return e
+	}
 	e.Aid = leU32(data, 2)                 // rAthena: aid (offset 2, size 4)
 	e.Message = nullTermString(data[6:86]) // rAthena: message (offset 6, size 80)
 	return e

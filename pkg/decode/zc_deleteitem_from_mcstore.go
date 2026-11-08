@@ -8,12 +8,18 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDeleteitemFromMcstore_0x0137(data []byte, packetver uint32) events.ZcDeleteitemFromMcstore {
 	var e events.ZcDeleteitemFromMcstore
 	if packetver >= 20141016 {
+		if len(data) < 18 {
+			return e
+		}
 		e.Index = leU16(data, 2)    // rAthena: index (offset 2, size 2)
 		e.Amount = leU16(data, 4)   // rAthena: amount (offset 4, size 2)
 		e.BuyerCID = leU32(data, 6) // rAthena: buyerCID (offset 6, size 4)
 		e.Date = leU32(data, 10)    // rAthena: date (offset 10, size 4)
 		e.Zeny = leI32(data, 14)    // rAthena: zeny (offset 14, size 4)
 	} else {
+		if len(data) < 6 {
+			return e
+		}
 		e.Index = leU16(data, 2)  // rAthena: index (offset 2, size 2)
 		e.Amount = leU16(data, 4) // rAthena: amount (offset 4, size 2)
 	}

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func CharCreated_0x006D(data []byte, packetver uint32) events.CharCreated {
 	var e events.CharCreated
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }
 
@@ -15,5 +18,8 @@ func CharCreated_0x006D(data []byte, packetver uint32) events.CharCreated {
 func CharCreated_0x0B6F(data []byte, packetver uint32) events.CharCreated {
 	var e events.CharCreated
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

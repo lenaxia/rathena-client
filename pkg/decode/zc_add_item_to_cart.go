@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCart {
 	var e events.ZcAddItemToCart
 	if packetver >= 20181121 {
+		if len(data) < 57 {
+			return e
+		}
 		e.Index = leI16(data, 2)    // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)   // rAthena: amount (offset 4, size 4)
 		e.ItemId = leU32(data, 8)   // rAthena: itemId (offset 8, size 4)
@@ -18,6 +21,9 @@ func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCar
 		e.Slot = data[16:32]        // rAthena: slot (offset 16, size 16)
 		e.Option_data = data[32:57] // rAthena: option_data (offset 32, size 25)
 	} else if packetver >= 20140813 {
+		if len(data) < 47 {
+			return e
+		}
 		e.Index = leI16(data, 2)          // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)         // rAthena: amount (offset 4, size 4)
 		e.ItemId = uint32(leU16(data, 8)) // rAthena: itemId (offset 8, size 2)
@@ -28,6 +34,9 @@ func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCar
 		e.Slot = data[14:22]              // rAthena: slot (offset 14, size 8)
 		e.Option_data = data[22:47]       // rAthena: option_data (offset 22, size 25)
 	} else {
+		if len(data) < 22 {
+			return e
+		}
 		e.Index = leI16(data, 2)          // rAthena: index (offset 2, size 2)
 		e.Amount = leI32(data, 4)         // rAthena: amount (offset 4, size 4)
 		e.ItemId = uint32(leU16(data, 8)) // rAthena: itemId (offset 8, size 2)
@@ -44,6 +53,9 @@ func ZcAddItemToCart_0x0124(data []byte, packetver uint32) events.ZcAddItemToCar
 func ZcAddItemToCart_0x0B45(data []byte, packetver uint32) events.ZcAddItemToCart {
 	var e events.ZcAddItemToCart
 	_ = packetver
+	if len(data) < 58 {
+		return e
+	}
 	e.Index = leI16(data, 2)    // rAthena: index (offset 2, size 2)
 	e.Amount = leI32(data, 4)   // rAthena: amount (offset 4, size 4)
 	e.ItemId = leU32(data, 8)   // rAthena: itemId (offset 8, size 4)

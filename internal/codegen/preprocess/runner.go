@@ -185,9 +185,12 @@ func ExtractStructs(preprocessed string, packetver uint32) (StructDB, error) {
 		i++ // advance past closing '}'
 
 		// Remove the closing '}' line and any trailing attribute/semicolon.
+		// Only pure struct-terminator lines are stripped: a line like
+		// "} posInfo[MAX_GUILDPOSITION];" closes an anonymous inline struct
+		// member and must survive so ParseStructBody can classify it.
 		for len(bodyLines) > 0 {
 			last := strings.TrimSpace(bodyLines[len(bodyLines)-1])
-			if last == "" || strings.HasPrefix(last, "}") || strings.HasPrefix(last, "__attribute__") {
+			if last == "" || last == "}" || last == "};" || strings.HasPrefix(last, "__attribute__") {
 				bodyLines = bodyLines[:len(bodyLines)-1]
 			} else {
 				break

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckDisorganizeGuildResult_0x015E(data []byte, packetver uint32) events.ZcAckDisorganizeGuildResult {
 	var e events.ZcAckDisorganizeGuildResult
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.Result = leI32(data, 2) // rAthena: result (offset 2, size 4)
 	return e
 }

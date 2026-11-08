@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomun {
 	var e events.ZcPropertyHomun
 	if packetver >= 20210303 {
+		if len(data) < 85 {
+			return e
+		}
 		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]                  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)           // rAthena: level (offset 27, size 2)
@@ -30,6 +33,9 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.SkillPoints = leU16(data, 81)     // rAthena: skillPoints (offset 81, size 2)
 		e.Range = leU16(data, 83)           // rAthena: range (offset 83, size 2)
 	} else if packetver >= 20200819 {
+		if len(data) < 77 {
+			return e
+		}
 		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]                  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)           // rAthena: level (offset 27, size 2)
@@ -52,6 +58,9 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.SkillPoints = leU16(data, 73)     // rAthena: skillPoints (offset 73, size 2)
 		e.Range = leU16(data, 75)           // rAthena: range (offset 75, size 2)
 	} else if packetver >= 20190619 {
+		if len(data) < 73 {
+			return e
+		}
 		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]                  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)           // rAthena: level (offset 27, size 2)
@@ -74,6 +83,9 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.SkillPoints = leU16(data, 69)     // rAthena: skillPoints (offset 69, size 2)
 		e.Range = leU16(data, 71)           // rAthena: range (offset 71, size 2)
 	} else if packetver >= 20181121 {
+		if len(data) < 77 {
+			return e
+		}
 		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]                  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)           // rAthena: level (offset 27, size 2)
@@ -97,6 +109,9 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.SkillPoints = leU16(data, 73)     // rAthena: skillPoints (offset 73, size 2)
 		e.Range = leU16(data, 75)           // rAthena: range (offset 75, size 2)
 	} else if packetver >= 20131230 {
+		if len(data) < 75 {
+			return e
+		}
 		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]                  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)           // rAthena: level (offset 27, size 2)
@@ -120,6 +135,9 @@ func ZcPropertyHomun_0x022E(data []byte, packetver uint32) events.ZcPropertyHomu
 		e.SkillPoints = leU16(data, 71)     // rAthena: skillPoints (offset 71, size 2)
 		e.Range = leU16(data, 73)           // rAthena: range (offset 73, size 2)
 	} else {
+		if len(data) < 71 {
+			return e
+		}
 		e.Name = nullTermString(data[2:26]) // rAthena: name (offset 2, size 24)
 		e.Flags = data[26]                  // rAthena: flags (offset 26, size 1)
 		e.Level = leU16(data, 27)           // rAthena: level (offset 27, size 2)

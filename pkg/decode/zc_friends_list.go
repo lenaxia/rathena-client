@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcFriendsList_0x0201(data []byte, packetver uint32) events.ZcFriendsList {
 	var e events.ZcFriendsList
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Friends = data[4:]            // rAthena: friends (offset 4, size 0)
 	return e

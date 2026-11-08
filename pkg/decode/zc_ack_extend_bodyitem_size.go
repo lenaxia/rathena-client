@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckExtendBodyitemSize_0x0B17(data []byte, packetver uint32) events.ZcAckExtendBodyitemSize {
 	var e events.ZcAckExtendBodyitemSize
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }

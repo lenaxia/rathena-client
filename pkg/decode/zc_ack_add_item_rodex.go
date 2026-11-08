@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItemRodex {
 	var e events.ZcAckAddItemRodex
 	if packetver >= 20181121 {
+		if len(data) < 63 {
+			return e
+		}
 		e.Result = int8(data[2])         // rAthena: result (offset 2, size 1)
 		e.Index = leI16(data, 3)         // rAthena: index (offset 3, size 2)
 		e.Count = leI16(data, 5)         // rAthena: count (offset 5, size 2)
@@ -22,6 +25,9 @@ func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItem
 		e.Favorite = data[58]            // rAthena: favorite (offset 58, size 1)
 		e.Location = leU32(data, 59)     // rAthena: location (offset 59, size 4)
 	} else {
+		if len(data) < 53 {
+			return e
+		}
 		e.Result = int8(data[2])          // rAthena: result (offset 2, size 1)
 		e.Index = leI16(data, 3)          // rAthena: index (offset 3, size 2)
 		e.Count = leI16(data, 5)          // rAthena: count (offset 5, size 2)
@@ -43,6 +49,9 @@ func ZcAckAddItemRodex_0x0A05(data []byte, packetver uint32) events.ZcAckAddItem
 func ZcAckAddItemRodex_0x0B3F(data []byte, packetver uint32) events.ZcAckAddItemRodex {
 	var e events.ZcAckAddItemRodex
 	_ = packetver
+	if len(data) < 64 {
+		return e
+	}
 	e.Result = int8(data[2])         // rAthena: result (offset 2, size 1)
 	e.Index = leI16(data, 3)         // rAthena: index (offset 3, size 2)
 	e.Count = leI16(data, 5)         // rAthena: count (offset 5, size 2)

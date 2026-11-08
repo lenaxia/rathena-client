@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AttackRange_0x013A(data []byte, packetver uint32) events.AttackRange {
 	var e events.AttackRange
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.CurrentAttRange = leI16(data, 2) // rAthena: currentAttRange (offset 2, size 2)
 	return e
 }

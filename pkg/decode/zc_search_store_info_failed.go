@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSearchStoreInfoFailed_0x0837(data []byte, packetver uint32) events.ZcSearchStoreInfoFailed {
 	var e events.ZcSearchStoreInfoFailed
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Reason = data[2] // rAthena: reason (offset 2, size 1)
 	return e
 }

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func PetInfo_0x01A2(data []byte, packetver uint32) events.PetInfo {
 	var e events.PetInfo
 	if packetver >= 20081126 {
+		if len(data) < 37 {
+			return e
+		}
 		e.SzName = nullTermString(data[2:26]) // rAthena: szName (offset 2, size 24)
 		e.BModified = int8(data[26])          // rAthena: bModified (offset 26, size 1)
 		e.NLevel = leI16(data, 27)            // rAthena: nLevel (offset 27, size 2)
@@ -16,6 +19,9 @@ func PetInfo_0x01A2(data []byte, packetver uint32) events.PetInfo {
 		e.ITID = leI16(data, 33)              // rAthena: ITID (offset 33, size 2)
 		e.Job = leI16(data, 35)               // rAthena: job (offset 35, size 2)
 	} else {
+		if len(data) < 35 {
+			return e
+		}
 		e.SzName = nullTermString(data[2:26]) // rAthena: szName (offset 2, size 24)
 		e.BModified = int8(data[26])          // rAthena: bModified (offset 26, size 1)
 		e.NLevel = leI16(data, 27)            // rAthena: nLevel (offset 27, size 2)

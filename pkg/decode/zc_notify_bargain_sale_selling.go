@@ -8,9 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyBargainSaleSelling_0x09B2(data []byte, packetver uint32) events.ZcNotifyBargainSaleSelling {
 	var e events.ZcNotifyBargainSaleSelling
 	if packetver >= 20181121 {
+		if len(data) < 10 {
+			return e
+		}
 		e.ItemId = leU32(data, 2)        // rAthena: itemId (offset 2, size 4)
 		e.RemainingTime = leU32(data, 6) // rAthena: remainingTime (offset 6, size 4)
 	} else {
+		if len(data) < 8 {
+			return e
+		}
 		e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 		e.RemainingTime = leU32(data, 4)  // rAthena: remainingTime (offset 4, size 4)
 	}

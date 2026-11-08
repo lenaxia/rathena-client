@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcLonglongparChange_0x0ACB(data []byte, packetver uint32) events.ZcLonglongparChange {
 	var e events.ZcLonglongparChange
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.VarID = leU16(data, 2)  // rAthena: varID (offset 2, size 2)
 	e.Amount = leI64(data, 4) // rAthena: amount (offset 4, size 8)
 	return e

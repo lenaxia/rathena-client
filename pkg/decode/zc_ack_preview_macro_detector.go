@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckPreviewMacroDetector_0x0A6A(data []byte, packetver uint32) events.ZcAckPreviewMacroDetector {
 	var e events.ZcAckPreviewMacroDetector
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.CaptchaFlag = data[2:6]                 // rAthena: captchaFlag (offset 2, size 4)
 	e.ImageSize = leU16(data, 6)              // rAthena: imageSize (offset 6, size 2)
 	e.CaptchaKey = nullTermString(data[8:12]) // rAthena: captchaKey (offset 8, size 4)

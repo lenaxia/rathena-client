@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNpcShowefstUpdate_0x028A(data []byte, packetver uint32) events.ZcNpcShowefstUpdate {
 	var e events.ZcNpcShowefstUpdate
 	_ = packetver
+	if len(data) < 18 {
+		return e
+	}
 	e.Gid = leU32(data, 2)         // rAthena: gid (offset 2, size 4)
 	e.EffectState = leU32(data, 6) // rAthena: effectState (offset 6, size 4)
 	e.Level = leI32(data, 10)      // rAthena: level (offset 10, size 4)

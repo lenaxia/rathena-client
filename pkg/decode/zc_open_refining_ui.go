@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcOpenRefiningUi_0x0AA0(data []byte, packetver uint32) events.ZcOpenRefiningUi {
 	var e events.ZcOpenRefiningUi
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

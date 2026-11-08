@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCMarkerinfo_0x09C1(data []byte, packetver uint32) events.ZcCMarkerinfo {
 	var e events.ZcCMarkerinfo
 	_ = packetver
+	if len(data) < 10 {
+		return e
+	}
 	e.AID = leU32(data, 2)  // rAthena: AID (offset 2, size 4)
 	e.XPos = leI16(data, 6) // rAthena: xPos (offset 6, size 2)
 	e.YPos = leI16(data, 8) // rAthena: yPos (offset 8, size 2)

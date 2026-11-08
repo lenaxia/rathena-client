@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDeleteMemberFromGroup_0x0105(data []byte, packetver uint32) events.ZcDeleteMemberFromGroup {
 	var e events.ZcDeleteMemberFromGroup
 	_ = packetver
+	if len(data) < 31 {
+		return e
+	}
 	e.AID = data[2:6]                            // rAthena: AID (offset 2, size 4)
 	e.CharacterName = nullTermString(data[6:30]) // rAthena: characterName (offset 6, size 24)
 	e.Result = int8(data[30])                    // rAthena: result (offset 30, size 1)

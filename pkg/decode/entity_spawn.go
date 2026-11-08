@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func EntitySpawn_0x007C(data []byte, packetver uint32) events.EntitySpawn {
 	var e events.EntitySpawn
 	if packetver >= 20071106 {
+		if len(data) < 42 {
+			return e
+		}
 		e.Objecttype = data[2]          // rAthena: objecttype (offset 2, size 1)
 		e.GID = leU32(data, 3)          // rAthena: GID (offset 3, size 4)
 		e.Speed = leI16(data, 7)        // rAthena: speed (offset 7, size 2)
@@ -30,6 +33,9 @@ func EntitySpawn_0x007C(data []byte, packetver uint32) events.EntitySpawn {
 		e.XSize = data[40]              // rAthena: xSize (offset 40, size 1)
 		e.YSize = data[41]              // rAthena: ySize (offset 41, size 1)
 	} else {
+		if len(data) < 41 {
+			return e
+		}
 		e.GID = leU32(data, 2)          // rAthena: GID (offset 2, size 4)
 		e.Speed = leI16(data, 6)        // rAthena: speed (offset 6, size 2)
 		e.BodyState = leI16(data, 8)    // rAthena: bodyState (offset 8, size 2)

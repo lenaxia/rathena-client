@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcResultMakeGuild_0x0167(data []byte, packetver uint32) events.ZcResultMakeGuild {
 	var e events.ZcResultMakeGuild
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.Result = data[2] // rAthena: result (offset 2, size 1)
 	return e
 }

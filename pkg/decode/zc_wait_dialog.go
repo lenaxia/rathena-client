@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcWaitDialog_0x00B5(data []byte, packetver uint32) events.ZcWaitDialog {
 	var e events.ZcWaitDialog
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.NpcID = leU32(data, 2) // rAthena: NpcID (offset 2, size 4)
 	return e
 }

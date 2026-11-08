@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcChangeGuild_0x01B4(data []byte, packetver uint32) events.ZcChangeGuild {
 	var e events.ZcChangeGuild
 	_ = packetver
+	if len(data) < 12 {
+		return e
+	}
 	e.AID = leU32(data, 2)                // rAthena: AID (offset 2, size 4)
 	e.Guild_id = leI32(data, 6)           // rAthena: guild_id (offset 6, size 4)
 	e.Emblem_id = uint32(leU16(data, 10)) // rAthena: emblem_id (offset 10, size 2)
@@ -18,6 +21,9 @@ func ZcChangeGuild_0x01B4(data []byte, packetver uint32) events.ZcChangeGuild {
 func ZcChangeGuild_0x0B1F(data []byte, packetver uint32) events.ZcChangeGuild {
 	var e events.ZcChangeGuild
 	_ = packetver
+	if len(data) < 14 {
+		return e
+	}
 	e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
 	e.Emblem_id = leU32(data, 6) // rAthena: emblem_id (offset 6, size 4)
 	e.AID = leU32(data, 10)      // rAthena: AID (offset 10, size 4)
@@ -28,6 +34,9 @@ func ZcChangeGuild_0x0B1F(data []byte, packetver uint32) events.ZcChangeGuild {
 func ZcChangeGuild_0x0B47(data []byte, packetver uint32) events.ZcChangeGuild {
 	var e events.ZcChangeGuild
 	_ = packetver
+	if len(data) < 14 {
+		return e
+	}
 	e.Guild_id = leI32(data, 2)  // rAthena: guild_id (offset 2, size 4)
 	e.Emblem_id = leU32(data, 6) // rAthena: emblem_id (offset 6, size 4)
 	e.AID = leU32(data, 10)      // rAthena: AID (offset 10, size 4)

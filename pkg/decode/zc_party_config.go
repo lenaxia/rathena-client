@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcPartyConfig_0x02C9(data []byte, packetver uint32) events.ZcPartyConfig {
 	var e events.ZcPartyConfig
 	_ = packetver
+	if len(data) < 3 {
+		return e
+	}
 	e.DenyPartyInvites = data[2] // rAthena: denyPartyInvites (offset 2, size 1)
 	return e
 }

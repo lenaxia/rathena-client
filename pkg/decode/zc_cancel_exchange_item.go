@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCancelExchangeItem_0x00EE(data []byte, packetver uint32) events.ZcCancelExchangeItem {
 	var e events.ZcCancelExchangeItem
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSkillinfoUpdate2_0x07E1(data []byte, packetver uint32) events.ZcSkillinfoUpdate2 {
 	var e events.ZcSkillinfoUpdate2
 	_ = packetver
+	if len(data) < 15 {
+		return e
+	}
 	e.Id = leU16(data, 2)      // rAthena: id (offset 2, size 2)
 	e.Inf = leI32(data, 4)     // rAthena: inf (offset 4, size 4)
 	e.Level = leU16(data, 8)   // rAthena: level (offset 8, size 2)
@@ -21,6 +24,9 @@ func ZcSkillinfoUpdate2_0x07E1(data []byte, packetver uint32) events.ZcSkillinfo
 func ZcSkillinfoUpdate2_0x0B33(data []byte, packetver uint32) events.ZcSkillinfoUpdate2 {
 	var e events.ZcSkillinfoUpdate2
 	_ = packetver
+	if len(data) < 15 {
+		return e
+	}
 	e.Id = leU16(data, 2)      // rAthena: id (offset 2, size 2)
 	e.Inf = leI32(data, 4)     // rAthena: inf (offset 4, size 4)
 	e.Level = leU16(data, 8)   // rAthena: level (offset 8, size 2)

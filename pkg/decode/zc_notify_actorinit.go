@@ -8,5 +8,8 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcNotifyActorinit_0x0B1B(data []byte, packetver uint32) events.ZcNotifyActorinit {
 	var e events.ZcNotifyActorinit
 	_ = packetver
+	if len(data) < 2 {
+		return e
+	}
 	return e
 }

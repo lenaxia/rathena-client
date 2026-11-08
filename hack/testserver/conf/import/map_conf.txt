@@ -1,0 +1,5 @@
+// rathena-client test harness overrides (conf/import/map_conf.txt).
+
+char_ip: 127.0.0.1
+map_ip: 127.0.0.1
+map_port: 5121

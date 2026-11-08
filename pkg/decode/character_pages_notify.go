@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func CharacterPagesNotify_0x09A0(data []byte, packetver uint32) events.CharacterPagesNotify {
 	var e events.CharacterPagesNotify
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.Total = leU32(data, 2) // rAthena: total (offset 2, size 4)
 	return e
 }

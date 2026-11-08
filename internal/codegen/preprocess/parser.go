@@ -66,6 +66,22 @@ var reNestedStructArrayField = regexp.MustCompile(`^struct\s+(\w+)\s+(\w+)\[([^\
 // nestedStructFlexArrayField matches: struct TYPENAME NAME[]
 var reNestedStructFlexArrayField = regexp.MustCompile(`^struct\s+(\w+)\s+(\w+)\[\]$`)
 
+// anonStructOpen matches the opening line of an anonymous inline struct member:
+// "struct {" — its members are parsed as if they belonged to the outer struct.
+var anonStructOpen = "struct {"
+
+// anonStructClose matches the closing line of an anonymous inline struct member:
+// "} name" (scalar) or "} name[EXPR]" (array, EXPR may be an unevaluated macro
+// such as MAX_GUILDPOSITION).
+var reAnonStructClose = regexp.MustCompile(`^\}\s*(\w+)(?:\[([^\]]*)\])?$`)
+
+// AnonFlexNote marks fields that belong to an anonymous inline struct whose
+// array count could not be evaluated (e.g. posInfo[MAX_GUILDPOSITION] in
+// PACKET_ZC_POSITION_ID_NAME_INFO). The member repeats on the wire a
+// variable number of times, so byte-slice reads of these fields must stay
+// unbounded.
+const AnonFlexNote = "anonFlex"
+
 // evalExpr evaluates a simple integer constant expression (the kind GCC produces
 // after preprocessing macro substitutions). It handles sums like (23 + 1).
 // Returns 0 on any parse error.
@@ -122,10 +138,36 @@ func ParseStructBody(body string, structName string, packetver uint32, knownStru
 	}
 
 	offset := 0
+	anonStart, inAnon := -1, false
 	for _, rawLine := range strings.Split(body, "\n") {
 		line := strings.TrimSpace(rawLine)
 		line = strings.TrimSuffix(line, ";")
 		if line == "" {
+			continue
+		}
+
+		// Anonymous inline struct member: "struct {" opens a block whose
+		// member lines are parsed by the regular field regexes below (they
+		// leak into the outer layout, which is how single-entry members like
+		// captcha GRID/AID get decoded). Track the block so the closing line
+		// can decide whether the members repeat.
+		if line == anonStructOpen {
+			anonStart, inAnon = len(layout.Fields), true
+			continue
+		}
+		if m := reAnonStructClose.FindStringSubmatch(line); m != nil && inAnon {
+			// "} name[EXPR]": an anonymous inline struct ARRAY. Its members
+			// repeat on the wire (EXPR is often the declared maximum, e.g.
+			// posInfo[MAX_GUILDPOSITION]=20, while the actual frame carries a
+			// variable count) — mark the leaked members so decode emission
+			// keeps their byte-slice reads unbounded. "} name" (scalar, e.g.
+			// "} Flag;") leaves members untagged and bounded.
+			if m[2] != "" {
+				for i := anonStart; i < len(layout.Fields); i++ {
+					layout.Fields[i].Note = AnonFlexNote
+				}
+			}
+			anonStart, inAnon = -1, false
 			continue
 		}
 

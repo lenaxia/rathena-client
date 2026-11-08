@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcDialogWindowPos2_0x0BB5(data []byte, packetver uint32) events.ZcDialogWindowPos2 {
 	var e events.ZcDialogWindowPos2
 	_ = packetver
+	if len(data) < 10 {
+		return e
+	}
 	e.X = data[2:6]  // rAthena: x (offset 2, size 4)
 	e.Y = data[6:10] // rAthena: y (offset 6, size 4)
 	return e

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
 	_ = packetver
+	if len(data) < 19 {
+		return e
+	}
 	e.Amount = leI32(data, 2)         // rAthena: amount (offset 2, size 4)
 	e.ItemId = uint32(leU16(data, 6)) // rAthena: itemId (offset 6, size 2)
 	e.Identified = data[8]            // rAthena: identified (offset 8, size 1)
@@ -21,6 +24,9 @@ func AddExchangeItem_0x00E9(data []byte, packetver uint32) events.AddExchangeIte
 func AddExchangeItem_0x080F(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
 	_ = packetver
+	if len(data) < 20 {
+		return e
+	}
 	e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 	e.ItemType = data[4]              // rAthena: itemType (offset 4, size 1)
 	e.Amount = leI32(data, 5)         // rAthena: amount (offset 5, size 4)
@@ -35,6 +41,9 @@ func AddExchangeItem_0x080F(data []byte, packetver uint32) events.AddExchangeIte
 func AddExchangeItem_0x0A09(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
 	_ = packetver
+	if len(data) < 45 {
+		return e
+	}
 	e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 	e.ItemType = data[4]              // rAthena: itemType (offset 4, size 1)
 	e.Amount = leI32(data, 5)         // rAthena: amount (offset 5, size 4)
@@ -50,6 +59,9 @@ func AddExchangeItem_0x0A09(data []byte, packetver uint32) events.AddExchangeIte
 func AddExchangeItem_0x0A96(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
 	if packetver >= 20181121 {
+		if len(data) < 61 {
+			return e
+		}
 		e.ItemId = leU32(data, 2)    // rAthena: itemId (offset 2, size 4)
 		e.ItemType = data[6]         // rAthena: itemType (offset 6, size 1)
 		e.Amount = leI32(data, 7)    // rAthena: amount (offset 7, size 4)
@@ -61,6 +73,9 @@ func AddExchangeItem_0x0A96(data []byte, packetver uint32) events.AddExchangeIte
 		e.Location = leU32(data, 55) // rAthena: location (offset 55, size 4)
 		e.Look = leU16(data, 59)     // rAthena: look (offset 59, size 2)
 	} else if packetver >= 20161102 {
+		if len(data) < 51 {
+			return e
+		}
 		e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]              // rAthena: itemType (offset 4, size 1)
 		e.Amount = leI32(data, 5)         // rAthena: amount (offset 5, size 4)
@@ -72,6 +87,9 @@ func AddExchangeItem_0x0A96(data []byte, packetver uint32) events.AddExchangeIte
 		e.Location = leU32(data, 45)      // rAthena: location (offset 45, size 4)
 		e.Look = leU16(data, 49)          // rAthena: look (offset 49, size 2)
 	} else {
+		if len(data) < 45 {
+			return e
+		}
 		e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 		e.ItemType = data[4]              // rAthena: itemType (offset 4, size 1)
 		e.Amount = leI32(data, 5)         // rAthena: amount (offset 5, size 4)
@@ -88,6 +106,9 @@ func AddExchangeItem_0x0A96(data []byte, packetver uint32) events.AddExchangeIte
 func AddExchangeItem_0x0B42(data []byte, packetver uint32) events.AddExchangeItem {
 	var e events.AddExchangeItem
 	_ = packetver
+	if len(data) < 62 {
+		return e
+	}
 	e.ItemId = leU32(data, 2)    // rAthena: itemId (offset 2, size 4)
 	e.ItemType = data[6]         // rAthena: itemType (offset 6, size 1)
 	e.Amount = leI32(data, 7)    // rAthena: amount (offset 7, size 4)

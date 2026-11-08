@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillUpdate_0x010E(data []byte, packetver uint32) events.SkillUpdate {
 	var e events.SkillUpdate
 	_ = packetver
+	if len(data) < 11 {
+		return e
+	}
 	e.SkillId = leU16(data, 2) // rAthena: skillId (offset 2, size 2)
 	e.Level = leU16(data, 4)   // rAthena: level (offset 4, size 2)
 	e.Sp = leU16(data, 6)      // rAthena: sp (offset 6, size 2)

@@ -8,8 +8,14 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcRandomUpgradeItemUiOpen_0x0AB4(data []byte, packetver uint32) events.ZcRandomUpgradeItemUiOpen {
 	var e events.ZcRandomUpgradeItemUiOpen
 	if packetver >= 20181121 {
+		if len(data) < 6 {
+			return e
+		}
 		e.ItemId = leU32(data, 2) // rAthena: itemId (offset 2, size 4)
 	} else {
+		if len(data) < 4 {
+			return e
+		}
 		e.ItemId = uint32(leU16(data, 2)) // rAthena: itemId (offset 2, size 2)
 	}
 	return e

@@ -19,6 +19,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 // AreaSpell_0x011F decodes a 0x011F packet (struct packet_skill_entry).
 func AreaSpell_0x011F(data []byte, packetver uint32) events.AreaSpell {
 	var e events.AreaSpell
+	if len(data) < 23 {
+		return e
+	}
 	if packetver >= 20130731 {
 		e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 		e.AID = leU32(data, 4)          // rAthena: AID

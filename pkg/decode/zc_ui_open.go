@@ -8,9 +8,15 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcUiOpen_0x0A38(data []byte, packetver uint32) events.ZcUiOpen {
 	var e events.ZcUiOpen
 	if packetver >= 20171122 {
+		if len(data) < 7 {
+			return e
+		}
 		e.UIType = int8(data[2]) // rAthena: UIType (offset 2, size 1)
 		e.Data = leI32(data, 3)  // rAthena: data (offset 3, size 4)
 	} else {
+		if len(data) < 3 {
+			return e
+		}
 		e.UIType = int8(data[2]) // rAthena: UIType (offset 2, size 1)
 	}
 	return e

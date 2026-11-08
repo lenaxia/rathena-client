@@ -1,0 +1,7 @@
+// rathena-client test harness overrides (conf/import/char_conf.txt).
+// Advertised address is the docker host loopback so the client under test
+// (integration test, goKore, or pktmirror) can reach the published ports.
+
+login_ip: 127.0.0.1
+char_ip: 127.0.0.1
+char_port: 6121

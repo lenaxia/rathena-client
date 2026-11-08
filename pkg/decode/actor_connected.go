@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorConnected_0x0079(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 107 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -50,6 +53,9 @@ func ActorConnected_0x0079(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x01D9(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 55 {
+		return e
+	}
 	e.GID = leU32(data, 2)                 // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)               // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)           // rAthena: bodyState (offset 8, size 2)
@@ -81,6 +87,9 @@ func ActorConnected_0x01D9(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x02ED(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 59 {
+		return e
+	}
 	e.GID = leU32(data, 2)          // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)        // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)    // rAthena: bodyState (offset 8, size 2)
@@ -113,6 +122,9 @@ func ActorConnected_0x02ED(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x09FE(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	if packetver >= 20181121 {
+		if len(data) < 107 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -149,6 +161,9 @@ func ActorConnected_0x09FE(data []byte, packetver uint32) events.ActorConnected 
 		e.Body = leI16(data, 81)              // rAthena: body (offset 81, size 2)
 		e.Name = nullTermString(data[83:107]) // rAthena: name (offset 83, size 24)
 	} else {
+		if len(data) < 103 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -191,6 +206,9 @@ func ActorConnected_0x09FE(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x022B(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 55 {
+		return e
+	}
 	e.GID = leU32(data, 2)                 // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)               // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)           // rAthena: bodyState (offset 8, size 2)
@@ -222,6 +240,9 @@ func ActorConnected_0x022B(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x09DC(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 101 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -262,6 +283,9 @@ func ActorConnected_0x09DC(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x07F8(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 62 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]          // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)          // rAthena: GID (offset 5, size 4)
@@ -296,6 +320,9 @@ func ActorConnected_0x07F8(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x0858(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 64 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]          // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)          // rAthena: GID (offset 5, size 4)
@@ -331,6 +358,9 @@ func ActorConnected_0x0858(data []byte, packetver uint32) events.ActorConnected 
 func ActorConnected_0x090F(data []byte, packetver uint32) events.ActorConnected {
 	var e events.ActorConnected
 	_ = packetver
+	if len(data) < 73 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]          // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)          // rAthena: GID (offset 5, size 4)

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcEquipArrow_0x013C(data []byte, packetver uint32) events.ZcEquipArrow {
 	var e events.ZcEquipArrow
 	_ = packetver
+	if len(data) < 4 {
+		return e
+	}
 	e.Index = leU16(data, 2) // rAthena: index (offset 2, size 2)
 	return e
 }

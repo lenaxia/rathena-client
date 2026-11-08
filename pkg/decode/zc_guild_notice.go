@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcGuildNotice_0x016F(data []byte, packetver uint32) events.ZcGuildNotice {
 	var e events.ZcGuildNotice
 	_ = packetver
+	if len(data) < 182 {
+		return e
+	}
 	e.Subject = nullTermString(data[2:62])  // rAthena: subject (offset 2, size 60)
 	e.Notice = nullTermString(data[62:182]) // rAthena: notice (offset 62, size 120)
 	return e

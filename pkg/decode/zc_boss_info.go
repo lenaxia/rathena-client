@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBossInfo_0x0293(data []byte, packetver uint32) events.ZcBossInfo {
 	var e events.ZcBossInfo
 	_ = packetver
+	if len(data) < 70 {
+		return e
+	}
 	e.Type = data[2]                     // rAthena: type (offset 2, size 1)
 	e.X = leU32(data, 3)                 // rAthena: x (offset 3, size 4)
 	e.Y = leU32(data, 7)                 // rAthena: y (offset 7, size 4)

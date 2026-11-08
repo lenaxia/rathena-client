@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcClaninfo_0x098A(data []byte, packetver uint32) events.ZcClaninfo {
 	var e events.ZcClaninfo
 	_ = packetver
+	if len(data) < 74 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)            // rAthena: PacketLength (offset 2, size 2)
 	e.ClanID = leU32(data, 4)                  // rAthena: ClanID (offset 4, size 4)
 	e.ClanName = nullTermString(data[8:32])    // rAthena: ClanName (offset 8, size 24)

@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcSkillUpdate_0x01AC(data []byte, packetver uint32) events.ZcSkillUpdate {
 	var e events.ZcSkillUpdate
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.GID = leU32(data, 2) // rAthena: GID (offset 2, size 4)
 	return e
 }

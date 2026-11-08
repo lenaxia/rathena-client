@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcReqWearEquipAck_0x0999(data []byte, packetver uint32) events.ZcReqWearEquipAck {
 	var e events.ZcReqWearEquipAck
 	_ = packetver
+	if len(data) < 11 {
+		return e
+	}
 	e.Index = leU16(data, 2)             // rAthena: index (offset 2, size 2)
 	e.WearLocation = leU32(data, 4)      // rAthena: wearLocation (offset 4, size 4)
 	e.WItemSpriteNumber = leU16(data, 8) // rAthena: wItemSpriteNumber (offset 8, size 2)
@@ -19,11 +22,17 @@ func ZcReqWearEquipAck_0x0999(data []byte, packetver uint32) events.ZcReqWearEqu
 func ZcReqWearEquipAck_0x00AA(data []byte, packetver uint32) events.ZcReqWearEquipAck {
 	var e events.ZcReqWearEquipAck
 	if packetver >= 20101123 {
+		if len(data) < 9 {
+			return e
+		}
 		e.Index = leU16(data, 2)                // rAthena: index (offset 2, size 2)
 		e.WearLocation = uint32(leU16(data, 4)) // rAthena: wearLocation (offset 4, size 2)
 		e.WItemSpriteNumber = leU16(data, 6)    // rAthena: wItemSpriteNumber (offset 6, size 2)
 		e.Result = data[8]                      // rAthena: result (offset 8, size 1)
 	} else {
+		if len(data) < 7 {
+			return e
+		}
 		e.Index = leU16(data, 2)                // rAthena: index (offset 2, size 2)
 		e.WearLocation = uint32(leU16(data, 4)) // rAthena: wearLocation (offset 4, size 2)
 		e.Result = data[6]                      // rAthena: result (offset 6, size 1)

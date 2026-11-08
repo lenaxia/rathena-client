@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func Exp_0x07F6(data []byte, packetver uint32) events.Exp {
 	var e events.Exp
 	_ = packetver
+	if len(data) < 14 {
+		return e
+	}
 	e.Aid = leU32(data, 2)         // rAthena: aid (offset 2, size 4)
 	e.Exp = uint64(leU32(data, 6)) // rAthena: exp (offset 6, size 4)
 	e.Type = leU16(data, 10)       // rAthena: type (offset 10, size 2)
@@ -19,6 +22,9 @@ func Exp_0x07F6(data []byte, packetver uint32) events.Exp {
 func Exp_0x0ACC(data []byte, packetver uint32) events.Exp {
 	var e events.Exp
 	_ = packetver
+	if len(data) < 18 {
+		return e
+	}
 	e.Aid = leU32(data, 2)    // rAthena: aid (offset 2, size 4)
 	e.Exp = leU64(data, 6)    // rAthena: exp (offset 6, size 8)
 	e.Type = leU16(data, 14)  // rAthena: type (offset 14, size 2)

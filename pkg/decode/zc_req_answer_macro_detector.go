@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcReqAnswerMacroDetector_0x0A5B(data []byte, packetver uint32) events.ZcReqAnswerMacroDetector {
 	var e events.ZcReqAnswerMacroDetector
 	_ = packetver
+	if len(data) < 7 {
+		return e
+	}
 	e.RetryCount = data[2] // rAthena: retryCount (offset 2, size 1)
 	e.Timeout = data[3:7]  // rAthena: timeout (offset 3, size 4)
 	return e

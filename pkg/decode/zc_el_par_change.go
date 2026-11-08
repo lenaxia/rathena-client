@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcElParChange_0x081E(data []byte, packetver uint32) events.ZcElParChange {
 	var e events.ZcElParChange
 	_ = packetver
+	if len(data) < 8 {
+		return e
+	}
 	e.Type = leU16(data, 2)  // rAthena: type (offset 2, size 2)
 	e.Value = leU32(data, 4) // rAthena: value (offset 4, size 4)
 	return e

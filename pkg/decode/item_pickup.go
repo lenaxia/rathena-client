@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ItemPickup_0x00A0(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	_ = packetver
+	if len(data) < 23 {
+		return e
+	}
 	e.Index = leU16(data, 2)             // rAthena: Index (offset 2, size 2)
 	e.Count = leU16(data, 4)             // rAthena: count (offset 4, size 2)
 	e.Nameid = uint32(leU16(data, 6))    // rAthena: nameid (offset 6, size 2)
@@ -25,6 +28,9 @@ func ItemPickup_0x00A0(data []byte, packetver uint32) events.ItemPickup {
 func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	if packetver >= 20181121 {
+		if len(data) < 69 {
+			return e
+		}
 		e.Index = leU16(data, 2)            // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)            // rAthena: count (offset 4, size 2)
 		e.Nameid = leU32(data, 6)           // rAthena: nameid (offset 6, size 4)
@@ -41,6 +47,9 @@ func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 		e.Favorite = data[66]               // rAthena: favorite (offset 66, size 1)
 		e.Look = leU16(data, 67)            // rAthena: look (offset 67, size 2)
 	} else {
+		if len(data) < 59 {
+			return e
+		}
 		e.Index = leU16(data, 2)            // rAthena: Index (offset 2, size 2)
 		e.Count = leU16(data, 4)            // rAthena: count (offset 4, size 2)
 		e.Nameid = uint32(leU16(data, 6))   // rAthena: nameid (offset 6, size 2)
@@ -64,6 +73,9 @@ func ItemPickup_0x0A37(data []byte, packetver uint32) events.ItemPickup {
 func ItemPickup_0x029A(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	_ = packetver
+	if len(data) < 27 {
+		return e
+	}
 	e.Index = leU16(data, 2)             // rAthena: Index (offset 2, size 2)
 	e.Count = leU16(data, 4)             // rAthena: count (offset 4, size 2)
 	e.Nameid = uint32(leU16(data, 6))    // rAthena: nameid (offset 6, size 2)
@@ -82,6 +94,9 @@ func ItemPickup_0x029A(data []byte, packetver uint32) events.ItemPickup {
 func ItemPickup_0x02D4(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	_ = packetver
+	if len(data) < 29 {
+		return e
+	}
 	e.Index = leU16(data, 2)             // rAthena: Index (offset 2, size 2)
 	e.Count = leU16(data, 4)             // rAthena: count (offset 4, size 2)
 	e.Nameid = uint32(leU16(data, 6))    // rAthena: nameid (offset 6, size 2)
@@ -101,6 +116,9 @@ func ItemPickup_0x02D4(data []byte, packetver uint32) events.ItemPickup {
 func ItemPickup_0x0990(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	_ = packetver
+	if len(data) < 31 {
+		return e
+	}
 	e.Index = leU16(data, 2)            // rAthena: Index (offset 2, size 2)
 	e.Count = leU16(data, 4)            // rAthena: count (offset 4, size 2)
 	e.Nameid = uint32(leU16(data, 6))   // rAthena: nameid (offset 6, size 2)
@@ -120,6 +138,9 @@ func ItemPickup_0x0990(data []byte, packetver uint32) events.ItemPickup {
 func ItemPickup_0x0A0C(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	_ = packetver
+	if len(data) < 56 {
+		return e
+	}
 	e.Index = leU16(data, 2)            // rAthena: Index (offset 2, size 2)
 	e.Count = leU16(data, 4)            // rAthena: count (offset 4, size 2)
 	e.Nameid = uint32(leU16(data, 6))   // rAthena: nameid (offset 6, size 2)
@@ -140,6 +161,9 @@ func ItemPickup_0x0A0C(data []byte, packetver uint32) events.ItemPickup {
 func ItemPickup_0x0B41(data []byte, packetver uint32) events.ItemPickup {
 	var e events.ItemPickup
 	_ = packetver
+	if len(data) < 70 {
+		return e
+	}
 	e.Index = leU16(data, 2)            // rAthena: Index (offset 2, size 2)
 	e.Count = leU16(data, 4)            // rAthena: count (offset 4, size 2)
 	e.Nameid = leU32(data, 6)           // rAthena: nameid (offset 6, size 4)

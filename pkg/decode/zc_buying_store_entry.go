@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcBuyingStoreEntry_0x0814(data []byte, packetver uint32) events.ZcBuyingStoreEntry {
 	var e events.ZcBuyingStoreEntry
 	_ = packetver
+	if len(data) < 86 {
+		return e
+	}
 	e.MakerAID = leU32(data, 2)              // rAthena: makerAID (offset 2, size 4)
 	e.StoreName = nullTermString(data[6:86]) // rAthena: storeName (offset 6, size 80)
 	return e

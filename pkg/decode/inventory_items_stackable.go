@@ -111,6 +111,9 @@ func decodeNormalItems(body []byte, pv uint32) []events.NormalItemEntry {
 // Active: pv < 20071002.
 func InventoryItemsStackable_0x00A3(data []byte, pv uint32) events.InventoryItemsStackable {
 	var e events.InventoryItemsStackable
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeNormalItems(data[4:], pv)
 	return e
@@ -120,6 +123,9 @@ func InventoryItemsStackable_0x00A3(data []byte, pv uint32) events.InventoryItem
 // Active: pv >= 20071002, < 20080102.
 func InventoryItemsStackable_0x01EE(data []byte, pv uint32) events.InventoryItemsStackable {
 	var e events.InventoryItemsStackable
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeNormalItems(data[4:], pv)
 	return e
@@ -129,6 +135,9 @@ func InventoryItemsStackable_0x01EE(data []byte, pv uint32) events.InventoryItem
 // Active: pv >= 20080102, < 20120925.
 func InventoryItemsStackable_0x02E8(data []byte, pv uint32) events.InventoryItemsStackable {
 	var e events.InventoryItemsStackable
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeNormalItems(data[4:], pv)
 	return e
@@ -138,6 +147,9 @@ func InventoryItemsStackable_0x02E8(data []byte, pv uint32) events.InventoryItem
 // Active: pv >= 20120925, < 20181002 (MAIN).
 func InventoryItemsStackable_0x0991(data []byte, pv uint32) events.InventoryItemsStackable {
 	var e events.InventoryItemsStackable
+	if len(data) < 4 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.Items = decodeNormalItems(data[4:], pv)
 	return e
@@ -148,6 +160,9 @@ func InventoryItemsStackable_0x0991(data []byte, pv uint32) events.InventoryItem
 // Source: packets_struct.hpp:1187–1194.
 func InventoryItemsStackable_0x0B09(data []byte, pv uint32) events.InventoryItemsStackable {
 	var e events.InventoryItemsStackable
+	if len(data) < 5 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2) // rAthena: PacketLength
 	e.InvType = data[4]             // rAthena: invType (pv >= 20181002 MAIN)
 	e.Items = decodeNormalItems(data[5:], pv)

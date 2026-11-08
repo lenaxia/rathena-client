@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcCloseDialog_0x00B6(data []byte, packetver uint32) events.ZcCloseDialog {
 	var e events.ZcCloseDialog
 	_ = packetver
+	if len(data) < 6 {
+		return e
+	}
 	e.NpcId = leU32(data, 2) // rAthena: npcId (offset 2, size 4)
 	return e
 }

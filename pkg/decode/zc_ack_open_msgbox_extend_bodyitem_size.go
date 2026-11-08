@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckOpenMsgboxExtendBodyitemSize_0x0B15(data []byte, packetver uint32) events.ZcAckOpenMsgboxExtendBodyitemSize {
 	var e events.ZcAckOpenMsgboxExtendBodyitemSize
 	_ = packetver
+	if len(data) < 7 {
+		return e
+	}
 	e.Result = data[2]        // rAthena: result (offset 2, size 1)
 	e.ItemId = leU32(data, 3) // rAthena: itemId (offset 3, size 4)
 	return e

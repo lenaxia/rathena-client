@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcReqAckAgitInvestment_0x0B2D(data []byte, packetver uint32) events.ZcReqAckAgitInvestment {
 	var e events.ZcReqAckAgitInvestment
 	_ = packetver
+	if len(data) < 11 {
+		return e
+	}
 	e.Castle_id = int8(data[2]) // rAthena: castle_id (offset 2, size 1)
 	e.Economy = leI32(data, 3)  // rAthena: economy (offset 3, size 4)
 	e.Defense = leI32(data, 7)  // rAthena: defense (offset 7, size 4)

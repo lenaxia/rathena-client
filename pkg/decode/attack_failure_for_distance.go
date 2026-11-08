@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func AttackFailureForDistance_0x0139(data []byte, packetver uint32) events.AttackFailureForDistance {
 	var e events.AttackFailureForDistance
 	_ = packetver
+	if len(data) < 16 {
+		return e
+	}
 	e.TargetAID = leU32(data, 2)        // rAthena: targetAID (offset 2, size 4)
 	e.TargetXPos = leI16(data, 6)       // rAthena: targetXPos (offset 6, size 2)
 	e.TargetYPos = leI16(data, 8)       // rAthena: targetYPos (offset 8, size 2)

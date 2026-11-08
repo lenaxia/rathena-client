@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillPostDelay_0x043D(data []byte, packetver uint32) events.SkillPostDelay {
 	var e events.SkillPostDelay
 	_ = packetver
+	if len(data) < 8 {
+		return e
+	}
 	e.SKID = leU16(data, 2)    // rAthena: SKID (offset 2, size 2)
 	e.DelayTM = leU32(data, 4) // rAthena: DelayTM (offset 4, size 4)
 	return e

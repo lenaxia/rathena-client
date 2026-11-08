@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ZcAckReadRodex_0x09EB(data []byte, packetver uint32) events.ZcAckReadRodex {
 	var e events.ZcAckReadRodex
 	_ = packetver
+	if len(data) < 24 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)           // rAthena: PacketLength (offset 2, size 2)
 	e.Opentype = int8(data[4])                // rAthena: opentype (offset 4, size 1)
 	e.MailID = leI64(data, 5)                 // rAthena: MailID (offset 5, size 8)
@@ -22,6 +25,9 @@ func ZcAckReadRodex_0x09EB(data []byte, packetver uint32) events.ZcAckReadRodex 
 func ZcAckReadRodex_0x0B63(data []byte, packetver uint32) events.ZcAckReadRodex {
 	var e events.ZcAckReadRodex
 	_ = packetver
+	if len(data) < 24 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)           // rAthena: PacketLength (offset 2, size 2)
 	e.Opentype = int8(data[4])                // rAthena: opentype (offset 4, size 1)
 	e.MailID = leI64(data, 5)                 // rAthena: MailID (offset 5, size 8)

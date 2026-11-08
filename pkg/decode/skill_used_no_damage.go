@@ -8,12 +8,18 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func SkillUsedNoDamage_0x011A(data []byte, packetver uint32) events.SkillUsedNoDamage {
 	var e events.SkillUsedNoDamage
 	if packetver >= 20130731 {
+		if len(data) < 17 {
+			return e
+		}
 		e.SKID = leU16(data, 2)      // rAthena: SKID (offset 2, size 2)
 		e.Level = leI32(data, 4)     // rAthena: level (offset 4, size 4)
 		e.TargetAID = leU32(data, 8) // rAthena: targetAID (offset 8, size 4)
 		e.SrcAID = leU32(data, 12)   // rAthena: srcAID (offset 12, size 4)
 		e.Result = int8(data[16])    // rAthena: result (offset 16, size 1)
 	} else {
+		if len(data) < 15 {
+			return e
+		}
 		e.SKID = leU16(data, 2)         // rAthena: SKID (offset 2, size 2)
 		e.Level = int32(leI16(data, 4)) // rAthena: level (offset 4, size 2)
 		e.TargetAID = leU32(data, 6)    // rAthena: targetAID (offset 6, size 4)

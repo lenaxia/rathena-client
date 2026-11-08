@@ -8,6 +8,9 @@ import "github.com/lenaxia/rathena-client/pkg/events"
 func ActorMoved_0x007B(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 114 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -51,6 +54,9 @@ func ActorMoved_0x007B(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x01DA(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 64 {
+		return e
+	}
 	e.GID = leU32(data, 2)            // rAthena: GID (offset 2, size 4)
 	e.Speed = leI16(data, 6)          // rAthena: speed (offset 6, size 2)
 	e.BodyState = leI16(data, 8)      // rAthena: bodyState (offset 8, size 2)
@@ -83,6 +89,9 @@ func ActorMoved_0x01DA(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x022C(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	if packetver >= 20071106 {
+		if len(data) < 65 {
+			return e
+		}
 		e.Objecttype = data[2]            // rAthena: objecttype (offset 2, size 1)
 		e.GID = leU32(data, 3)            // rAthena: GID (offset 3, size 4)
 		e.Speed = leI16(data, 7)          // rAthena: speed (offset 7, size 2)
@@ -110,6 +119,9 @@ func ActorMoved_0x022C(data []byte, packetver uint32) events.ActorMoved {
 		e.YSize = data[62]                // rAthena: ySize (offset 62, size 1)
 		e.Clevel = leI16(data, 63)        // rAthena: clevel (offset 63, size 2)
 	} else {
+		if len(data) < 64 {
+			return e
+		}
 		e.GID = leU32(data, 2)            // rAthena: GID (offset 2, size 4)
 		e.Speed = leI16(data, 6)          // rAthena: speed (offset 6, size 2)
 		e.BodyState = leI16(data, 8)      // rAthena: bodyState (offset 8, size 2)
@@ -143,6 +155,9 @@ func ActorMoved_0x022C(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x09FD(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	if packetver >= 20181121 {
+		if len(data) < 114 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -180,6 +195,9 @@ func ActorMoved_0x09FD(data []byte, packetver uint32) events.ActorMoved {
 		e.Body = leU16(data, 88)              // rAthena: body (offset 88, size 2)
 		e.Name = nullTermString(data[90:114]) // rAthena: name (offset 90, size 24)
 	} else {
+		if len(data) < 110 {
+			return e
+		}
 		e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 		e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 		e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
@@ -223,6 +241,9 @@ func ActorMoved_0x09FD(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x02EC(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 67 {
+		return e
+	}
 	e.Objecttype = data[2]            // rAthena: objecttype (offset 2, size 1)
 	e.GID = leU32(data, 3)            // rAthena: GID (offset 3, size 4)
 	e.Speed = leI16(data, 7)          // rAthena: speed (offset 7, size 2)
@@ -257,6 +278,9 @@ func ActorMoved_0x02EC(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x07F7(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 69 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)   // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]            // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)            // rAthena: GID (offset 5, size 4)
@@ -292,6 +316,9 @@ func ActorMoved_0x07F7(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x0856(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 71 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)   // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]            // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)            // rAthena: GID (offset 5, size 4)
@@ -328,6 +355,9 @@ func ActorMoved_0x0856(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x0914(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 80 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)   // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]            // rAthena: objecttype (offset 4, size 1)
 	e.GID = leU32(data, 5)            // rAthena: GID (offset 5, size 4)
@@ -367,6 +397,9 @@ func ActorMoved_0x0914(data []byte, packetver uint32) events.ActorMoved {
 func ActorMoved_0x09DB(data []byte, packetver uint32) events.ActorMoved {
 	var e events.ActorMoved
 	_ = packetver
+	if len(data) < 108 {
+		return e
+	}
 	e.PacketLength = leI16(data, 2)       // rAthena: PacketLength (offset 2, size 2)
 	e.Objecttype = data[4]                // rAthena: objecttype (offset 4, size 1)
 	e.AID = leU32(data, 5)                // rAthena: AID (offset 5, size 4)
